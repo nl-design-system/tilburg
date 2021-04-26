@@ -40,4 +40,9 @@ How to setup you environment
 The following command will open a browser with the latest storybook:
 
     npm run storybook
+
+## Optional building
+
+    npm run build
+
     
