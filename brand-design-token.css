@@ -11,7 +11,23 @@
  * @presenter Color
  */
 :root {
-  --example-blue: blue;
+  --tilburg-blue-40: hsl(197 100% 43%); /* #009cda */
+  --tilburg-blue-30: hsl(203 99% 32%); /* #0165a2 */
+  --tilburg-blue-30b: hsl(200 99% 30%); /* #016596 */
+  --tilburg-blue-20: hsl(207 100% 20%); /* #003865 */
+  --tilburg-blue-20b: hsl(204 90% 20%); /* #053d63 - logo castle background color */
+
+  --tilburg-pink-40: hsl(327 100% 45%); /* #e6007e */
+
+  --tilburg-green-20: hsl(166 98% 23%); /* #01745A */
+  --tilburg-green-30: hsl(166 100% 26%); /* #008768 */
+
+  --tilburg-gray-20: hsl(0 0% 18%); /* #2D2D2D */
+  --tilburg-gray-40: hsl(0 0% 40%); /* #666666 */
+  --tilburg-gray-80: hsl(0 0% 77%); /* #C4C4C4 */
+
+  --tilburg-orange-50: hsl(27 96% 48%); /* #F06E05 */
+  --tilburg-orange-40: hsl(27 99% 42%); /* #D45F01 */
 }
 
 /**
