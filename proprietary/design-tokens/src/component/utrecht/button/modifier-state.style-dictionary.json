@@ -1,0 +1,30 @@
+{
+  "utrecht": {
+    "button": {
+      "primary-action": {
+        "hover": {
+          "background-color": {},
+          "color": {}
+        }
+      },
+      "secondary-action": {
+        "hover": {
+          "background-color": {},
+          "color": {},
+          "border-color": {}
+        },
+        "disabled": {
+          "background-color": {},
+          "color": {},
+          "border-color": {}
+        }
+      },
+      "FIXME-next": {
+        "hover": {
+          "background-color": { "value": "{tilburg.color.orange.40.value}" },
+          "color": { "value": "{tilburg.color.grey.100.value}" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "tilburg": {
+    "color": {
+      "grey": {
+        "0": {
+          "value": "#000000"
+        },
+        "20": {
+          "value": "#2d2d2d"
+        },
+        "40": {
+          "value": "hsl(0deg 0% 40%)"
+        },
+        "60": {
+          "value": "hsl(0deg 0% 58%)"
+        },
+        "70": {
+          "value": "hsl(0deg 0% 69%)"
+        },
+        "80": {
+          "value": "hsl(0deg 0% 77%)"
+        },
+        "90": {
+          "value": "hsl(0deg 0% 90%)"
+        },
+        "95": {
+          "value": "#eee"
+        },
+        "100": {
+          "value": "#ffffff"
+        }
+      },
+      "blue": {
+        "20": {
+          "value": "#053d63"
+        },
+        "30": {
+          "value": "hsl(200deg 99% 30%)",
+          "$comment": "#016698"
+        },
+        "40": {
+          "value": "#009cda"
+        }
+      },
+      "pink": {
+        "50": {
+          "value": "#E6007E"
+        },
+        "40": {
+          "value": "hsl(328deg 100% 39%)"
+        }
+      },
+      "red": {
+        "40": {
+          "value": "hsl(17deg 98% 42%)"
+        },
+        "40b": {
+          "value": "hsl(3deg 83% 41%)"
+        },
+        "50": {
+          "value": "hsl(3deg 78% 54%)"
+        }
+      },
+      "green": {
+        "20": {
+          "value": "hsl(166deg 98% 23%)",
+          "$comment": "#01745a"
+        },
+        "30": {
+          "value": "hsl(166deg 100% 26%)"
+        },
+        "50": {
+          "value": "hsl(120deg 39% 54%)"
+        }
+      },
+      "orange": {
+        "40": {
+          "value": "hsl(27deg 99% 42%)"
+        },
+        "50": {
+          "value": "hsl(27deg 96% 48%)"
+        }
+      }
+    }
+  }
+}

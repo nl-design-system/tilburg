@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "author": "Community for NL Design System",
+  "description": "DUO design tokens",
+  "license": "SEE LICENSE IN ../LICENSE.md",
+  "name": "@nl-design-system-unstable/duo-design-tokens",
+  "private": true,
+  "repository": {
+    "type": "git+ssh",
+    "url": "git@github.com:nl-design-system/rijkshuisstijl-design-tokens.git"
+  },
+  "scripts": {
+    "clean": "rimraf -rf dist/",
+    "prebuild": "npm run clean",
+    "watch": "chokidar --follow-symlinks --initial --command 'npm run build' 'src/**/*.style-dictionary.json'",
+    "build": "style-dictionary build --config ./style-dictionary.config.json"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^2.1.0",
+    "rimraf": "^3.0.2",
+    "style-dictionary": "^3.0.0-rc.9"
+  }
+}

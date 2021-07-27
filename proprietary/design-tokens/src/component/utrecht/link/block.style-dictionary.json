@@ -1,0 +1,8 @@
+{
+  "utrecht": {
+    "link": {
+      "color": { "value": "{tilburg.color.pink.50.value}" },
+      "text-decoration": { "value": "none" }
+    }
+  }
+}

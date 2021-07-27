@@ -1,0 +1,19 @@
+{
+  "utrecht": {
+    "paragraph": {
+      "lead": {
+        "font-size": { "value": "1.7em" },
+        "font-weight": {},
+        "line-height": {},
+        "color": {
+          "value": "{tilburg.color.blue.40.value}",
+          "comment": "FIXME new"
+        },
+        "margin-block-end": {
+          "value": "0.3em",
+          "comment": "FIXME new"
+        }
+      }
+    }
+  }
+}

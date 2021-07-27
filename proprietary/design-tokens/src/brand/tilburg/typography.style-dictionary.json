@@ -1,0 +1,27 @@
+{
+  "tilburg": {
+    "typography": {
+      "sans-serif": {
+        "font-family": { "value": "Arial, Helvetica, sans-serif" }
+      },
+      "sans-serif-alternate": {
+        "font-family": {
+          "value": "\"Trade Gothic W01 Cn 18\", AvenirNextCondensed-Medium, \"Univers Condensed\", Univers, Arial, sans-serif"
+        }
+      },
+      "weight-scale": {
+        "bold": {
+          "font-weight": { "value": "700" }
+        },
+        "normal": {
+          "font-weight": { "value": "400" }
+        }
+      },
+      "scale": {
+        "md": {
+          "font-size": { "value": "14px" }
+        }
+      }
+    }
+  }
+}

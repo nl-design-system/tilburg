@@ -1,0 +1,12 @@
+{
+  "utrecht": {
+    "form-label": {
+      "checkbox": {
+        "font-weight": { "value": "{tilburg.typography.weight-scale.normal.font-weight.value}", "comment": "FIXME" }
+      },
+      "radio": {
+        "font-weight": { "value": "{tilburg.typography.weight-scale.normal.font-weight.value}", "comment": "FIXME" }
+      }
+    }
+  }
+}

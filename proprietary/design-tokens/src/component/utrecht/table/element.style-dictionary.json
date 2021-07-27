@@ -1,0 +1,43 @@
+{
+  "utrecht": {
+    "table": {
+      "caption": {
+        "font-size": {},
+        "font-weight": { "value": "{tilburg.typography.weight-scale.bold.font-weight.value}" },
+        "font-family": {},
+        "color": { "value": "{tilburg.color.grey.20.value}" },
+        "line-height": {},
+        "text-align": { "value": "start" },
+        "margin-block-end": { "value": "5px" }
+      },
+      "header": {
+        "font-weight": {},
+        "color": {},
+        "text-transform": {},
+        "background-color": { "value": "{tilburg.color.grey.90.value}", "comment": "FIXME" },
+        "border-block-end-color": {},
+        "border-block-end-width": {}
+      },
+      "heading": {
+        "font-weight": {},
+        "color": {},
+        "text-transform": {}
+      },
+      "cell": {
+        "line-height": {},
+        "padding-block-end": { "value": "0.5em" },
+        "padding-block-start": { "value": "0.5em" },
+        "padding-inline-end": { "value": "1em" },
+        "padding-inline-start": { "value": "1em" },
+        "border-color": { "value": "{tilburg.color.grey.70.value}", "comment": "FIXME" },
+        "border-width": { "value": "1px", "comment": "FIXME" }
+      },
+      "row": {
+        "padding-inline-end": {},
+        "padding-inline-start": {},
+        "border-block-end-width": {},
+        "border-block-end-color": {}
+      }
+    }
+  }
+}

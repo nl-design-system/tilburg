@@ -1,0 +1,9 @@
+{
+  "utrecht": {
+    "separator": {
+      "color": { "value": "{tilburg.color.grey.0.value}" },
+      "width": { "value": "10px" },
+      "margin-block": { "value": "40px" }
+    }
+  }
+}

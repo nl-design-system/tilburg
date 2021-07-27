@@ -1,0 +1,20 @@
+{
+  "utrecht": {
+    "button": {
+      "border-width": { "value": "0" },
+      "border-radius": { "value": "0" },
+      "font-family": { "value": "{tilburg.typography.sans-serif-alternate.font-family.value}" },
+      "font-size": {},
+      "padding-inline-start": { "value": "10px" },
+      "padding-inline-end": { "value": "10px" },
+      "padding-block-start": { "value": "10px" },
+      "padding-block-end": { "value": "10px" },
+      "margin-inline-start": {},
+      "margin-inline-end": {},
+      "margin-block-start": {},
+      "margin-block-end": {},
+      "background-color": { "value": "{tilburg.color.green.30.value}" },
+      "color": { "value": "{tilburg.color.grey.100.value}" }
+    }
+  }
+}

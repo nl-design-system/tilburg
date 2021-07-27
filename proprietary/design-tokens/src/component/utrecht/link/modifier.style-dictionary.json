@@ -1,0 +1,20 @@
+{
+  "utrecht": {
+    "link": {
+      "active": {
+        "color": { "value": "{tilburg.color.blue.40.value}" }
+      },
+      "focus": {
+        "color": { "value": "{tilburg.color.blue.40.value}" },
+        "text-decoration": { "value": "underline" }
+      },
+      "hover": {
+        "color": { "value": "{tilburg.color.blue.40.value}" },
+        "text-decoration": { "value": "underline" }
+      },
+      "visited": {
+        "color": {}
+      }
+    }
+  }
+}

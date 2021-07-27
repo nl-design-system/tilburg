@@ -1,0 +1,15 @@
+{
+  "utrecht": {
+    "heading-4": {
+      "color": {},
+      "font-family": { "value": "{tilburg.typography.sans-serif-alternate.font-family.value}" },
+      "font-size": {},
+      "font-weight": { "value": "{tilburg.typography.weight-scale.bold.font-weight.value}" },
+      "line-height": { "value": "1.2em" },
+      "margin-block-end": {},
+      "margin-block-start": {},
+      "padding-block-end": { "value": "10px" },
+      "padding-block-start": {}
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "utrecht": {
+    "textbox": {
+      "disabled": {
+        "background-color": { "value": "{tilburg.color.grey.80.value}", "comment": "FIXME: NEW" },
+        "border-color": {},
+        "color": { "value": "{tilburg.color.grey.100.value}" },
+        "font-weight": { "value": "400", "comment": "FIXME: NEW" }
+      },
+      "invalid": {
+        "border-color": { "value": "{utrecht.feedback.invalid.border-color.value}" },
+        "border-width": {}
+      },
+      "read-only": {
+        "border-color": {},
+        "color": {}
+      }
+    }
+  }
+}

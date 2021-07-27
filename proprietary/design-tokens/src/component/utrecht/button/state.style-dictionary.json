@@ -1,0 +1,15 @@
+{
+  "utrecht": {
+    "button": {
+      "focus": {
+        "border-color": {},
+        "border-width": {},
+        "transform-scale": {}
+      },
+      "disabled": {
+        "background-color": { "value": "{tilburg.color.grey.20.value}" },
+        "color": { "value": "{tilburg.color.grey.100.value}" }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "utrecht": {
+    "document": {
+      "line-height": { "value": "1.5" },
+      "background-color": { "value": "{tilburg.color.grey.100.value}" },
+      "color": { "value": "{tilburg.color.grey.20.value}" },
+      "font-family": { "value": "{tilburg.typography.sans-serif.font-family.value}" },
+      "font-size": { "value": "90%" }
+    }
+  }
+}
