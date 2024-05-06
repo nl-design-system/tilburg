@@ -7,7 +7,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 export const Button = forwardRef(
   ({ children, className, ...restProps }: PropsWithChildren<ButtonProps>, ref: ForwardedRef<HTMLButtonElement>) => {
     return (
-      <button ref={ref} className={clsx('example-button', className)} {...restProps}>
+      <button ref={ref} className={clsx('tilburg-button', className)} {...restProps}>
         {children}
       </button>
     );

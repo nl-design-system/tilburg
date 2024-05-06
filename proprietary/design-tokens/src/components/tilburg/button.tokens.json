@@ -1,0 +1,8 @@
+{
+  "tilburg": {
+    "button": {
+      "background-color": { "value": "{tilburg.color.blue.50}" },
+      "color": { "value": "{tilburg.color.grey.100}" }
+    }
+  }
+}

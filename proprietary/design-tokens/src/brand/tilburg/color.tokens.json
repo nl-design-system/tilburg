@@ -1,8 +1,8 @@
 {
-  "example": {
+  "tilburg": {
     "color": {
       "blue": {
-        "50": { "value": "cornflowerblue" }
+        "50": { "value": "purple" }
       },
       "grey": {
         "100": { "value": "white" },

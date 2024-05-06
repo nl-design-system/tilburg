@@ -13,7 +13,7 @@
   "types": "./dist/types/components.d.ts",
   "collection": "./dist/collection/collection-manifest.json",
   "collection:main": "./dist/collection/collection-manifest.json",
-  "unpkg": "./dist/example/example.esm.js",
+  "unpkg": "./dist/tilburg/tilburg.esm.js",
   "files": [
     "dist/",
     "loader/"
