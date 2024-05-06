@@ -6,8 +6,8 @@ import { PropsWithChildren } from 'react';
 import '@tilburg/components-css/button/index.scss';
 
 const Button = ({ children }: PropsWithChildren<{}>) => (
-  <button className="example-button" type="button">
-    <span className="example-button__text">{children}</span>
+  <button className="tilburg-button" type="button">
+    <span className="tilburg-button__text">{children}</span>
   </button>
 );
 

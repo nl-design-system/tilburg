@@ -8,10 +8,6 @@
     "nl-design-system"
   ],
   "private": true,
-  "engines": {
-    "node": "^20",
-    "pnpm": "^8"
-  },
   "workspaces": [
     "./packages/*",
     "./proprietary/*"
