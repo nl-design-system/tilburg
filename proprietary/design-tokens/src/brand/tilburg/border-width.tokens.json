@@ -1,0 +1,18 @@
+{
+  "tilburg": {
+    "border-width": {
+      "sm": {
+        "value": "1px",
+        "type": "borderWidth"
+      },
+      "md": {
+        "value": "2px",
+        "type": "borderWidth"
+      },
+      "lg": {
+        "value": "4px",
+        "type": "borderWidth"
+      }
+    }
+  }
+}
