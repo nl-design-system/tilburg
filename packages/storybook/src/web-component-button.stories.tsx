@@ -2,10 +2,10 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import readme from '@tilburg/components-css/button/README.md?raw';
-import { ExampleButton } from '@tilburg/web-components-react/src';
+import { TilburgButton } from '@tilburg/web-components-react/src';
 import { PropsWithChildren } from 'react';
 
-const Button = ({ children }: PropsWithChildren<{}>) => <ExampleButton>{children}</ExampleButton>;
+const Button = ({ children }: PropsWithChildren<{}>) => <TilburgButton>{children}</TilburgButton>;
 
 const meta = {
   title: 'Web Component/Button',

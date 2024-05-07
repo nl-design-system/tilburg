@@ -1,7 +1,36 @@
 {
   "tilburg": {
     "focus": {
-      "outline-offset": { "value": "2px" }
+      "background-color": {
+        "value": "{tilburg.color.pink.200}",
+        "type": "color"
+      },
+      "color": {
+        "value": "{tilburg.color.black}",
+        "type": "color"
+      },
+      "outline-color": {
+        "value": "{tilburg.color.extra.purple}",
+        "type": "color"
+      },
+      "inverse": {
+        "outline-color": {
+          "value": "{tilburg.color.white}",
+          "type": "color"
+        }
+      },
+      "outline-offset": {
+        "value": "0",
+        "type": "other"
+      },
+      "outline-style": {
+        "value": "dotted",
+        "type": "other"
+      },
+      "outline-width": {
+        "value": "{tilburg.border-width.md}",
+        "type": "borderWidth"
+      }
     }
   }
 }

@@ -1,0 +1,18 @@
+{
+  "tilburg": {
+    "icon": {
+      "functional": {
+        "size": {
+          "value": "{tilburg.size.icon.md}",
+          "type": "sizing"
+        }
+      },
+      "toptask": {
+        "size": {
+          "value": "{tilburg.size.icon.4xl}",
+          "type": "sizing"
+        }
+      }
+    }
+  }
+}

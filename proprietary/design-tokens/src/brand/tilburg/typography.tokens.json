@@ -1,0 +1,74 @@
+{
+  "tilburg": {
+    "typography": {
+      "font-size": {
+        "sm": {
+          "value": "14px",
+          "type": "fontSizes"
+        },
+        "md": {
+          "value": "16px",
+          "type": "fontSizes"
+        },
+        "lg": {
+          "value": "20px",
+          "type": "fontSizes"
+        },
+        "xl": {
+          "value": "24px",
+          "type": "fontSizes"
+        },
+        "2xl": {
+          "value": "32px",
+          "type": "fontSizes"
+        },
+        "3xl": {
+          "value": "40px",
+          "type": "fontSizes"
+        },
+        "4xl": {
+          "value": "48px",
+          "type": "fontSizes"
+        }
+      },
+      "line-height": {
+        "xs": {
+          "value": "100%",
+          "type": "lineHeights"
+        },
+        "sm": {
+          "value": "125%",
+          "type": "lineHeights"
+        },
+        "md": {
+          "value": "150%",
+          "type": "lineHeights"
+        },
+        "lg": {
+          "value": "200%",
+          "type": "lineHeights"
+        }
+      },
+      "font-weight": {
+        "normal": {
+          "value": "Regular",
+          "type": "fontWeights"
+        },
+        "bold": {
+          "value": "Bold",
+          "type": "fontWeights"
+        }
+      },
+      "font-family": {
+        "primary": {
+          "value": "TradeGothicCondensed18",
+          "type": "fontFamilies"
+        },
+        "secondary": {
+          "value": "TradeGothicBoldCondensed20",
+          "type": "fontFamilies"
+        }
+      }
+    }
+  }
+}
