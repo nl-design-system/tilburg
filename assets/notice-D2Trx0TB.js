@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as o}from"./index-DlpNa54Y.js";import{M as i,e as a}from"./chunk-HLWAVYOI-DeHijJ8y.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-DKoBQfWr.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./index-ChwMrSJI.js";const s=`# Auteursrecht {auteur}
+import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as o}from"./index-DlpNa54Y.js";import{M as i,e as a}from"./chunk-HLWAVYOI-BlfQpSZ6.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-BToyxFHh.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./extends-CCbyfPlC.js";import"./index-ChwMrSJI.js";const s=`# Auteursrecht {auteur}
 
 Copyright (c) {jaar} {auteur}
 
@@ -15,5 +15,5 @@ Lettertypes die worden gebruikt voor de huisstijl zijn niet allemaal gratis en o
 ## Toestemming
 
 Wanneer je het logo of de huisstijl wilt gebruiken kun je voor toestemming contact opnemen met {contactpersoon}.
-`;function r(n){return e.jsxs(e.Fragment,{children:[e.jsx(i,{title:"Example/Toestemming voor gebruik"}),`
-`,e.jsx(a,{children:s})]})}function b(n={}){const{wrapper:t}={...o(),...n.components};return t?e.jsx(t,{...n,children:e.jsx(r,{...n})}):r()}export{b as default};
+`;function r(n){return e.jsxs(e.Fragment,{children:[e.jsx(i,{title:"Tilburg/Toestemming voor gebruik"}),`
+`,e.jsx(a,{children:s})]})}function k(n={}){const{wrapper:t}={...o(),...n.components};return t?e.jsx(t,{...n,children:e.jsx(r,{...n})}):r()}export{k as default};

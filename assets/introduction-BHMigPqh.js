@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as s}from"./index-DlpNa54Y.js";import{M as r,e as a}from"./chunk-HLWAVYOI-DeHijJ8y.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-DKoBQfWr.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./index-ChwMrSJI.js";const o=`<!-- @license CC0-1.0 -->
+import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as r}from"./index-DlpNa54Y.js";import{M as s,e as a}from"./chunk-HLWAVYOI-BlfQpSZ6.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-BToyxFHh.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./extends-CCbyfPlC.js";import"./index-ChwMrSJI.js";const o=`<!-- @license CC0-1.0 -->
 
 # NL Design System introductie
 
@@ -34,5 +34,5 @@ Het is belangrijk dat iedereen de online dienstverlening van de overheid kan geb
 De POC is te vinden op:
 
 <http://github.com/nl-design-system>
-`;function t(n){return e.jsxs(e.Fragment,{children:[e.jsx(r,{title:"Example/Intro"}),`
-`,e.jsx(a,{children:o})]})}function h(n={}){const{wrapper:i}={...s(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(t,{...n})}):t()}export{h as default};
+`;function t(n){return e.jsxs(e.Fragment,{children:[e.jsx(s,{title:"Tilburg/Intro"}),`
+`,e.jsx(a,{children:o})]})}function j(n={}){const{wrapper:i}={...r(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(t,{...n})}):t()}export{j as default};
