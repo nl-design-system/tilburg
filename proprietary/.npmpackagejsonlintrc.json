@@ -1,6 +1,5 @@
 {
   "rules": {
-    "valid-values-license": ["error", ["SEE LICENSE IN LICENSE.md"]],
-    "valid-values-name-scope": ["tilburg"]
+    "valid-values-license": ["error", ["SEE LICENSE IN LICENSE.md"]]
   }
 }
