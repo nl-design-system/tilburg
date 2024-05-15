@@ -4,6 +4,7 @@ import '@tilburg/design-tokens/dist/index.css';
 import '@tilburg/font/src/index.scss';
 import { defineCustomElements } from '@tilburg/web-components-stencil/loader/index.js';
 import { ParametersArgsDecorator } from './ParametersArgsDecorator';
+import { theme } from './theme';
 
 defineCustomElements();
 
@@ -23,6 +24,7 @@ const preview: Preview = {
           </>
         );
       },
+      theme: theme,
     },
   },
   decorators: [ParametersArgsDecorator],
