@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as o}from"./index-DlpNa54Y.js";import{M as i,e as a}from"./chunk-HLWAVYOI-tCW_DDAY.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-eRBuBCOV.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./extends-CCbyfPlC.js";import"./index-ChwMrSJI.js";const s=`# Auteursrecht {auteur}
+import{j as e}from"./jsx-runtime-Nms4Y4qS.js";import{useMDXComponents as o}from"./index-DlpNa54Y.js";import{M as i,e as a}from"./chunk-HLWAVYOI-BH_m5K7J.js";import"./index-BwDkhjyp.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-vMhBB7Sd.js";import"../sb-preview/runtime.js";import"./react-18-CzKcEif8.js";import"./extends-CCbyfPlC.js";import"./index-ChwMrSJI.js";const s=`# Auteursrecht {auteur}
 
 Copyright (c) {jaar} {auteur}
 
