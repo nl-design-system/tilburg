@@ -11,7 +11,12 @@ defineCustomElements();
 const preview: Preview = {
   parameters: {
     controls: { expanded: false },
-    options: { panelPosition: 'right' },
+    options: {
+      panelPosition: 'right',
+      storySort: {
+        order: ['Tilburg', 'CSS Component'],
+      },
+    },
     docs: {
       page: () => {
         // Exclude `<Title>` because the title comes from the Markdown file

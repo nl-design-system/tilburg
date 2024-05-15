@@ -1,0 +1,14 @@
+{
+  "tilburg": {
+    "line": {
+      "border-color": {
+        "value": "{tilburg.color.gray.200}",
+        "type": "color"
+      },
+      "border-width": {
+        "value": "{tilburg.border-width.sm}",
+        "type": "borderWidth"
+      }
+    }
+  }
+}
