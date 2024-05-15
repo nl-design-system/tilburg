@@ -21,11 +21,13 @@ const meta = {
   id: 'css-utrecht-accordion',
   component: AccordionProvider,
   args: {
+    // @ts-ignore
     label: '',
     body: '',
     expandedAccordion: false,
   },
   argTypes: {
+    // @ts-ignore
     label: {
       name: 'label',
       type: { name: 'string', required: true },
@@ -55,7 +57,7 @@ const meta = {
   parameters: {
     design: {
       type: 'figma',
-      url: 'https://www.figma.com/design/ck81CE8SNzePi30jCEu7MK/NLDS---Gemeente-Tilburg---Bibliotheek?node-id=828%3A920&t=Y2YZ0H2902enM7la-1',
+      url: 'https://www.figma.com/design/ck81CE8SNzePi30jCEu7MK/NLDS---Gemeente-Tilburg---Bibliotheek?node-id=1261%3A4784&t=lu24fBlSHdl7JcKT-1',
     },
     docs: {
       description: {
@@ -63,6 +65,7 @@ const meta = {
       },
     },
   },
+  // @ts-ignore
   render: AccordionStory,
 } satisfies Meta<typeof AccordionProvider>;
 export default meta;
@@ -70,6 +73,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  // @ts-ignore
   args: {
     label: 'Lorem ipsum',
     body: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
@@ -111,6 +115,7 @@ const accordionData = [
   },
 ];
 
+// @ts-ignore
 export const Multiple: Story = {
   render: () => <AccordionProvider sections={accordionData} />,
 };
