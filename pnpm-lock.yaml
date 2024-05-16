@@ -212,6 +212,10 @@ importers:
         version: 1.0.2(vite@5.2.11(@types/node@20.12.8)(sass@1.76.0)(terser@5.31.0))
 
   packages/storybook:
+    dependencies:
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 8.0.9
