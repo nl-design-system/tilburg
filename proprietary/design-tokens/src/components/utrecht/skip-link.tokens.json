@@ -1,0 +1,84 @@
+{
+  "utrecht": {
+    "skip-link": {
+      "font-weight": {
+        "value": "{tilburg.document.strong.font-weight}",
+        "type": "fontWeights"
+      },
+      "font-family": {
+        "value": "{tilburg.document.font-family}",
+        "type": "fontFamilies"
+      },
+      "font-size": {
+        "value": "{tilburg.document.font-size}",
+        "type": "fontSizes"
+      },
+      "min-block-size": {
+        "type": "sizing",
+        "value": "{tilburg.pointer-target.min-size}"
+      },
+      "min-inline-size": {
+        "type": "sizing",
+        "value": "{tilburg.pointer-target.min-size}"
+      },
+      "padding-block-end": {
+        "value": "{tilburg.space.block.snail}",
+        "type": "spacing"
+      },
+      "padding-block-start": {
+        "value": "{tilburg.space.block.snail}",
+        "type": "spacing"
+      },
+      "padding-inline-end": {
+        "value": "{tilburg.space.inline.mouse}",
+        "type": "spacing"
+      },
+      "padding-inline-start": {
+        "value": "{tilburg.space.inline.mouse}",
+        "type": "spacing"
+      },
+      "focus": {
+        "background-color": {
+          "type": "color",
+          "value": "{tilburg.focus.background-color}"
+        },
+        "border-color": {
+          "value": "transparent",
+          "type": "color"
+        },
+        "color": {
+          "type": "color",
+          "value": "{tilburg.focus.color}"
+        },
+        "text-decoration": {
+          "value": "none",
+          "type": "textDecoration"
+        }
+      },
+      "background-color": {
+        "type": "color",
+        "value": "{tilburg.document.inverse.background-color}"
+      },
+      "border-color": {
+        "value": "transparent",
+        "type": "color"
+      },
+      "color": {
+        "type": "color",
+        "value": "{tilburg.document.inverse.color}"
+      },
+      "border-width": {
+        "type": "borderWidth",
+        "value": "{tilburg.border-width.sm}"
+      },
+      "box-block-end-shadow": {
+        "value": "{tilburg.box-shadow.lg}",
+        "type": "boxShadow"
+      },
+      "text-decoration": {
+        "value": "underline",
+        "type": "textDecoration"
+      }
+    }
+  }
+}
