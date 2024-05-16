@@ -10,6 +10,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@utrecht/component-library-react';
+import { Link } from '@utrecht/component-library-react/dist/css-module';
 import readme from './documentation/table.md?raw';
 
 const meta = {
@@ -41,10 +42,10 @@ export const Default: Story = {
     children: [
       <TableHeader>
         <TableRow>
-          <TableHeaderCell scope="col">Column A</TableHeaderCell>
-          <TableHeaderCell scope="col">Column B</TableHeaderCell>
-          <TableHeaderCell scope="col">Column C</TableHeaderCell>
-          <TableHeaderCell scope="col">Column d</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 1</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 2</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 3</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 4</TableHeaderCell>
         </TableRow>
       </TableHeader>,
       <TableBody>
@@ -65,10 +66,59 @@ export const Default: Story = {
       </TableFooter>,
     ],
   },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/ck81CE8SNzePi30jCEu7MK/NLDS---Gemeente-Tilburg---Bibliotheek?node-id=1561-6448&t=31Z0WojGdXpyWRau-0',
-    },
+};
+
+export const TableWithLinks: Story = {
+  args: {
+    children: [
+      <TableHeader>
+        <TableRow>
+          <TableHeaderCell scope="col">Column 1</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 2</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 3</TableHeaderCell>
+          <TableHeaderCell scope="col">Column 4</TableHeaderCell>
+        </TableRow>
+      </TableHeader>,
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <Link href="#">Link</Link>
+          </TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+        </TableRow>
+      </TableBody>,
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <Link href="#">Link</Link>
+          </TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+        </TableRow>
+      </TableBody>,
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <Link href="#">Link</Link>
+          </TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+        </TableRow>
+      </TableBody>,
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <Link href="#">Link</Link>
+          </TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+          <TableCell>Data</TableCell>
+        </TableRow>
+      </TableBody>,
+    ],
   },
 };
