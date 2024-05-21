@@ -1,6 +1,6 @@
 {
   "utrecht": {
-    "breadcrumb": {
+    "breadcrumb-nav": {
       "line-height": {
         "value": "{tilburg.document.line-height}",
         "type": "lineHeights"
