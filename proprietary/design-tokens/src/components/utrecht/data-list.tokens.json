@@ -1,0 +1,158 @@
+{
+  "utrecht": {
+    "data-list": {
+      "rows-item": {
+        "padding-block-end": {
+          "value": "{tilburg.space.block.ant}",
+          "type": "spacing"
+        },
+        "padding-block-start": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        }
+      },
+      "font-family": {
+        "value": "{tilburg.document.font-family}",
+        "type": "fontFamilies"
+      },
+      "item-value": {
+        "font-weight": {
+          "value": "{tilburg.document.font-weight}",
+          "type": "fontWeights"
+        },
+        "row": {
+          "padding-block-end": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-block-start": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-inline-end": {
+            "value": "0px",
+            "type": "spacing"
+          },
+          "padding-inline-start": {
+            "value": "0px",
+            "type": "spacing"
+          }
+        },
+        "padding-block-end": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-block-start": {
+          "value": "{tilburg.space.block.ant}",
+          "type": "spacing"
+        },
+        "padding-inline-end": {
+          "value": "0px",
+          "type": "spacing"
+        },
+        "padding-inline-start": {
+          "value": "0px",
+          "type": "spacing"
+        }
+      },
+      "item-key": {
+        "font-weight": {
+          "value": "{tilburg.document.strong.font-weight}",
+          "type": "fontWeights"
+        },
+        "row": {
+          "padding-block-end": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-block-start": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-inline-end": {
+            "value": "{tilburg.space.inline.mouse}",
+            "type": "spacing"
+          },
+          "padding-inline-start": {
+            "value": "0px",
+            "type": "spacing"
+          }
+        },
+        "padding-block-end": {
+          "value": "{tilburg.space.block.ant}",
+          "type": "spacing"
+        },
+        "padding-block-start": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-inline-end": {
+          "value": "0px",
+          "type": "spacing"
+        },
+        "padding-inline-start": {
+          "value": "0px",
+          "type": "spacing"
+        }
+      },
+      "item": {
+        "border-width": {
+          "type": "borderWidth",
+          "value": "{tilburg.border-width.sm}"
+        },
+        "border-color": {
+          "value": "{tilburg.line.border-color}",
+          "type": "color"
+        },
+        "color": {
+          "value": "{tilburg.document.color}",
+          "type": "color"
+        }
+      },
+      "font-size": {
+        "value": "{tilburg.document.font-size}",
+        "type": "fontSizes"
+      },
+      "line-height": {
+        "value": "{tilburg.document.line-height}",
+        "type": "lineHeights"
+      },
+      "item-action": {
+        "row": {
+          "padding-block-end": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-block-start": {
+            "value": "{tilburg.space.block.snail}",
+            "type": "spacing"
+          },
+          "padding-inline-end": {
+            "value": "0px",
+            "type": "spacing"
+          },
+          "padding-inline-start": {
+            "value": "{tilburg.space.inline.mouse}",
+            "type": "spacing"
+          }
+        },
+        "padding-block-end": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-block-start": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-inline-end": {
+          "value": "{tilburg.space.inline.mouse}",
+          "type": "spacing"
+        },
+        "padding-inline-start": {
+          "value": "0px",
+          "type": "spacing"
+        }
+      }
+    }
+  }
+}
