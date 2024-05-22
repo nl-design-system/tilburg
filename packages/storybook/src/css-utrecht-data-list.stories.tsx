@@ -1,15 +1,7 @@
 /* @license CC0-1.0 */
 
 import { Meta, StoryObj } from '@storybook/react';
-import {
-  DataList,
-  DataListActions,
-  DataListItem,
-  DataListKey,
-  DataListValue,
-  Link,
-  LinkButton,
-} from '@utrecht/component-library-react';
+import { DataList, DataListActions, DataListItem, DataListKey, DataListValue } from '@utrecht/component-library-react';
 import readme from '@utrecht/components/data-list/README.md?raw';
 import { ReactNode } from 'react';
 
@@ -41,13 +33,6 @@ const meta = {
   id: 'css-data-list',
   component: DataListStory,
   argTypes: {
-    items: {
-      description: 'Data list items',
-      type: {
-        name: 'array',
-        required: true,
-      },
-    },
     appearance: {
       description: 'Appearance',
       options: ['', 'rows'],
@@ -101,52 +86,6 @@ export const Default: Story = {
       },
     },
   },
-};
-
-export const ActionLink: Story = {
-  args: {
-    appearance: 'rows',
-    items: [
-      {
-        key: 'Voornaam',
-        keyId: '993b9f5a-9cb8-454d-8408-9e0fa3125c28',
-        value: 'Mees',
-        actions: (
-          <Link
-            href="./form-step-1#given-name"
-            id="f8b0b08f-8b59-48b8-bef1-c2b78d76564a"
-            aria-labelledby="f8b0b08f-8b59-48b8-bef1-c2b78d76564a 993b9f5a-9cb8-454d-8408-9e0fa3125c28"
-          >
-            Edit
-          </Link>
-        ),
-      },
-    ],
-  },
-  name: 'Action link',
-};
-
-export const ActionButton: Story = {
-  args: {
-    appearance: 'rows',
-    items: [
-      {
-        key: 'Voornaam',
-        keyId: '720feb7a-8c3d-42ac-96c5-ee7a62c9d75d',
-        value: 'Mees',
-        actions: (
-          <LinkButton
-            inline
-            id="33bd9956-ca7a-4613-adf3-c42631981303"
-            aria-labelledby="33bd9956-ca7a-4613-adf3-c42631981303 720feb7a-8c3d-42ac-96c5-ee7a62c9d75d"
-          >
-            Edit
-          </LinkButton>
-        ),
-      },
-    ],
-  },
-  name: 'Action button',
 };
 
 export const DesignTokens = meta;
