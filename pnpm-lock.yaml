@@ -213,6 +213,12 @@ importers:
 
   packages/storybook:
     dependencies:
+      '@amsterdam/design-system-css':
+        specifier: 0.8.0
+        version: 0.8.0
+      '@amsterdam/design-system-react':
+        specifier: 0.8.0
+        version: 0.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx:
         specifier: 2.1.1
         version: 2.1.1
@@ -384,6 +390,21 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@amsterdam/design-system-css@0.8.0':
+    resolution: {integrity: sha512-QRuAP2JddeqLpti3y8H34+RI67ZC7GB4MxVRQ+SKQ2fJDuTjBXUQARWnfLdEfaWbrTMVV+lQHZP5ik0y2M8alw==}
+
+  '@amsterdam/design-system-react-icons@0.1.12':
+    resolution: {integrity: sha512-pBR7NnX2J8CsKaNbWSf+lxrPHvPqgSmgB2CYuIDD4RL472kUsNjzJNVOhR24QaKkUGCSUaskhVlUPqeJZIX/MA==}
+    peerDependencies:
+      react: 16 - 18
+      react-dom: 16 - 18
+
+  '@amsterdam/design-system-react@0.8.0':
+    resolution: {integrity: sha512-7v6NOIszDzJ1xnNb/zaJtBWMRkYOkpz7HLfQjCqeODrN19PIqGBx0IDdxo2XldP8s8Z79irki+sN60aZAAEfyg==}
+    peerDependencies:
+      react: 16 - 18
+      react-dom: 16 - 18
 
   '@aw-web-design/x-default-browser@1.4.126':
     resolution: {integrity: sha512-Xk1sIhyNC/esHGGVjL/niHLowM0csl/kFO5uawBy4IrWwy0o1G8LGt3jP6nmWGz+USxeeqbihAmp/oVZju6wug==}
@@ -1049,6 +1070,10 @@ packages:
 
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
+
+  '@babel/runtime@7.24.4':
+    resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
+    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.24.5':
     resolution: {integrity: sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==}
@@ -3102,6 +3127,10 @@ packages:
 
   clsx@1.2.1:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
+
+  clsx@2.1.0:
+    resolution: {integrity: sha512-m3iNNWpd9rl3jvvcBnu70ylMdrXt8Vlq4HYadnU5fwcOtvkSQWPmj7amUcDT2qYI7risszBjI5AUIUox9D16pg==}
     engines: {node: '>=6'}
 
   clsx@2.1.1:
@@ -8087,6 +8116,21 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
+  '@amsterdam/design-system-css@0.8.0': {}
+
+  '@amsterdam/design-system-react-icons@0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@amsterdam/design-system-react@0.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@amsterdam/design-system-react-icons': 0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@babel/runtime': 7.24.4
+      clsx: 2.1.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@aw-web-design/x-default-browser@1.4.126':
     dependencies:
       default-browser-id: 3.0.0
@@ -8884,6 +8928,10 @@ snapshots:
       source-map-support: 0.5.21
 
   '@babel/regjsgen@0.8.0': {}
+
+  '@babel/runtime@7.24.4':
+    dependencies:
+      regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.24.5':
     dependencies:
@@ -11706,6 +11754,8 @@ snapshots:
   clone@1.0.4: {}
 
   clsx@1.2.1: {}
+
+  clsx@2.1.0: {}
 
   clsx@2.1.1: {}
 

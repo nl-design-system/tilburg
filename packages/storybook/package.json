@@ -48,6 +48,8 @@
     "vite": "5.2.11"
   },
   "dependencies": {
+    "@amsterdam/design-system-css": "0.8.0",
+    "@amsterdam/design-system-react": "0.8.0",
     "clsx": "2.1.1"
   }
 }
