@@ -9,8 +9,8 @@
   ],
   "private": true,
   "engines": {
-    "node": "^20 || ^21",
-    "pnpm": "^8 || ^9"
+    "node": "^20",
+    "pnpm": "^9"
   },
   "workspaces": [
     "./packages/*",
@@ -75,5 +75,6 @@
   },
   "dependencies": {
     "http-server": "14.1.1"
-  }
+  },
+  "packageManager": "pnpm@9.1.2+sha256.19c17528f9ca20bd442e4ca42f00f1b9808a9cb419383cd04ba32ef19322aba7"
 }
