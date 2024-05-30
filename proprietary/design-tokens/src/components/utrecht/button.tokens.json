@@ -174,7 +174,7 @@
           "type": "sizing",
           "value": "{tilburg.icon.functional.size}"
         },
-        "margin-inline": {
+        "gap": {
           "value": "{tilburg.space.text.beetle}",
           "type": "spacing"
         }
