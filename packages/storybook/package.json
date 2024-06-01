@@ -39,7 +39,7 @@
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@utrecht/component-library-react": "3.0.1-alpha.41",
-    "@utrecht/components": "3.0.1-alpha.41",
+    "@utrecht/components": "4.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rimraf": "5.0.7",
