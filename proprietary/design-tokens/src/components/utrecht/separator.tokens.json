@@ -1,0 +1,22 @@
+{
+  "tilburg": {
+    "separator": {
+      "color": {
+        "value": "{tilburg.line.border-color}",
+        "type": "color"
+      },
+      "block-size": {
+        "value": "{tilburg.size.4xs}",
+        "type": "sizing"
+      },
+      "padding-block-end": {
+        "value": "{tilburg.space.block.snail}",
+        "type": "spacing"
+      },
+      "padding-block-start": {
+        "value": "{tilburg.space.block.snail}",
+        "type": "spacing"
+      }
+    }
+  }
+}
