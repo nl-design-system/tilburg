@@ -45,7 +45,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  name: 'Breadcrumb navigation',
+  name: 'Breadcrumb Navigation',
   args: {
     children: [
       <BreadcrumbNavLink href="/" rel="home" index={0}>
