@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 
 @Component({
   selector: 'example-story',
