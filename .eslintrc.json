@@ -79,6 +79,7 @@
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
         "project": [
+          "packages/components-angular/tsconfig.json",
           "packages/storybook/tsconfig.json",
           "packages/web-components-react/tsconfig.json",
           "packages/components-react/tsconfig.json",
