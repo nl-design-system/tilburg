@@ -278,8 +278,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       '@utrecht/component-library-react':
-        specifier: 3.0.1-alpha.41
-        version: 3.0.1-alpha.41(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.0.0
+        version: 4.0.0(@babel/runtime@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@utrecht/components':
         specifier: 3.0.1-alpha.41
         version: 3.0.1-alpha.41
@@ -2880,9 +2880,10 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@utrecht/component-library-react@3.0.1-alpha.41':
-    resolution: {integrity: sha512-Mra3ZeoDIdJAWkwRtrHFnMLDGN6goikWuHOP7v499HWSUxciDLaD5rXXgjIE3Zs+NfuwGiCbyRun6GJ9VAEUwg==}
+  '@utrecht/component-library-react@4.0.0':
+    resolution: {integrity: sha512-scrPPT3TM1ZGdTUBuQ4L72DW/dZyKacq+lrrjJfNpXB/xnSFeGLWi4gzR6xzg2c6q7ucUt0SKIYi6/W4r7USKg==}
     peerDependencies:
+      '@babel/runtime': ^7.23.6
       date-fns: ^2.30.0
       react: '18'
       react-dom: '18'
@@ -12035,8 +12036,9 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@utrecht/component-library-react@3.0.1-alpha.41(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@utrecht/component-library-react@4.0.0(@babel/runtime@7.24.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
+      '@babel/runtime': 7.24.6
       clsx: 1.2.1
       lodash.chunk: 4.2.0
       react: 18.3.1
