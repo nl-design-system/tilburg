@@ -45,7 +45,7 @@
     "rimraf": "5.0.9",
     "storybook": "8.2.6",
     "typescript": "5.5.4",
-    "vite": "5.2.11"
+    "vite": "5.3.5"
   },
   "dependencies": {
     "@amsterdam/design-system-css": "0.10.0",
