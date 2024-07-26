@@ -284,8 +284,8 @@ importers:
         specifier: 18.3.0
         version: 18.3.0
       '@utrecht/component-library-react':
-        specifier: 4.0.0
-        version: 4.0.0(@babel/runtime@7.24.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.2.0
+        version: 4.2.0(@babel/runtime@7.24.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@utrecht/components':
         specifier: 6.1.0
         version: 6.1.0
@@ -2485,8 +2485,8 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@utrecht/component-library-react@4.0.0':
-    resolution: {integrity: sha512-scrPPT3TM1ZGdTUBuQ4L72DW/dZyKacq+lrrjJfNpXB/xnSFeGLWi4gzR6xzg2c6q7ucUt0SKIYi6/W4r7USKg==}
+  '@utrecht/component-library-react@4.2.0':
+    resolution: {integrity: sha512-xS6hpHtidYstCPjm1STc+iGTHmc02mc/dmvDcFAcRnwzweI4zunxawIxwF8cpG4SyjeK0b6iU8GJ3d7QXUe7mA==}
     peerDependencies:
       '@babel/runtime': ^7.23.6
       date-fns: ^2.30.0
@@ -3089,10 +3089,6 @@ packages:
   clone@1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
-
-  clsx@1.2.1:
-    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
-    engines: {node: '>=6'}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -10562,10 +10558,10 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@utrecht/component-library-react@4.0.0(@babel/runtime@7.24.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@utrecht/component-library-react@4.2.0(@babel/runtime@7.24.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.24.8
-      clsx: 1.2.1
+      clsx: 2.1.1
       lodash.chunk: 4.2.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -11311,8 +11307,6 @@ snapshots:
       shallow-clone: 3.0.1
 
   clone@1.0.4: {}
-
-  clsx@1.2.1: {}
 
   clsx@2.1.1: {}
 
