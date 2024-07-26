@@ -17,6 +17,8 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
+# Ignore files managed by Figma Token Studio
+figma/*.tokens.json
 
 # Ignore generated files from Stencil
 components/components.d.ts
