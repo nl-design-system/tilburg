@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BlAj40OV.js";import{D as h,a as k,b,c as _,d as w}from"./index.esm-Bd5EsrpD.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./objectDestructuringEmpty-91S45k9y.js";import"./extends-CF3RwP-h.js";const j=`<!-- @license CC0-1.0 -->
+import{j as e}from"./jsx-runtime-BlAj40OV.js";import{D as h,a as k,b,c as _,d as w}from"./index.esm-DALnRssO.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./objectDestructuringEmpty-kEsbOJzC.js";import"./clsx-B-dksMZM.js";import"./extends-CF3RwP-h.js";const j=`<!-- @license CC0-1.0 -->
 
 # Data list
 
@@ -135,4 +135,4 @@ Wel:
       }
     }
   }
-}`,...(r=(o=n.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};var s,d,l;t.parameters={...t.parameters,docs:{...(s=t.parameters)==null?void 0:s.docs,source:{originalSource:"meta",...(l=(d=t.parameters)==null?void 0:d.docs)==null?void 0:l.source}}};const D=["Default","DesignTokens"];export{n as Default,t as DesignTokens,D as __namedExportsOrder,W as default};
+}`,...(r=(o=n.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};var s,d,l;t.parameters={...t.parameters,docs:{...(s=t.parameters)==null?void 0:s.docs,source:{originalSource:"meta",...(l=(d=t.parameters)==null?void 0:d.docs)==null?void 0:l.source}}};const L=["Default","DesignTokens"];export{n as Default,t as DesignTokens,L as __namedExportsOrder,W as default};
