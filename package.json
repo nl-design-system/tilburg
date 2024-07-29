@@ -12,6 +12,11 @@
     "node": "^20",
     "pnpm": "^9"
   },
+  "repository": {
+    "type": "git+ssh",
+    "url": "git@github.com:nl-design-system/tilburg.git",
+    "directory": "."
+  },
   "workspaces": [
     "./packages/*",
     "./proprietary/*"
@@ -22,8 +27,8 @@
     "@lerna-lite/run": "3.4.0",
     "@lerna-lite/version": "3.4.0",
     "@types/node": "20.12.12",
-    "@typescript-eslint/eslint-plugin": "7.10.0",
-    "@typescript-eslint/parser": "7.10.0",
+    "@typescript-eslint/eslint-plugin": "7.17.0",
+    "@typescript-eslint/parser": "7.17.0",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.29.1",
@@ -31,17 +36,17 @@
     "eslint-plugin-mdx": "3.1.5",
     "eslint-plugin-react": "7.34.1",
     "husky": "9.0.11",
-    "lint-staged": "15.2.4",
-    "markdownlint-cli": "0.40.0",
+    "lint-staged": "15.2.7",
+    "markdownlint-cli": "0.41.0",
     "npm-check-updates": "16.14.20",
     "npm-package-json-lint": "7.1.0",
     "npm-run-all": "4.1.5",
-    "postcss": "8.4.38",
-    "prettier": "3.2.5",
-    "stylelint": "16.6.0",
+    "postcss": "8.4.40",
+    "prettier": "3.3.3",
+    "stylelint": "16.7.0",
     "stylelint-config-standard-scss": "13.1.0",
     "stylelint-order": "6.0.4",
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   },
   "scripts": {
     "build": "lerna run build",
@@ -50,7 +55,7 @@
     "lint:css": "stylelint --allow-empty-input '**/*.{css,scss}'",
     "lint:js": "eslint --ext .js,.cjs,.mjs,.json,.jsx,.mdx,.ts,.tsx --report-unused-disable-directives .",
     "lint:md": "markdownlint '**/*.md'",
-    "lint:package-json": "npmPkgJsonLint '**/package.json'",
+    "lint:package-json": "npmPkgJsonLint .",
     "lint:package-lock": "pnpm ls --recursive",
     "lint-fix": "npm-run-all --continue-on-error lint-fix:** prettier",
     "lint-fix:css": "stylelint --fix '**/*.{css,scss}'",
