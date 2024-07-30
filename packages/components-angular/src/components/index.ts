@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TilburgButtonAttr } from './button/component';
+import { TilburgFormField } from './form-field/component';
 import { TilburgHeading1 } from './heading-1/component';
 import { TilburgHeading2 } from './heading-2/component';
 import { TilburgHeading3 } from './heading-3/component';
@@ -19,6 +20,7 @@ const components = [
   TilburgHeading4,
   TilburgHeading5,
   TilburgHeading6,
+  TilburgFormField,
   TilburgRadioButtonAttr,
 ];
 
