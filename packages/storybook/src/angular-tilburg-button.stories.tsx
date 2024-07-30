@@ -1,12 +1,11 @@
 /* @license CC0-1.0 */
-
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@utrecht/component-library-react/dist/css-module';
-import readme from '@utrecht/components/button/README.md?raw';
+import readme from './angular-tilburg-button.md?raw';
 
 const meta = {
-  title: 'CSS Component/Button',
-  id: 'css-utrecht-button',
+  title: 'Tilburg Angular Components/Button',
+  id: 'angular-tilburg-button',
   component: Button,
   argTypes: {
     children: {
