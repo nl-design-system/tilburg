@@ -13,6 +13,7 @@ import { TilburgHeading6 } from './heading-6/component';
 import { TilburgLinkAttr } from './link/component';
 import { TilburgRadioButtonAttr } from './radio-button/component';
 import { ExampleStoryComponent } from './story/component';
+import { TilburgTextareaAttr } from './textarea/component';
 
 const components = [
   ExampleStoryComponent,
@@ -27,6 +28,7 @@ const components = [
   TilburgLinkAttr,
   TilburgFormField,
   TilburgFormLabelAttr,
+  TilburgTextareaAttr,
   TilburgRadioButtonAttr,
 ];
 
