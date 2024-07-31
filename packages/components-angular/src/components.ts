@@ -7,6 +7,8 @@ export * from './components/color-sample/public-api';
 export * from './components/link/public-api';
 export * from './components/radio-button/public-api';
 export * from './components/story/public-api';
+export * from './components/form-fieldset/public-api';
+export * from './components/form-field-description/public-api';
 export * from './components/form-field/public-api';
 export * from './components/form-label/public-api';
 export * from './components/textarea/public-api';
