@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgButtonAttr } from './button/component';
+import { TilburgButtonGroup } from './button-group/component';
+import { TilburgButtonLinkAttr } from './button-link/component';
 import { TilburgCheckboxAttr } from './checkbox/component';
 import { TilburgDocument } from './document/component';
 import { TilburgFormField } from './form-field/component';
@@ -20,7 +23,10 @@ import { TilburgTextareaAttr } from './textarea/component';
 
 const components = [
   ExampleStoryComponent,
+  TilburgBadgeStatus,
   TilburgButtonAttr,
+  TilburgButtonGroup,
+  TilburgButtonLinkAttr,
   TilburgCheckboxAttr,
   TilburgHeading1,
   TilburgHeading2,
