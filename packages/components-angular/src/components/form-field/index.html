@@ -6,7 +6,7 @@
   'utrecht-form-field--radio': type === 'radio',
   'utrecht-form-field--text': type === 'text'
 }"
-  [class]="class"
+  [class]="class||''"
 >
   <ng-content></ng-content>
 </div>
