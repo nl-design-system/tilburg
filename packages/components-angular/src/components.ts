@@ -1,4 +1,7 @@
+export * from './components/badge-status/public-api';
 export * from './components/button/public-api';
+export * from './components/button-group/public-api';
+export * from './components/button-link/public-api';
 export * from './components/checkbox/public-api';
 export * from './components/link/public-api';
 export * from './components/radio-button/public-api';
