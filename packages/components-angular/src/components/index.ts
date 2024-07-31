@@ -19,6 +19,8 @@ import { TilburgHeading5 } from './heading-5/component';
 import { TilburgHeading6 } from './heading-6/component';
 import { TilburgHtmlContent } from './html-content/component';
 import { TilburgLinkAttr } from './link/component';
+import { TilburgOrderedListAttr } from './ordered-list/component';
+import { TilburgOrderedListItemAttr } from './ordered-list/item.component';
 import { TilburgPage } from './page/component';
 import { TilburgRadioButtonAttr } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
@@ -43,6 +45,8 @@ const components = [
   TilburgFormField,
   TilburgFormFieldDescription,
   TilburgFieldsetAttr,
+  TilburgOrderedListAttr,
+  TilburgOrderedListItemAttr,
   TilburgPage,
   TilburgDocument,
   TilburgHtmlContent,
