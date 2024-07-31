@@ -5,6 +5,7 @@ import { TilburgButtonAttr } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLinkAttr } from './button-link/component';
 import { TilburgCheckboxAttr } from './checkbox/component';
+import { TilburgColorSample } from './color-sample/component';
 import { TilburgDocument } from './document/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormLabelAttr } from './form-label/component';
@@ -18,6 +19,7 @@ import { TilburgHtmlContent } from './html-content/component';
 import { TilburgLinkAttr } from './link/component';
 import { TilburgPage } from './page/component';
 import { TilburgRadioButtonAttr } from './radio-button/component';
+import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
 import { TilburgTextareaAttr } from './textarea/component';
 
@@ -28,6 +30,7 @@ const components = [
   TilburgButtonGroup,
   TilburgButtonLinkAttr,
   TilburgCheckboxAttr,
+  TilburgColorSample,
   TilburgHeading1,
   TilburgHeading2,
   TilburgHeading3,
@@ -40,6 +43,7 @@ const components = [
   TilburgDocument,
   TilburgHtmlContent,
   TilburgFormLabelAttr,
+  TilburgSeparator,
   TilburgTextareaAttr,
   TilburgRadioButtonAttr,
 ];
