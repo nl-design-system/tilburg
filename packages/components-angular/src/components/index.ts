@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { TilburgButtonAttr } from './button/component';
 import { TilburgCheckboxAttr } from './checkbox/component';
 import { TilburgFormField } from './form-field/component';
+import { TilburgFormLabelAttr } from './form-label/component';
 import { TilburgHeading1 } from './heading-1/component';
 import { TilburgHeading2 } from './heading-2/component';
 import { TilburgHeading3 } from './heading-3/component';
@@ -25,6 +26,7 @@ const components = [
   TilburgHeading6,
   TilburgLinkAttr,
   TilburgFormField,
+  TilburgFormLabelAttr,
   TilburgRadioButtonAttr,
 ];
 

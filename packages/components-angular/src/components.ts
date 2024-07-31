@@ -4,6 +4,7 @@ export * from './components/link/public-api';
 export * from './components/radio-button/public-api';
 export * from './components/story/public-api';
 export * from './components/form-field/public-api';
+export * from './components/form-label/public-api';
 export * from './components/heading-1/public-api';
 export * from './components/heading-2/public-api';
 export * from './components/heading-3/public-api';
