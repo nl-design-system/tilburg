@@ -54,6 +54,7 @@
     "@amsterdam/design-system-css": "0.10.0",
     "@amsterdam/design-system-react": "0.10.0",
     "@amsterdam/design-system-tokens": "0.10.0",
+    "@storybook/angular": "8.1.11",
     "clsx": "2.1.1"
   }
 }
