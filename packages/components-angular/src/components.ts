@@ -1,4 +1,6 @@
 export * from './components/button/public-api';
+export * from './components/checkbox/public-api';
+export * from './components/link/public-api';
 export * from './components/radio-button/public-api';
 export * from './components/story/public-api';
 export * from './components/form-field/public-api';
