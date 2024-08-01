@@ -64,8 +64,8 @@ importers:
         specifier: 16.14.20
         version: 16.14.20
       npm-package-json-lint:
-        specifier: 7.1.0
-        version: 7.1.0(typescript@5.5.4)
+        specifier: 8.0.0
+        version: 8.0.0(typescript@5.5.4)
       npm-run-all:
         specifier: 4.1.5
         version: 4.1.5
@@ -5671,9 +5671,9 @@ packages:
     resolution: {integrity: sha512-IGN0IAwmhDJwy13Wc8k+4PEbTPhpJnMtfR53ZbOyjkvmEcLS4nCwp6mvMWjS5sUjeiW3mpx6cHmuhKEu9XmcQw==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
-  npm-package-json-lint@7.1.0:
-    resolution: {integrity: sha512-ypcMpag32TCP89zzLSS+7vjeR2QY613WzmO2upcJgKNWlcswDz8cdb80urbBNHkhSPI40ex3nsKrRDH/WhMYOg==}
-    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
+  npm-package-json-lint@8.0.0:
+    resolution: {integrity: sha512-44xqAKoV0nXnBYYLGUhMItGZb5tW3cLoW3UZxcsaCOX/YAkECrzOQA5F48oAA51vVE5CqAnsJB2CFvtolzMA3Q==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
     hasBin: true
 
   npm-packlist@5.1.3:
@@ -7393,6 +7393,10 @@ packages:
     resolution: {integrity: sha512-qXhgeNsX15bM63h5aapNFcQid9jRF/l3ojDoDFmekDQEUufZ9U4ErVt6SjDxnHp48Ltrw616R8yNc3giJ3KvVQ==}
     engines: {node: '>=16'}
 
+  type-fest@4.23.0:
+    resolution: {integrity: sha512-ZiBujro2ohr5+Z/hZWHESLz3g08BBdrdLMieYFULJO+tWc437sn8kQsWLJoZErY8alNhxre9K4p3GURAG11n+w==}
+    engines: {node: '>=16'}
+
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
@@ -7606,6 +7610,10 @@ packages:
 
   validate-npm-package-name@5.0.0:
     resolution: {integrity: sha512-YuKoXDAhBYxY7SfOKxHBDoSyENFeW5VvIIQp2TGQuit8gpK6MnWaQelBKxso72DoxTZfZdcP3W90LqpSkgPzLQ==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  validate-npm-package-name@5.0.1:
+    resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   vary@1.1.2:
@@ -14575,13 +14583,13 @@ snapshots:
       semver: 7.6.2
       validate-npm-package-name: 5.0.0
 
-  npm-package-json-lint@7.1.0(typescript@5.5.4):
+  npm-package-json-lint@8.0.0(typescript@5.5.4):
     dependencies:
       ajv: 6.12.6
       ajv-errors: 1.0.1(ajv@6.12.6)
       chalk: 4.1.2
       cosmiconfig: 8.3.6(typescript@5.5.4)
-      debug: 4.3.4
+      debug: 4.3.5
       globby: 11.1.0
       ignore: 5.3.1
       is-plain-obj: 3.0.0
@@ -14589,11 +14597,11 @@ snapshots:
       log-symbols: 4.1.0
       meow: 9.0.0
       plur: 4.0.0
-      semver: 7.6.0
+      semver: 7.6.2
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      type-fest: 4.18.1
-      validate-npm-package-name: 5.0.0
+      type-fest: 4.23.0
+      validate-npm-package-name: 5.0.1
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -16560,6 +16568,8 @@ snapshots:
 
   type-fest@4.18.1: {}
 
+  type-fest@4.23.0: {}
+
   type-is@1.6.18:
     dependencies:
       media-typer: 0.3.0
@@ -16834,6 +16844,8 @@ snapshots:
   validate-npm-package-name@5.0.0:
     dependencies:
       builtins: 5.1.0
+
+  validate-npm-package-name@5.0.1: {}
 
   vary@1.1.2: {}
 
