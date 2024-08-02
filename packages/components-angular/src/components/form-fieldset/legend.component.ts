@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: '[utrecht-fieldset-legend]',
+  selector: '[tilburg-fieldset-legend]',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,6 +10,6 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     '[class.utrecht-fieldset__legend]': 'true',
   },
 })
-export class UtrechtFieldsetLegendAttr {
+export class TilburgFieldsetLegendAttr {
   constructor() {}
 }

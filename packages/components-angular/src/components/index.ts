@@ -28,6 +28,14 @@ import { TilburgPageHeader } from './page-header/component';
 import { TilburgRadioButtonAttr } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
+import { TilburgTableAttr } from './table/component';
+import { TilburgTableBodyAttr } from './table-body/component';
+import { TilburgTableCaptionAttr } from './table-caption/component';
+import { TilburgTableCellAttr } from './table-cell/component';
+import { TilburgTableFooterAttr } from './table-footer/component';
+import { TilburgTableHeaderAttr } from './table-header/component';
+import { TilburgTableHeaderCellAttr } from './table-header-cell/component';
+import { TilburgTableRowAttr } from './table-row/component';
 import { TilburgTextareaAttr } from './textarea/component';
 
 const components = [
@@ -54,6 +62,14 @@ const components = [
   TilburgPageContent,
   TilburgPageFooter,
   TilburgPageHeader,
+  TilburgTableAttr,
+  TilburgTableBodyAttr,
+  TilburgTableCaptionAttr,
+  TilburgTableCellAttr,
+  TilburgTableFooterAttr,
+  TilburgTableHeaderAttr,
+  TilburgTableHeaderCellAttr,
+  TilburgTableRowAttr,
   TilburgDocument,
   TilburgHtmlContent,
   TilburgFormLabelAttr,
