@@ -22,6 +22,9 @@ import { TilburgLinkAttr } from './link/component';
 import { TilburgOrderedListAttr } from './ordered-list/component';
 import { TilburgOrderedListItemAttr } from './ordered-list/item.component';
 import { TilburgPage } from './page/component';
+import { TilburgPageContent } from './page-content/component';
+import { TilburgPageFooter } from './page-footer/component';
+import { TilburgPageHeader } from './page-header/component';
 import { TilburgRadioButtonAttr } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
@@ -48,6 +51,9 @@ const components = [
   TilburgOrderedListAttr,
   TilburgOrderedListItemAttr,
   TilburgPage,
+  TilburgPageContent,
+  TilburgPageFooter,
+  TilburgPageHeader,
   TilburgDocument,
   TilburgHtmlContent,
   TilburgFormLabelAttr,
