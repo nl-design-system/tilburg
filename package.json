@@ -22,7 +22,7 @@
     "./proprietary/*"
   ],
   "devDependencies": {
-    "@lerna-lite/cli": "3.4.0",
+    "@lerna-lite/cli": "3.7.1",
     "@lerna-lite/publish": "3.4.0",
     "@lerna-lite/run": "3.4.0",
     "@lerna-lite/version": "3.4.0",
