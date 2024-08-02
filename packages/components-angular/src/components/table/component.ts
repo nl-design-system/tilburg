@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector: '[tilburg-fieldset-legend]',
+  selector: '[tilburg-table]',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.utrecht-fieldset__legend]': 'true',
+    '[class.utrecht-table]': 'true',
+    role: 'table',
   },
 })
-export class TilburgFieldsetLegendAttr {
+export class TilburgTableAttr {
   constructor() {}
 }
