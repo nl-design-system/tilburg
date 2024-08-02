@@ -19,3 +19,7 @@ export * from './components/heading-3/public-api';
 export * from './components/heading-4/public-api';
 export * from './components/heading-5/public-api';
 export * from './components/heading-6/public-api';
+export * from './components/page-content/public-api';
+export * from './components/page-footer/public-api';
+export * from './components/page-header/public-api';
+export * from './components/page/public-api';
