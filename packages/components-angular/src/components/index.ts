@@ -37,6 +37,8 @@ import { TilburgTableHeaderAttr } from './table-header/component';
 import { TilburgTableHeaderCellAttr } from './table-header-cell/component';
 import { TilburgTableRowAttr } from './table-row/component';
 import { TilburgTextareaAttr } from './textarea/component';
+import { TilburgTextboxAttr } from './textbox/component';
+import { TilburgUnorderedListAttr } from './unordered-list/component';
 
 const components = [
   ExampleStoryComponent,
@@ -75,7 +77,10 @@ const components = [
   TilburgFormLabelAttr,
   TilburgSeparator,
   TilburgTextareaAttr,
+  TilburgTextboxAttr,
   TilburgRadioButtonAttr,
+  TilburgOrderedListAttr,
+  TilburgUnorderedListAttr,
 ];
 
 @NgModule({
