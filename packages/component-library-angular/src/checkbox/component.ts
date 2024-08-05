@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   // Case-insensitive variant `input[type="checkbox" i]` does not appear to work in Angular
-  selector: 'input[type="checkbox"][tilburg-checkbox]',
+  selector: 'tilburg-checkbox',
   template: '',
   styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   },
 })
 export class TilburgCheckboxAttr {
+  @Input() formContext?: FormControl;
   @Input() invalid = false;
   @Input() disabled = false;
   @Input() checked = false;

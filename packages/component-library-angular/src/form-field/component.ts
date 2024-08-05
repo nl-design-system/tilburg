@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'tilburg-form-field',
@@ -8,6 +9,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   encapsulation: ViewEncapsulation.None,
 })
 export class TilburgFormField {
+  @Input() formContext?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() type?: 'checkbox' | 'radio' | 'text';
   @Input() class?: string;

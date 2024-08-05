@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  selector:
-    'button[utrecht-button], input[type="button" i][utrecht-button], input[type="reset" i][utrecht-button], input[type="submit" i]',
+  selector: 'tilburg-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

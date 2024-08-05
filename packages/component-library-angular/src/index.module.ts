@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgButtonAttr } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
@@ -86,7 +87,7 @@ const components = [
 @NgModule({
   declarations: [...components],
   exports: [...components],
-  imports: [CommonModule],
+  imports: [CommonModule, UtrechtComponentsModule],
   providers: [],
 })
 export class TilburgComponentsModule {}

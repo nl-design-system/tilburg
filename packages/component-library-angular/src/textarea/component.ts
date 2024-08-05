@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'textarea[tilburg-textarea]',
@@ -23,6 +24,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   },
 })
 export class TilburgTextareaAttr {
+  @Input() formContext?: FormControl;
   @Input() dir = '';
   @Input() disabled = false;
   @Input() invalid = false;
