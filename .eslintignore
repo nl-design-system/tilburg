@@ -10,6 +10,7 @@ tmp/
 
 # Ignore generated files from Stencil
 components/components.d.ts
+packages/component-library-angular/test-exports.mjs
 packages/web-components-angular/src/directives/angular-component-lib/utils.ts
 packages/web-components-angular/src/directives/proxies.ts
 packages/web-components-stencil/loader

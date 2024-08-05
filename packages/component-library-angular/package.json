@@ -1,0 +1,113 @@
+{
+  "version": "1.1.0",
+  "author": "Community for NL Design System",
+  "description": "Angular web components for the Municipality of Tilburg based on the NL Design System architecture",
+  "license": "EUPL-1.2",
+  "name": "@tilburg/component-library-angular",
+  "keywords": [
+    "nl-design-system"
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git+ssh",
+    "url": "git@github.com:nl-design-system/tilburg.git",
+    "directory": "packages/component-library-angular"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "pnpm run '/^build:.*/' --passWithNoTests",
+    "build:components": "ng build && pnpm test-results",
+    "clean": "rimraf dist/ .angular/",
+    "lint": "pnpm run '/^lint:.*/'",
+    "lint:ts": "tsc --noEmit --project tsconfig.json",
+    "lint:spec": "tsc --noEmit --project tsconfig.spec.json",
+    "watch:build": "ng build --watch",
+    "test-results": "jest --json --outputFile=dist/.jest-test-results.json --silent",
+    "test": "jest --verbose",
+    "test-build": "node test-exports.mjs",
+    "watch:test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --watch"
+  },
+  "dependencies": {
+    "tslib": "2.6.3"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "18.1.0",
+    "@angular-eslint/eslint-plugin": "18.1.0",
+    "@angular-eslint/eslint-plugin-template": "18.1.0",
+    "@angular-eslint/template-parser": "18.1.0",
+    "@angular/cli": "18.1.0",
+    "@angular/compiler-cli": "18.1.0",
+    "@angular/core": "18.1.0",
+    "@babel/plugin-proposal-decorators": "7.24.7",
+    "@ngx-translate/core": "15.0.0",
+    "@ngx-translate/http-loader": "8.0.0",
+    "@storybook/addon-actions": "8.1.11",
+    "@storybook/addon-essentials": "8.1.11",
+    "@storybook/addon-interactions": "8.1.11",
+    "@storybook/addon-links": "8.1.11",
+    "@storybook/addon-onboarding": "8.1.11",
+    "@storybook/angular": "8.1.11",
+    "@storybook/blocks": "8.1.11",
+    "@storybook/builder-webpack5": "8.1.11",
+    "@storybook/test": "8.1.11",
+    "@tilburg/assets": "workspace:*",
+    "@tilburg/design-tokens": "workspace:*",
+    "@tilburg/font": "workspace:*",
+    "@types/jasmine": "5.1.4",
+    "@types/node": "20.14.10",
+    "@typescript-eslint/eslint-plugin": "7.16.1",
+    "@typescript-eslint/parser": "7.16.1",
+    "@utrecht/component-library-angular": "1.1.0",
+    "@utrecht/component-library-css": "4.0.0",
+    "@utrecht/components": "6.1.0",
+    "@utrecht/design-tokens": "1.0.0",
+    "@utrecht/web-component-library-angular": "1.1.0",
+    "@utrecht/web-component-library-stencil": "1.3.0",
+    "add": "2.0.6",
+    "codelyzer": "6.0.2",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-jasmine": "4.2.0",
+    "eslint-plugin-json": "3.1.0",
+    "eslint-plugin-prettier": "5.1.3",
+    "jasmine-core": "5.1.2",
+    "jasmine-spec-reporter": "7.0.0",
+    "karma": "6.4.3",
+    "karma-chrome-launcher": "3.2.0",
+    "karma-coverage": "2.2.1",
+    "karma-jasmine": "5.1.0",
+    "karma-jasmine-html-reporter": "2.1.0",
+    "ng-packagr": "17.0.3",
+    "npm-check-updates": "16.14.20",
+    "npm-run-all": "4.1.5",
+    "pnpm": "9.6.0",
+    "prettier": "3.3.3",
+    "protractor": "7.0.0",
+    "storybook": "8.1.3",
+    "ts-node": "10.9.2",
+    "chokidar-cli": "3.0.0",
+    "jest": "29.7.0",
+    "jest-preset-angular": "13.1.4",
+    "lodash.clonedeepwith": "4.5.0",
+    "lodash.isequal": "4.5.0",
+    "rxjs": "7.8.1",
+    "typescript": "5.5.4",
+    "zone.js": "0.14.3"
+  },
+  "module": "dist/fesm2022/tilburg-component-library-angular.mjs",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./dist/package.json"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "esm2022": "./dist/esm2022/tilburg-component-library-angular.mjs",
+      "esm": "./dist/esm2022/tilburg-component-library-angular.mjs",
+      "default": "./dist/fesm2022/tilburg-component-library-angular.mjs"
+    }
+  }
+}
