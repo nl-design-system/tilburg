@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: '[tilburg-fieldset]',
@@ -14,6 +15,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   },
 })
 export class TilburgFieldsetAttr {
+  @Input() formContext?: FormControl;
   @Input() disabled?: boolean = false;
   @Input() invalid?: boolean = false;
   constructor() {}

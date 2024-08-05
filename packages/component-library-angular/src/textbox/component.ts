@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'input[tilburg-textbox]',
@@ -27,6 +28,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   },
 })
 export class TilburgTextboxAttr {
+  @Input() formContext?: FormControl;
   @Input() disabled = false;
   @Input() invalid = false;
   @Input() required = false;

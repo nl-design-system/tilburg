@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   // Case-insensitive variant `input[type="radio" i]` does not appear to work in Angular
@@ -17,6 +18,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   },
 })
 export class TilburgRadioButtonAttr {
+  @Input() formContext?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() disabled?: boolean = false;
   constructor() {}

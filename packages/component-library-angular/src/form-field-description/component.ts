@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'tilburg-form-field-description',
@@ -8,6 +9,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   encapsulation: ViewEncapsulation.None,
 })
 export class TilburgFormFieldDescription {
+  @Input() formContext?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() valid?: boolean = false;
   @Input() warning?: boolean = false;
