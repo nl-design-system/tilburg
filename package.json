@@ -65,13 +65,15 @@
     "publish": "changeset publish",
     "start": "node_modules/http-server/bin packages/storybook/dist/",
     "storybook": "npm-run-all --parallel watch:**",
-    "test": "pnpm --recursive run test",
+    "storybook-angular": " pnpm --filter ./packages/storybook-angular run storybook",
+    "test": "pnpm run test-workspaces",
     "test-update": "npm-run-all --sequential clean lint build test",
-    "update-patch": "npm-check-updates --configFileName .ncurc.patch.mjs",
-    "update-minor": "npm-check-updates --configFileName .ncurc.minor.mjs",
-    "update-major": "npm-check-updates --configFileName .ncurc.major.mjs",
-    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build:style-dictionary && pnpm --filter @gemeente-tilburg/storybook run storybook",
-    "watch:style-dictionary": "pnpm --filter @gemeente-tilburg/design-tokens run watch:style-dictionary"
+    "test-workspaces": "lerna run --no-bail test",
+    "update-patch": "npm-check-updates --configFileName .ncurc.patch.cjs",
+    "update-minor": "npm-check-updates --configFileName .ncurc.minor.cjs",
+    "update-major": "npm-check-updates --configFileName .ncurc.major.cjs",
+    "watch:storybook": "lerna run build:stencil && lerna run build:style-dictionary && pnpm --filter ./packages/storybook-angular run storybook",
+    "watch:style-dictionary": "lerna run watch:style-dictionary"
   },
   "dependencies": {
     "http-server": "14.1.1"
