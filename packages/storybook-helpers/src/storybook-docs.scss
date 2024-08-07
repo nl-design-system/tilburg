@@ -1,0 +1,41 @@
+/* allow `sbdocs` prefix */
+/* stylelint-disable selector-class-pattern */
+/* stylelint-disable no-descending-specificity */
+
+/* allow `nldesignsystem` prefix */
+/* stylelint-disable custom-property-pattern */
+
+@mixin reset-font-smoothing() {
+  -webkit-font-smoothing: initial !important;
+  -moz-osx-font-smoothing: initial !important;
+}
+
+@mixin reset-dfn() {
+  font-style: normal;
+}
+
+.docs-story {
+  /* Avoid "Show code"/"Hide code" button to become invisible for stories that render no visible content, using `min-block-size` */
+  background-color: var(--utrecht-document-background-color);
+  color: var(--utrecht-document-color);
+  min-block-size: 2em;
+}
+
+.utrecht-reduced-motion {
+  --utrecht-motion-max-animation-duration: 0;
+}
+
+.no-style-decorator *,
+.no-style .docs-story,
+.no-style .docs-story * {
+  all: revert !important;
+}
+
+.sbdocs:not(:has(.sbdocs-preview)) {
+  * {
+    @include reset-font-smoothing;
+
+    --utrecht-paragraph-margin-block-start: 1em;
+    --utrecht-paragraph-margin-block-end: 1em;
+  }
+}

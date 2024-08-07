@@ -31,7 +31,6 @@
     "@storybook/react-vite": "8.2.6",
     "@storybook/theming": "8.2.6",
     "@tilburg/assets": "workspace:*",
-    "@tilburg/components-angular": "workspace:*",
     "@tilburg/components-css": "workspace:*",
     "@tilburg/design-tokens": "workspace:*",
     "@tilburg/font": "workspace:*",
