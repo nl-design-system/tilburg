@@ -28,6 +28,7 @@ export * from './page/component';
 export * from './paragraph/component';
 export * from './radio-button/component';
 export * from './separator/component';
+export * from './story/component';
 export * from './table-body/component';
 export * from './table-caption/component';
 export * from './table-cell/component';
