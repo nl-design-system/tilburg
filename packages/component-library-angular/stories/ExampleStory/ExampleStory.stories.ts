@@ -1,10 +1,14 @@
-import { Meta, StoryObj } from '@storybook/angular';
-import { ExampleStoryComponent } from '@tilburg/component-library-angular';
+import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { ExampleStoryComponent, TilburgComponentsModule } from '@tilburg/component-library-angular';
 export default {
-  title: 'Angular Component/Example',
+  title: 'Tilburg Angular Components/Example',
   id: 'example',
   component: ExampleStoryComponent,
-  decorators: [],
+  decorators: [
+    moduleMetadata({
+      imports: [TilburgComponentsModule],
+    }),
+  ],
 } as Meta;
 
 type Story = StoryObj<ExampleStoryComponent>;
