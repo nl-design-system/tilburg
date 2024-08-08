@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 
 @Component({
   // Case-insensitive variant `input[type="radio" i]` does not appear to work in Angular
-  selector: 'input[type="radio"][utrecht-radio-button]',
+  selector: 'input[type="radio"][tilburg-radio-button]',
   template: '',
   styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
