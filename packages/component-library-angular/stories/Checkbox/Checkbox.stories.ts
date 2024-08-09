@@ -17,6 +17,6 @@ type Story = StoryObj<TilburgCheckboxAttr>;
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template: '<tilburg-checkbox>Test Heading 1</tilburg-checkbox>',
+    template: '<div><tilburg-checkbox>Test Heading 1</tilburg-checkbox> <label>Checkbox</label></div>',
   }),
 };
