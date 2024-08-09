@@ -18,6 +18,6 @@ export const Default: Story = {
   render: (args) => ({
     props: args,
     template:
-      '<input type="radio" [invalid]="invalid" [value]="value" [checked]="checked" [disabled]="disabled" tilburg-radio-button />',
+      '<div><input type="radio" [invalid]="invalid" [value]="value" [checked]="checked" [disabled]="disabled" tilburg-radio-button /> <label>Radio button</label></div>',
   }),
 };
