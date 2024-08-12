@@ -1,10 +1,6 @@
 {
   "utrecht": {
     "checkbox": {
-      "border-radius": {
-        "type": "borderRadius",
-        "value": "{tilburg.border-radius.sm}"
-      },
       "size": {
         "type": "sizing",
         "value": "{tilburg.size.xs}"

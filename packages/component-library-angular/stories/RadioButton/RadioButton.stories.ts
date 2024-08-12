@@ -1,10 +1,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgComponentsModule, TilburgRadioButtonAttr } from '@tilburg/component-library-angular';
+import { TilburgComponentsModule, TilburgRadioButton } from '@tilburg/component-library-angular';
 
 export default {
   title: 'Tilburg Angular Components/RadioButton',
   id: 'radio-button-1',
-  component: TilburgRadioButtonAttr,
+  component: TilburgRadioButton,
   decorators: [
     moduleMetadata({
       imports: [TilburgComponentsModule],
@@ -12,12 +12,11 @@ export default {
   ],
 } as Meta;
 
-type Story = StoryObj<TilburgRadioButtonAttr>;
+type Story = StoryObj<TilburgRadioButton>;
 
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template:
-      '<div><input type="radio" [invalid]="invalid" [value]="value" [checked]="checked" [disabled]="disabled" tilburg-radio-button /> <label>Radio button</label></div>',
+    template: '<div><tilburg-radio-button><label>Radio button</label></tilburg-radio-button></div>',
   }),
 };
