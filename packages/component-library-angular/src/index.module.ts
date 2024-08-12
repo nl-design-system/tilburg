@@ -26,7 +26,7 @@ import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
 import { TilburgPageFooter } from './page-footer/component';
 import { TilburgPageHeader } from './page-header/component';
-import { TilburgRadioButtonAttr } from './radio-button/component';
+import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
 import { TilburgTableAttr } from './table/component';
@@ -79,7 +79,7 @@ const components = [
   TilburgSeparator,
   TilburgTextareaAttr,
   TilburgTextboxAttr,
-  TilburgRadioButtonAttr,
+  TilburgRadioButton,
   TilburgOrderedListAttr,
   TilburgUnorderedListAttr,
 ];
