@@ -17,7 +17,7 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
 
-  staticDirs: ['../../../dis/proprietary/assets/src'],
+  staticDirs: ['../../../proprietary/assets/src'],
   webpackFinal: async (config) => {
     config.resolve = {
       ...config.resolve,
