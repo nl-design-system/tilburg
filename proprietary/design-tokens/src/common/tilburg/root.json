@@ -1,0 +1,10 @@
+{
+  "tilburg": {
+    "root": {
+      "background-color": {
+        "value": "{tilburg.color.gray.50}",
+        "type": "color"
+      }
+    }
+  }
+}

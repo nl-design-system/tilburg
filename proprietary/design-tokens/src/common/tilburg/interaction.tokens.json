@@ -2,19 +2,37 @@
   "tilburg": {
     "interaction": {
       "color": {
-        "value": "{tilburg.color.pink.300}",
+        "value": "{tilburg.color.pink.400}",
         "type": "color"
       },
       "active": {
         "color": {
-          "value": "{tilburg.color.pink.200}",
+          "value": "{tilburg.color.pink.300}",
           "type": "color"
         }
       },
       "hover": {
         "color": {
-          "value": "{tilburg.color.pink.400}",
+          "value": "{tilburg.color.pink.500}",
           "type": "color"
+        }
+      },
+      "accent": {
+        "color": {
+          "value": "{tilburg.color.blue.400}",
+          "type": "color"
+        },
+        "active": {
+          "color": {
+            "value": "{tilburg.color.blue.500}",
+            "type": "color"
+          }
+        },
+        "hover": {
+          "color": {
+            "value": "{tilburg.color.blue.300}",
+            "type": "color"
+          }
         }
       }
     }
