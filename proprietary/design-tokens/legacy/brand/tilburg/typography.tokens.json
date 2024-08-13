@@ -61,7 +61,7 @@
       },
       "font-family": {
         "primary": {
-          "value": "TradeGothicCondensed18",
+          "value": "Roboto Condensed",
           "type": "fontFamilies"
         },
         "secondary": {

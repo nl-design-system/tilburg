@@ -39,7 +39,7 @@
           "type": "color"
         },
         "border-color": {
-          "value": "{tilburg.form-control.focus.border-color}",
+          "value": "{tilburg.form-control.focus.border-color-1}",
           "type": "color"
         },
         "border-width": {
@@ -98,7 +98,7 @@
             "type": "color"
           },
           "border-color": {
-            "value": "{tilburg.form-control.focus.border-color}",
+            "value": "{tilburg.form-control.focus.border-color-1}",
             "type": "color"
           },
           "color": {
@@ -216,7 +216,7 @@
             "type": "color"
           },
           "border-color": {
-            "value": "{tilburg.form-control.focus.border-color}",
+            "value": "{tilburg.form-control.focus.border-color-1}",
             "type": "color"
           },
           "color": {
