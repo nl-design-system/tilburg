@@ -1,12 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'tilburg-form-field-description',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgFormFieldDescription {
   @Input() formContext?: FormControl;
