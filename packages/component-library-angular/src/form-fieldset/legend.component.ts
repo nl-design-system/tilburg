@@ -1,15 +1,13 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: '[tilburg-fieldset-legend]',
+  selector: 'tilburg-fieldset-legend',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
-  host: {
-    '[class.utrecht-fieldset__legend]': 'true',
-  },
 })
-export class TilburgFieldsetLegendAttr {
+export class TilburgFieldsetLegend {
+  @Input() textContent?: string;
+  @Input() disabled?: boolean = false;
+  @Input() invalid?: boolean = false;
   constructor() {}
 }

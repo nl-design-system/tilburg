@@ -10,8 +10,9 @@ import { TilburgColorSample } from './color-sample/component';
 import { TilburgDocument } from './document/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
-import { TilburgFieldsetAttr } from './form-fieldset/component';
-import { TilburgFormLabelAttr } from './form-label/component';
+import { TilburgFieldset } from './form-fieldset/component';
+import { TilburgFieldsetLegend } from './form-fieldset/legend.component';
+import { TilburgFormLabel } from './form-label/component';
 import { TilburgHeading1 } from './heading-1/component';
 import { TilburgHeading2 } from './heading-2/component';
 import { TilburgHeading3 } from './heading-3/component';
@@ -58,7 +59,8 @@ const components = [
   TilburgLinkAttr,
   TilburgFormField,
   TilburgFormFieldDescription,
-  TilburgFieldsetAttr,
+  TilburgFieldset,
+  TilburgFieldsetLegend,
   TilburgOrderedListAttr,
   TilburgOrderedListItemAttr,
   TilburgPage,
@@ -75,7 +77,7 @@ const components = [
   TilburgTableRowAttr,
   TilburgDocument,
   TilburgHtmlContent,
-  TilburgFormLabelAttr,
+  TilburgFormLabel,
   TilburgSeparator,
   TilburgTextareaAttr,
   TilburgTextboxAttr,
