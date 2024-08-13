@@ -27,6 +27,7 @@ import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
 import { TilburgPageFooter } from './page-footer/component';
 import { TilburgPageHeader } from './page-header/component';
+import { TilburgParagraph } from './paragraph/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
@@ -67,6 +68,7 @@ const components = [
   TilburgPageContent,
   TilburgPageFooter,
   TilburgPageHeader,
+  TilburgParagraph,
   TilburgTableAttr,
   TilburgTableBodyAttr,
   TilburgTableCaptionAttr,

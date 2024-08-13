@@ -21,6 +21,7 @@ export * from './html-content/component';
 export * from './link/component';
 export * from './ordered-list/component';
 export * from './ordered-list/item.component';
+export * from './paragraph/component';
 export * from './page-content/component';
 export * from './page-footer/component';
 export * from './page-header/component';
