@@ -5,7 +5,7 @@ import { TilburgArticle } from './article/component';
 import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgButtonAttr } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
-import { TilburgButtonLinkAttr } from './button-link/component';
+import { TilburgButtonLink } from './button-link/component';
 import { TilburgCheckboxAttr } from './checkbox/component';
 import { TilburgColorSample } from './color-sample/component';
 import { TilburgDocument } from './document/component';
@@ -50,7 +50,7 @@ const components = [
   TilburgBadgeStatus,
   TilburgButtonAttr,
   TilburgButtonGroup,
-  TilburgButtonLinkAttr,
+  TilburgButtonLink,
   TilburgCheckboxAttr,
   TilburgColorSample,
   TilburgHeading1,
