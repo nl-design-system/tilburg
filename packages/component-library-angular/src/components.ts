@@ -1,3 +1,4 @@
+export * from './article/component';
 export * from './badge-status/component';
 export * from './story/component';
 export * from './button-group/component';

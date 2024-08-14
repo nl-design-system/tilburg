@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
+import { TilburgArticle } from './article/component';
 import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgButtonAttr } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
@@ -45,6 +46,7 @@ import { TilburgUnorderedListAttr } from './unordered-list/component';
 
 const components = [
   ExampleStoryComponent,
+  TilburgArticle,
   TilburgBadgeStatus,
   TilburgButtonAttr,
   TilburgButtonGroup,
