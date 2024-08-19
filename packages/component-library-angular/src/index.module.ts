@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgArticle } from './article/component';
 import { TilburgBadgeStatus } from './badge-status/component';
@@ -93,7 +94,7 @@ const components = [
 @NgModule({
   declarations: [...components],
   exports: [...components],
-  imports: [CommonModule, UtrechtComponentsModule],
+  imports: [CommonModule, ReactiveFormsModule, UtrechtComponentsModule],
   providers: [],
 })
 export class TilburgComponentsModule {}

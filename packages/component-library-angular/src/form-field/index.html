@@ -1,1 +1,5 @@
-<utrecht-form-field [type]="type"><ng-content></ng-content></utrecht-form-field>
+<utrecht-form-field>
+  <input *ngif="formContext" [formControl]="formContext" [type]="type" />
+  <input *ngif="!formContext" [type]="type" />
+  <label *ngif="label" for="1" utrecht-form-label>{{label}}</label>
+</utrecht-form-field>
