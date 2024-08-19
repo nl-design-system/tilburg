@@ -11,7 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "./ng-package.json"
+            "project": "./ng-package.json",
           },
           "configurations": {
             "production": {
@@ -30,7 +30,7 @@
             "browserTarget": "component-library-angular:build",
             "compodoc": false,
             "port": 6006,
-            "styles": ["node_modules/@tilburg/design-tokens/dist/index.css"]
+            "styles": ["src/design-tokens.css"]
           }
         },
         "build-storybook": {
@@ -40,7 +40,7 @@
             "browserTarget": "component-library-angular:build",
             "compodoc": false,
             "outputDir": "storybook-static",
-            "styles": ["node_modules/@tilburg/design-tokens/dist/index.css"]
+            "styles": ["src/design-tokens.css"]
           }
         }
       }
