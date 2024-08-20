@@ -17,6 +17,7 @@ type Story = StoryObj<TilburgButtonAttr>;
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template: '<tilburg-button>Test Heading 1</tilburg-button>',
+    template: '<tilburg-button (click)="alert()">Test Heading 1</tilburg-button>',
+
   }),
 };
