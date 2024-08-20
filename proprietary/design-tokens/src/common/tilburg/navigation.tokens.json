@@ -1,0 +1,14 @@
+{
+  "tilburg": {
+    "navigation": {
+      "background-color": {
+        "value": "{tilburg.color.blue.100}",
+        "type": "color"
+      },
+      "text-color": {
+        "value": "{tilburg.color.blue.400}",
+        "type": "color"
+      }
+    }
+  }
+}

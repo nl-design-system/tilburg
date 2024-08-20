@@ -13,6 +13,10 @@
         "value": "{tilburg.color.gray.500}",
         "type": "color"
       },
+      "border-color-dark": {
+        "value": "{tilburg.color.blue.500}",
+        "type": "color"
+      },
       "border-width": {
         "value": "{tilburg.border-width.sm}",
         "type": "borderWidth"
