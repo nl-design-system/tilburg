@@ -7,7 +7,7 @@
           "y": "2",
           "blur": "6",
           "spread": "0",
-          "color": "#0000000d",
+          "color": "{tilburg.color.dark.alpha.100}",
           "type": "dropShadow"
         },
         "type": "boxShadow"
@@ -18,7 +18,7 @@
           "y": "8",
           "blur": "16",
           "spread": "0",
-          "color": "#0000000d",
+          "color": "{tilburg.color.dark.alpha.100}",
           "type": "dropShadow"
         },
         "type": "boxShadow"
@@ -29,7 +29,7 @@
           "y": "16",
           "blur": "48",
           "spread": "0",
-          "color": "#0000000d",
+          "color": "{tilburg.color.dark.alpha.100}",
           "type": "dropShadow"
         },
         "type": "boxShadow"
