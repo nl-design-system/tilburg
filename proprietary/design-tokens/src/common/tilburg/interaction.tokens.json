@@ -17,20 +17,20 @@
           "type": "color"
         }
       },
-      "accent": {
+      "secondary": {
         "color": {
           "value": "{tilburg.color.blue.400}",
           "type": "color"
         },
         "active": {
           "color": {
-            "value": "{tilburg.color.blue.500}",
+            "value": "{tilburg.color.blue.300}",
             "type": "color"
           }
         },
         "hover": {
           "color": {
-            "value": "{tilburg.color.blue.300}",
+            "value": "{tilburg.color.blue.400}",
             "type": "color"
           }
         }
