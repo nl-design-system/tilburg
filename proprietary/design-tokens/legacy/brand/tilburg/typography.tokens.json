@@ -2,6 +2,10 @@
   "tilburg": {
     "typography": {
       "font-size": {
+        "xs": {
+          "value": "12px",
+          "type": "fontSizes"
+        },
         "sm": {
           "value": "14px",
           "type": "fontSizes"
