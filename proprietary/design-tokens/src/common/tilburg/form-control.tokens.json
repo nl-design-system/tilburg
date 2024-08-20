@@ -70,6 +70,10 @@
           "value": "{tilburg.color.white}",
           "type": "color"
         },
+        "border-color": {
+          "value": "{tilburg.color.black}",
+          "type": "color"
+        },
         "border-color-1": {
           "value": "{tilburg.color.black}",
           "type": "color"
