@@ -1,10 +1,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgComponentsModule, TilburgTextareaAttr } from '@tilburg/component-library-angular';
+import { TilburgComponentsModule, TilburgTextarea } from '@tilburg/component-library-angular';
 
 export default {
   title: 'Tilburg Angular Components/Textarea',
   id: 'tilburg-text-area',
-  component: TilburgTextareaAttr,
+  component: TilburgTextarea,
   decorators: [
     moduleMetadata({
       imports: [TilburgComponentsModule],
@@ -12,11 +12,11 @@ export default {
   ],
 } as Meta;
 
-type Story = StoryObj<TilburgTextareaAttr>;
+type Story = StoryObj<TilburgTextarea>;
 
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template: '<textarea tilburg-textarea>this is a text area</textarea>',
+    template: '<tilburg-textarea>this is a text area</tilburg-textarea>',
   }),
 };
