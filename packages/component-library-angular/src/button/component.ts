@@ -14,21 +14,11 @@ import {
     'utrecht-button': ''
   }
 })
-export class TilburgButtonAttr implements OnInit, AfterViewInit {
+export class TilburgButtonAttr {
 
+  @Input() appearance = 'primary-action-button';
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() small = false;
 
-  constructor(private elementRef: ElementRef, private changeDetector: ChangeDetectorRef) {
-    // this.elementRef.nativeElement.setAttribute('utrecht-button', '');
-  }
-
-  ngOnInit(): void {
-    // this.elementRef.nativeElement.setAttribute('utrecht-button', '');
-  }
-
-  ngAfterViewInit(): void {
-    this.changeDetector.detectChanges();
-  }
 }
