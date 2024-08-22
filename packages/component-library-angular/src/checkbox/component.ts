@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -11,7 +11,11 @@ export class TilburgCheckboxAttr {
   @Input() invalid?: boolean = false;
   @Input() disabled?: boolean = false;
   @Input() checked: boolean = false;
+  @Output() checkChanged = new EventEmitter<Event>();
   constructor() {
     console.log('TilburgCheckboxAttr');
+  }
+  onCheckChange(event: Event) {
+    this.checkChanged.emit(event);
   }
 }
