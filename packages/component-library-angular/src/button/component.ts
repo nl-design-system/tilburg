@@ -1,24 +1,16 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef, Input,
-  OnInit, Renderer2
-} from "@angular/core";
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   host: {
-    'utrecht-button': ''
-  }
+    'utrecht-button': '',
+  },
 })
 export class TilburgButtonAttr {
-
   @Input() appearance = 'primary-action-button';
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() small = false;
-
 }
