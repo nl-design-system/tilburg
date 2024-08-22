@@ -17,6 +17,6 @@ type Story = StoryObj<TilburgButtonLink>;
 export const Default: Story = {
   render: (args) => ({
     props: args,
-    template: '<a [external]="external" [appearance]="appearance" [href]="href" utrecht-button-link>Read More</a>',
+    template: '<a tilburg-button-link [external]="external" [appearance]="appearance" [href]="href">Read More</a>',
   }),
 };
