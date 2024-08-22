@@ -8,6 +8,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['index.scss'],
 })
 export class TilburgRadioButton {
+  @Input() id: string;
   @Input() value: any;
   @Input() formContext!: FormControl;
   @Input() invalid?: boolean = false;
