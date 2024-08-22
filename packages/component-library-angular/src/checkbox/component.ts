@@ -10,5 +10,8 @@ export class TilburgCheckboxAttr {
   @Input() formContext?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() disabled?: boolean = false;
-  constructor() {}
+  @Input() checked: boolean = false;
+  constructor() {
+    console.log('TilburgCheckboxAttr');
+  }
 }
