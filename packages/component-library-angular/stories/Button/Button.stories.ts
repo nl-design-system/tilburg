@@ -18,6 +18,5 @@ export const Default: Story = {
   render: (args) => ({
     props: args,
     template: '<tilburg-button (click)="alert()">Test Heading 1</tilburg-button>',
-
   }),
 };
