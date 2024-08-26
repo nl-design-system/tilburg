@@ -2,7 +2,8 @@
   type="radio"
   utrecht-radio-button
   [disabled]="disabled"
-  [id]="id"
+  [id]="id ?? null"
+  [name]="name"
   [value]="value"
   [attr.value]="value"
   [formControl]="formContext"
