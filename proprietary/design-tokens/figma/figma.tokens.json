@@ -4316,7 +4316,7 @@
         },
         "background-color": {
           "type": "color",
-          "value": "{tilburg.color.violet.100}"
+          "value": "{tilburg.document.background-color}"
         },
         "border-color": {
           "type": "color",
@@ -4532,7 +4532,7 @@
             },
             "background-color": {
               "type": "color",
-              "value": "{tilburg.color.green.600}"
+              "value": "{tilburg.color.green.400}"
             },
             "border-color": {
               "type": "color",
