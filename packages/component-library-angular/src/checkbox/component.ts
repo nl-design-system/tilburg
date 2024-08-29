@@ -12,9 +12,6 @@ export class TilburgCheckboxAttr {
   @Input() disabled?: boolean = false;
   @Input() checked: boolean = false;
   @Output() checkChanged = new EventEmitter<Event>();
-  constructor() {
-    console.log('TilburgCheckboxAttr');
-  }
   onCheckChange(event: Event) {
     this.checkChanged.emit(event);
   }
