@@ -12,13 +12,17 @@ const build = async () => {
   });
 
   register(StyleDictionary, {
-    // TODO: Enable `excludeParentKeys` when Figma is the source of design tokens
-    // excludeParentKeys: true,
+    excludeParentKeys: true,
   });
 
   const sd = new StyleDictionary({
     ...createStyleDictionaryConfig({
       selector: `.${themeConfig.prefix}-theme`,
+      source: [
+        "figma/figma.tokens.json",
+        "src/**/tokens.json",
+        "src/**/*.tokens.json",
+      ],
     }),
     log: "warn",
     preprocessors: ["tokens-studio", "dtcg-delegate"],
