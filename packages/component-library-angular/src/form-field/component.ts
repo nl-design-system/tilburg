@@ -9,7 +9,4 @@ export class TilburgFormField {
   @Input() invalid?: boolean = false;
   @Input() type?: 'checkbox' | 'radio' | 'text';
   @Input() class?: string;
-  constructor() {
-    console.log('TilburgFormField');
-  }
 }
