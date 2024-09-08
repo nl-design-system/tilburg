@@ -375,7 +375,7 @@ importers:
     devDependencies:
       '@tokens-studio/sd-transforms':
         specifier: 1.2.3
-        version: 1.2.3(style-dictionary@4.0.1)
+        version: 1.2.3(style-dictionary@4.1.0)
       chokidar-cli:
         specifier: 3.0.0
         version: 3.0.0
@@ -386,8 +386,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       style-dictionary:
-        specifier: 4.0.1
-        version: 4.0.1
+        specifier: 4.1.0
+        version: 4.1.0
 
   proprietary/font: {}
 
@@ -7236,8 +7236,8 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
-  style-dictionary@4.0.1:
-    resolution: {integrity: sha512-aZ2iouI0i0DIXk3QhCkwOeo5rQeuk5Ja0PhHo32/EXCNuay4jK4CZ+hQJW0Er0J74VWniR+qaeoWgjklcULxOQ==}
+  style-dictionary@4.1.0:
+    resolution: {integrity: sha512-DfY64t/XsL0bycnabIcIna/H1GyjK4sKLui2t0q6flr2uM+VpRNoSNCPOpi5YSouhKEFjoiC6ediyrMzraTz8A==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -10353,7 +10353,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@tokens-studio/sd-transforms@1.2.3(style-dictionary@4.0.1)':
+  '@tokens-studio/sd-transforms@1.2.3(style-dictionary@4.1.0)':
     dependencies:
       '@bundled-es-modules/deepmerge': 4.3.1
       '@bundled-es-modules/postcss-calc-ast-parser': 0.1.6
@@ -10361,7 +10361,7 @@ snapshots:
       colorjs.io: 0.4.5
       expr-eval-fork: 2.0.2
       is-mergeable-object: 1.1.1
-      style-dictionary: 4.0.1
+      style-dictionary: 4.1.0
 
   '@tokens-studio/types@0.5.1': {}
 
@@ -16506,7 +16506,7 @@ snapshots:
       minimist: 1.2.8
       through: 2.3.8
 
-  style-dictionary@4.0.1:
+  style-dictionary@4.1.0:
     dependencies:
       '@bundled-es-modules/deepmerge': 4.3.1
       '@bundled-es-modules/glob': 10.4.2
