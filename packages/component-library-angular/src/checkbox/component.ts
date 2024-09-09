@@ -6,8 +6,8 @@ import { FormControl } from '@angular/forms';
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
 })
-export class TilburgCheckboxAttr {
-  @Input() formContext?: FormControl;
+export class TilburgCheckbox {
+  @Input() control?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() disabled?: boolean = false;
   @Input() checked: boolean = false;

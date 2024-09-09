@@ -4,11 +4,8 @@ import { Component, Input } from '@angular/core';
   selector: 'tilburg-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  host: {
-    'utrecht-button': '',
-  },
 })
-export class TilburgButtonAttr {
+export class TilburgButton {
   @Input() appearance = 'primary-action-button';
   @Input() type = 'button';
   @Input() disabled = false;

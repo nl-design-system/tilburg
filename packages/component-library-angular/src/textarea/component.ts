@@ -12,6 +12,6 @@ export class TilburgTextarea {
   @Input() invalid = false;
   @Input() required = false;
   @Input() readonly = false;
-  @Input() formContext!: FormControl;
+  @Input() control!: FormControl;
   constructor() {}
 }
