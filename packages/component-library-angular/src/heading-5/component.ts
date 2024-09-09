@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'tilburg-heading-5',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgHeading5 {
   constructor() {}

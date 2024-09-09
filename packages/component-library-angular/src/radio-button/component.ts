@@ -11,7 +11,7 @@ export class TilburgRadioButton {
   @Input() id?: string = undefined;
   @Input() name: string = '';
   @Input() value: any;
-  @Input() formContext!: FormControl;
+  @Input() control!: FormControl;
   @Input() invalid: boolean = false;
   @Input() disabled: boolean = false;
   @Input() checked: boolean = false;
