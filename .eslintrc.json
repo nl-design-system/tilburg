@@ -18,8 +18,8 @@
   },
   "overrides": [
     {
-      "extends": ["plugin:json/recommended"],
-      "files": ["*.json"]
+      "files": ["*.json"],
+      "extends": ["plugin:json/recommended"]
     },
     {
       "extends": [
