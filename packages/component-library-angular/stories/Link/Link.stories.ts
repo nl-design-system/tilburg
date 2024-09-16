@@ -1,10 +1,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgComponentsModule, TilburgLinkAttr } from '@tilburg/component-library-angular';
+import { TilburgComponentsModule, TilburgLink } from '@tilburg/component-library-angular';
 
 export default {
   title: 'Tilburg Angular Components/Link',
   id: 'tilburg-link',
-  component: TilburgLinkAttr,
+  component: TilburgLink,
   decorators: [
     moduleMetadata({
       imports: [TilburgComponentsModule],
@@ -12,7 +12,7 @@ export default {
   ],
 } as Meta;
 
-type Story = StoryObj<TilburgLinkAttr>;
+type Story = StoryObj<TilburgLink>;
 
 export const Default: Story = {
   render: (args) => ({
