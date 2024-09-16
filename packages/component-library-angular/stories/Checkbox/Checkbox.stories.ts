@@ -1,10 +1,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgCheckboxAttr, TilburgComponentsModule } from '@tilburg/component-library-angular';
+import { TilburgCheckbox, TilburgComponentsModule } from '@tilburg/component-library-angular';
 
 export default {
   title: 'Tilburg Angular Components/Checkbox',
   id: 'tilburg-checkbox-1',
-  component: TilburgCheckboxAttr,
+  component: TilburgCheckbox,
   decorators: [
     moduleMetadata({
       imports: [TilburgComponentsModule],
@@ -12,7 +12,7 @@ export default {
   ],
 } as Meta;
 
-type Story = StoryObj<TilburgCheckboxAttr>;
+type Story = StoryObj<TilburgCheckbox>;
 
 export const Default: Story = {
   render: (args) => ({
