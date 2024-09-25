@@ -881,12 +881,20 @@
         "border-color": {
           "$type": "color",
           "$value": "{tilburg.color.gray.200}"
+        },
+        "border-width": {
+          "$type": "borderWidth",
+          "$value": "{tilburg.border-width.sm}"
         }
       },
       "line": {
         "border-color": {
           "$type": "color",
           "$value": "{tilburg.color.gray.200}"
+        },
+        "border-width": {
+          "$type": "borderWidth",
+          "$value": "{tilburg.border-width.sm}"
         }
       },
       "form-control": {
@@ -906,6 +914,10 @@
           "color": {
             "$type": "color",
             "$value": "{tilburg.color.gray.500}"
+          },
+          "border-width": {
+            "$type": "borderWidth",
+            "$value": "{tilburg.border-width.md}"
           }
         },
         "hover": {
@@ -924,6 +936,10 @@
           "color": {
             "$type": "color",
             "$value": "{tilburg.color.gray.500}"
+          },
+          "border-width": {
+            "$type": "borderWidth",
+            "$value": "{tilburg.border-width.sm}"
           }
         },
         "accent-color": {
@@ -952,6 +968,12 @@
           "color": {
             "$type": "color",
             "$value": "{tilburg.color.gray.400}"
+          }
+        },
+        "strong": {
+          "font-weight": {
+            "$type": "fontWeights",
+            "$value": "{tilburg.typography.font-weight.bold}"
           }
         }
       },
@@ -1016,42 +1038,6 @@
             "$value": "{tilburg.color.green.300}"
           }
         }
-      }
-    },
-    "voorbeeld": {
-      "container": {
-        "border-width": {
-          "$type": "borderWidth",
-          "$value": "{tilburg.border-width.sm}"
-        }
-      },
-      "line": {
-        "border-width": {
-          "$type": "borderWidth",
-          "$value": "{tilburg.border-width.sm}"
-        }
-      },
-      "form-control": {
-        "active": {
-          "border-width": {
-            "$type": "borderWidth",
-            "$value": "{tilburg.border-width.md}"
-          }
-        },
-        "hover": {
-          "border-width": {
-            "$type": "borderWidth",
-            "$value": "{tilburg.border-width.sm}"
-          }
-        }
-      },
-      "document": {
-        "strong": {
-          "font-weight": {
-            "$type": "fontWeights",
-            "$value": "{tilburg.typography.font-weight.bold}"
-          }
-        }
       },
       "icon": {
         "functional": {
@@ -1066,7 +1052,9 @@
             "$value": "{tilburg.size.icon.4xl}"
           }
         }
-      },
+      }
+    },
+    "voorbeeld": {
       "space": {
         "relation": {
           "kind": {
@@ -1140,7 +1128,7 @@
           "icon": {
             "size": {
               "$type": "sizing",
-              "$value": "{voorbeeld.icon.functional.size}"
+              "$value": "{tilburg.icon.functional.size}"
             }
           },
           "padding-block-end": {
@@ -1228,35 +1216,15 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "accordion": {
-        "border-radius": {
-          "$type": "borderRadius",
-          "$value": "0px"
-        },
         "section": {
-          "border-block-end-width": {
-            "$type": "borderWidth",
-            "$value": "{tilburg.border-width.sm}"
-          },
           "border-color": {
             "$type": "color",
             "$value": "{tilburg.color.blue.300}"
-          },
-          "border-width": {
-            "$type": "borderWidth",
-            "$value": "{tilburg.border-width.sm}"
           }
         },
         "button": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{utrecht.document.font-size}"
-          },
-          "line-height": {
-            "$type": "lineHeights",
-            "$value": "{utrecht.document.line-height}"
-          },
           "expanded": {
             "background-color": {
               "$type": "color",
@@ -1270,14 +1238,6 @@
               "$type": "color",
               "$value": "{tilburg.color.blue.400}"
             }
-          },
-          "font-family": {
-            "$type": "fontFamilies",
-            "$value": "{utrecht.document.font-family}"
-          },
-          "font-weight": {
-            "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
           }
         }
       }
@@ -1401,7 +1361,7 @@
           },
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           },
           "color": {
             "$type": "color",
@@ -1475,7 +1435,7 @@
         "icon": {
           "icon-size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "border-color": {
@@ -1493,7 +1453,7 @@
           },
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           },
           "line-height": {
             "$type": "lineHeights",
@@ -1660,7 +1620,7 @@
           "icon": {
             "size": {
               "$type": "sizing",
-              "$value": "{voorbeeld.icon.functional.size}"
+              "$value": "{tilburg.icon.functional.size}"
             },
             "column-gap": {
               "$type": "spacing",
@@ -1784,43 +1744,17 @@
           "$type": "borderWidth",
           "$value": "{tilburg.border-width.sm}"
         },
-        "icon": {
-          "size": {
-            "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
-          }
-        },
         "font-family": {
           "$type": "fontFamilies",
           "$value": "{tilburg.typography.font-family.primary}"
         },
-        "font-size": {
-          "$type": "fontSizes",
-          "$value": "{tilburg.typography.font-size.xl}"
-        },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{tilburg.document.strong.font-weight}"
         },
         "line-height": {
           "$type": "lineHeights",
           "$value": "{utrecht.document.line-height}"
-        },
-        "padding-block-end": {
-          "$type": "spacing",
-          "$value": "{tilburg.space.block.snail}"
-        },
-        "padding-block-start": {
-          "$type": "spacing",
-          "$value": "{tilburg.space.block.snail}"
-        },
-        "padding-inline-end": {
-          "$type": "spacing",
-          "$value": "{tilburg.space.inline.mouse}"
-        },
-        "padding-inline-start": {
-          "$type": "spacing",
-          "$value": "{tilburg.space.inline.mouse}"
         },
         "disabled": {
           "background-color": {
@@ -1877,18 +1811,6 @@
             "$type": "color",
             "$value": "{tilburg.interaction.active.color}"
           }
-        },
-        "min-block-size": {
-          "$type": "sizing",
-          "$value": "{utrecht.pointer-target.min-size}"
-        },
-        "min-inline-size": {
-          "$type": "sizing",
-          "$value": "{utrecht.pointer-target.min-size}"
-        },
-        "column-gap": {
-          "$type": "spacing",
-          "$value": "{tilburg.space.text.beetle}"
         },
         "primary-action": {
           "hover": {
@@ -1947,7 +1869,7 @@
           },
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           },
           "active": {
             "background-color": {
@@ -1962,10 +1884,6 @@
               "$type": "color",
               "$value": "{tilburg.color.white}"
             }
-          },
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.xl}"
           },
           "line-height": {
             "$type": "lineHeights",
@@ -2029,7 +1947,7 @@
           },
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           },
           "active": {
             "background-color": {
@@ -2045,23 +1963,15 @@
               "$value": "{tilburg.interaction.active.color}"
             }
           },
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.xl}"
-          },
           "line-height": {
             "$type": "lineHeights",
             "$value": "{utrecht.document.line-height}"
           }
         },
         "subtle": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.xl}"
-          },
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           },
           "hover": {
             "background-color": {
@@ -2138,11 +2048,179 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "button": {
-        "text-case": {
-          "$type": "textCase",
-          "$value": "uppercase"
+        "icon": {
+          "large": {
+            "size": {
+              "$type": "sizing",
+              "$value": "{tilburg.icon.functional.size}"
+            }
+          },
+          "medium": {
+            "size": {
+              "$type": "sizing",
+              "$value": "{tilburg.icon.functional.size}"
+            }
+          },
+          "small": {
+            "size": {
+              "$type": "sizing",
+              "$value": "{tilburg.size.icon.sm}"
+            }
+          }
+        },
+        "large": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.xl}"
+          },
+          "padding-block-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.snail}"
+          },
+          "padding-block-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.snail}"
+          },
+          "padding-inline-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.mouse}"
+          },
+          "padding-inline-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.mouse}"
+          },
+          "column-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.text.mouse}"
+          },
+          "primary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.xl}"
+            }
+          },
+          "secondary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.xl}"
+            }
+          },
+          "subtle": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.xl}"
+            }
+          },
+          "text-case": {
+            "$type": "textCase",
+            "$value": "uppercase"
+          }
+        },
+        "min-block-size": {
+          "$type": "sizing",
+          "$value": "{utrecht.pointer-target.min-size}"
+        },
+        "min-inline-size": {
+          "$type": "sizing",
+          "$value": "{utrecht.pointer-target.min-size}"
+        },
+        "medium": {
+          "padding-block-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-block-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-inline-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.cat}"
+          },
+          "padding-inline-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.cat}"
+          },
+          "column-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.text.mouse}"
+          },
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.lg}"
+          },
+          "primary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.lg}"
+            }
+          },
+          "secondary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.lg}"
+            }
+          },
+          "subtle": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.lg}"
+            }
+          },
+          "text-case": {
+            "$type": "textCase",
+            "$value": "capitalize"
+          }
+        },
+        "small": {
+          "padding-block-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-block-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-inline-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.rabbit}"
+          },
+          "padding-inline-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.rabbit}"
+          },
+          "column-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.text.mouse}"
+          },
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.sm}"
+          },
+          "primary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.sm}"
+            }
+          },
+          "secondary-action": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.sm}"
+            }
+          },
+          "subtle": {
+            "font-size": {
+              "$type": "fontSizes",
+              "$value": "{tilburg.typography.font-size.sm}"
+            }
+          },
+          "text-case": {
+            "$type": "textCase",
+            "$value": "capitalize"
+          }
         }
       }
     }
@@ -2199,7 +2277,7 @@
         "icon": {
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "active": {
@@ -2213,7 +2291,7 @@
           },
           "border-width": {
             "$type": "borderWidth",
-            "$value": "{voorbeeld.form-control.active.border-width}"
+            "$value": "{tilburg.form-control.active.border-width}"
           }
         },
         "disabled": {
@@ -2237,7 +2315,7 @@
           },
           "border-width": {
             "$type": "borderWidth",
-            "$value": "{voorbeeld.form-control.hover.border-width}"
+            "$value": "{tilburg.form-control.hover.border-width}"
           }
         },
         "focus": {
@@ -2330,7 +2408,7 @@
           "hover": {
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.hover.border-width}"
+              "$value": "{tilburg.form-control.hover.border-width}"
             },
             "background-color": {
               "$type": "color",
@@ -2348,7 +2426,7 @@
           "active": {
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.active.border-width}"
+              "$value": "{tilburg.form-control.active.border-width}"
             },
             "background-color": {
               "$type": "color",
@@ -2382,7 +2460,7 @@
           "active": {
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.active.border-width}"
+              "$value": "{tilburg.form-control.active.border-width}"
             },
             "background-color": {
               "$type": "color",
@@ -2400,7 +2478,7 @@
           "hover": {
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.hover.border-width}"
+              "$value": "{tilburg.form-control.hover.border-width}"
             },
             "background-color": {
               "$type": "color",
@@ -2602,7 +2680,7 @@
             },
             "font-weight": {
               "$type": "fontWeights",
-              "$value": "{voorbeeld.document.strong.font-weight}"
+              "$value": "{tilburg.document.strong.font-weight}"
             },
             "line-height": {
               "$type": "lineHeights",
@@ -2709,6 +2787,158 @@
       }
     }
   },
+  "components/fIle-upload-download": {
+    "tilburg": {
+      "file-upload": {
+        "item": {
+          "background": {
+            "$type": "color",
+            "$value": "{tilburg.color.white}"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{tilburg.color.blue.500}"
+          },
+          "color": {
+            "$type": "color",
+            "$value": "{tilburg.color.gray.500}"
+          },
+          "icon-size": {
+            "$type": "sizing",
+            "$value": "{tilburg.size.icon.2xl}"
+          },
+          "padding-block-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.rabbit}"
+          },
+          "padding-block-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.rabbit}"
+          },
+          "padding-inline-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.rabbit}"
+          },
+          "padding-inline-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.rabbit}"
+          },
+          "row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.snail}"
+          },
+          "focus": {
+            "background": {
+              "$type": "color",
+              "$value": "{utrecht.form-control.focus.background-color}"
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{utrecht.form-control.focus.border-color}"
+            }
+          }
+        },
+        "file": {
+          "icon-size": {
+            "$type": "sizing",
+            "$value": "{tilburg.size.icon.lg}"
+          },
+          "icon": {
+            "padding-block-start": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.block.rat}"
+            },
+            "padding-block-end": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.block.rat}"
+            },
+            "padding-inline-start": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.inline.snail}"
+            },
+            "padding-inline-end": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.inline.snail}"
+            }
+          },
+          "column-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.column.snail}"
+          },
+          "row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.column.snail}"
+          },
+          "icon-background": {
+            "$type": "color",
+            "$value": "{tilburg.color.gray.100}"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "{tilburg.color.white}"
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{utrecht.form-control.border-color}"
+          },
+          "error": {
+            "border": {
+              "$type": "color",
+              "$value": "{utrecht.form-control.invalid.border-color}"
+            }
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "{tilburg.document.subtle.color}"
+          },
+          "padding-inline-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.beetle}"
+          },
+          "padding-inline-start": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.inline.beetle}"
+          },
+          "padding-block-end": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "file-details-border": {
+            "$type": "border",
+            "$value": {
+              "color": "{tilburg.color.gray.100}",
+              "width": "1",
+              "style": "solid"
+            }
+          },
+          "icon-small": {
+            "padding-block-start": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.block.snail}"
+            },
+            "padding-block-end": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.block.snail}"
+            },
+            "padding-inline-start": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.inline.beetle}"
+            },
+            "padding-inline-end": {
+              "$type": "spacing",
+              "$value": "{tilburg.space.inline.beetle}"
+            }
+          }
+        },
+        "download": {
+          "row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.snail}"
+          }
+        }
+      }
+    }
+  },
   "components/form-field": {
     "utrecht": {
       "form-field": {
@@ -2807,7 +3037,7 @@
         "icon": {
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "column-gap": {
@@ -2834,7 +3064,7 @@
         },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{tilburg.document.strong.font-weight}"
         },
         "line-height": {
           "$type": "lineHeights",
@@ -2903,18 +3133,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.sm}"
-        },
-        "small-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.2xl}"
-          }
-        },
-        "large-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.3xl}"
-          }
         }
       },
       "heading-2": {
@@ -2933,18 +3151,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.sm}"
-        },
-        "small-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.xl}"
-          }
-        },
-        "large-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.2xl}"
-          }
         }
       },
       "heading-3": {
@@ -2963,18 +3169,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.sm}"
-        },
-        "small-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.lg}"
-          }
-        },
-        "large-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.xl}"
-          }
         }
       },
       "heading-4": {
@@ -2993,18 +3187,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.md}"
-        },
-        "small-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.md}"
-          }
-        },
-        "large-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.lg}"
-          }
         }
       },
       "heading-5": {
@@ -3023,18 +3205,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.md}"
-        },
-        "small-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.sm}"
-          }
-        },
-        "large-vw": {
-          "font-size": {
-            "$type": "fontSizes",
-            "$value": "{tilburg.typography.font-size.md}"
-          }
         }
       },
       "heading-6": {
@@ -3053,20 +3223,90 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{tilburg.typography.line-height.md}"
+        }
+      }
+    },
+    "tilburg": {
+      "heading-1": {
+        "small-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.2xl}"
+          }
         },
+        "large-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.3xl}"
+          }
+        },
+        "text-case": {
+          "$type": "textCase",
+          "$value": "uppercase"
+        }
+      },
+      "heading-2": {
+        "small-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.xl}"
+          }
+        },
+        "large-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.2xl}"
+          }
+        }
+      },
+      "heading-3": {
+        "small-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.lg}"
+          }
+        },
+        "large-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.xl}"
+          }
+        }
+      },
+      "heading-4": {
+        "small-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.md}"
+          }
+        },
+        "large-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.lg}"
+          }
+        }
+      },
+      "heading-5": {
+        "small-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.sm}"
+          }
+        },
+        "large-vw": {
+          "font-size": {
+            "$type": "fontSizes",
+            "$value": "{tilburg.typography.font-size.md}"
+          }
+        }
+      },
+      "heading-6": {
         "large-vw": {
           "font-size": {
             "$type": "fontSizes",
             "$value": "{tilburg.typography.font-size.sm}"
           }
-        }
-      }
-    },
-    "todo": {
-      "heading-1": {
-        "text-case": {
-          "$type": "textCase",
-          "$value": "uppercase"
         }
       }
     }
@@ -3123,7 +3363,7 @@
         "icon": {
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "active": {
@@ -3188,7 +3428,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "link": {
         "active": {
           "text-decoration": {
@@ -3213,12 +3453,12 @@
           },
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "link-list": {
         "item": {
           "column-gap": {
@@ -3308,7 +3548,7 @@
             },
             "font-weight": {
               "$type": "fontWeights",
-              "$value": "{voorbeeld.document.strong.font-weight}"
+              "$value": "{tilburg.document.strong.font-weight}"
             },
             "font-size": {
               "$type": "fontSizes",
@@ -3436,7 +3676,7 @@
         },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{tilburg.document.strong.font-weight}"
         },
         "border-width": {
           "$type": "borderWidth",
@@ -3480,7 +3720,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "ordered-list": {
         "marker": {
           "number": {
@@ -3492,7 +3732,7 @@
     }
   },
   "components/pagination": {
-    "todo": {
+    "tilburg": {
       "pagination": {
         "relative-link": {
           "border-width": {
@@ -3506,7 +3746,7 @@
             },
             "size": {
               "$type": "sizing",
-              "$value": "{voorbeeld.icon.functional.size}"
+              "$value": "{tilburg.icon.functional.size}"
             }
           },
           "padding-block-end": {
@@ -3634,7 +3874,7 @@
           "current": {
             "font-weight": {
               "$type": "fontWeights",
-              "$value": "{voorbeeld.document.strong.font-weight}"
+              "$value": "{tilburg.document.strong.font-weight}"
             },
             "text-decoration": {
               "$type": "textDecoration",
@@ -3902,7 +4142,7 @@
         },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{tilburg.document.strong.font-weight}"
         },
         "line-height": {
           "$type": "lineHeights",
@@ -3912,7 +4152,7 @@
     }
   },
   "components/progress-bar": {
-    "todo": {
+    "tilburg": {
       "bar": {
         "active": {
           "$type": "color",
@@ -3920,7 +4160,41 @@
         },
         "inactive": {
           "$type": "color",
-          "$value": "{tilburg.color.gray.100}"
+          "$value": "{tilburg.color.gray.300}"
+        }
+      },
+      "large-vw": {
+        "progress-bar": {
+          "row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.cat}"
+          },
+          "title-row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.snail}"
+          }
+        }
+      },
+      "small-vw": {
+        "progress-bar": {
+          "row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.rabbit}"
+          },
+          "title-row-gap": {
+            "$type": "spacing",
+            "$value": "{tilburg.space.row.beetle}"
+          }
+        }
+      },
+      "progress-bar": {
+        "active": {
+          "$type": "border",
+          "$value": {
+            "color": "{tilburg.color.white}",
+            "width": "2",
+            "style": "solid"
+          }
         }
       }
     }
@@ -3961,7 +4235,7 @@
           },
           "border-width": {
             "$type": "borderWidth",
-            "$value": "{voorbeeld.form-control.active.border-width}"
+            "$value": "{tilburg.form-control.active.border-width}"
           }
         },
         "focus": {
@@ -3989,7 +4263,7 @@
           },
           "border-width": {
             "$type": "borderWidth",
-            "$value": "{voorbeeld.form-control.hover.border-width}"
+            "$value": "{tilburg.form-control.hover.border-width}"
           }
         },
         "invalid": {
@@ -4044,7 +4318,7 @@
             },
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.active.border-width}"
+              "$value": "{tilburg.form-control.active.border-width}"
             },
             "color": {
               "$type": "color",
@@ -4080,7 +4354,7 @@
             },
             "border-width": {
               "$type": "borderWidth",
-              "$value": "{voorbeeld.form-control.hover.border-width}"
+              "$value": "{tilburg.form-control.hover.border-width}"
             },
             "color": {
               "$type": "color",
@@ -4090,7 +4364,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "radio-button": {
         "checked": {
           "disabled": {
@@ -4240,7 +4514,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "select": {
         "line-height": {
           "$type": "lineHeights",
@@ -4249,7 +4523,7 @@
         "icon": {
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "focus": {
@@ -4273,8 +4547,12 @@
           },
           "border-width": {
             "$type": "borderWidth",
-            "$value": "{voorbeeld.form-control.hover.border-width}"
+            "$value": "{tilburg.form-control.hover.border-width}"
           }
+        },
+        "column-gap": {
+          "$type": "spacing",
+          "$value": "{tilburg.space.column.snail}"
         }
       }
     }
@@ -4312,7 +4590,7 @@
           "icon": {
             "size": {
               "$type": "sizing",
-              "$value": "{voorbeeld.icon.functional.size}"
+              "$value": "{tilburg.icon.functional.size}"
             },
             "margin-inline": {
               "$type": "spacing",
@@ -4334,7 +4612,7 @@
           "current": {
             "font-weight": {
               "$type": "fontWeights",
-              "$value": "{voorbeeld.document.strong.font-weight}"
+              "$value": "{tilburg.document.strong.font-weight}"
             },
             "color": {
               "$type": "color",
@@ -4466,7 +4744,7 @@
         },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{tilburg.document.strong.font-weight}"
         }
       }
     }
@@ -4476,7 +4754,7 @@
       "status-badge": {
         "font-size": {
           "$type": "fontSizes",
-          "$value": "{tilburg.typography.font-size.sm}"
+          "$value": "{utrecht.paragraph.large-vw.font-size}"
         },
         "line-height": {
           "$type": "lineHeights",
@@ -4484,7 +4762,7 @@
         },
         "font-weight": {
           "$type": "fontWeights",
-          "$value": "{voorbeeld.document.strong.font-weight}"
+          "$value": "{utrecht.document.font-weight}"
         },
         "border-width": {
           "$type": "borderWidth",
@@ -4509,13 +4787,17 @@
         "informative": {
           "background-color": {
             "$type": "color",
-            "$value": "{utrecht.alert.info.background-color}"
+            "$value": "transparent"
           },
           "border-color": {
             "$type": "color",
             "$value": "transparent"
           },
           "color": {
+            "$type": "color",
+            "$value": "{utrecht.document.color}"
+          },
+          "marker": {
             "$type": "color",
             "$value": "{tilburg.feedback.informative.color}"
           }
@@ -4523,13 +4805,17 @@
         "positive": {
           "background-color": {
             "$type": "color",
-            "$value": "{utrecht.alert.ok.background-color}"
+            "$value": "transparent"
           },
           "border-color": {
             "$type": "color",
             "$value": "transparent"
           },
           "color": {
+            "$type": "color",
+            "$value": "{utrecht.document.color}"
+          },
+          "marker": {
             "$type": "color",
             "$value": "{tilburg.feedback.positive.color}"
           }
@@ -4537,34 +4823,42 @@
         "negative": {
           "background-color": {
             "$type": "color",
-            "$value": "{tilburg.feedback.negative.background-color}"
+            "$value": "transparent"
           },
           "border-color": {
             "$type": "color",
             "$value": "transparent"
           },
-          "color": {
+          "marker": {
             "$type": "color",
             "$value": "{tilburg.feedback.negative.color}"
+          },
+          "color": {
+            "$type": "color",
+            "$value": "{utrecht.document.color}"
           }
         },
         "warning": {
           "background-color": {
             "$type": "color",
-            "$value": "{utrecht.feedback.warning.background-color}"
+            "$value": "transparent"
           },
           "border-color": {
             "$type": "color",
             "$value": "transparent"
           },
           "color": {
+            "$type": "color",
+            "$value": "{utrecht.document.color}"
+          },
+          "marker": {
             "$type": "color",
             "$value": "{utrecht.feedback.warning.color}"
           }
         },
         "background-color": {
           "$type": "color",
-          "$value": "{voorbeeld.color.violet.100}"
+          "$value": "transparent"
         },
         "border-color": {
           "$type": "color",
@@ -4573,12 +4867,16 @@
         "color": {
           "$type": "color",
           "$value": "{utrecht.document.color}"
+        },
+        "marker": {
+          "$type": "color",
+          "$value": "{utrecht.document.color}"
         }
       }
     }
   },
   "components/summary-list": {
-    "todo": {
+    "tilburg": {
       "summary-list": {
         "font-family": {
           "$type": "fontFamilies",
@@ -4627,7 +4925,7 @@
         "item-key": {
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           },
           "row": {
             "padding-block-end": {
@@ -4827,7 +5125,7 @@
           },
           "size": {
             "$type": "sizing",
-            "$value": "{voorbeeld.icon.functional.size}"
+            "$value": "{tilburg.icon.functional.size}"
           }
         },
         "border-color": {
@@ -4973,7 +5271,7 @@
         "header-cell": {
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           }
         },
         "row": {
@@ -4988,7 +5286,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "table": {
         "container": {
           "box-inline-end-shadow": {
@@ -5011,7 +5309,7 @@
           },
           "font-weight": {
             "$type": "fontWeights",
-            "$value": "{voorbeeld.document.strong.font-weight}"
+            "$value": "{tilburg.document.strong.font-weight}"
           }
         }
       }
@@ -5244,7 +5542,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "textarea": {
         "hover": {
           "background-color": {
@@ -5402,7 +5700,7 @@
         }
       }
     },
-    "todo": {
+    "tilburg": {
       "textbox": {
         "hover": {
           "background-color": {
@@ -5506,6 +5804,7 @@
       "components/code-block",
       "components/color-sample",
       "components/drawer",
+      "components/fIle-upload-download",
       "components/form-field",
       "components/form-field-checkbox-option",
       "components/form-field-description",
