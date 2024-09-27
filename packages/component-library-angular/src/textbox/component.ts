@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['index.scss'],
 })
 export class TilburgTextbox {
+  @Input() ariaLabelArgument: string = '';
   @Input() control!: FormControl;
   @Input() disabled = false;
   @Input() invalid = false;
