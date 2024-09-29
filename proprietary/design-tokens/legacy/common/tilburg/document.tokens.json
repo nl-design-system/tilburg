@@ -1,0 +1,52 @@
+{
+  "tilburg": {
+    "document": {
+      "background-color": {
+        "value": "{tilburg.color.white}",
+        "type": "color"
+      },
+      "color": {
+        "value": "{tilburg.color.black-txt}",
+        "type": "color"
+      },
+      "inverse": {
+        "background-color": {
+          "value": "{tilburg.color.gray.950}",
+          "type": "color"
+        },
+        "color": {
+          "value": "{tilburg.color.white}",
+          "type": "color"
+        }
+      },
+      "subtle": {
+        "color": {
+          "value": "{tilburg.color.gray.600}",
+          "type": "color"
+        }
+      },
+      "font-family": {
+        "value": "{tilburg.typography.font-family.secondary}",
+        "type": "fontFamilies"
+      },
+      "font-size": {
+        "value": "{tilburg.typography.font-size.md}",
+        "type": "fontSizes"
+      },
+      "font-weight": {
+        "value": "{tilburg.typography.font-weight.normal}",
+        "type": "fontWeights"
+      },
+      "strong": {
+        "font-weight": {
+          "value": "{tilburg.typography.font-weight.bold}",
+          "type": "fontWeights"
+        }
+      },
+      "line-height": {
+        "value": "{tilburg.typography.line-height.md}",
+        "type": "lineHeights"
+      }
+    }
+  }
+}

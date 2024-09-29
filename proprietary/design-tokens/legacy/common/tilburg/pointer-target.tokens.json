@@ -1,0 +1,10 @@
+{
+  "tilburg": {
+    "pointer-target": {
+      "min-size": {
+        "value": "{tilburg.size.md}",
+        "type": "sizing"
+      }
+    }
+  }
+}

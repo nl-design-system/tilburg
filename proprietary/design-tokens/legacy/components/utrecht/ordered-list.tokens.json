@@ -1,0 +1,40 @@
+{
+  "utrecht": {
+    "ordered-list": {
+      "padding-inline-start": {
+        "value": "{tilburg.space.inline.rabbit}",
+        "type": "spacing"
+      },
+      "color": {
+        "type": "color",
+        "value": "{tilburg.document.color}"
+      },
+      "font-family": {
+        "value": "{tilburg.document.font-family}",
+        "type": "fontFamilies"
+      },
+      "font-weight": {
+        "value": "{tilburg.document.font-weight}",
+        "type": "fontWeights"
+      },
+      "font-size": {
+        "value": "{tilburg.document.font-size}",
+        "type": "fontSizes"
+      },
+      "line-height": {
+        "value": "{tilburg.document.line-height}",
+        "type": "lineHeights"
+      },
+      "item": {
+        "margin-block-end": {
+          "value": "{tilburg.space.block.ant}",
+          "type": "spacing"
+        },
+        "margin-block-start": {
+          "value": "{tilburg.space.block.ant}",
+          "type": "spacing"
+        }
+      }
+    }
+  }
+}

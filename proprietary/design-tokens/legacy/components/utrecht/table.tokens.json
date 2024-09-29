@@ -1,0 +1,152 @@
+{
+  "utrecht": {
+    "table": {
+      "header-cell": {
+        "color": {
+          "value": "{tilburg.document.color}",
+          "type": "color"
+        },
+        "font-family": {
+          "value": "{tilburg.document.font-family}",
+          "type": "fontFamilies"
+        },
+        "font-weight": {
+          "value": "{tilburg.document.strong.font-weight}",
+          "type": "fontWeights"
+        },
+        "font-size": {
+          "value": "{tilburg.document.font-size}",
+          "type": "fontSizes"
+        }
+      },
+      "caption": {
+        "margin-block-end": {
+          "value": "{tilburg.space.block.rabbit}",
+          "type": "spacing"
+        },
+        "color": {
+          "value": "{tilburg.heading.color}",
+          "type": "color"
+        },
+        "font-family": {
+          "value": "{tilburg.heading.font-family}",
+          "type": "fontFamilies"
+        },
+        "font-weight": {
+          "value": "{tilburg.heading.font-weight}",
+          "type": "fontWeights"
+        },
+        "font-size": {
+          "value": "{tilburg.typography.font-size.xl}",
+          "type": "fontSizes"
+        }
+      },
+      "cell": {
+        "padding-block-start": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-block-end": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-inline-end": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        },
+        "padding-inline-start": {
+          "value": "{tilburg.space.block.snail}",
+          "type": "spacing"
+        }
+      },
+      "data-cell": {
+        "color": {
+          "value": "{tilburg.document.color}",
+          "type": "color"
+        },
+        "font-family": {
+          "value": "{tilburg.document.font-family}",
+          "type": "fontFamilies"
+        },
+        "font-weight": {
+          "value": "{tilburg.document.font-weight}",
+          "type": "fontWeights"
+        },
+        "font-size": {
+          "value": "{tilburg.document.font-size}",
+          "type": "fontSizes"
+        }
+      },
+      "header": {
+        "border-block-end-width": {
+          "value": "{tilburg.border-width.md}",
+          "type": "borderWidth"
+        },
+        "border-block-end-color": {
+          "value": "{tilburg.line.border-color}",
+          "type": "color"
+        },
+        "background-color": {
+          "value": "transparent",
+          "type": "color"
+        }
+      },
+      "footer": {
+        "border-block-end-width": {
+          "value": "{tilburg.border-width.sm}",
+          "type": "borderWidth"
+        },
+        "border-block-end-color": {
+          "value": "{tilburg.line.border-color}",
+          "type": "color"
+        },
+        "background-color": {
+          "value": "transparent",
+          "type": "color"
+        }
+      },
+      "row": {
+        "border-block-end-width": {
+          "value": "{tilburg.border-width.sm}",
+          "type": "borderWidth"
+        },
+        "border-block-end-color": {
+          "value": "{tilburg.line.border-color}",
+          "type": "color"
+        },
+        "background-color": {
+          "value": "transparent",
+          "type": "color"
+        }
+      },
+      "footer-cell": {
+        "font-weight": {
+          "value": "{tilburg.document.strong.font-weight}",
+          "type": "fontWeights"
+        },
+        "font-size": {
+          "value": "{tilburg.document.font-size}",
+          "type": "fontSizes"
+        },
+        "color": {
+          "value": "{tilburg.document.color}",
+          "type": "color"
+        },
+        "font-family": {
+          "value": "{tilburg.document.font-family}",
+          "type": "fontFamilies"
+        }
+      },
+      "container": {
+        "box-inline-end-shadow": {
+          "value": "{tilburg.box-shadow.lg}",
+          "type": "boxShadow"
+        },
+        "box-inline-start-shadow": {
+          "value": "{tilburg.box-shadow.lg}",
+          "type": "boxShadow"
+        }
+      }
+    }
+  }
+}
