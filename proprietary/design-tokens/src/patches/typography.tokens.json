@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "tilburg": {
+      "typography": {
+        "font-family": {
+          "primary": {
+            "$value": "\"TradeGothic LT CondEighteen\", \"TradeGothic LT\", \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
+            "$type": "fontFamilies"
+          },
+          "secondary": {
+            "$value": "\"Roboto\"",
+            "$type": "fontFamilies"
+          },
+          "code": {
+            "$value": "\"Fira Code\", Tahoma, Verdana, sans-serif",
+            "$type": "fontFamilies"
+          }
+        }
+      }
+    }
+  }
+}
