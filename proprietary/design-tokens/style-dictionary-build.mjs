@@ -8,8 +8,11 @@ StyleDictionary.registerAction({
   name: "log-missing-tokens",
   do: function (dictionary) {
     console.log("Logging all tokens for debugging:");
+
     dictionary.allTokens.forEach((token) => {
-      console.log(`Token: ${token.name}, Value: ${token.value}`);
+      console.log(
+        `Token: ${token.name}, Value: ${token.value || token.$value}`,
+      );
     });
 
     // Check for unresolved references
