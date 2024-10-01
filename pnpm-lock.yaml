@@ -233,8 +233,8 @@ importers:
         specifier: 8.2.6
         version: 8.2.6(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
       '@storybook/addon-actions':
-        specifier: 8.2.6
-        version: 8.2.6(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
+        specifier: 8.3.4
+        version: 8.3.4(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
       '@storybook/addon-docs':
         specifier: 8.2.6
         version: 8.2.6(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))
@@ -2093,10 +2093,10 @@ packages:
     peerDependencies:
       storybook: ^8.2.6
 
-  '@storybook/addon-actions@8.2.6':
-    resolution: {integrity: sha512-iCsf3V28/jJ95w2zd8aSvR4denoA2UYV3fpNCTGOURqICyKOG3cyVxvqKp8Hhcwn7trNOsK+HlL6q5gpv56ViA==}
+  '@storybook/addon-actions@8.3.4':
+    resolution: {integrity: sha512-1y0yD3upKcyzNwwA6loAGW2cRDqExwl4oAT7GJQA4tmabI+fNwmANSgU/ezLvvSUf4Qo0eJHg2Zcn8y+Apq2eA==}
     peerDependencies:
-      storybook: ^8.2.6
+      storybook: ^8.3.4
 
   '@storybook/addon-docs@8.2.6':
     resolution: {integrity: sha512-qe7hxntaezqjKdU9QS+Q9NFL6i/uNdBxdvOnCKgPhBAY/zY6yhk5t3sOvonynPK5nkaNAowfSNPIzNxAXlJ1sA==}
@@ -10450,7 +10450,7 @@ snapshots:
       axe-core: 4.9.0
       storybook: 8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2))
 
-  '@storybook/addon-actions@8.2.6(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))':
+  '@storybook/addon-actions@8.3.4(storybook@8.2.6(@babel/preset-env@7.25.4(@babel/core@7.25.2)))':
     dependencies:
       '@storybook/global': 5.0.0
       '@types/uuid': 9.0.8
