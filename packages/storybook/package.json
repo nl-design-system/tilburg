@@ -29,7 +29,7 @@
     "@storybook/manager-api": "8.2.6",
     "@storybook/react": "8.2.6",
     "@storybook/react-vite": "8.2.6",
-    "@storybook/theming": "8.2.6",
+    "@storybook/theming": "8.3.4",
     "@tilburg/assets": "workspace:*",
     "@tilburg/components-css": "workspace:*",
     "@tilburg/design-tokens": "workspace:*",
