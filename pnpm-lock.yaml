@@ -374,8 +374,8 @@ importers:
   proprietary/design-tokens:
     devDependencies:
       '@tokens-studio/sd-transforms':
-        specifier: 1.2.3
-        version: 1.2.3(style-dictionary@4.1.0)
+        specifier: 1.2.5
+        version: 1.2.5(style-dictionary@4.1.0)
       chokidar-cli:
         specifier: 3.0.0
         version: 3.0.0
@@ -2297,8 +2297,8 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tokens-studio/sd-transforms@1.2.3':
-    resolution: {integrity: sha512-4F/Nl0oWwmukNLkOehrvosAFKvWUVieWqlKDua80NU1jNWgpax4EQjbHDQgfCF9nCthdcdcImzhItqbaLcmlvg==}
+  '@tokens-studio/sd-transforms@1.2.5':
+    resolution: {integrity: sha512-zX2ei4BTPCnMAUv/hcDxdrK6OoJ2pwAfygmbqtS17pMrhJcu06Tr7wkWEUSSuNU9jjwPkZrN/JUfZ/NFsdA+tQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       style-dictionary: ^4.0.1
@@ -10769,7 +10769,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@tokens-studio/sd-transforms@1.2.3(style-dictionary@4.1.0)':
+  '@tokens-studio/sd-transforms@1.2.5(style-dictionary@4.1.0)':
     dependencies:
       '@bundled-es-modules/deepmerge': 4.3.1
       '@bundled-es-modules/postcss-calc-ast-parser': 0.1.6
