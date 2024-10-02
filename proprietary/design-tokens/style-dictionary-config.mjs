@@ -4,7 +4,11 @@ const sortByName = (a, b) => stringSort(a.name, b.name);
 
 export const createStyleDictionaryConfig = ({
   selector,
-  source = ["src/**/tokens.json", "src/**/*.tokens.json"],
+  source = [
+    "src/**/tokens.json",
+    "src/**/*.tokens.json",
+    "figma/**/*.tokens.json",
+  ],
 }) => {
   const prefix = selector.replace(/^\.(.+)-theme/, "$1");
   const themeName = `${prefix}-theme`;
