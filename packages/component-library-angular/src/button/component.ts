@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgButton {
   @Input() appearance = 'primary-action-button';
+  @Input() size = 'medium';
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() small = false;
