@@ -1,1 +1,15 @@
-/* intentionally empty for now */
+.utrecht-button--secondary-action {
+  --_utrecht-button-appearance-focus-background-color: white;
+  --_utrecht-button-appearance-focus-color: var(--tilburg-interaction-active-color);
+  --_utrecht-button-appearance-focus-border-color: var(--tilburg-interaction-active-color);
+}
+
+.utrecht-button--subtle {
+  --_utrecht-button-appearance-focus-background-color: white;
+  --_utrecht-button-appearance-focus-color: var(--tilburg-interaction-active-color);
+  --utrecht-button-subtle-disabled-color: var(--tilburg-color-gray-400);
+}
+
+.utrecht-button {
+  text-transform: uppercase;
+}
