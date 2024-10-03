@@ -1,3 +1,41 @@
+.utrecht-button {
+  &.tilburg-small {
+    --utrecht-button-font-size: var(--tilburg-button-small-font-size);
+    --utrecht-button-icon-gap: var(--tilburg-button-small-column-gap);
+    --utrecht-button-font-size-medium: var(--tilburg-button-large-font-size);
+    --utrecht-button-padding-inline-start: var(--tilburg-fix-button-small-padding-inline-start);
+    --utrecht-button-padding-inline-end: var(--tilburg-fix-button-small-padding-inline-end);
+    --utrecht-button-padding-block-start: var(--tilburg-fix-button-small-padding-block-start);
+    --utrecht-button-padding-block-end: var(--tilburg-fix-button-small-padding-block-end);
+
+    font-size: 12px;
+    text-transform: var(--tilburg-button-small-text-case);
+  }
+
+  &.tilburg-medium {
+    --utrecht-button-font-size: var(--tilburg-button-medium-font-size);
+    --utrecht-button-icon-gap: var(--tilburg-button-medium-column-gap);
+    --utrecht-button-padding-inline-start: var(--tilburg-fix-button-medium-padding-inline-start);
+    --utrecht-button-padding-inline-end: var(--tilburg-fix-button-medium-padding-inline-end);
+    --utrecht-button-padding-block-start: var(--tilburg-fix-button-medium-padding-block-start);
+    --utrecht-button-padding-block-end: var(--tilburg-fix-button-medium-padding-block-end);
+
+    font-size: 16px;
+    text-transform: var(--tilburg-button-medium-text-case);
+  }
+
+  &.tilburg-large {
+    --utrecht-button-font-size: var(--tilburg-button-large-font-size);
+    --utrecht-button-icon-gap: var(--tilburg-button-large-column-gap);
+    --utrecht-button-padding-inline-start: var(--tilburg-fix-button-large-padding-inline-start);
+    --utrecht-button-padding-inline-end: var(--tilburg-fix-button-large-padding-inline-end);
+    --utrecht-button-padding-block-start: var(--tilburg-fix-button-large-padding-block-start);
+    --utrecht-button-padding-block-end: var(--tilburg-fix-button-large-padding-block-end);
+
+    text-transform: var(--tilburg-button-large-text-case);
+  }
+}
+
 .utrecht-button--secondary-action {
   --_utrecht-button-appearance-focus-background-color: white;
   --_utrecht-button-appearance-focus-color: var(--tilburg-interaction-active-color);
@@ -8,8 +46,4 @@
   --_utrecht-button-appearance-focus-background-color: white;
   --_utrecht-button-appearance-focus-color: var(--tilburg-interaction-active-color);
   --utrecht-button-subtle-disabled-color: var(--tilburg-color-gray-400);
-}
-
-.utrecht-button {
-  text-transform: uppercase;
 }
