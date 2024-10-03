@@ -1,0 +1,16 @@
+{
+  "components/button": {
+    "utrecht": {
+      "button": {
+        "padding-inline-start": { "$value": "{tilburg.space.inline.mouse}" },
+        "padding-inline-end": { "$value": "{tilburg.space.inline.mouse}" },
+        "padding-block-start": { "$value": "{tilburg.space.block.snail}" },
+        "padding-block-end": { "$value": "{tilburg.space.block.snail}" },
+        "margin-inline-start": { "$value": "0" },
+        "margin-inline-end": { "$value": "0" },
+        "margin-block-start": { "$value": "{tilburg.space.row.snail}" },
+        "margin-block-end": { "$value": "{tilburg.space.row.snail}" }
+      }
+    }
+  }
+}
