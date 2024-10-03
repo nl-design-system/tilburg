@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgFormField {
   @Input() invalid?: boolean = false;
+  @Input() warning?: boolean = false;
   @Input() type?: 'checkbox' | 'radio' | 'text';
   @Input() class?: string;
 }

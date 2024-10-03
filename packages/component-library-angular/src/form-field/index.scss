@@ -1,1 +1,5 @@
-/* intentionally empty for now */
+utrecht-form-field.tilburg-warning {
+  --utrecht-form-field-invalid-border-inline-start-color: var(--utrecht-feedback-warning-color);
+  --utrecht-textbox-invalid-border-color: var(--utrecht-feedback-warning-border-color);
+  --utrecht-textbox-invalid-background-color: var(--utrecht-feedback-warning-background-color);
+}
