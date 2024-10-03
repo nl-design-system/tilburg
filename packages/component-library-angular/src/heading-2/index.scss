@@ -1,1 +1,9 @@
-/* intentionally empty for now */
+utrecht-heading-2 {
+  --utrecht-heading-2-font-size: var(--tilburg-heading-2-large-vw-font-size);
+}
+
+@media (width <= 768px) {
+  utrecht-heading-2 {
+    --utrecht-heading-2-font-size: var(--tilburg-heading-2-small-vw-font-size);
+  }
+}
