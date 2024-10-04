@@ -1,7 +1,5 @@
 {
-  "name": "@gemeente-tilburg/design-tokens",
-  "version": "0.0.1",
-  "description": "Gemeente Tilburg design tokens",
+  "version": "1.0.0-alpha.33",
   "author": "Community for NL Design System",
   "license": "SEE LICENSE IN LICENSE.md",
   "keywords": [

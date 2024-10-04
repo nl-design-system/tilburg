@@ -30,9 +30,43 @@ StyleDictionary.registerAction({
   undo: function (dictionary) {},
 });
 
+StyleDictionary.registerAction({
+  name: "log-missing-tokens",
+  do: function (dictionary) {
+    console.log("Logging all tokens for debugging:");
+
+    dictionary.allTokens.forEach((token) => {
+      console.log(
+        `Token: ${token.name}, Value: ${token.value || token.$value}`,
+      );
+    });
+
+    // Check for unresolved references
+    const unresolvedReferences = dictionary.allTokens.filter((token) => {
+      return (
+        typeof token.value === "string" &&
+        token.value.includes("{") &&
+        token.value.includes("}")
+      );
+    });
+
+    if (unresolvedReferences.length > 0) {
+      console.log("Unresolved Token References:");
+      unresolvedReferences.forEach((token) => {
+        console.log(
+          `Token: ${token.name} has an unresolved reference: ${token.value}`,
+        );
+      });
+    } else {
+      console.log("No unresolved token references.");
+    }
+  },
+  undo: function (dictionary) {},
+});
+
 const build = async () => {
-  const themeConfig = JSON.parse(await readFile('./config.json', 'utf-8'));
-  console.log('Starting build...'); // Debugging statement
+  const themeConfig = JSON.parse(await readFile("./config.json", "utf-8"));
+  console.log("Starting build..."); // Debugging statement
 
   // Register preprocessors and transformers
   StyleDictionary.registerPreprocessor({
@@ -47,23 +81,27 @@ const build = async () => {
   const sd = new StyleDictionary({
     ...createStyleDictionaryConfig({
       selector: `.${themeConfig.prefix}-theme`,
-      source: ['figma/figma.tokens.json', 'src/**/tokens.json', 'src/**/*.tokens.json'],
+      source: [
+        "figma/figma.tokens.json",
+        "src/**/tokens.json",
+        "src/**/*.tokens.json",
+      ],
     }),
     log: {
-      verbosity: 'verbose',
+      verbosity: "verbose",
     },
-    preprocessors: ['tokens-studio', 'dtcg-delegate'],
+    preprocessors: ["tokens-studio", "dtcg-delegate"],
   });
 
   // Ensure custom action is directly attached to the platform
   sd.platforms = {
     ...sd.platforms,
     ...{
-      'css-for-backwards-compatibility': {
-        transformGroups: 'tokens-studio',
-        transforms: ['name/kebab', 'color/hsl-4'],
-        buildPath: 'dist/',
-        actions: ['log-missing-tokens'], // Attach custom action here
+      "css-for-backwards-compatibility": {
+        transformGroups: "tokens-studio",
+        transforms: ["name/kebab", "color/hsl-4"],
+        buildPath: "dist/",
+        actions: ["log-missing-tokens"], // Attach custom action here
         files: [
           {
             destination: 'index.css',
@@ -78,12 +116,12 @@ const build = async () => {
     },
   };
 
-  console.log('Cleaning platforms...'); // Debugging statement
+  console.log("Cleaning platforms..."); // Debugging statement
   await sd.cleanAllPlatforms();
 
-  console.log('Building platforms...'); // Debugging statement
+  console.log("Building platforms..."); // Debugging statement
   await sd.buildAllPlatforms();
-  console.log('Build complete!'); // Debugging statement
+  console.log("Build complete!"); // Debugging statement
 };
 
 build();
