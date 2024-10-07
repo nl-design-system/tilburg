@@ -6,6 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['index.scss'],
 })
 export class TilburgFormLabel {
+  @Input() for?: string = undefined;
   @Input() checked?: boolean = false;
   @Input() type?: 'checkbox' | 'radio' | 'text';
   @Input() disabled?: boolean = false;

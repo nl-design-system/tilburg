@@ -8,8 +8,8 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['index.scss'],
 })
 export class TilburgRadioButton {
-  @Input() ariaLabel: string = '';
   @Input() id?: string = undefined;
+  @Input() ariaLabel: string = '';
   @Input() name: string = '';
   @Input() value: any;
   @Input() control!: FormControl;

@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['index.scss'],
 })
 export class TilburgCheckbox {
+  @Input() id?: string = undefined;
   @Input() control?: FormControl;
   @Input() ariaLabel: string = '';
   @Input() invalid?: boolean = false;
