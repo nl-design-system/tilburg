@@ -1,0 +1,23 @@
+{
+  "components/form-label": {
+    "utrecht": {
+      "form-label": {
+        "color": {
+          "$value": "#333333"
+        },
+        "font-family": {
+          "$value": "Roboto"
+        },
+        "font-size": {
+          "$value": "16px"
+        },
+        "font-weight": {
+          "$value": "700"
+        },
+        "line-height": {
+          "$value": "24px"
+        }
+      }
+    }
+  }
+}
