@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['index.scss'],
 })
 export class TilburgTextarea {
+  @Input() id?: string = undefined;
   @Input() dir = '';
   @Input() disabled = false;
   @Input() invalid = false;
