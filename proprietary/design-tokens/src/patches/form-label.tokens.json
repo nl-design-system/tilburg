@@ -16,6 +16,9 @@
         },
         "line-height": {
           "$value": "24px"
+        },
+        "checkbox-font-weight": {
+          "$value": "400"
         }
       }
     }
