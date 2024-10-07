@@ -19,6 +19,9 @@
         },
         "checkbox-font-weight": {
           "$value": "400"
+        },
+        "radio-font-weight": {
+          "$value": "400"
         }
       }
     }
