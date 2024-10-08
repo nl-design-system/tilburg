@@ -1,1 +1,9 @@
 /* intentionally empty for now */
+.utrecht-form-label--radio {
+  font-weight: 400;
+}
+
+.utrecht-radio-button.utrecht-radio-button--html-input {
+  /* Wont be patched properly for some reason. The values set come after the patches. */
+  --utrecht-radio-button-icon-size: 6px;
+}
