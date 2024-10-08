@@ -7,3 +7,8 @@
   /* Wont be patched properly for some reason. The values set come after the patches. */
   --utrecht-radio-button-icon-size: 6px;
 }
+
+.utrecht-radio-button--html-input {
+  --utrecht-radio-button-focus-background-color: var(--utrecht-radio-button-checked-background-color);
+  --utrecht-radio-button-focus-color: var(--utrecht-radio-button-checked-color);
+}
