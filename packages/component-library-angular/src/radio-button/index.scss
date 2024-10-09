@@ -1,0 +1,70 @@
+/* intentionally empty for now */
+.utrecht-form-label--radio {
+  font-weight: 400;
+}
+
+.utrecht-radio-button.utrecht-radio-button--html-input {
+  /* Wont be patched properly for some reason. The values set come after the patches. */
+  --utrecht-radio-button-icon-size: 6px;
+}
+
+.utrecht-radio-button--html-input {
+  --utrecht-radio-button-focus-background-color: var(--utrecht-radio-button-checked-background-color);
+  --utrecht-radio-button-focus-color: var(--utrecht-radio-button-checked-color);
+}
+
+.utrecht-radio-button--html-input.utrecht-radio-button {
+  &:focus:not([aria-disabled="true"], :disabled) {
+    background-color: var(--utrecht-radio-button-disabled-background-color);
+    border-width: 1px;
+  }
+
+  &:focus-visible:not([aria-disabled="true"], :disabled) {
+    background-color: var(--utrecht-radio-button-disabled-background-color);
+    border-width: 1px;
+  }
+
+  &:invalid:not(:checked) {
+    background-color: #ffe1e0;
+  }
+
+  &:checked {
+    &:disabled {
+      border-color: #626262;
+      border-width: 7px;
+    }
+    &:active {
+      opacity: 90%;
+    }
+
+    &:hover {
+      filter: brightness(90%);
+    }
+
+    &:focus,
+    &:focus-visible {
+      --utrecht-radio-button-color: black;
+      --_utrecht-radio-button-color: black;
+      --utrecht-radio-button-background-color: #e6f6ff;
+      --_utrecht-radio-button-background-color: #e6f6ff;
+      --_utrecht-radio-button-interactive-background-color: var(
+        --utrecht-radio-button-focus-background-color,
+        var(--utrecht-radio-button-focus-background-color)
+      );
+      --_utrecht-radio-button-interactive-border-color: var(
+        --utrecht-radio-button-focus-border-color,
+        var(--utrecht-radio-button-focus-border-color)
+      );
+      --_utrecht-radio-button-interactive-border-width: var(
+        --utrecht-radio-button-focus-border-width,
+        var(--utrecht-radio-button-focus-border-width)
+      );
+      --_utrecht-radio-button-interactive-color: var(
+        --utrecht-radio-button-focus-color,
+        var(--utrecht-radio-button-focus-color)
+      );
+
+      background-color: #e6f6ff;
+    }
+  }
+}
