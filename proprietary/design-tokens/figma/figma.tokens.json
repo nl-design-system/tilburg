@@ -3333,7 +3333,7 @@
     }
   },
   "components/form-field-label": {
-    "todo": {
+    "tilburg": {
       "form-field-label": {
         "color": {
           "$type": "color",
@@ -3354,14 +3354,12 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{utrecht.document.line-height}"
-        }
-      }
-    },
-    "tilburg": {
-      "accordion": {
-        "border-radius": {
-          "$type": "borderRadius",
-          "$value": "0"
+        },
+        "accordion": {
+          "border-radius": {
+            "$type": "borderRadius",
+            "$value": "0"
+          }
         }
       }
     }
@@ -4941,12 +4939,12 @@
             },
             "color": {
               "$type": "color",
-              "$value": "{utrecht.document.color}"
+              "$value": "{tilburg.interaction.color}"
             }
           },
           "color": {
             "$type": "color",
-            "$value": "{tilburg.interaction.color}"
+            "$value": "{utrecht.document.color}"
           },
           "active": {
             "color": {
@@ -6170,6 +6168,24 @@
       }
     }
   },
+  "components/loading-spinner": {
+    "tilburg": {
+      "loading-spinner": {
+        "row-gap": {
+          "$type": "spacing",
+          "$value": "{tilburg.space.row.snail}"
+        },
+        "background-color": {
+          "$type": "color",
+          "$value": "{utrecht.form-control.placeholder.color}"
+        },
+        "active-color": {
+          "$type": "color",
+          "$value": "{tilburg.form-control.active.color}"
+        }
+      }
+    }
+  },
   "components/unordered-list": {
     "utrecht": {
       "unordered-list": {
@@ -6262,6 +6278,7 @@
       "components/textarea",
       "components/textbox",
       "components/toolbar-button",
+      "components/loading-spinner",
       "components/unordered-list"
     ]
   }
