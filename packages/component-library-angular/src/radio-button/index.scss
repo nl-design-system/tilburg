@@ -29,6 +29,10 @@
   }
 
   &:checked {
+    &:disabled {
+      border-color: #626262;
+      border-width: 7px;
+    }
     &:active {
       opacity: 90%;
     }
