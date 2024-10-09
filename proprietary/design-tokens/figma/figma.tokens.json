@@ -3782,6 +3782,24 @@
       }
     }
   },
+  "components/loading-spinner": {
+    "tilburg": {
+      "loading-spinner": {
+        "row-gap": {
+          "$value": "{tilburg.space.row.snail}",
+          "$type": "spacing"
+        },
+        "background-color": {
+          "$value": "{utrecht.form-control.placeholder.color}",
+          "$type": "color"
+        },
+        "active-color": {
+          "$value": "{tilburg.form-control.active.color}",
+          "$type": "color"
+        }
+      }
+    }
+  },
   "components/mark": {
     "utrecht": {
       "mark": {
@@ -6168,24 +6186,6 @@
       }
     }
   },
-  "components/loading-spinner": {
-    "tilburg": {
-      "loading-spinner": {
-        "row-gap": {
-          "$value": "{tilburg.space.row.snail}",
-          "$type": "spacing"
-        },
-        "background-color": {
-          "$value": "{utrecht.form-control.placeholder.color}",
-          "$type": "color"
-        },
-        "active-color": {
-          "$value": "{tilburg.form-control.active.color}",
-          "$type": "color"
-        }
-      }
-    }
-  },
   "components/unordered-list": {
     "utrecht": {
       "unordered-list": {
@@ -6256,6 +6256,7 @@
       "components/icon-only-button",
       "components/link",
       "components/link-list",
+      "components/loading-spinner",
       "components/mark",
       "components/modal-dialog",
       "components/number-badge",
@@ -6278,7 +6279,6 @@
       "components/textarea",
       "components/textbox",
       "components/toolbar-button",
-      "components/loading-spinner",
       "components/unordered-list"
     ]
   }
