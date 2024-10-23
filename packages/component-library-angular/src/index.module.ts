@@ -39,6 +39,7 @@ import { TilburgTableHeaderAttr } from './table-header/component';
 import { TilburgTableHeaderCellAttr } from './table-header-cell/component';
 import { TilburgTableRowAttr } from './table-row/component';
 import { TilburgTextarea } from './textarea/component';
+import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-directive';
 import { TilburgTextbox } from './textbox/component';
 import { TilburgUnorderedList } from './unordered-list/component';
 
@@ -78,6 +79,7 @@ const components = [
   TilburgHtmlContent,
   TilburgFormLabel,
   TilburgSeparator,
+  TilburgTextareaAutoresizeDirective,
   TilburgTextarea,
   TilburgTextbox,
   TilburgRadioButton,

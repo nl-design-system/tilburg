@@ -39,3 +39,4 @@ export * from './table/component';
 export * from './textarea/component';
 export * from './textbox/component';
 export * from './unordered-list/component';
+export * from './textarea/textarea-resize-directive';
