@@ -24,7 +24,9 @@ export class TilburgTextareaAutoresizeDirective implements OnInit {
     const paddingTop = parseInt(style.paddingTop.replace('px', ''), 10);
     const paddingBottom = parseInt(style.paddingBottom.replace('px', ''), 10);
     const lineHeight = parseInt(style.lineHeight.replace('px', ''), 10);
-    this._elementRef.nativeElement.style.height =
-      Math.min(lineHeight * 8 + paddingTop + paddingBottom, this.elementRef.nativeElement.scrollHeight) + 'px';
+    this._elementRef.nativeElement.style.minHeight = lineHeight * 4 + paddingTop + paddingBottom;
+    let maxSize = Math.min(lineHeight * 8 + paddingTop + paddingBottom, this.elementRef.nativeElement.scrollHeight);
+    let minSize = lineHeight * 4 + paddingTop + paddingBottom;
+    this._elementRef.nativeElement.style.height = Math.max(minSize, maxSize) + 'px';
   }
 }
