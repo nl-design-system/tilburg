@@ -40,6 +40,7 @@
     "@types/react-dom": "18.3.0",
     "@utrecht/component-library-react": "4.2.0",
     "@utrecht/components": "6.1.0",
+    "eslint-plugin-storybook": "0.8.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rimraf": "6.0.1",
@@ -48,6 +49,7 @@
     "vite": "5.3.5"
   },
   "dependencies": {
+    "@storybook/angular": "8.1.11",
     "@amsterdam/design-system-css": "0.11.1",
     "@amsterdam/design-system-react": "0.11.1",
     "@amsterdam/design-system-assets": "0.2.1",
