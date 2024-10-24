@@ -36,24 +36,24 @@
             "$value": "{tilburg.space.block.beetle}"
           },
           "padding-inline-end": {
-            "$value": "{tilburg.space.column.dog}"
+            "$value": "{tilburg.space.inline.cat}"
           },
           "padding-inline-start": {
-            "$value": "{tilburg.space.column.dog}"
+            "$value": "{tilburg.space.inline.cat}"
           }
         },
         "large": {
           "padding-block-end": {
-            "$value": "{tilburg.space.block.rat}"
+            "$value": "{tilburg.space.block.snail}"
           },
           "padding-block-start": {
-            "$value": "{tilburg.space.block.rat}"
+            "$value": "{tilburg.space.block.snail}"
           },
           "padding-inline-end": {
-            "$value": "{tilburg.space.inline.cat}"
+            "$value": "{tilburg.space.inline.mouse}"
           },
           "padding-inline-start": {
-            "$value": "{tilburg.space.inline.cat}"
+            "$value": "{tilburg.space.inline.mouse}"
           }
         }
       }
