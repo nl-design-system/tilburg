@@ -1,4 +1,8 @@
 .utrecht-button {
+  &:focus-visible {
+    outline: dashed black thin;
+  }
+
   &.tilburg-small {
     --utrecht-button-font-size: var(--tilburg-button-small-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-small-column-gap);
