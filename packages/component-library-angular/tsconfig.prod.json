@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declarationMap": false,
     "paths": {
-      "@tilburg/component-library-angular": ["./"]
+      "@tilburg/component-library-angular": ["."]
     }
   },
   "angularCompilerOptions": {

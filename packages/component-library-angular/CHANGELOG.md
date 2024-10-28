@@ -1,4 +1,4 @@
-# @utrecht/component-library-angular
+# @tilburg/component-library-angular
 
 ## 1.1.0
 

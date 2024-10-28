@@ -15,8 +15,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.dist.json",
-    "clean": "rimraf dist",
-    "lint-build": "tsc --noEmit --project tsconfig.json"
+    "clean": "rimraf dist"
   },
   "devDependencies": {
     "@storybook/theming": "8.1.11",

@@ -20,7 +20,7 @@
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@tilburg/component-library-angular": ["./"]
+      "@tilburg/component-library-angular": ["."]
     }
   },
   "angularCompilerOptions": {
