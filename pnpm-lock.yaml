@@ -14,16 +14,28 @@ importers:
     devDependencies:
       '@lerna-lite/cli':
         specifier: 3.9.1
+<<<<<<< HEAD
         version: 3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)
+=======
+        version: 3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4))(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
       '@lerna-lite/publish':
         specifier: 3.4.0
-        version: 3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4)
+        version: 3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4)
       '@lerna-lite/run':
+<<<<<<< HEAD
         specifier: 3.9.1
         version: 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4)
       '@lerna-lite/version':
         specifier: 3.10.0
         version: 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+=======
+        specifier: 3.10.0
+        version: 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/version':
+        specifier: 3.9.1
+        version: 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
       '@types/node':
         specifier: 20.12.12
         version: 20.12.12
@@ -2455,8 +2467,8 @@ packages:
     resolution: {integrity: sha512-xIJcHu6be937nNNtkHaaj37pdc+GtwdiO60iURGqHZJNPaN2lq00bqcSQ3OVuszpBQXGaMI3DuvDTdxoZR7clg==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
-  '@lerna-lite/filter-packages@3.9.1':
-    resolution: {integrity: sha512-q43dm046Hotg5ITbfkvDLffrjhpGzFvVUAlhwTdC5vFti6wFKHvu4+0Uv1CJeIp1Wb1X88hyU4zaPWRJzaCkTA==}
+  '@lerna-lite/init@3.10.0':
+    resolution: {integrity: sha512-lLdhw/0uqXi5vKjcliudMTxe2zvHVTFdNw6xeI8ni3eq3T1duguoPb+832wgApJK+yzQM6kWG8j9GxtQQzAZdg==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
   '@lerna-lite/init@3.10.0':
@@ -2479,16 +2491,16 @@ packages:
     resolution: {integrity: sha512-ny8vueqyhWZtNRsoOVUybdOK6KcGDpLzFD01Ae4k/NjEw1ap3v6sUS0k7h/U2/HmZgiR0bU+XRJShuoUZf6E/g==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
-  '@lerna-lite/profiler@3.9.1':
-    resolution: {integrity: sha512-bGRxjhPT5Ly7U54YPa+oqF4REU/12YW5eLlzNh3mIwtdxysUx71DTEBiBvA45wYlu0RWtwnOYHDpvhMts+H2fw==}
+  '@lerna-lite/profiler@3.10.0':
+    resolution: {integrity: sha512-GHSUWBj7KPDKEF0I8Y1uzwQHKafVvDhFtOHq9rPdc2FUCL3Sck3ZhK5CwSHFhVq50owoEBYVHNrvG/4a6Kf8zA==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
   '@lerna-lite/publish@3.4.0':
     resolution: {integrity: sha512-BiWDdV1vKhdxumXX4uSrhauvD7qV8TpImAYFyR3XxKEOv8SQt4O5ZlAIKG8yH1i365zIsS6DOPfBdamMFKB9hw==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
-  '@lerna-lite/run@3.9.1':
-    resolution: {integrity: sha512-GeVHa9lVP/ZPD1vlMoHgAgLhzDCER60N+qGXN0sUhnyjXK0prmWMPOpwmqRt1ML75rvSXj+YogsOVk6nJfe0+w==}
+  '@lerna-lite/run@3.10.0':
+    resolution: {integrity: sha512-pYh81vRgZHfqKPIDwX/JOp/BjrfjaSs+jHw/BXFnJKTykIDAlmgGRyPC4yKuamiJ/+lmin+6OKDJoZGXbea9lQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
   '@lerna-lite/version@3.10.0':
@@ -14503,7 +14515,11 @@ snapshots:
     dependencies:
       tslib: 2.6.3
 
+<<<<<<< HEAD
   '@lerna-lite/cli@3.10.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@types/node@20.12.12)(typescript@5.5.4)':
+=======
+  '@lerna-lite/cli@3.10.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@types/node@20.12.12)(typescript@5.5.4)':
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     dependencies:
       '@lerna-lite/core': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
       '@lerna-lite/init': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
@@ -14514,9 +14530,15 @@ snapshots:
       load-json-file: 7.0.1
       yargs: 17.7.2
     optionalDependencies:
+<<<<<<< HEAD
       '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4)
       '@lerna-lite/run': 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4)
       '@lerna-lite/version': 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+=======
+      '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+      '@lerna-lite/run': 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/version': 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -14524,7 +14546,11 @@ snapshots:
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@lerna-lite/cli@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)':
+=======
+  '@lerna-lite/cli@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)':
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     dependencies:
       '@lerna-lite/core': 3.4.0(typescript@5.5.4)
       '@lerna-lite/init': 3.4.0(typescript@5.5.4)
@@ -14535,16 +14561,26 @@ snapshots:
       npmlog: 7.0.1
       yargs: 17.7.2
     optionalDependencies:
+<<<<<<< HEAD
       '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4)
       '@lerna-lite/run': 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4)
       '@lerna-lite/version': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4)
+=======
+      '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+      '@lerna-lite/run': 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/version': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     transitivePeerDependencies:
       - babel-plugin-macros
       - bluebird
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@lerna-lite/cli@3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)':
+=======
+  '@lerna-lite/cli@3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4))(typescript@5.5.4)':
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     dependencies:
       '@lerna-lite/core': 3.9.1(typescript@5.5.4)
       '@lerna-lite/init': 3.9.1(typescript@5.5.4)
@@ -14555,9 +14591,15 @@ snapshots:
       load-json-file: 7.0.1
       yargs: 17.7.2
     optionalDependencies:
+<<<<<<< HEAD
       '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4)
       '@lerna-lite/run': 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4)
       '@lerna-lite/version': 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+=======
+      '@lerna-lite/publish': 3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+      '@lerna-lite/run': 3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/version': 3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
     transitivePeerDependencies:
       - babel-plugin-macros
       - bluebird
@@ -14672,12 +14714,14 @@ snapshots:
       - supports-color
       - typescript
 
-  '@lerna-lite/filter-packages@3.9.1(typescript@5.5.4)':
+  '@lerna-lite/init@3.10.0(@types/node@20.12.12)(typescript@5.5.4)':
     dependencies:
-      '@lerna-lite/core': 3.9.1(typescript@5.5.4)
-      '@lerna-lite/npmlog': 3.8.0
-      multimatch: 7.0.0
+      '@lerna-lite/core': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
+      fs-extra: 11.2.0
+      p-map: 7.0.2
+      write-json-file: 6.0.0
     transitivePeerDependencies:
+      - '@types/node'
       - babel-plugin-macros
       - bluebird
       - supports-color
@@ -14744,23 +14788,30 @@ snapshots:
       strip-ansi: 7.1.0
       wide-align: 1.1.5
 
-  '@lerna-lite/profiler@3.9.1(typescript@5.5.4)':
+  '@lerna-lite/profiler@3.10.0(@types/node@20.12.12)(typescript@5.5.4)':
     dependencies:
-      '@lerna-lite/core': 3.9.1(typescript@5.5.4)
-      '@lerna-lite/npmlog': 3.8.0
+      '@lerna-lite/core': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/npmlog': 3.10.0
       fs-extra: 11.2.0
       upath: 2.0.1
     transitivePeerDependencies:
+      - '@types/node'
       - babel-plugin-macros
       - bluebird
       - supports-color
       - typescript
 
-  '@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4)':
+  '@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4)':
     dependencies:
+<<<<<<< HEAD
       '@lerna-lite/cli': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)
       '@lerna-lite/core': 3.4.0(typescript@5.5.4)
       '@lerna-lite/version': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4)
+=======
+      '@lerna-lite/cli': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)
+      '@lerna-lite/core': 3.4.0(typescript@5.5.4)
+      '@lerna-lite/version': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
       byte-size: 8.1.1
       chalk: 5.3.0
       columnify: 1.6.0
@@ -14793,6 +14844,7 @@ snapshots:
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4)':
     dependencies:
       '@lerna-lite/cli': 3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)
@@ -14801,19 +14853,30 @@ snapshots:
       '@lerna-lite/npmlog': 3.8.0
       '@lerna-lite/profiler': 3.9.1(typescript@5.5.4)
       chalk: 5.3.0
+=======
+  '@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)':
+    dependencies:
+      '@lerna-lite/cli': 3.10.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/core': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
+      '@lerna-lite/npmlog': 3.10.0
+      '@lerna-lite/profiler': 3.10.0(@types/node@20.12.12)(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
       fs-extra: 11.2.0
       p-map: 7.0.2
+      tinyrainbow: 1.2.0
     transitivePeerDependencies:
       - '@lerna-lite/exec'
       - '@lerna-lite/list'
       - '@lerna-lite/publish'
       - '@lerna-lite/version'
       - '@lerna-lite/watch'
+      - '@types/node'
       - babel-plugin-macros
       - bluebird
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4)':
     dependencies:
       '@lerna-lite/cli': 3.10.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@types/node@20.12.12)(typescript@5.5.4)
@@ -14864,6 +14927,11 @@ snapshots:
   '@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4)':
     dependencies:
       '@lerna-lite/cli': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.9.1)(typescript@5.5.4))(@lerna-lite/run@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.10.0)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)
+=======
+  '@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4)':
+    dependencies:
+      '@lerna-lite/cli': 3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.4.0(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(typescript@5.5.4))(typescript@5.5.4)
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
       '@lerna-lite/core': 3.4.0(typescript@5.5.4)
       '@octokit/plugin-enterprise-rest': 6.0.1
       '@octokit/rest': 20.1.1
@@ -14906,10 +14974,58 @@ snapshots:
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@listr2/prompt-adapter-inquirer@2.0.13(@inquirer/prompts@5.0.7)':
     dependencies:
       '@inquirer/prompts': 5.0.7
       '@inquirer/type': 1.5.3
+=======
+  '@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4)':
+    dependencies:
+      '@lerna-lite/cli': 3.9.1(@lerna-lite/publish@3.4.0(@lerna-lite/run@3.10.0)(typescript@5.5.4))(@lerna-lite/run@3.10.0(@lerna-lite/publish@3.4.0)(@lerna-lite/version@3.9.1)(@types/node@20.12.12)(typescript@5.5.4))(@lerna-lite/version@3.9.1(@lerna-lite/publish@3.4.0)(@lerna-lite/run@3.10.0)(typescript@5.5.4))(typescript@5.5.4)
+      '@lerna-lite/core': 3.9.1(typescript@5.5.4)
+      '@lerna-lite/npmlog': 3.8.0
+      '@octokit/plugin-enterprise-rest': 6.0.1
+      '@octokit/rest': 21.0.2
+      chalk: 5.3.0
+      conventional-changelog-angular: 7.0.0
+      conventional-changelog-core: 7.0.0
+      conventional-changelog-writer: 7.0.1
+      conventional-commits-parser: 5.0.0
+      conventional-recommended-bump: 9.0.0
+      dedent: 1.5.3
+      fs-extra: 11.2.0
+      get-stream: 9.0.1
+      git-url-parse: 15.0.0
+      graceful-fs: 4.2.11
+      is-stream: 4.0.1
+      load-json-file: 7.0.1
+      make-dir: 5.0.0
+      minimatch: 9.0.5
+      new-github-release-url: 2.0.0
+      node-fetch: 3.3.2
+      npm-package-arg: 11.0.3
+      p-limit: 6.1.0
+      p-map: 7.0.2
+      p-pipe: 4.0.0
+      p-reduce: 3.0.0
+      pify: 6.1.0
+      semver: 7.6.3
+      slash: 5.1.0
+      temp-dir: 3.0.0
+      uuid: 10.0.0
+      write-json-file: 6.0.0
+    transitivePeerDependencies:
+      - '@lerna-lite/exec'
+      - '@lerna-lite/list'
+      - '@lerna-lite/publish'
+      - '@lerna-lite/run'
+      - '@lerna-lite/watch'
+      - babel-plugin-macros
+      - bluebird
+      - supports-color
+      - typescript
+>>>>>>> dependabot/npm_and_yarn/lerna-lite/run-3.10.0
 
   '@ljharb/through@2.3.13':
     dependencies:
