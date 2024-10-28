@@ -3,7 +3,6 @@ import { Component, Input, OnInit } from '@angular/core';
 @Component({
   selector: 'tilburg-paragraph',
   templateUrl: 'index.html',
-  styleUrls: ['index.scss'],
 })
 export class TilburgParagraph implements OnInit {
   @Input() lead = false;
