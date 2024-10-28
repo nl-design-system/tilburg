@@ -284,8 +284,8 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       '@utrecht/component-library-react':
-        specifier: 4.2.0
-        version: 4.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 7.2.0
+        version: 7.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@utrecht/components':
         specifier: 6.2.0
         version: 6.2.0
@@ -2551,8 +2551,8 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@utrecht/component-library-react@4.2.0':
-    resolution: {integrity: sha512-xS6hpHtidYstCPjm1STc+iGTHmc02mc/dmvDcFAcRnwzweI4zunxawIxwF8cpG4SyjeK0b6iU8GJ3d7QXUe7mA==}
+  '@utrecht/component-library-react@7.2.0':
+    resolution: {integrity: sha512-o2nJIWxc93KmQIVNSX4WIJQqZCcMCOnS1A6oqfFKV8kBbnVaDxuqQSgjT/HNkoqLWZQY9Zo5orKdmRDHDpKr+w==}
     peerDependencies:
       '@babel/runtime': ^7.23.6
       date-fns: ^2.30.0
@@ -10647,7 +10647,7 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@utrecht/component-library-react@4.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@utrecht/component-library-react@7.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.0
       clsx: 2.1.1
