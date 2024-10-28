@@ -82,6 +82,7 @@
     "@tilburg/design-tokens": "workspace:*",
     "@tilburg/font": "workspace:*",
     "@tilburg/storybook-helpers": "workspace:*",
+    "@tilburg/component-library-angular": "workspace:*",
     "@types/node": "20.14.10",
     "@types/jest": "29.5.14",
     "@typescript-eslint/eslint-plugin": "7.16.1",

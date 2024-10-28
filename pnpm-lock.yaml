@@ -214,6 +214,9 @@ importers:
       '@tilburg/assets':
         specifier: workspace:*
         version: link:../../proprietary/assets
+      '@tilburg/component-library-angular':
+        specifier: workspace:*
+        version: 'link:'
       '@tilburg/design-tokens':
         specifier: workspace:*
         version: link:../../proprietary/design-tokens
