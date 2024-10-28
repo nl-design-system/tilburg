@@ -9,6 +9,7 @@ export class TilburgLink {
   @Input() external = false;
   @Input() rel?;
   @Input() href?;
+  @Input() target?;
 
   constructor() {}
 }
