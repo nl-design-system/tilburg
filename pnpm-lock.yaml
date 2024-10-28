@@ -217,14 +217,14 @@ importers:
         specifier: 0.2.2
         version: 0.2.2
       '@amsterdam/design-system-css':
-        specifier: 0.12.0
-        version: 0.12.0(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.12.0)
+        specifier: 0.11.1
+        version: 0.11.1(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.11.0)
       '@amsterdam/design-system-react':
-        specifier: 0.12.0
-        version: 0.12.0(@amsterdam/design-system-css@0.12.0(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.12.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.11.1
+        version: 0.11.1(@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.11.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@amsterdam/design-system-tokens':
-        specifier: 0.12.0
-        version: 0.12.0
+        specifier: 0.11.0
+        version: 0.11.0
       clsx:
         specifier: 2.1.1
         version: 2.1.1
@@ -406,27 +406,27 @@ packages:
   '@amsterdam/design-system-assets@0.2.2':
     resolution: {integrity: sha512-z/TjM5TKqvMkKOfYYbNbaTccskuPqHoCcSdaLQiAodEEjmnERSt1ZKB99cFfLM0/87UFNt7WcgiPyoM5g1KnJQ==}
 
-  '@amsterdam/design-system-css@0.12.0':
-    resolution: {integrity: sha512-HGgSX7ZiYsoe+3ApRxZwN0K72ZTtQyp97s6SVBS0WZFrWNqCd4NdQYYv14FB4JxNm7HfGHav4PgppcpfbE6eUg==}
+  '@amsterdam/design-system-css@0.11.1':
+    resolution: {integrity: sha512-ZRl+ag+jgYnHAWJWMIErRmS2x4sATrlyVYtVrV0hnxi6yC04o5g2PamjbQPA4/5ytx9gMg7ZxHQgHXUWyaSKEg==}
     peerDependencies:
-      '@amsterdam/design-system-assets': 0.2.2
-      '@amsterdam/design-system-tokens': 0.12.0
+      '@amsterdam/design-system-assets': 0.2.1
+      '@amsterdam/design-system-tokens': 0.11.0
 
-  '@amsterdam/design-system-react-icons@0.1.13':
-    resolution: {integrity: sha512-V7l+TRlrw9TXrRxBeAzq/2jpESRjCrMkupGvyxr8BEBNSgnJQusNl4yLRXe8BKdy1hEjbJtjOlKIItJy11NGcw==}
+  '@amsterdam/design-system-react-icons@0.1.12':
+    resolution: {integrity: sha512-pBR7NnX2J8CsKaNbWSf+lxrPHvPqgSmgB2CYuIDD4RL472kUsNjzJNVOhR24QaKkUGCSUaskhVlUPqeJZIX/MA==}
     peerDependencies:
       react: 16 - 18
       react-dom: 16 - 18
 
-  '@amsterdam/design-system-react@0.12.0':
-    resolution: {integrity: sha512-ogPEPNJARL3A66zK209J1nS5bejxzs+DFLkp0wheK4DMkaJ9IopDKtjuiIRAJPiZFfB8L76Kp4fn2ou5Z/Sgwg==}
+  '@amsterdam/design-system-react@0.11.1':
+    resolution: {integrity: sha512-xFCXhaXbm2m5+xYUlT9aHlFQ3MyWMRqRY8byK2yU8yLW3MDfqTMoqwSTUMhmvA6dj1JtGfuYEdv7RoxYSp3irg==}
     peerDependencies:
-      '@amsterdam/design-system-css': 0.12.0
+      '@amsterdam/design-system-css': 0.11.1
       react: 16 - 18
       react-dom: 16 - 18
 
-  '@amsterdam/design-system-tokens@0.12.0':
-    resolution: {integrity: sha512-1KbJXvo4z42fovRYbKSouEPkRD1Qjb0O/+2jGlfUgEcjm0IUn+8RMGsn3/rnIKKQ1hZX3uftMzNFdWgG/1MpMw==}
+  '@amsterdam/design-system-tokens@0.11.0':
+    resolution: {integrity: sha512-LgF8u5EDhNpjdhF4doaojoPV/cLJYWJR0ZPcJpJjjkkfKRsesEtO8cTZIQBCDMpXwvRUIuw7henmipdueLtsww==}
 
   '@babel/code-frame@7.24.7':
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -1108,8 +1108,8 @@ packages:
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
 
-  '@babel/runtime@7.25.7':
-    resolution: {integrity: sha512-FjoyLe754PMiYsFaN5C94ttGiOmBNYTf6pLr4xXHAT5uctHb092PBszndLDR5XA/jghQvn4n7JMHl7dmTgbm9w==}
+  '@babel/runtime@7.24.8':
+    resolution: {integrity: sha512-5F7SDGs1T72ZczbRwbGO9lQi0NLjQxzl6i4lJxLxfW9U5UluCSyEJeniWvnhl3/euNiqQVbo8zruhsDfid0esA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.26.0':
@@ -8165,26 +8165,26 @@ snapshots:
 
   '@amsterdam/design-system-assets@0.2.2': {}
 
-  '@amsterdam/design-system-css@0.12.0(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.12.0)':
+  '@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.11.0)':
     dependencies:
       '@amsterdam/design-system-assets': 0.2.2
-      '@amsterdam/design-system-tokens': 0.12.0
+      '@amsterdam/design-system-tokens': 0.11.0
 
-  '@amsterdam/design-system-react-icons@0.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@amsterdam/design-system-react-icons@0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@amsterdam/design-system-react@0.12.0(@amsterdam/design-system-css@0.12.0(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.12.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@amsterdam/design-system-react@0.11.1(@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.11.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@amsterdam/design-system-css': 0.12.0(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.12.0)
-      '@amsterdam/design-system-react-icons': 0.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@babel/runtime': 7.25.7
+      '@amsterdam/design-system-css': 0.11.1(@amsterdam/design-system-assets@0.2.2)(@amsterdam/design-system-tokens@0.11.0)
+      '@amsterdam/design-system-react-icons': 0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@babel/runtime': 7.24.8
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@amsterdam/design-system-tokens@0.12.0': {}
+  '@amsterdam/design-system-tokens@0.11.0': {}
 
   '@babel/code-frame@7.24.7':
     dependencies:
@@ -9039,7 +9039,7 @@ snapshots:
 
   '@babel/regjsgen@0.8.0': {}
 
-  '@babel/runtime@7.25.7':
+  '@babel/runtime@7.24.8':
     dependencies:
       regenerator-runtime: 0.14.1
 
