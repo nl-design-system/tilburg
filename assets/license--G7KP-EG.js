@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as t}from"./index-BI1Biiay.js";import{ag as r,ah as a}from"./chunk-HLWAVYOI-DZpn68JE.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-Cs2K_AkU.js";import"../sb-preview/runtime.js";import"./react-18-D9dwDG6f.js";import"./extends-CF3RwP-h.js";import"./index-DSgSp0X8.js";const s=`# EUROPEAN UNION PUBLIC LICENCE v. 1.2
+import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as t}from"./index-BI1Biiay.js";import{ag as r,ah as a}from"./chunk-NUUEMKO5-5OoIQz4d.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-CxRO4VhW.js";import"../sb-preview/runtime.js";import"./index-DJFdew98.js";import"./extends-CF3RwP-h.js";import"./index-BLrIWWQf.js";import"./react-18-B3HRjLEH.js";const s=`# EUROPEAN UNION PUBLIC LICENCE v. 1.2
 
 EUPL © the European Union 2007, 2016
 
@@ -287,4 +287,4 @@ Code from exclusive appropriation.
 All other changes or additions to this Appendix require the production of a new
 EUPL version.
 `;function o(n){return e.jsxs(e.Fragment,{children:[e.jsx(r,{title:"Tilburg/Open Source License"}),`
-`,e.jsx(a,{children:s})]})}function y(n={}){const{wrapper:i}={...t(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(o,{...n})}):o()}export{y as default};
+`,e.jsx(a,{children:s})]})}function L(n={}){const{wrapper:i}={...t(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(o,{...n})}):o()}export{L as default};

@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as o}from"./index-BI1Biiay.js";import{ag as i,ah as a}from"./chunk-HLWAVYOI-DZpn68JE.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-Cs2K_AkU.js";import"../sb-preview/runtime.js";import"./react-18-D9dwDG6f.js";import"./extends-CF3RwP-h.js";import"./index-DSgSp0X8.js";const s=`# Auteursrecht {auteur}
+import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as o}from"./index-BI1Biiay.js";import{ag as i,ah as a}from"./chunk-NUUEMKO5-5OoIQz4d.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-CxRO4VhW.js";import"../sb-preview/runtime.js";import"./index-DJFdew98.js";import"./extends-CF3RwP-h.js";import"./index-BLrIWWQf.js";import"./react-18-B3HRjLEH.js";const s=`# Auteursrecht {auteur}
 
 Copyright (c) {jaar} {auteur}
 
@@ -16,4 +16,4 @@ Lettertypes die worden gebruikt voor de huisstijl zijn niet allemaal gratis en o
 
 Wanneer je het logo of de huisstijl wilt gebruiken kun je voor toestemming contact opnemen met {contactpersoon}.
 `;function r(n){return e.jsxs(e.Fragment,{children:[e.jsx(i,{title:"Tilburg/Toestemming voor gebruik"}),`
-`,e.jsx(a,{children:s})]})}function k(n={}){const{wrapper:t}={...o(),...n.components};return t?e.jsx(t,{...n,children:e.jsx(r,{...n})}):r()}export{k as default};
+`,e.jsx(a,{children:s})]})}function v(n={}){const{wrapper:t}={...o(),...n.components};return t?e.jsx(t,{...n,children:e.jsx(r,{...n})}):r()}export{v as default};

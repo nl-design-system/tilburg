@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as r}from"./index-BI1Biiay.js";import{ag as s,ah as a}from"./chunk-HLWAVYOI-DZpn68JE.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-Cs2K_AkU.js";import"../sb-preview/runtime.js";import"./react-18-D9dwDG6f.js";import"./extends-CF3RwP-h.js";import"./index-DSgSp0X8.js";const o=`<!-- @license CC0-1.0 -->
+import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as r}from"./index-BI1Biiay.js";import{ag as s,ah as a}from"./chunk-NUUEMKO5-5OoIQz4d.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-CxRO4VhW.js";import"../sb-preview/runtime.js";import"./index-DJFdew98.js";import"./extends-CF3RwP-h.js";import"./index-BLrIWWQf.js";import"./react-18-B3HRjLEH.js";const o=`<!-- @license CC0-1.0 -->
 
 # NL Design System introductie
 
@@ -35,4 +35,4 @@ De POC is te vinden op:
 
 <http://github.com/nl-design-system>
 `;function t(n){return e.jsxs(e.Fragment,{children:[e.jsx(s,{title:"Tilburg/Intro"}),`
-`,e.jsx(a,{children:o})]})}function j(n={}){const{wrapper:i}={...r(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(t,{...n})}):t()}export{j as default};
+`,e.jsx(a,{children:o})]})}function c(n={}){const{wrapper:i}={...r(),...n.components};return i?e.jsx(i,{...n,children:e.jsx(t,{...n})}):t()}export{c as default};
