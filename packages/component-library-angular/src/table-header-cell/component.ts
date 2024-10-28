@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
 @Component({
   selector: '[tilburg-table-header-cell]',
   templateUrl: 'index.html',
-  styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {

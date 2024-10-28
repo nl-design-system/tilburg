@@ -5,7 +5,6 @@ export type AppearanceType = 'primary-action-button' | 'secondary-action-button'
 @Component({
   selector: '[tilburg-button-link]',
   templateUrl: 'index.html',
-  styleUrls: ['index.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   inputs: ['rel'],
