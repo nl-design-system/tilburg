@@ -230,8 +230,8 @@ importers:
         version: 2.1.1
     devDependencies:
       '@storybook/addon-a11y':
-        specifier: 8.3.6
-        version: 8.3.6(storybook@8.3.6)
+        specifier: 8.4.0
+        version: 8.4.0(storybook@8.3.6)
       '@storybook/addon-actions':
         specifier: 8.3.6
         version: 8.3.6(storybook@8.3.6)
@@ -2063,10 +2063,10 @@ packages:
     peerDependencies:
       '@stencil/core': '>=2.0.0 || >=3.0.0-beta.0 || >= 4.0.0-beta.0 || >= 4.0.0'
 
-  '@storybook/addon-a11y@8.3.6':
-    resolution: {integrity: sha512-EeVzUN+WaLtz/DXVBL3rIGvP8+pTuJXA3lEz9CbTQXRO7QMhzTTXLKmp8xmSA2w5H01a8XpjLcZ5LYjdKrvw0g==}
+  '@storybook/addon-a11y@8.4.0':
+    resolution: {integrity: sha512-FbvdAnYG5y0l1iBvtwlN8sQL39/FyQefKGK4+0MDmdDvCDq2JpkNU9rDL4HT8aYVAiPfr+M2DmXGJihLxwRyhw==}
     peerDependencies:
-      storybook: ^8.3.6
+      storybook: ^8.4.0
 
   '@storybook/addon-actions@8.3.6':
     resolution: {integrity: sha512-nOqgl0WoZK2KwjaABaXMoIgrIHOQl9inOzJvqQau0HOtsvnXGXYfJXYnpjZenoZDoZXKbUDl0U2haDFx2a2fJw==}
@@ -2078,10 +2078,10 @@ packages:
     peerDependencies:
       storybook: ^8.3.6
 
-  '@storybook/addon-highlight@8.3.6':
-    resolution: {integrity: sha512-A7uU+1OPVXGpkklEUJjSl2VEEDLCSNvmffUJlvW1GjajsNFIHOW2CSD+KnfFlQyPxyVbnWAYLqUP4XJxoqrvDw==}
+  '@storybook/addon-highlight@8.4.0':
+    resolution: {integrity: sha512-tshX/2HnPzGQ9Kza2DARNfirBRhE/Ts7bldbhMiJu20YhJD1jQzXSDEX1cCgHsDc8HKYOsV/Kuu5WDzp/1i97w==}
     peerDependencies:
-      storybook: ^8.3.6
+      storybook: ^8.4.0
 
   '@storybook/addon-interactions@8.3.6':
     resolution: {integrity: sha512-Y0YUJj0oE1+6DFkaTPXM/8+dwTSoy0ltj2Sn2KOTJYzxKQYXBp8TlUv0QOQiGH7o/GKXIWek/VlTuvG/JEeiWw==}
@@ -10036,9 +10036,9 @@ snapshots:
     dependencies:
       '@stencil/core': 4.19.2
 
-  '@storybook/addon-a11y@8.3.6(storybook@8.3.6)':
+  '@storybook/addon-a11y@8.4.0(storybook@8.3.6)':
     dependencies:
-      '@storybook/addon-highlight': 8.3.6(storybook@8.3.6)
+      '@storybook/addon-highlight': 8.4.0(storybook@8.3.6)
       axe-core: 4.9.0
       storybook: 8.3.6
 
@@ -10067,7 +10067,7 @@ snapshots:
       storybook: 8.3.6
       ts-dedent: 2.2.0
 
-  '@storybook/addon-highlight@8.3.6(storybook@8.3.6)':
+  '@storybook/addon-highlight@8.4.0(storybook@8.3.6)':
     dependencies:
       '@storybook/global': 5.0.0
       storybook: 8.3.6
