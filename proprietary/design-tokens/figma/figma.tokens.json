@@ -4513,6 +4513,10 @@
           "title-row-gap": {
             "$value": "{tilburg.space.row.snail}",
             "$type": "spacing"
+          },
+          "padding-block-end": {
+            "$value": "{tilburg.space.block.rat}",
+            "$type": "spacing"
           }
         }
       },
@@ -4524,6 +4528,10 @@
           },
           "title-row-gap": {
             "$value": "{tilburg.space.row.beetle}",
+            "$type": "spacing"
+          },
+          "padding-block-end": {
+            "$value": "{tilburg.space.block.mouse}",
             "$type": "spacing"
           }
         }
