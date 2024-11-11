@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as r}from"./index-BI1Biiay.js";import{ag as s,ah as a}from"./chunk-NUUEMKO5-5OoIQz4d.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-CxRO4VhW.js";import"../sb-preview/runtime.js";import"./index-DJFdew98.js";import"./extends-CF3RwP-h.js";import"./index-BLrIWWQf.js";import"./react-18-B3HRjLEH.js";const o=`<!-- @license CC0-1.0 -->
+import{j as e}from"./jsx-runtime-BlAj40OV.js";import{useMDXComponents as r}from"./index-BI1Biiay.js";import{ag as s,ah as a}from"./chunk-NUUEMKO5-BorT7OyQ.js";import"./index-Cs7sjTYM.js";import"./_commonjsHelpers-BosuxZz1.js";import"./iframe-BKUnKzLC.js";import"../sb-preview/runtime.js";import"./index-DJFdew98.js";import"./extends-CF3RwP-h.js";import"./index-BLrIWWQf.js";import"./react-18-B3HRjLEH.js";const o=`<!-- @license CC0-1.0 -->
 
 # NL Design System introductie
 
