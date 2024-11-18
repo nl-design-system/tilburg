@@ -18,8 +18,15 @@
       filter: brightness(90%);
     }
 
-    &:focus,
-    &:focus-visible {
+    &:focus-visible:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+      background-color: var(--utrecht-radio-button-disabled-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+      outline: dashed black thin;
+    }
+
+    &:focus.tilburg-radio-pressed,
+    &:focus-visible:not(.tilburg-radio-pressed) {
       --utrecht-radio-button-color: black;
       --_utrecht-radio-button-color: black;
       --utrecht-radio-button-background-color: #e6f6ff;
@@ -43,27 +50,20 @@
 
       background-color: #e6f6ff;
     }
-  }
 
-  &:invalid:not(:checked) {
-    background-color: #ffe1e0;
-  }
+    &:focus:not([aria-disabled="true"], :disabled) {
+      background-color: var(--utrecht-radio-button-disabled-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+    }
 
-  &:focus-visible:not([aria-disabled="true"], :disabled) {
-    background-color: var(--utrecht-radio-button-disabled-background-color);
-    border-color: var(--utrecht-form-control-focus-border-color);
-    border-width: 1px;
-    outline: dashed black thin;
-  }
-
-  &:focus:not([aria-disabled="true"], :disabled) {
-    background-color: var(--utrecht-radio-button-disabled-background-color);
-    border-color: var(--utrecht-form-control-focus-border-color);
-    border-width: 1px;
+    &:invalid:not(:checked) {
+      background-color: #ffe1e0;
+    }
   }
 
   &:focus-visible:not([aria-disabled="true"], :disabled):checked,
-  &:focus:not([aria-disabled="true"], :disabled):checked {
+  &:focus:not([aria-disabled="true"], :disabled):checked.tilburg-radio-pressed {
     --_utrecht-radio-button-color: black;
   }
 }
