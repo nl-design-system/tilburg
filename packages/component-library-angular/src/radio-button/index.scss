@@ -63,7 +63,7 @@
   }
 
   &:focus-visible:not([aria-disabled="true"], :disabled):checked,
-  &:focus:not([aria-disabled="true"], :disabled):checked.tilburg-radio-pressed {
+  &:focus:not([aria-disabled="true"], :disabled).tilburg-radio-pressed {
     --_utrecht-radio-button-color: black;
   }
 }

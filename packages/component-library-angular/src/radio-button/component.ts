@@ -23,6 +23,6 @@ export class TilburgRadioButton {
   }
   mouseDown(event: MouseEvent) {
     (event.target as HTMLInputElement).classList.add('tilburg-radio-pressed');
-    (event.target as HTMLInputElement).click();
+    (event.target as HTMLInputElement).focus();
   }
 }
