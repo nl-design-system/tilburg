@@ -16,5 +16,13 @@ export class TilburgRadioButton {
   @Input() invalid: boolean = false;
   @Input() disabled: boolean = false;
   @Input() checked: boolean = false;
+
   constructor() {}
+  mouseUp(event: MouseEvent) {
+    (event.target as HTMLInputElement).classList.remove('tilburg-radio-pressed');
+  }
+  mouseDown(event: MouseEvent) {
+    (event.target as HTMLInputElement).classList.add('tilburg-radio-pressed');
+    (event.target as HTMLInputElement).focus();
+  }
 }
