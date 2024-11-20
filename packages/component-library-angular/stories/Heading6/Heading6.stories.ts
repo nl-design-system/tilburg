@@ -1,5 +1,6 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgComponentsModule, TilburgHeading6 } from '@tilburg/component-library-angular';
+import { TilburgHeading6 } from 'src/components';
+import { TilburgComponentsModule } from 'src/index.module';
 
 export default {
   title: 'Tilburg Angular Components/Heading 6',

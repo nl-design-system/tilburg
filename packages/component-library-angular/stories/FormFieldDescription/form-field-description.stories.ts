@@ -1,5 +1,6 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgComponentsModule, TilburgFormFieldDescription } from '@tilburg/component-library-angular';
+import { TilburgFormFieldDescription } from 'src/components';
+import { TilburgComponentsModule } from 'src/index.module';
 
 export default {
   title: 'Tilburg Angular Components/Form Field Description',
