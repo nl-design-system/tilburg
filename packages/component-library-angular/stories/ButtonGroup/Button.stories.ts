@@ -1,5 +1,6 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { TilburgButtonGroup, TilburgComponentsModule } from '@tilburg/component-library-angular';
+import { TilburgButtonGroup } from 'src/components';
+import { TilburgComponentsModule } from 'src/index.module';
 
 export default {
   title: 'Tilburg Angular Components/Button Group',
