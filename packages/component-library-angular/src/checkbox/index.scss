@@ -11,13 +11,39 @@
     background-color: #ffe1e0;
   }
 
+  &:disabled:not(:checked) {
+    background-color: var(--utrecht-checkbox-disabled-background-color, var(--utrecht-checkbox-background-color));
+    border-color: var(--utrecht-checkbox-disabled-border-color, var(--utrecht-checkbox-border-color));
+  }
+
+  &:focus-visible:not(:disabled) {
+    background-color: var(--utrecht-checkbox-focus-background-color, var(--utrecht-checkbox-background-color));
+    border-color: var(--utrecht-checkbox-focus-border-color, var(--utrecht-checkbox-border-color));
+    border-width: var(--utrecht-checkbox-focus-border-width, var(--utrecht-checkbox-border-width));
+  }
+
   &:checked {
     &:active {
-      opacity: 90%;
+      background-color: var(
+        --utrecht-radio-button-checked-active-background-color,
+        var(--utrecht-checkbox-background-color)
+      );
+    }
+
+    &:hover {
+      background-color: var(
+        --utrecht-radio-button-checked-hover-background-color,
+        var(--utrecht-checkbox-background-color)
+      );
     }
 
     &:invalid {
       background-color: var(--utrecht-checkbox-disabled-border-color);
+    }
+
+    &:disabled {
+      background-color: var(--utrecht-checkbox-disabled-border-color);
+      border-color: var(--utrecht-checkbox-disabled-border-color, var(--utrecht-checkbox-border-color));
     }
 
     &:focus-visible,
