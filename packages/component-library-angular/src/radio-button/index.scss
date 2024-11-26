@@ -4,6 +4,25 @@
 }
 
 .utrecht-radio-button--html-input.utrecht-radio-button {
+  &:focus-visible:not([aria-disabled="true"], :disabled, :checked, .tilburg-radio-pressed) {
+    --_utrecht-radio-button-interactive-background-color: var(
+      --utrecht-radio-button-focus-background-color,
+      var(--utrecht-radio-button-focus-background-color)
+    );
+    --_utrecht-radio-button-interactive-border-color: var(
+      --utrecht-radio-button-focus-border-color,
+      var(--utrecht-radio-button-focus-border-color)
+    );
+    --_utrecht-radio-button-interactive-border-width: var(
+      --utrecht-radio-button-focus-border-width,
+      var(--utrecht-radio-button-focus-border-width)
+    );
+    --_utrecht-radio-button-interactive-color: var(
+      --utrecht-radio-button-focus-color,
+      var(--utrecht-radio-button-focus-color)
+    );
+  }
+
   &:checked {
     &:disabled {
       border-color: #626262;
@@ -18,11 +37,16 @@
       filter: brightness(90%);
     }
 
+    &:focus:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+      background-color: var(--utrecht-radio-button-disabled-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+    }
+
     &:focus-visible:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
       background-color: var(--utrecht-radio-button-disabled-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
       border-width: 1px;
-      outline: dashed black thin;
     }
 
     &:focus.tilburg-radio-pressed,
@@ -63,7 +87,8 @@
   }
 
   &:focus-visible:not([aria-disabled="true"], :disabled):checked,
-  &:focus:not([aria-disabled="true"], :disabled).tilburg-radio-pressed {
+  &:focus:not([aria-disabled="true"], :disabled):checked,
+  &:focus:not([aria-disabled="true"], :disabled):checked.tilburg-radio-pressed {
     --_utrecht-radio-button-color: black;
   }
 }
@@ -74,6 +99,5 @@
 }
 
 .utrecht-radio-button--html-input {
-  --utrecht-radio-button-focus-background-color: var(--utrecht-radio-button-checked-background-color);
   --utrecht-radio-button-focus-color: var(--utrecht-radio-button-checked-color);
 }
