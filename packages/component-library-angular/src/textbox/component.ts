@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'tilburg-textbox',
   templateUrl: 'index.html',
+  styleUrls: ['index.scss'],
 })
 export class TilburgTextbox {
   @Input() id?: string = undefined;
