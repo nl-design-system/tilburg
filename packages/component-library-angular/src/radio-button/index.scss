@@ -4,6 +4,10 @@
 }
 
 .utrecht-radio-button--html-input.utrecht-radio-button {
+  &:invalid:not(:checked) {
+    background-color: var(--utrecht-radio-button-invalid-background-color);
+  }
+
   &:focus-visible:not([aria-disabled="true"], :disabled, :checked, .tilburg-radio-pressed) {
     --_utrecht-radio-button-interactive-background-color: var(
       --utrecht-radio-button-focus-background-color,
@@ -79,10 +83,6 @@
       background-color: var(--utrecht-radio-button-disabled-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
       border-width: 1px;
-    }
-
-    &:invalid:not(:checked) {
-      background-color: #ffe1e0;
     }
   }
 
