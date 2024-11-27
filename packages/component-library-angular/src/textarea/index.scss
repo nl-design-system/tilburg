@@ -1,3 +1,9 @@
+// Fix the weird bottom margin
+:host {
+  display: inline-flex;
+  width: 100%;
+}
+
 .utrecht-textarea {
   min-block-size: 5em;
   min-inline-size: 5em;
