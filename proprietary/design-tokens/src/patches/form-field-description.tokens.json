@@ -8,14 +8,8 @@
         "font-family": {
           "$value": "Roboto"
         },
-        "font-size": {
-          "$value": "16px"
-        },
         "font-weight": {
           "$value": "400"
-        },
-        "line-height": {
-          "$value": "24px"
         },
         "margin-block-end": {
           "$value": "4px"
