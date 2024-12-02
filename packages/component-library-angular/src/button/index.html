@@ -1,0 +1,10 @@
+<button
+  utrecht-button
+  [class.utrecht-button--subtle]="appearance === 'subtle-button'"
+  [appearance]="appearance"
+  [disabled]="disabled"
+  [type]="type"
+  [ngClass]="'tilburg-' + size"
+>
+  <ng-content></ng-content>
+</button>
