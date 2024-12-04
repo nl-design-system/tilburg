@@ -885,7 +885,7 @@
         },
         "outline-style": {
           "$type": "other",
-          "$value": "dotted"
+          "$value": "dashed"
         },
         "outline-width": {
           "$type": "borderWidth",
@@ -5650,10 +5650,6 @@
         "line-height": {
           "$type": "lineHeights",
           "$value": "{utrecht.document.line-height}"
-        },
-        "line-height": {
-          "$value": "{utrecht.document.line-height}",
-          "$type": "lineHeights"
         },
         "caption": {
           "color": {
