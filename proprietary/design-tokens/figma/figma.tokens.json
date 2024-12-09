@@ -885,7 +885,7 @@
         },
         "outline-style": {
           "$type": "other",
-          "$value": "dotted"
+          "$value": "dashed"
         },
         "outline-width": {
           "$type": "borderWidth",
