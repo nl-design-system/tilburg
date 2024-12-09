@@ -1,0 +1,23 @@
+{
+  "components/form-label": {
+    "utrecht": {
+      "form-label": {
+        "color": {
+          "$value": "#333333"
+        },
+        "font-family": {
+          "$value": "Roboto"
+        },
+        "font-weight": {
+          "$value": "700"
+        },
+        "checkbox-font-weight": {
+          "$value": "400"
+        },
+        "radio-font-weight": {
+          "$value": "400"
+        }
+      }
+    }
+  }
+}
