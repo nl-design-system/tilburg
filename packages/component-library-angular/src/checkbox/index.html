@@ -1,8 +1,10 @@
 <input
   type="checkbox"
   [id]="id"
-  [attr.aria-label]="ariaLabel"
+  [disabled]="disabled==true"
   [checked]="checked"
   (change)="onCheckChange($event)"
+  (mouseup)="mouseUp($event)"
+  (mousedown)="mouseDown($event)"
   utrecht-checkbox
 />
