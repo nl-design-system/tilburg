@@ -17,4 +17,11 @@ export class TilburgCheckbox {
   onCheckChange(event: Event) {
     this.checkChanged.emit(event);
   }
+
+  mouseUp(event: MouseEvent) {
+    (event.target as HTMLInputElement).classList.remove('tilburg-checkbox-pressed');
+  }
+  mouseDown(event: MouseEvent) {
+    (event.target as HTMLInputElement).classList.add('tilburg-checkbox-pressed');
+  }
 }
