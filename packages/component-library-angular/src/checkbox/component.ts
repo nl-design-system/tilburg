@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 export class TilburgCheckbox {
   @Input() id?: string = undefined;
   @Input() control?: FormControl;
+  @Input() name: string = '';
   @Input() ariaLabel: string = '';
   @Input() invalid?: boolean = false;
   @Input() disabled?: boolean = false;
