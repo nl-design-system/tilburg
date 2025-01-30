@@ -1,0 +1,122 @@
+.tilburg-modal {
+  --tilburg-modal-animation-duration: 400ms;
+  --tilburg-modal-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --tilburg-modal-offset: 7.5vh;
+
+  background: var(--tilburg-color-white);
+  border: none;
+  border-radius: var(--tilburg-border-radius-lg);
+  box-shadow: var(--tilburg-box-shadow-lg);
+  inline-size: min(80%, 450px);
+  opacity: 0%;
+  translate: 0 var(--tilburg-modal-offset);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tilburg-modal {
+    transition-behavior: allow-discrete;
+    transition-duration: var(--tilburg-modal-animation-duration);
+    transition-property: display, opacity, translate, overlay;
+    transition-timing-function: var(--tilburg-modal-animation-easing);
+  }
+}
+
+.tilburg-modal[open] {
+  display: block;
+  opacity: 100%;
+  translate: 0 0;
+}
+
+@starting-style {
+  .tilburg-modal[open] {
+    opacity: 0%;
+    translate: 0 calc(var(--tilburg-modal-offset) * -1);
+  }
+}
+
+.tilburg-modal[open]::backdrop {
+  opacity: 100%;
+}
+
+@starting-style {
+  .tilburg-modal[open]::backdrop {
+    opacity: 0%;
+  }
+}
+
+.tilburg-modal::backdrop {
+  backdrop-filter: blur(5px);
+  background-color: rgb(0 0 0 / 50%);
+  opacity: 0%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tilburg-modal::backdrop {
+    transition-behavior: allow-discrete;
+    transition-duration: var(--tilburg-modal-animation-duration);
+    transition-property: display, opacity, overlay;
+    transition-timing-function: var(--tilburg-modal-animation-easing);
+  }
+}
+
+.tilburg-modal h2 {
+  color: var(--tilburg-color-gray-900, #0a2750);
+  font-family: var(--tilburg-typography-font-family-secondary), sans-serif;
+  font-size: var(--tilburg-typography-font-size-md);
+}
+
+.tilburg-modal__header {
+  align-items: center;
+  border-block-end: 1px solid var(--tilburg-color-gray-300);
+  display: flex;
+  gap: var(--tilburg-space-row-cat);
+  justify-content: space-between;
+  padding-block: var(--tilburg-space-block-snail);
+}
+
+.tilburg-modal__content {
+  padding-block: var(--tilburg-space-block-cat) var(--tilburg-space-block-rat);
+}
+
+.tilburg-modal__content > * + * {
+  margin-block-start: var(--tilburg-space-row-mouse);
+}
+
+.tilburg-modal__content a {
+  color: var(--tilburg-interaction-color);
+}
+
+.tilburg-modal__footer {
+  align-items: center;
+  display: flex;
+  gap: var(--tilburg-space-row-cat);
+  padding-block: var(--tilburg-space-block-snail);
+}
+
+/* Button styles for close button */
+.tilburg-modal__close-button {
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--tilburg-interaction-color);
+  cursor: pointer;
+  display: flex;
+  font-size: var(--tilburg-typography-font-size-md);
+  gap: var(--tilburg-space-column-snail);
+}
+
+.tilburg-modal__close-button svg {
+  transition: rotate 250ms cubic-bezier(0.1, 0.1, 0, 1);
+}
+
+.tilburg-modal__close-button:where(:hover, :focus-visible) {
+  text-decoration: underline;
+}
+
+.tilburg-modal__close-button:where(:hover, :focus-visible) svg {
+  rotate: -90deg;
+}
+
+body:has(.tilburg-modal[open]) {
+  overflow-y: clip;
+}
