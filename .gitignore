@@ -61,3 +61,6 @@ pnpm-lock.yaml
 
 # Ignore generated files from Stencil
 components.d.ts
+
+*storybook.log
+*.angular

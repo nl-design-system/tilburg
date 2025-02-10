@@ -1,0 +1,56 @@
+.utrecht-checkbox--html-input.utrecht-checkbox--custom {
+  &:not(:checked) {
+    background-image: none;
+  }
+
+  &:active {
+    --utrecht-checkbox-border-width: 2px;
+  }
+
+  &:invalid {
+    background-color: #ffe1e0;
+  }
+
+  &:disabled:not(:checked) {
+    background-color: var(--utrecht-checkbox-disabled-background-color, var(--utrecht-checkbox-background-color));
+    border-color: var(--utrecht-checkbox-disabled-border-color, var(--utrecht-checkbox-border-color));
+  }
+
+  &:focus-visible:not(:disabled, [aria-disabled="true"]) {
+    background-color: var(--utrecht-checkbox-focus-background-color, var(--utrecht-checkbox-background-color));
+    border-color: var(--utrecht-checkbox-focus-border-color, var(--utrecht-checkbox-border-color));
+    border-width: var(--utrecht-checkbox-focus-border-width, var(--utrecht-checkbox-border-width));
+  }
+
+  &:checked {
+    &:active {
+      background-color: var(
+        --utrecht-radio-button-checked-active-background-color,
+        var(--utrecht-checkbox-background-color)
+      );
+    }
+
+    &:hover {
+      background-color: var(
+        --utrecht-radio-button-checked-hover-background-color,
+        var(--utrecht-checkbox-background-color)
+      );
+    }
+
+    &:invalid {
+      background-color: var(--utrecht-checkbox-disabled-border-color);
+    }
+
+    &:disabled {
+      background-color: var(--utrecht-checkbox-disabled-border-color);
+      border-color: var(--utrecht-checkbox-disabled-border-color, var(--utrecht-checkbox-border-color));
+    }
+
+    &:focus.tilburg-checkbox-pressed:active:not([aria-disabled="true"]),
+    &:focus-visible:not(:active, .tilburg-checkbox-pressed, [aria-disabled="true"]) {
+      background-color: #e6f6ff;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+      border-color: var(--utrecht-form-control-focus-border-color, var(--utrecht-form-control-focus-border-color));
+    }
+  }
+}

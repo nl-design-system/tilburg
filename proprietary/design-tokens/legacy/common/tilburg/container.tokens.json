@@ -1,0 +1,24 @@
+{
+  "tilburg": {
+    "container": {
+      "border-color": {
+        "value": "{tilburg.color.gray.200}",
+        "type": "color"
+      },
+      "border-width": {
+        "value": "{tilburg.border-width.sm}",
+        "type": "borderWidth"
+      },
+      "accent": {
+        "border-color": {
+          "value": "{tilburg.color.blue.300}",
+          "type": "color"
+        },
+        "background-color": {
+          "value": "{tilburg.color.blue.300}",
+          "type": "color"
+        }
+      }
+    }
+  }
+}
