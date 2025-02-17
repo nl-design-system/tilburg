@@ -3,6 +3,8 @@ import '@gemeente-tilburg/design-tokens/dist/theme.css';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button, Paragraph } from '@utrecht/component-library-react/dist/css-module';
 import { useRef } from 'react';
+import '@tilburg/design-tokens/dist/tilburg/theme.css';
+import { AlertDialog } from './alert-dialog';
 
 const meta = {
   title: 'React/Alert Dialog',
