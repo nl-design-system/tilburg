@@ -59,11 +59,7 @@ const build = async () => {
     const sd = new StyleDictionary({
       ...createStyleDictionaryConfig({
         selector: `.${theme}-theme`,
-        source: [
-          `${theme}/figma.tokens.json`,
-          "src/**/tokens.json",
-          "src/**/*.tokens.json",
-        ],
+        source: [`figma/${theme}/figma.tokens.json`, "src/**/*.tokens.json"],
       }),
       log: {
         verbosity: "verbose",
