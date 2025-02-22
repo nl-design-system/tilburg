@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { AlertDialog } from '@tilburg/components-react/src/index';
 import { Button, Paragraph } from '@utrecht/component-library-react/dist/css-module';
 import { useRef } from 'react';
 import '@tilburg/design-tokens/dist/theme.css';
-import { AlertDialog } from './alert-dialog';
 
 const meta = {
   title: 'React/Alert Dialog',
@@ -96,7 +96,7 @@ import { AlertDialog, Button } from '@tilburg/component-library-react';
 
 function MyComponent() {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  
+
   const openDialog = () => {
     dialogRef.current?.showModal();
   };
@@ -154,7 +154,7 @@ import { AlertDialog, Button } from '@tilburg/component-library-react';
 
 function MyComponent() {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  
+
   const openDialog = () => {
     dialogRef.current?.showModal();
   };
