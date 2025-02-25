@@ -4,5 +4,6 @@
   "prefix": "tilburg",
   "npm": "@tilburg/design-tokens",
   "cdn": "https://unpkg.com/@tilburg/design-tokens/dist/index.css",
-  "stories": []
+  "stories": [],
+  "themes": ["tilburg", "bat"]
 }

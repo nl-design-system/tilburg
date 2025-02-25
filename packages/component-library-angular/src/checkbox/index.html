@@ -1,0 +1,12 @@
+<input
+  type="checkbox"
+  [id]="id"
+  [attr.name]="name"
+  [name]="name"
+  [disabled]="disabled==true"
+  [checked]="checked"
+  (change)="onCheckChange($event)"
+  (mouseup)="mouseUp($event)"
+  (mousedown)="mouseDown($event)"
+  utrecht-checkbox
+/>

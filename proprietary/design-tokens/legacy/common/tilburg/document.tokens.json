@@ -23,6 +23,10 @@
         "color": {
           "value": "{tilburg.color.gray.600}",
           "type": "color"
+        },
+        "background-color": {
+          "value": "{tilburg.color.gray.50}",
+          "type": "color"
         }
       },
       "font-family": {
