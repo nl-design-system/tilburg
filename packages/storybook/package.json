@@ -32,6 +32,7 @@
     "@storybook/theming": "8.3.6",
     "@tilburg/assets": "workspace:*",
     "@tilburg/components-css": "workspace:*",
+    "@tilburg/components-react": "workspace:*",
     "@tilburg/design-tokens": "workspace:*",
     "@tilburg/font": "workspace:*",
     "@tilburg/web-components-react": "workspace:*",
