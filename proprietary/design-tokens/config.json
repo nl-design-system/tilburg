@@ -2,7 +2,7 @@
   "fullName": "Gemeente Tilburg",
   "name": "Tilburg",
   "prefix": "tilburg",
-  "npm": "@tilburg/design-tokens",
-  "cdn": "https://unpkg.com/@tilburg/design-tokens/dist/index.css",
+  "npm": "@gemeente-tilburg/design-tokens",
+  "cdn": "https://unpkg.com/@gemeente-tilburg/design-tokens/dist/index.css",
   "stories": []
 }
