@@ -24,9 +24,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm ls --recursive
+        run: pnpm install --frozen-lockfile
 
   lint:
     runs-on: ubuntu-latest
@@ -158,7 +156,6 @@ jobs:
       - name: "Continuous Deployment: install"
         run: |
           pnpm install --frozen-lockfile
-          pnpm ls --recursive
 
       - name: "Continuous Deployment: build"
         run: pnpm run --if-present build

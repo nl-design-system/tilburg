@@ -114,6 +114,9 @@ importers:
       '@babel/runtime':
         specifier: 7.26.0
         version: 7.26.0
+      '@gemeente-tilburg/components-css':
+        specifier: workspace:*
+        version: link:../components-css
       '@rollup/plugin-babel':
         specifier: 6.0.4
         version: 6.0.4(@babel/core@7.26.0)(@types/babel__core@7.20.5)(rollup@4.24.2)
@@ -135,9 +138,6 @@ importers:
       '@testing-library/user-event':
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
-      '@tilburg/components-css':
-        specifier: workspace:*
-        version: link:../components-css
       '@types/jest':
         specifier: 29.5.12
         version: 29.5.12
@@ -235,6 +235,27 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
     devDependencies:
+      '@gemeente-tilburg/assets':
+        specifier: workspace:*
+        version: link:../../proprietary/assets
+      '@gemeente-tilburg/components-css':
+        specifier: workspace:*
+        version: link:../components-css
+      '@gemeente-tilburg/components-react':
+        specifier: workspace:*
+        version: link:../components-react
+      '@gemeente-tilburg/design-tokens':
+        specifier: workspace:*
+        version: link:../../proprietary/design-tokens
+      '@gemeente-tilburg/font':
+        specifier: workspace:*
+        version: link:../../proprietary/font
+      '@gemeente-tilburg/web-components-react':
+        specifier: workspace:*
+        version: link:../web-components-react
+      '@gemeente-tilburg/web-components-stencil':
+        specifier: workspace:*
+        version: link:../web-components-stencil
       '@storybook/addon-a11y':
         specifier: 8.4.0
         version: 8.4.0(storybook@8.3.6)
@@ -265,27 +286,6 @@ importers:
       '@storybook/theming':
         specifier: 8.3.6
         version: 8.3.6(storybook@8.3.6)
-      '@tilburg/assets':
-        specifier: workspace:*
-        version: link:../../proprietary/assets
-      '@tilburg/components-css':
-        specifier: workspace:*
-        version: link:../components-css
-      '@tilburg/components-react':
-        specifier: workspace:*
-        version: link:../components-react
-      '@tilburg/design-tokens':
-        specifier: workspace:*
-        version: link:../../proprietary/design-tokens
-      '@tilburg/font':
-        specifier: workspace:*
-        version: link:../../proprietary/font
-      '@tilburg/web-components-react':
-        specifier: workspace:*
-        version: link:../web-components-react
-      '@tilburg/web-components-stencil':
-        specifier: workspace:*
-        version: link:../web-components-stencil
       '@types/react':
         specifier: 18.3.12
         version: 18.3.12
@@ -319,7 +319,7 @@ importers:
 
   packages/web-components-react:
     devDependencies:
-      '@tilburg/web-components-stencil':
+      '@gemeente-tilburg/web-components-stencil':
         specifier: workspace:*
         version: link:../web-components-stencil
       '@types/node':
@@ -350,15 +350,15 @@ importers:
         specifier: 4.19.2
         version: 4.19.2
     devDependencies:
+      '@gemeente-tilburg/components-css':
+        specifier: workspace:*
+        version: link:../components-css
       '@stencil/react-output-target':
         specifier: 0.5.3
         version: 0.5.3(@stencil/core@4.19.2)
       '@stencil/sass':
         specifier: 3.0.12
         version: 3.0.12(@stencil/core@4.19.2)
-      '@tilburg/components-css':
-        specifier: workspace:*
-        version: link:../components-css
       '@types/jest':
         specifier: 29.5.12
         version: 29.5.12

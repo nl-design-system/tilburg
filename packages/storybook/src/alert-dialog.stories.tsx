@@ -1,8 +1,8 @@
+import { AlertDialog } from '@gemeente-tilburg/components-react/src/index';
+import '@gemeente-tilburg/design-tokens/dist/theme.css';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AlertDialog } from '@tilburg/components-react/src/index';
 import { Button, Paragraph } from '@utrecht/component-library-react/dist/css-module';
 import { useRef } from 'react';
-import '@tilburg/design-tokens/dist/theme.css';
 
 const meta = {
   title: 'React/Alert Dialog',
@@ -92,7 +92,7 @@ export const Default: Story = {
       source: {
         language: 'tsx',
         code: `
-import { AlertDialog, Button } from '@tilburg/component-library-react';
+import { AlertDialog, Button } from '@gemeente-tilburg/component-library-react';
 
 function MyComponent() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -150,7 +150,7 @@ export const WithCustomFooter: Story = {
       source: {
         language: 'tsx',
         code: `
-import { AlertDialog, Button } from '@tilburg/component-library-react';
+import { AlertDialog, Button } from '@gemeente-tilburg/component-library-react';
 
 function MyComponent() {
   const dialogRef = useRef<HTMLDialogElement>(null);
