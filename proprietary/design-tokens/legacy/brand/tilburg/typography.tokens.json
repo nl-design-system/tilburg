@@ -2,6 +2,10 @@
   "tilburg": {
     "typography": {
       "font-size": {
+        "xs": {
+          "value": "12px",
+          "type": "fontSizes"
+        },
         "sm": {
           "value": "14px",
           "type": "fontSizes"
@@ -61,7 +65,7 @@
       },
       "font-family": {
         "primary": {
-          "value": "TradeGothicCondensed18",
+          "value": "Roboto Condensed",
           "type": "fontFamilies"
         },
         "secondary": {

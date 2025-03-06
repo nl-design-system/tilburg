@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "author": "Community for NL Design System",
+  "description": "Storybook utilities shared by multiple Storybook configurations",
+  "license": "EUPL-1.2",
+  "name": "@tilburg/storybook-helpers",
+  "keywords": [
+    "nl-design-system"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git+ssh",
+    "url": "git@github.com:nl-design-system/tilburg.git",
+    "directory": "packages/storybook-helpers"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.dist.json",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@storybook/theming": "8.1.11",
+    "typescript": "4.9.5"
+  }
+}
