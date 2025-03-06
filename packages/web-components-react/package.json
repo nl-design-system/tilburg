@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/web-components-react",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "React web components bundle based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
