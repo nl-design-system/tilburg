@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/components-react",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "React component library for the Example repository, based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
@@ -9,7 +9,7 @@
   ],
   "private": true,
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
