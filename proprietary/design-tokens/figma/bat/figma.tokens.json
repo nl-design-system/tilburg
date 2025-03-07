@@ -747,7 +747,7 @@
         },
         "border-color": {
           "$type": "color",
-          "$value": "{tilburg.color.gray.400}"
+          "$value": "{tilburg.color.gray.50}"
         },
         "border-width": {
           "$type": "borderWidth",
@@ -774,7 +774,7 @@
         "focus": {
           "background-color": {
             "$type": "color",
-            "$value": "{tilburg.color.oxford.900}"
+            "$value": "{tilburg.color.oxford.500}"
           },
           "border-color": {
             "$type": "color",
@@ -4511,7 +4511,7 @@
       "bar": {
         "active": {
           "$type": "color",
-          "$value": "{tilburg.color.pink.300}"
+          "$value": "{tilburg.color.red.900}"
         },
         "inactive": {
           "$type": "color",
