@@ -63,7 +63,7 @@
         "font-family": {
           "primary": {
             "$type": "fontFamilies",
-            "$value": "TradeGothic LT CondEighteen, AvenirNextCondensed-DemiBold, \"Univers Condensed\", Univers, Arial, Helvetica, sans-serif"
+            "$value": "TradeGothicCondensed18, AvenirNextCondensed-DemiBold, \"Univers Condensed\", Univers, Arial, Helvetica, sans-serif"
           },
           "secondary": {
             "$type": "fontFamilies",
