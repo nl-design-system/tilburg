@@ -747,7 +747,7 @@
         },
         "border-color": {
           "$type": "color",
-          "$value": "{tilburg.color.gray.50}"
+          "$value": "{tilburg.color.gray.200}"
         },
         "border-width": {
           "$type": "borderWidth",
