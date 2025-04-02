@@ -3439,7 +3439,7 @@
       "heading-2": {
         "color": {
           "$type": "color",
-          "$value": "{tilburg.blue.500}"
+          "$value": "{tilburg.color.blue.500}"
         },
         "font-family": {
           "$type": "fontFamilies",
