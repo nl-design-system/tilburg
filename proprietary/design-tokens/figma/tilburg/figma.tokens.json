@@ -4414,7 +4414,7 @@
         "lead": {
           "color": {
             "$type": "color",
-            "$value": "{tilburg.color.blue.300}"
+            "$value": "{tilburg.color.blue.400}"
           },
           "small-vw": {
             "font-size": {
