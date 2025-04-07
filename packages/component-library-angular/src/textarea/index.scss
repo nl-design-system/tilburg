@@ -1,6 +1,7 @@
 .utrecht-textarea {
   min-block-size: 5em;
   min-inline-size: 5em;
+  max-inline-size: var(--tilburg-textarea-max-inline-size);
 
   &:hover:not(:disabled, :focus, :focus-visible) {
     background-color: var(
