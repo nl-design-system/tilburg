@@ -943,6 +943,10 @@
         }
       },
       "form-control": {
+        "max-textarea-inline-size": {
+          "$type": "sizing",
+          "$value": "800px"
+        },
         "active": {
           "accent-color": {
             "$type": "color",
@@ -6071,6 +6075,10 @@
     },
     "tilburg": {
       "textarea": {
+        "max-inline-size": {
+          "$type": "sizing",
+          "$value": "{tilburg.form-control.max-textarea-inline-size}"
+        },
         "hover": {
           "background-color": {
             "$type": "color",
