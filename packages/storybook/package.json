@@ -19,16 +19,16 @@
     "storybook": "storybook dev --config-dir config/ --port 6006"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "8.4.0",
-    "@storybook/addon-actions": "8.3.6",
-    "@storybook/addon-docs": "8.3.6",
-    "@storybook/addon-interactions": "8.3.6",
-    "@storybook/addon-links": "8.3.6",
-    "@storybook/addon-viewport": "8.4.0",
-    "@storybook/manager-api": "8.3.6",
-    "@storybook/react": "8.3.6",
-    "@storybook/react-vite": "8.3.6",
-    "@storybook/theming": "8.3.6",
+    "@storybook/addon-a11y": "8.6.12",
+    "@storybook/addon-actions": "8.6.12",
+    "@storybook/addon-docs": "8.6.12",
+    "@storybook/addon-interactions": "8.6.12",
+    "@storybook/addon-links": "8.6.12",
+    "@storybook/addon-viewport": "8.6.12",
+    "@storybook/manager-api": "8.6.12",
+    "@storybook/react": "8.6.12",
+    "@storybook/react-vite": "8.6.12",
+    "@storybook/theming": "8.6.12",
     "@gemeente-tilburg/assets": "workspace:*",
     "@gemeente-tilburg/components-css": "workspace:*",
     "@gemeente-tilburg/components-react": "workspace:*",
@@ -43,15 +43,15 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rimraf": "6.0.1",
-    "storybook": "8.3.6",
-    "typescript": "5.5.4",
+    "storybook": "8.6.12",
+    "typescript": "5.8.3",
     "vite": "5.4.10"
   },
   "dependencies": {
-    "@amsterdam/design-system-css": "0.11.1",
-    "@amsterdam/design-system-react": "0.11.1",
-    "@amsterdam/design-system-assets": "0.2.1",
-    "@amsterdam/design-system-tokens": "0.11.0",
+    "@amsterdam/design-system-css": "0.16.0",
+    "@amsterdam/design-system-react": "0.16.0",
+    "@amsterdam/design-system-assets": "0.3.0",
+    "@amsterdam/design-system-tokens": "0.16.0",
     "clsx": "2.1.1"
   }
 }
