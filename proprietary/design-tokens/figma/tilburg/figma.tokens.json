@@ -3425,7 +3425,7 @@
       "heading-1": {
         "color": {
           "$type": "color",
-          "$value": "{tilburg.color.blue.400}"
+          "$value": "{tilburg.color.black}"
         },
         "font-family": {
           "$type": "fontFamilies",
