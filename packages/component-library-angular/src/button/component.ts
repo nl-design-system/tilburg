@@ -11,4 +11,5 @@ export class TilburgButton {
   @Input() type = 'button';
   @Input() disabled = false;
   @Input() small = false;
+  @Input() title? = '';
 }
