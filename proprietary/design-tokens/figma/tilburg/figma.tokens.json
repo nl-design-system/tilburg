@@ -178,6 +178,10 @@
           "500": {
             "$type": "color",
             "$value": "#FFDD00"
+          },
+          "600": {
+            "$type": "color",
+            "$value": "#AE9100"
           }
         },
         "green": {
@@ -1085,6 +1089,20 @@
           "color": {
             "$type": "color",
             "$value": "{tilburg.color.green.300}"
+          }
+        },
+        "notice": {
+          "background-color": {
+            "$type": "color",
+            "$value": "{tilburg.color.red.100}"
+          },
+          "border-color": {
+            "$type": "color",
+            "$value": "{tilburg.color.yellow.600}"
+          },
+          "color": {
+            "$type": "color",
+            "$value": "{tilburg.color.yellow.600}"
           }
         }
       },
