@@ -4,11 +4,11 @@
       "typography": {
         "font-family": {
           "primary": {
-            "$value": "\"din-2014\", \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
+            "$value": "DIN2014Regular, \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
             "$type": "fontFamilies"
           },
           "secondary": {
-            "$value": "\"Roboto\"",
+            "$value": "DIN2014Light",
             "$type": "fontFamilies"
           },
           "code": {
