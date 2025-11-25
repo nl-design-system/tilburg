@@ -1,15 +1,15 @@
 {
-  "version": "1.0.0-alpha.0",
-  "author": "Community for NL Design System",
+  "name": "@gemeente-tilburg/components-react",
+  "version": "0.0.0",
   "description": "React component library for the Example repository, based on the NL Design System architecture",
+  "author": "Community for NL Design System",
   "license": "EUPL-1.2",
-  "name": "@tilburg/components-react",
   "keywords": [
     "nl-design-system"
   ],
   "private": true,
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
@@ -48,7 +48,7 @@
     "@testing-library/jest-dom": "6.4.5",
     "@testing-library/react": "16.0.1",
     "@testing-library/user-event": "14.5.2",
-    "@tilburg/components-css": "workspace:*",
+    "@gemeente-tilburg/components-css": "workspace:*",
     "@types/jest": "29.5.12",
     "@types/react": "18.3.3",
     "@types/testing-library__jest-dom": "5.14.9",
