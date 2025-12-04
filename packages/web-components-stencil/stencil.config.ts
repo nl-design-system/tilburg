@@ -19,7 +19,7 @@ export const config: Config = {
       serviceWorker: null, // disable service workers
     },
     reactOutputTarget({
-      componentCorePackage: '@gemeente-tilburg/web-components-stencil',
+      componentCorePackage: '@tilburg/web-components-stencil',
       proxiesFile: '../web-components-react/src/components.ts',
     }),
   ],

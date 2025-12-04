@@ -1,9 +1,9 @@
 {
-  "name": "@gemeente-tilburg/assets",
-  "version": "0.0.0",
-  "description": "Assets",
+  "version": "1.0.0-alpha.0",
   "author": "Community for NL Design System",
+  "description": "Assets",
   "license": "SEE LICENSE IN LICENSE.md",
+  "name": "@tilburg/assets",
   "keywords": [
     "nl-design-system"
   ],

@@ -1,8 +1,9 @@
 {
-  "name": "@gemeente-tilburg/storybook",
-  "description": "Storybook based on the NL Design System architecture",
+  "version": "1.0.0-alpha.0",
   "author": "Community for NL Design System",
+  "description": "Storybook based on the NL Design System architecture",
   "license": "EUPL-1.2",
+  "name": "@tilburg/storybook",
   "keywords": [
     "nl-design-system"
   ],
@@ -31,6 +32,7 @@
     "@storybook/theming": "8.3.6",
     "@tilburg/assets": "workspace:*",
     "@tilburg/components-css": "workspace:*",
+    "@tilburg/components-react": "workspace:*",
     "@tilburg/design-tokens": "workspace:*",
     "@tilburg/font": "workspace:*",
     "@tilburg/web-components-react": "workspace:*",
