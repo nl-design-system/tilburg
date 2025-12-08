@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'tilburg-form-field-description',
   templateUrl: 'index.html',
+  standalone:false
 })
 export class TilburgFormFieldDescription {
   @Input() formContext?: FormControl;

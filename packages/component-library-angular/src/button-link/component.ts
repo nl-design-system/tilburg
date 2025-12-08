@@ -16,6 +16,7 @@ export type AppearanceType = 'primary-action-button' | 'secondary-action-button'
     '[class.utrecht-button-link--html-a]': 'true',
     '[class.utrecht-button-link]': 'true',
   },
+  standalone:false
 })
 // COMPONENT IS COPIED BECAUSE IT IS NOT EXPORTED BY UTRECHT
 export class TilburgButtonLink {

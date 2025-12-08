@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
   selector: 'tilburg-article',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
+  standalone:false
 })
 export class TilburgArticle {
   constructor() {}

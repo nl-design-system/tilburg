@@ -8,6 +8,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   host: {
     '[class.utrecht-table__caption]': 'true',
   },
+  standalone:false
 })
 export class TilburgTableCaptionAttr {
   constructor() {}
