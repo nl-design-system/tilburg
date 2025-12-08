@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, OnInit } from '@angular/core';
 
-@Directive({ selector: '[tilburgTextAreaAutoResize]' })
+@Directive({ selector: '[tilburgTextAreaAutoResize]' ,  standalone:false})
 export class TilburgTextareaAutoresizeDirective implements OnInit {
   private _elementRef: ElementRef;
 

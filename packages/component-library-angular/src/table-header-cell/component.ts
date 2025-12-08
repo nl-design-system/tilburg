@@ -9,6 +9,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
     '[attr.role]': "scope === 'col' ? 'columnheader' : scope === 'row' ? 'rowheader' : undefined",
     '[class.utrecht-table__table-header-cell]': 'true',
   },
+  standalone:false
 })
 export class TilburgTableHeaderCellAttr {
   @Input() scope?: string;

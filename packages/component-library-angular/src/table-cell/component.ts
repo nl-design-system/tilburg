@@ -9,6 +9,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     '[class.utrecht-table__table-cell]': 'true',
     role: 'table',
   },
+  standalone:false
 })
 export class TilburgTableCellAttr {
   constructor() {}
