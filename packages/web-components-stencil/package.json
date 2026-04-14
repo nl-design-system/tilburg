@@ -1,9 +1,9 @@
 {
-  "version": "1.0.0-alpha.0",
-  "author": "Community for NL Design System",
+  "name": "@gemeente-tilburg/web-components-stencil",
+  "version": "0.0.0",
   "description": "Stencil web components bundle based on the NL Design System architecture",
+  "author": "Community for NL Design System",
   "license": "EUPL-1.2",
-  "name": "@tilburg/web-components-stencil",
   "keywords": [
     "nl-design-system"
   ],
@@ -34,7 +34,7 @@
     "generate": "stencil generate"
   },
   "devDependencies": {
-    "@tilburg/components-css": "workspace:*",
+    "@gemeente-tilburg/components-css": "workspace:*",
     "@stencil/react-output-target": "0.5.3",
     "@stencil/sass": "3.0.12",
     "@types/jest": "29.5.12",

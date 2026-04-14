@@ -1,9 +1,9 @@
 {
-  "version": "1.0.0-alpha.0",
-  "author": "Community for NL Design System",
+  "name": "@gemeente-tilburg/components-css",
+  "version": "0.0.0",
   "description": "CSS Components for a design system based on the NL Design System architecture",
+  "author": "Community for NL Design System",
   "license": "EUPL-1.2",
-  "name": "@tilburg/components-css",
   "keywords": [
     "nl-design-system"
   ],
