@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "root": "{workspaceRoot}/packages/component-library-angular",
+  "root": "{workspaceRoot}/packages/components-angular",
   "sourceRoot": "{projectRoot}",
   "projectType": "library",
   "targets": {
@@ -9,8 +9,8 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "command": "npm run build",
-        "cwd": "packages/component-library-angular",
-        "outputPath": "packages/component-library-angular/dist"
+        "cwd": "packages/components-angular",
+        "outputPath": "packages/components-angular/dist"
       },
       "dependsOn": ["^build"]
     },
@@ -19,7 +19,7 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "command": "npm run watch-build",
-        "cwd": "packages/component-library-angular"
+        "cwd": "packages/components-angular"
       }
     }
   }
