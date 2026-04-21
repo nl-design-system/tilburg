@@ -1,42 +1,147 @@
-# Edit this file by hand. Using `pnpm config` reformats the file and removes all comments.
-
 packages:
-  - "components/**"
-  - "packages/*"
-  - "proprietary/*"
+  - components/**
+  - packages/*
+  - proprietary/*
 
-# Configure pnpm so peer dependencies must be explicitly added instead of being automatically installed.
 autoInstallPeers: false
 
-# Configure pnpm so that it will not install any package that claims to not be compatible with the current Node.js
-# version.
 engineStrict: true
 
-# Configure pnpm so it only installs package versions that have been published on the npm registry for at least 24 hours
-# (1440 minutes). This helps mitigate the risk of supply chain attacks by avoiding newly published, potentially
-# malicious versions. Keep this in sync with npm-check-updates's `cooldown` configuration.
 minimumReleaseAge: 1440
 
-# Make an exception for trusted packages, notably our own
 minimumReleaseAgeExclude:
-  - "@amsterdam/*"
-  - "@gemeente-denhaag/*"
-  - "@gemeente-rotterdam/*"
-  - "@nl-design-system/*"
-  - "@nl-design-system-candidate/*"
-  - "@nl-design-system-community/*"
-  - "@nl-design-system-unstable/*"
-  - "@nl-rvo/*"
-  - "@rijkshuisstijl-community/*"
-  - "@utrecht/*"
+  - '@amsterdam/*'
+  - '@gemeente-denhaag/*'
+  - '@gemeente-rotterdam/*'
+  - '@nl-design-system/*'
+  - '@nl-design-system-candidate/*'
+  - '@nl-design-system-community/*'
+  - '@nl-design-system-unstable/*'
+  - '@nl-rvo/*'
+  - '@rijkshuisstijl-community/*'
+  - '@utrecht/*'
 
 overrides:
-  form-data@>=4.0.0 <4.0.4: ">=4.0.4"
+  '@angular/common@>=20.0.0-next.0 <20.3.14': '>=20.3.14'
+  '@angular/compiler@>=20.0.0-next.0 <20.3.15': '>=20.3.15'
+  '@angular/compiler@>=20.0.0-next.0 <20.3.16': '>=20.3.16'
+  '@angular/compiler@>=20.0.0-next.0.0.0 <20.3.18': '>=20.3.18'
+  '@angular/core@>=20.0.0-next.0 <20.3.16': '>=20.3.16'
+  '@angular/core@>=20.0.0-next.0 <=20.3.16': '>=20.3.17'
+  '@angular/core@>=20.0.0-next.0.0.0 <20.3.18': '>=20.3.18'
+  '@babel/helpers@<7.26.10': '>=7.26.10'
+  '@babel/runtime@<7.26.10': '>=7.26.10'
+  '@eslint/plugin-kit@<0.3.4': '>=0.3.4'
+  '@isaacs/brace-expansion@<=5.0.0': '>=5.0.1'
+  '@modelcontextprotocol/sdk@<1.24.0': '>=1.24.0'
+  '@modelcontextprotocol/sdk@<1.25.2': '>=1.25.2'
+  '@modelcontextprotocol/sdk@>=1.10.0 <=1.25.3': '>=1.26.0'
+  '@tootallnate/once@<3.0.1': '>=3.0.1'
+  ajv@<6.14.0: '>=6.14.0'
+  ajv@>=7.0.0-alpha.0 <8.18.0: '>=8.18.0'
+  body-parser@<1.20.3: '>=1.20.3'
+  brace-expansion@<1.1.13: '>=1.1.13'
+  brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'
+  brace-expansion@>=2.0.0 <2.0.3: '>=2.0.3'
+  brace-expansion@>=2.0.0 <=2.0.1: '>=2.0.2'
+  cookie@<0.7.0: '>=0.7.0'
+  cross-spawn@<6.0.6: '>=6.0.6'
+  cross-spawn@>=7.0.0 <7.0.5: '>=7.0.5'
+  diff@>=4.0.0 <4.0.4: '>=4.0.4'
+  diff@>=5.0.0 <5.2.2: '>=5.2.2'
+  esbuild@<=0.24.2: '>=0.25.0'
+  expr-eval-fork@<=3.0.0: '>=3.0.1'
+  express@<4.20.0: '>=4.20.0'
+  flatted@<3.4.0: '>=3.4.0'
+  flatted@<=3.4.1: '>=3.4.2'
+  follow-redirects@<=1.15.11: '>=1.16.0'
+  form-data@>=4.0.0 <4.0.4: '>=4.0.4'
+  glob@>=10.2.0 <10.5.0: '>=10.5.0'
+  glob@>=11.0.0 <11.1.0: '>=11.1.0'
+  handlebars@>=4.0.0 <4.7.9: '>=4.7.9'
+  handlebars@>=4.0.0 <=4.7.8: '>=4.7.9'
+  handlebars@>=4.6.0 <=4.7.8: '>=4.7.9'
+  immutable@>=4.0.0-rc.1 <4.3.8: '>=4.3.8'
+  immutable@>=5.0.0 <5.1.5: '>=5.1.5'
+  js-yaml@<3.14.2: '>=3.14.2'
+  js-yaml@>=4.0.0 <4.1.1: '>=4.1.1'
+  lodash-es@<=4.17.23: '>=4.18.0'
+  lodash-es@>=4.0.0 <=4.17.22: '>=4.17.23'
+  lodash-es@>=4.0.0 <=4.17.23: '>=4.18.0'
+  lodash@<=4.17.23: '>=4.18.0'
+  lodash@>=4.0.0 <=4.17.22: '>=4.17.23'
+  lodash@>=4.0.0 <=4.17.23: '>=4.18.0'
+  markdown-it@>=13.0.0 <14.1.1: '>=14.1.1'
+  micromatch@<4.0.8: '>=4.0.8'
+  minimatch@<3.1.3: '>=3.1.3'
+  minimatch@<3.1.4: '>=3.1.4'
+  minimatch@>=10.0.0 <10.2.1: '>=10.2.1'
+  minimatch@>=10.0.0 <10.2.3: '>=10.2.3'
+  minimatch@>=5.0.0 <5.1.7: '>=5.1.7'
+  minimatch@>=5.0.0 <5.1.8: '>=5.1.8'
+  minimatch@>=9.0.0 <9.0.6: '>=9.0.6'
+  minimatch@>=9.0.0 <9.0.7: '>=9.0.7'
+  nanoid@<3.3.8: '>=3.3.8'
+  next@>=10.0.0 <15.5.10: '>=15.5.10'
+  next@>=10.0.0 <15.5.14: '>=15.5.14'
+  next@>=13.0.0 <15.0.8: '>=15.0.8'
+  next@>=13.0.0 <15.5.15: '>=15.5.15'
+  next@>=13.3.0 <14.2.34: '>=14.2.34'
+  next@>=13.3.1-canary.0 <14.2.35: '>=14.2.35'
+  next@>=9.5.0 <15.5.13: '>=15.5.13'
+  node-forge@<1.3.2: '>=1.3.2'
+  node-forge@<1.4.0: '>=1.4.0'
+  node-forge@<=1.3.3: '>=1.4.0'
+  on-headers@<1.1.0: '>=1.1.0'
+  path-to-regexp@<0.1.10: '>=0.1.10'
+  path-to-regexp@<0.1.12: '>=0.1.12'
+  path-to-regexp@<0.1.13: '>=0.1.13'
+  path-to-regexp@>=8.0.0 <8.4.0: '>=8.4.0'
+  picomatch@<2.3.2: '>=2.3.2'
+  picomatch@>=4.0.0 <4.0.4: '>=4.0.4'
+  pnpm@<10.0.0: '>=10.0.0'
+  pnpm@<10.26.0: '>=10.26.0'
+  pnpm@<10.28.1: '>=10.28.1'
+  pnpm@<10.28.2: '>=10.28.2'
+  pnpm@>=6.25.0 <10.27.0: '>=10.27.0'
+  qs@<6.14.1: '>=6.14.1'
+  qs@>=6.7.0 <=6.14.1: '>=6.14.2'
+  rollup@>=4.0.0 <4.59.0: '>=4.59.0'
+  send@<0.19.0: '>=0.19.0'
+  serialize-javascript@<7.0.5: '>=7.0.5'
+  serialize-javascript@<=7.0.2: '>=7.0.3'
+  serve-static@<1.16.0: '>=1.16.0'
+  smol-toml@<1.6.1: '>=1.6.1'
+  smol-toml@<=1.3.0: '>=1.3.1'
+  storybook@>=8.0.0 <8.6.15: '>=8.6.15'
+  storybook@>=8.1.0 <8.6.17: '>=8.6.17'
+  svgo@>=2.1.0 <2.8.1: '>=2.8.1'
+  tar@<7.5.7: '>=7.5.7'
+  tar@<7.5.8: '>=7.5.8'
+  tar@<=7.5.10: '>=7.5.11'
+  tar@<=7.5.2: '>=7.5.3'
+  tar@<=7.5.3: '>=7.5.4'
+  tar@<=7.5.9: '>=7.5.10'
+  tmp@<=0.2.3: '>=0.2.4'
+  vite@<=5.4.19: '>=5.4.20'
+  vite@<=6.4.1: '>=6.4.2'
+  vite@>=5.0.0 <5.4.15: '>=5.4.15'
+  vite@>=5.0.0 <5.4.16: '>=5.4.16'
+  vite@>=5.0.0 <5.4.17: '>=5.4.17'
+  vite@>=5.0.0 <5.4.18: '>=5.4.18'
+  vite@>=5.0.0 <=5.4.11: '>=5.4.12'
+  vite@>=5.0.0 <=5.4.18: '>=5.4.19'
+  vite@>=5.2.6 <=5.4.20: '>=5.4.21'
+  vite@>=7.0.0 <=7.3.1: '>=7.3.2'
+  vite@>=7.1.0 <=7.3.1: '>=7.3.2'
+  webpack@>=5.49.0 <5.104.0: '>=5.104.0'
+  webpack@>=5.49.0 <=5.104.0: '>=5.104.1'
+  ws@>=8.0.0 <8.17.1: '>=8.17.1'
+  yaml@>=1.0.0 <1.10.3: '>=1.10.3'
+  yaml@>=2.0.0 <2.8.3: '>=2.8.3'
 
-# Configure pnpm to save exact version numbers (not including ^ or ~) in package.json. Lock dependencies to specific
-# versions to ensure reproducible installs and prevent automatic upgrades to newer minor or patch releases.
 saveExact: true
-savePrefix: ""
 
-# Configure pnpm to not fail when there are missing or invalid peer dependencies in the tree.
+savePrefix: ''
+
 strictPeerDependencies: false
