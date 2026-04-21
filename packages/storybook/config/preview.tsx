@@ -1,4 +1,4 @@
-import '@gemeente-tilburg/design-tokens/dist/theme.css';
+import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 import '@gemeente-tilburg/font/src/index.scss';
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
 import { Controls, Description, Primary, Stories } from '@storybook/addon-docs';
