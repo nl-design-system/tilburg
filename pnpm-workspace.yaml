@@ -1,3 +1,5 @@
+# Edit this file by hand. Using `pnpm config` reformats the file and removes all comments.
+
 packages:
   - "components/**"
   - "packages/*"

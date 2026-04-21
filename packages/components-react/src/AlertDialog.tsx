@@ -1,8 +1,8 @@
+import '@gemeente-tilburg/components-css/modal/index.scss';
 import { Button } from '@utrecht/button-react/dist/css';
 import { Heading } from '@utrecht/component-library-react/dist/css-module';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import '@tilburg/components-css/modal/index.scss';
 
 const CloseIcon = () => (
   <svg aria-hidden="true" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
