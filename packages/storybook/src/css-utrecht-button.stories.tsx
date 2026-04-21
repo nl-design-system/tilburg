@@ -2,7 +2,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@utrecht/component-library-react/dist/css-module';
-import readme from '@utrecht/components/button/README.md?raw';
+import readme from './button.md?raw';
 
 const meta = {
   title: 'CSS Component/Button',
