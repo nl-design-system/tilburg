@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
   selector: 'tilburg-form-field',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgFormField {
   @Input() invalid?: boolean = false;

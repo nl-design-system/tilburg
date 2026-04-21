@@ -6,7 +6,7 @@ import { FormControl } from '@angular/forms';
   selector: 'tilburg-radio-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgRadioButton {
   @Input() id?: string = undefined;

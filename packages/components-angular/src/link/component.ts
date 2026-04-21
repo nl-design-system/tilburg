@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'tilburg-link',
   templateUrl: 'index.html',
-  standalone:false
+  standalone: false,
 })
 export class TilburgLink {
   @Input() external = false;

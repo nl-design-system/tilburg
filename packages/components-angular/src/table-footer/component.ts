@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     '[class.utrecht-table__table-footer]': 'true',
     role: 'table-row-group',
   },
-  standalone:false
+  standalone: false,
 })
 export class TilburgTableFooterAttr {
   constructor() {}

@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
   selector: 'tilburg-checkbox',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgCheckbox {
   @Input() id?: string = undefined;
