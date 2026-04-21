@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'tilburg-heading-3',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgHeading3 {
   constructor() {}

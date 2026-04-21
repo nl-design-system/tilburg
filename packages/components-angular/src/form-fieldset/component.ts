@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'tilburg-fieldset',
   templateUrl: 'index.html',
-  standalone:false
+  standalone: false,
 })
 export class TilburgFieldset {
   @Input() disabled?: boolean = false;

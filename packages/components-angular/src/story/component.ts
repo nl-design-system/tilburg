@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular
   templateUrl: 'index.html',
   styleUrls: ['index.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone:false
+  standalone: false,
 })
 export class ExampleStoryComponent {
   @Input() name = '';

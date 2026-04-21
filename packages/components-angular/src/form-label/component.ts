@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'tilburg-form-label',
   templateUrl: 'index.html',
-  standalone:false
+  standalone: false,
 })
 export class TilburgFormLabel {
   @Input() for?: string = undefined;

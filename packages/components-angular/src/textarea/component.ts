@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
   selector: 'tilburg-textarea',
   templateUrl: './index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgTextarea {
   @Input() id?: string = undefined;

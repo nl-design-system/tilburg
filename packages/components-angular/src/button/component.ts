@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
   selector: 'tilburg-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
-  standalone:false
+  standalone: false,
 })
 export class TilburgButton {
   @Input() appearance = 'primary-action-button';

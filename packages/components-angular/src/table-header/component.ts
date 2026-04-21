@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
     '[class.utrecht-table__header]': 'true',
     role: 'table-row-group',
   },
-  standalone:false
+  standalone: false,
 })
 export class TilburgTableHeaderAttr {
   constructor() {}
