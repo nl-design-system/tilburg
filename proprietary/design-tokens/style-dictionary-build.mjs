@@ -1,7 +1,7 @@
 import { register } from "@tokens-studio/sd-transforms";
 import StyleDictionary from "style-dictionary";
 import { typeDtcgDelegate } from "style-dictionary/utils";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { createStyleDictionaryConfig } from "./style-dictionary-config.mjs"; // Assuming this file exists
 
 // --- Original Custom Action ---
@@ -23,14 +23,14 @@ StyleDictionary.registerAction({
       // Note: This isn't foolproof as transforms might output strings with braces.
       // A more robust check would compare original.value to final value if original contained braces.
       return (
-          typeof token.value === "string" &&
-          token.value.includes("{") &&
-          token.value.includes("}") &&
-          // Add check to see if original value was also a reference
-          typeof token.original.value === 'string' &&
-          token.original.value.includes("{") &&
-          token.original.value.includes("}") &&
-          token.value === token.original.value // Only flag if final value is identical to original reference string
+        typeof token.value === "string" &&
+        token.value.includes("{") &&
+        token.value.includes("}") &&
+        // Add check to see if original value was also a reference
+        typeof token.original.value === "string" &&
+        token.original.value.includes("{") &&
+        token.original.value.includes("}") &&
+        token.value === token.original.value // Only flag if final value is identical to original reference string
       );
     });
 
@@ -38,7 +38,7 @@ StyleDictionary.registerAction({
       console.warn("⚠️ Unresolved Token References Found:"); // Use warn for visibility
       unresolvedReferences.forEach((token) => {
         console.warn(
-            `  - Token: ${token.name} (Path: ${token.path.join(".")}) has an unresolved reference: ${token.original.value}`
+          `  - Token: ${token.name} (Path: ${token.path.join(".")}) has an unresolved reference: ${token.original.value}`,
         );
       });
     } else {
@@ -72,14 +72,19 @@ const build = async () => {
 
     // --- MINIMAL CHANGE START ---
     // Define base source files
-    const baseSource = [`figma/${theme}/figma.tokens.json`, "src/**/*.tokens.json"];
+    const baseSource = [
+      `figma/${theme}/figma.tokens.json`,
+      "src/**/*.tokens.json",
+    ];
 
     // Conditionally add patch files for 'bat' theme
     let sourceFiles = [...baseSource]; // Start with base sources
-    if (theme === 'bat') {
+    if (theme === "bat") {
       // Use a glob pattern to include all .tokens.json files in the directory and subdirectories
       sourceFiles.push("src/patches/bat/**/*.tokens.json");
-      console.log(`   - Including 'patches/bat/**/*.tokens.json' for theme '${theme}'`); // Optional log
+      console.log(
+        `   - Including 'patches/bat/**/*.tokens.json' for theme '${theme}'`,
+      ); // Optional log
     }
     // --- MINIMAL CHANGE END ---
 
@@ -91,7 +96,7 @@ const build = async () => {
       }),
       log: {
         // verbosity: "verbose", // Deprecated, use level
-        level: "verbose"
+        level: "verbose",
       },
       preprocessors: ["tokens-studio", "dtcg-delegate"],
       // **Important Reminder**: Ensure 'log-missing-tokens' action is added
@@ -113,11 +118,20 @@ const build = async () => {
     await sd.buildAllPlatforms();
     console.log(`Build complete for theme: ${theme}!`); // Debugging statement
   }
-  console.log("Build process finished!"); // Overall completion log
+  console.log("Build process finished!");
+
+  const { scripts, devDependencies, ...publishFields } = JSON.parse(
+    await readFile("./package.json", "utf-8"),
+  );
+  await writeFile(
+    "./dist/package.json",
+    JSON.stringify(publishFields, null, 2),
+  );
+  console.log("✅ dist/package.json written.");
 };
 
 // --- Run Build ---
-build().catch(error => {
+build().catch((error) => {
   console.error("❌ Build script failed:", error);
   process.exit(1);
 });
