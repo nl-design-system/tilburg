@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: '[tilburg-table-caption]',
@@ -6,10 +6,12 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
+    '[attr.id]': 'id || null',
     '[class.utrecht-table__caption]': 'true',
   },
   standalone: false,
 })
 export class TilburgTableCaptionAttr {
+  @Input() id?: string;
   constructor() {}
 }

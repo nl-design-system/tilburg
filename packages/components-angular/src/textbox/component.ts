@@ -19,8 +19,10 @@ export class TilburgTextbox {
   @Input() inputMode?;
   @Input() type?;
   @Input() name?;
+  @Input() placeholder?: string;
 
   @Input() ariaLabel?: string = '';
+  @Input() ariaDescribedBy?: string;
 
   constructor() {}
 }

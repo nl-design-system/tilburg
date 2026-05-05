@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
   standalone: false,
 })
 export class TilburgFormFieldDescription {
+  @Input() id?: string;
   @Input() formContext?: FormControl;
   @Input() invalid?: boolean = false;
   @Input() valid?: boolean = false;

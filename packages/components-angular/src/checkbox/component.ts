@@ -12,7 +12,9 @@ export class TilburgCheckbox {
   @Input() control?: FormControl;
   @Input() name: string = '';
   @Input() ariaLabel: string = '';
+  @Input() ariaDescribedBy?: string;
   @Input() invalid?: boolean = false;
+  @Input() required: boolean = false;
   @Input() disabled?: boolean = false;
   @Input() checked: boolean = false;
   @Output() checkChanged = new EventEmitter<Event>();

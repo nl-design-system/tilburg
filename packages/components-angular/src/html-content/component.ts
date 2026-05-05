@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-html-content',
@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class TilburgHtmlContent {
+  @Input() lang?: string;
   constructor() {}
 }

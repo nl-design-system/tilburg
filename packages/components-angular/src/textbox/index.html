@@ -9,6 +9,10 @@
   [inputMode]="inputMode"
   [type]="type"
   [name]="name"
-  [attr.aria-label]="ariaLabel"
+  [attr.placeholder]="placeholder || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-invalid]="invalid ? 'true' : null"
+  [attr.aria-required]="required ? 'true' : null"
   utrecht-textbox
 />

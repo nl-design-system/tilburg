@@ -13,4 +13,7 @@ export class TilburgButton {
   @Input() disabled = false;
   @Input() small = false;
   @Input() title? = '';
+  @Input() ariaLabel?: string;
+  @Input() ariaDescribedBy?: string;
+  @Input() pressed?: boolean;
 }

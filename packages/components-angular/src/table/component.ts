@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-table',
@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class TilburgTable {
+  @Input() caption?: string;
+  @Input() ariaLabel?: string;
+  @Input() ariaLabelledby?: string;
+  @Input() ariaDescribedBy?: string;
   constructor() {}
 }

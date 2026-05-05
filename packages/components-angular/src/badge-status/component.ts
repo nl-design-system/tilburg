@@ -7,5 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgBadgeStatus {
   @Input() status?: string;
+  @Input() ariaLabel?: string;
+  @Input() liveRegion: 'polite' | 'assertive' | 'off' = 'polite';
   constructor() {}
 }
