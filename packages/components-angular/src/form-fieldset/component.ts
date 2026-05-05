@@ -8,5 +8,8 @@ import { Component, Input } from '@angular/core';
 export class TilburgFieldset {
   @Input() disabled?: boolean = false;
   @Input() invalid?: boolean = false;
+  @Input() ariaLabel?: string;
+  @Input() ariaLabelledby?: string;
+  @Input() ariaDescribedBy?: string;
   constructor() {}
 }

@@ -11,10 +11,12 @@ import { FormControl } from '@angular/forms';
 export class TilburgRadioButton {
   @Input() id?: string = undefined;
   @Input() ariaLabel: string = '';
+  @Input() ariaDescribedBy?: string;
   @Input() name: string = '';
   @Input() value: any;
   @Input() control!: FormControl;
   @Input() invalid: boolean = false;
+  @Input() required: boolean = false;
   @Input() disabled: boolean = false;
   @Input() checked: boolean = false;
 

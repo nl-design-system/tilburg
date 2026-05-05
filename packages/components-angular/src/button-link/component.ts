@@ -9,7 +9,7 @@ export type AppearanceType = 'primary-action-button' | 'secondary-action-button'
   encapsulation: ViewEncapsulation.None,
   inputs: ['rel'],
   host: {
-    '[attr.rel]': 'external ? "external noopener noreferer" : ""',
+    '[attr.rel]': 'external ? "external noopener noreferrer" : ""',
     '[class.utrecht-button-link--primary-action]': 'appearance === "primary-action-button"',
     '[class.utrecht-button-link--secondary-action]': 'appearance === "secondary-action-button"',
     '[class.utrecht-button-link--subtle-action]': 'appearance === "subtle-button"',

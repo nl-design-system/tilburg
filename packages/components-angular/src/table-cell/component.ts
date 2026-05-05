@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   encapsulation: ViewEncapsulation.None,
   host: {
     '[class.utrecht-table__table-cell]': 'true',
-    role: 'table',
+    role: 'cell',
   },
   standalone: false,
 })

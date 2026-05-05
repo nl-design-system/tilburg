@@ -15,6 +15,10 @@ export class TilburgTextarea {
   @Input() required = false;
   @Input() readonly = false;
   @Input() control!: FormControl;
+  @Input() placeholder?: string;
+  @Input() rows?: number;
+  @Input() cols?: number;
   @Input() ariaLabel?: string = '';
+  @Input() ariaDescribedBy?: string;
   constructor() {}
 }

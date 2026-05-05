@@ -5,7 +5,9 @@
   [disabled]="disabled"
   [type]="type"
   [title]="title"
-  [attr.aria-label]="title"
+  [attr.aria-label]="ariaLabel || title || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-pressed]="pressed === undefined ? null : (pressed ? 'true' : 'false')"
   [ngClass]="'tilburg-' + size"
 >
   <ng-content></ng-content>
