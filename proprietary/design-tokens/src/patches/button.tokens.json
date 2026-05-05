@@ -11,6 +11,52 @@
         "margin-block-start": { "$value": "{tilburg.space.row.snail}" },
         "margin-block-end": { "$value": "{tilburg.space.row.snail}" }
       }
+    },
+    "tilburg-fix": {
+      "button": {
+        "small": {
+          "padding-block-end": {
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-block-start": {
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-inline-end": {
+            "$value": "{tilburg.space.inline.rabbit}"
+          },
+          "padding-inline-start": {
+            "$value": "{tilburg.space.inline.rabbit}"
+          }
+        },
+        "medium": {
+          "padding-block-end": {
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-block-start": {
+            "$value": "{tilburg.space.block.beetle}"
+          },
+          "padding-inline-end": {
+            "$value": "{tilburg.space.inline.cat}"
+          },
+          "padding-inline-start": {
+            "$value": "{tilburg.space.inline.cat}"
+          }
+        },
+        "large": {
+          "padding-block-end": {
+            "$value": "{tilburg.space.block.snail}"
+          },
+          "padding-block-start": {
+            "$value": "{tilburg.space.block.snail}"
+          },
+          "padding-inline-end": {
+            "$value": "{tilburg.space.inline.mouse}"
+          },
+          "padding-inline-start": {
+            "$value": "{tilburg.space.inline.mouse}"
+          }
+        }
+      }
     }
   }
 }

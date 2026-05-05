@@ -1,0 +1,10 @@
+<utrecht-form-field-description
+  [valid]="valid"
+  [invalid]="invalid"
+  [warning]="warning"
+  [class]="class"
+  [attr.id]="id || null"
+  [attr.role]="invalid ? 'alert' : null"
+>
+  <ng-content></ng-content>
+</utrecht-form-field-description>

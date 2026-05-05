@@ -1,0 +1,9 @@
+<table
+  utrecht-table
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledby || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+>
+  <caption *ngIf="caption">{{ caption }}</caption>
+  <ng-content></ng-content>
+</table>

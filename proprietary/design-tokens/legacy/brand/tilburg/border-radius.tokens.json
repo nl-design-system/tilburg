@@ -2,19 +2,19 @@
   "tilburg": {
     "border-radius": {
       "sm": {
-        "value": "4px",
+        "value": "4",
         "type": "borderRadius"
       },
       "md": {
-        "value": "8px",
+        "value": "8",
         "type": "borderRadius"
       },
       "lg": {
-        "value": "16px",
+        "value": "16",
         "type": "borderRadius"
       },
       "round": {
-        "value": "999px",
+        "value": "999",
         "type": "borderRadius"
       }
     }
