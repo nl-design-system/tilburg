@@ -2,8 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
+import { TilburgAccordion, TilburgAccordionSection } from './accordion/component';
+import { TilburgAlert } from './alert/component';
 import { TilburgArticle } from './article/component';
 import { TilburgBadgeStatus } from './badge-status/component';
+import { TilburgBreadcrumb } from './breadcrumb/component';
 import { TilburgButton } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLink } from './button-link/component';
@@ -20,13 +23,16 @@ import { TilburgHeading4 } from './heading-4/component';
 import { TilburgHeading5 } from './heading-5/component';
 import { TilburgHeading6 } from './heading-6/component';
 import { TilburgHtmlContent } from './html-content/component';
+import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
+import { TilburgLoadingSpinner } from './loading-spinner/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
 import { TilburgPageFooter } from './page-footer/component';
 import { TilburgPageHeader } from './page-header/component';
 import { TilburgParagraph } from './paragraph/component';
+import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
 import { ExampleStoryComponent } from './story/component';
@@ -42,11 +48,16 @@ import { TilburgTextarea } from './textarea/component';
 import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-directive';
 import { TilburgTextbox } from './textbox/component';
 import { TilburgUnorderedList } from './unordered-list/component';
+import { TilburgValidationMessage } from './validation-message/component';
 
 const components = [
   ExampleStoryComponent,
+  TilburgAccordion,
+  TilburgAccordionSection,
+  TilburgAlert,
   TilburgArticle,
   TilburgBadgeStatus,
+  TilburgBreadcrumb,
   TilburgButton,
   TilburgButtonGroup,
   TilburgButtonLink,
@@ -57,7 +68,9 @@ const components = [
   TilburgHeading4,
   TilburgHeading5,
   TilburgHeading6,
+  TilburgLanguageToggle,
   TilburgLink,
+  TilburgLoadingSpinner,
   TilburgFormField,
   TilburgFormFieldDescription,
   TilburgFieldset,
@@ -67,6 +80,7 @@ const components = [
   TilburgPageFooter,
   TilburgPageHeader,
   TilburgParagraph,
+  TilburgProgressBar,
   TilburgTable,
   TilburgTableBodyAttr,
   TilburgTableCaptionAttr,
@@ -85,6 +99,7 @@ const components = [
   TilburgRadioButton,
   TilburgOrderedList,
   TilburgUnorderedList,
+  TilburgValidationMessage,
 ];
 
 @NgModule({

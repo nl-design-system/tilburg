@@ -1,0 +1,25 @@
+.tilburg-language-toggle {
+  --_utrecht-button-appearance-focus-background-color: white;
+  --_utrecht-button-appearance-focus-color: var(--tilburg-interaction-active-color);
+  --_utrecht-button-appearance-focus-border-color: var(--tilburg-interaction-active-color);
+
+  display: flex;
+  font-weight: 600;
+  padding-block: 0;
+  padding-inline: 0;
+}
+
+.tilburg-language-toggle__option {
+  align-items: center;
+  block-size: 100%;
+  display: flex;
+  inline-size: 50%;
+  min-block-size: 42px;
+  padding-block: 0;
+  padding-inline: 0.5rem;
+
+  &.tilburg-language-toggle__option--active {
+    background-color: var(--tilburg-interaction-active-color);
+    color: #fff;
+  }
+}

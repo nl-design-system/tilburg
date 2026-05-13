@@ -1,0 +1,38 @@
+// TilburgAlert uses `encapsulation: ViewEncapsulation.None` so the rule below
+// can reach the projected `<i>` inside `<app-icon>` without `::ng-deep`. The
+// `.tilburg-alert *` selectors stay specific enough not to leak.
+.tilburg-alert {
+  align-items: flex-start;
+  margin-block-end: 1rem;
+
+  .utrecht-alert__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-block-size: 30px;
+  }
+
+  .utrecht-alert__icon {
+    color: var(--_utrecht-alert-icon-color, var(--utrecht-alert-icon-color));
+    font-size: var(--utrecht-alert-icon-size);
+
+    // Match the heading line-height so the icon vertically centers with the
+    // first line of the title (original bq-tlb-frontend wrapper used the same
+    // trick).
+    i {
+      line-height: var(--utrecht-heading-3-line-height);
+    }
+  }
+
+  .tilburg-alert__title {
+    flex-grow: 1;
+  }
+
+  .tilburg-alert__close {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding-block: 0;
+    padding-inline: 0;
+  }
+}

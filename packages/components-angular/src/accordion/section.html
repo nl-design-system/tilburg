@@ -1,0 +1,28 @@
+<div class="utrecht-accordion__section">
+  <span class="utrecht-accordion__header">
+    <button
+      class="utrecht-button utrecht-button--subtle utrecht-accordion__button"
+      [id]="buttonId"
+      type="button"
+      [disabled]="disabled"
+      [attr.aria-expanded]="expanded"
+      [attr.aria-controls]="panelId"
+      (click)="onToggle()"
+    >
+      <span class="utrecht-accordion__button-icon">
+        <ng-content *ngIf="expanded" select="[slot=icon-expanded]"></ng-content>
+        <ng-content *ngIf="!expanded" select="[slot=icon-collapsed]"></ng-content>
+      </span>
+      <span class="utrecht-accordion__button-label tilburg-accordion__display-name">{{ label }}</span>
+    </button>
+  </span>
+  <div
+    class="utrecht-accordion__panel"
+    [id]="panelId"
+    [attr.aria-labelledby]="buttonId"
+    [hidden]="!expanded"
+    role="region"
+  >
+    <ng-content></ng-content>
+  </div>
+</div>
