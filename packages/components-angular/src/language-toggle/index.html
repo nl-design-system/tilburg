@@ -1,0 +1,17 @@
+<button
+  type="button"
+  role="switch"
+  tabindex="0"
+  [attr.aria-label]="ariaLabel"
+  [attr.aria-checked]="isActive(options[options.length - 1])"
+  (click)="onClick()"
+  (keydown)="onKeyDown($event)"
+  class="tilburg-language-toggle utrecht-button utrecht-button--html-button utrecht-button--secondary-action"
+>
+  <span
+    *ngFor="let option of options"
+    class="tilburg-language-toggle__option"
+    [class.tilburg-language-toggle__option--active]="isActive(option)"
+    >{{ option.label }}</span
+  >
+</button>

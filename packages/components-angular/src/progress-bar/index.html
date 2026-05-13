@@ -1,0 +1,28 @@
+<a
+  *ngIf="showBack"
+  class="tilburg-progress-bar__back utrecht-link utrecht-link--html-a"
+  href=""
+  (click)="onBack($event)"
+>
+  <ng-content select="[slot=back-icon]"></ng-content>
+  <span class="tilburg-progress-bar__back-label">{{ backLabel }}</span>
+</a>
+
+<div class="tilburg-progress-bar__header">
+  <tilburg-heading-2 *ngIf="title" class="tilburg-progress-bar__title tilburg-step-title"
+    >{{ title }}</tilburg-heading-2
+  >
+  <div *ngIf="label" class="tilburg-progress-bar__label">{{ label }}</div>
+</div>
+
+<div
+  class="tilburg-progress-bar__track"
+  role="progressbar"
+  [attr.aria-label]="ariaLabel || title || null"
+  [attr.aria-valuemin]="0"
+  [attr.aria-valuemax]="total"
+  [attr.aria-valuenow]="value"
+  [attr.aria-valuetext]="label || null"
+>
+  <div class="tilburg-progress-bar__indicator progress-bar-indicator" [style.width.%]="percentage"></div>
+</div>

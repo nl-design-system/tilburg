@@ -1,0 +1,17 @@
+<div
+  class="tilburg-validation-message"
+  [class.utrecht-form-field-error-message]="resolvedType === 'error'"
+  [class.utrecht-form-field-description]="resolvedType === 'warning'"
+  [class.utrecht-form-field-description--warning]="resolvedType === 'warning'"
+  [class.tilburg-validation-message--error]="resolvedType === 'error'"
+  [class.tilburg-validation-message--warning]="resolvedType === 'warning'"
+  role="alert"
+  [attr.aria-live]="ariaLive"
+>
+  <span class="tilburg-validation-message__icon">
+    <ng-content select="[slot=icon]"></ng-content>
+  </span>
+  <span class="tilburg-validation-message__body">
+    <ng-content></ng-content>
+  </span>
+</div>

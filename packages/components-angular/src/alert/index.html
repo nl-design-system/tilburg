@@ -1,0 +1,34 @@
+<div
+  class="utrecht-alert tilburg-alert"
+  [ngClass]="variantClass"
+  role="status"
+  [attr.aria-live]="liveRegion"
+  [attr.aria-label]="ariaLabel || null"
+  aria-atomic="true"
+>
+  <div class="utrecht-alert__icon">
+    <ng-content select="[slot=icon]"></ng-content>
+  </div>
+  <div class="utrecht-alert__content">
+    <ng-container *ngIf="title" [ngSwitch]="headingLevel">
+      <tilburg-heading-1 *ngSwitchCase="1" class="tilburg-alert__title">{{ title }}</tilburg-heading-1>
+      <tilburg-heading-2 *ngSwitchCase="2" class="tilburg-alert__title">{{ title }}</tilburg-heading-2>
+      <tilburg-heading-3 *ngSwitchCase="3" class="tilburg-alert__title">{{ title }}</tilburg-heading-3>
+      <tilburg-heading-4 *ngSwitchCase="4" class="tilburg-alert__title">{{ title }}</tilburg-heading-4>
+      <tilburg-heading-5 *ngSwitchCase="5" class="tilburg-alert__title">{{ title }}</tilburg-heading-5>
+      <tilburg-heading-6 *ngSwitchCase="6" class="tilburg-alert__title">{{ title }}</tilburg-heading-6>
+    </ng-container>
+    <div class="utrecht-alert__message">
+      <ng-content></ng-content>
+    </div>
+  </div>
+  <button
+    *ngIf="closable"
+    type="button"
+    class="tilburg-alert__close"
+    [attr.aria-label]="closeButtonAriaLabel"
+    (click)="onClose()"
+  >
+    <ng-content select="[slot=close-icon]"></ng-content>
+  </button>
+</div>

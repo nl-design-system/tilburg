@@ -1,0 +1,70 @@
+.utrecht-accordion {
+  margin-block-end: var(--tilburg-container-bottom-margin);
+}
+
+// De-nested from `.utrecht-accordion`: TilburgAccordion (root) and
+// TilburgAccordionSection are separate components with separate emulated
+// encapsulation IDs, so a nested rule never matches across the boundary.
+.utrecht-accordion__section {
+  background-color: var(--tilburg-color-slate-0, transparent);
+  border: 1px solid var(--utrecht-accordion-button-hover-background-color);
+  margin-block-end: 0.25rem;
+  max-block-size: fit-content;
+  transition: transform 500ms;
+
+  &:focus,
+  &:focus-visible {
+    border-width: 2px;
+  }
+}
+
+.tilburg-accordion__display-name {
+  font-family: var(--utrecht-document-font-family, inherit);
+  font-weight: 700;
+}
+
+.utrecht-accordion__button {
+  display: flex;
+  flex-direction: row-reverse;
+  min-inline-size: 100%;
+  padding-block: 11px;
+  z-index: 0;
+}
+
+.utrecht-accordion__button-icon {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: row-reverse;
+}
+
+// Utrecht's accordion rotates the icon container 180deg when expanded (so its
+// default chevron flips between down and up). Tilburg swaps the projected
+// glyph explicitly (minus/plus via *ngIf), and with `flex-direction: row-reverse`
+// on the icon container the rotation would move the glyph from the right edge
+// to the left edge — visually pushing the minus next to the label. Cancel the
+// rotation so both expanded and collapsed states keep the glyph at the right.
+.utrecht-accordion__button[aria-expanded="true"] .utrecht-accordion__button-icon {
+  transform: none;
+}
+
+.utrecht-accordion__button-label {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+// Original bq-tlb-frontend wrapper used a bare div with `m-4 transition-all`
+// (no `.utrecht-accordion__panel` class), so utrecht's panel padding+border
+// never applied. Re-emit only the original margin/transition by zeroing the
+// utrecht-css defaults.
+.utrecht-accordion__panel {
+  border: none;
+  margin-block: 1rem;
+  margin-inline: 1rem;
+  padding-block: 0;
+  padding-inline: 0;
+  transition: all 200ms ease-in-out;
+}
+
+.utrecht-accordion__panel[hidden] {
+  display: none;
+}
