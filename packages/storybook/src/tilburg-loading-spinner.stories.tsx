@@ -10,8 +10,39 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Floading-spinner',
     docs: {
       description: {
-        component:
-          'Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.',
+        component: `Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-loading-spinner
+  [visible]="loading$ | async"
+  title="Bezig met laden"
+  message="Een momentje alstublieft..."
+  [delayMs]="1000"
+/>
+\`\`\`
+
+Inputs: \`visible\`, \`title\`, \`message\`, \`delayMs\` (overlay only appears after this many ms; default 1000), \`ariaLabel\`. The grace timer prevents flicker for quick operations.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
+  <div class="tilburg-loading-spinner__panel">
+    <div class="tilburg-loading-spinner__content">
+      <span class="tilburg-loading-spinner__title">Bezig met laden</span>
+      <div role="status">
+        <svg class="tilburg-loading-spinner__svg" viewBox="0 0 100 101"><!-- … --></svg>
+      </div>
+      <span class="tilburg-loading-spinner__message">Een momentje alstublieft...</span>
+    </div>
+  </div>
+</div>
+\`\`\`
+`,
       },
     },
   },

@@ -17,8 +17,7 @@
     font-size: var(--utrecht-alert-icon-size);
 
     // Match the heading line-height so the icon vertically centers with the
-    // first line of the title (original bq-tlb-frontend wrapper used the same
-    // trick).
+    // first line of the title.
     i {
       line-height: var(--utrecht-heading-3-line-height);
     }

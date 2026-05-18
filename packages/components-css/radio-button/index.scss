@@ -1,6 +1,17 @@
-/* intentionally empty for now */
 .utrecht-form-label--radio {
   font-weight: 400;
+}
+
+/* Radio-group title: when the form-label is used as a fieldset <legend>, drop
+   the browser-default padding, add bottom spacing, and bump weight so the
+   question text stands out from the option labels. The bottom margin matches
+   the vertical rhythm used between other form-field labels and their inputs. */
+.utrecht-form-label--radio:where(legend),
+.utrecht-form-label:where(legend) {
+  font-weight: 700;
+  margin-block-end: var(--tilburg-space-block-snail, 0.75rem);
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 .utrecht-radio-button--html-input.utrecht-radio-button {

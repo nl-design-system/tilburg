@@ -1,4 +1,4 @@
-<div class="utrecht-accordion" [attr.aria-label]="ariaLabel || null">
+<div class="utrecht-accordion" [attr.aria-label]="ariaLabel || null" [attr.role]="ariaLabel ? 'region' : null">
   <ng-container [ngSwitch]="headingLevel">
     <tilburg-heading-1 *ngSwitchCase="1" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-1>
     <tilburg-heading-2 *ngSwitchCase="2" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-2>

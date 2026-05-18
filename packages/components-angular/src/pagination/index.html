@@ -1,0 +1,111 @@
+<nav class="tilburg-pagination" [attr.aria-label]="ariaLabel || null">
+  <div *ngIf="feedback" class="tilburg-pagination__feedback">{{ feedback }}</div>
+  <div class="tilburg-pagination__controls">
+    <button
+      type="button"
+      class="tilburg-pagination__button"
+      [disabled]="firstDisabled"
+      [attr.aria-label]="firstLabel"
+      (click)="onStep('first')"
+    >
+      <svg
+        class="tilburg-pagination__icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="11 17 6 12 11 7"></polyline>
+        <polyline points="18 17 13 12 18 7"></polyline>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="tilburg-pagination__button"
+      [disabled]="previousDisabled"
+      [attr.aria-label]="previousLabel"
+      (click)="onStep('previous')"
+    >
+      <svg
+        class="tilburg-pagination__icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <ng-container *ngIf="pages.length; else rangeText">
+      <ul class="tilburg-pagination__pages">
+        <li *ngFor="let slot of pages">
+          <span *ngIf="slot.kind === 'ellipsis'" class="tilburg-pagination__ellipsis" aria-hidden="true">…</span>
+          <button
+            *ngIf="slot.kind === 'page'"
+            type="button"
+            class="tilburg-pagination__page"
+            [class.tilburg-pagination__page--current]="isCurrent(slot.value)"
+            [attr.aria-current]="isCurrent(slot.value) ? 'page' : null"
+            [attr.aria-label]="pageLabel(slot.value)"
+            [disabled]="isCurrent(slot.value)"
+            (click)="onPage(slot.value)"
+          >
+            {{ slot.value }}
+          </button>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-template #rangeText>
+      <div *ngIf="range" class="tilburg-pagination__range">{{ range }}</div>
+    </ng-template>
+
+    <button
+      type="button"
+      class="tilburg-pagination__button"
+      [disabled]="nextDisabled"
+      [attr.aria-label]="nextLabel"
+      (click)="onStep('next')"
+    >
+      <svg
+        class="tilburg-pagination__icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="tilburg-pagination__button"
+      [disabled]="lastDisabled"
+      [attr.aria-label]="lastLabel"
+      (click)="onStep('last')"
+    >
+      <svg
+        class="tilburg-pagination__icon"
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="13 17 18 12 13 7"></polyline>
+        <polyline points="6 17 11 12 6 7"></polyline>
+      </svg>
+    </button>
+  </div>
+</nav>

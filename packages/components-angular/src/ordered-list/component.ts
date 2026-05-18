@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-ordered-list',
   templateUrl: 'index.html',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgOrderedList {
-  constructor() {}
+  @Input() byLetter = false;
 }

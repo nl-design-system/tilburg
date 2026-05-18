@@ -11,8 +11,30 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fbutton',
     docs: {
       description: {
-        component:
-          'Tilburg-specific button variants on top of utrecht: `.tilburg-small / .tilburg-medium / .tilburg-large` size classes and `--secondary-action` / `--subtle` focus overrides.',
+        component: `Tilburg-specific button variants on top of utrecht: \`.tilburg-small / .tilburg-medium / .tilburg-large\` size classes and \`--secondary-action\` / \`--subtle\` focus overrides.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-button appearance="primary-action" size="medium" (click)="submit()">
+  Versturen
+</tilburg-button>
+\`\`\`
+
+Inputs: \`appearance\` (\`'primary-action' | 'secondary-action' | 'subtle'\`), \`size\` (\`'small' | 'medium' | 'large'\`), \`type\`, \`disabled\`, \`title\`, \`ariaLabel\`, \`ariaDescribedBy\`, \`pressed\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">
+  Versturen
+</button>
+\`\`\`
+
+Combine one size class (\`tilburg-small | tilburg-medium | tilburg-large\`) with one appearance modifier (\`utrecht-button--primary-action | utrecht-button--secondary-action | utrecht-button--subtle\`).
+`,
       },
     },
   },

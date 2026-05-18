@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-page-header',
   templateUrl: 'index.html',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgPageHeader {
-  constructor() {}
+  @Input() logoSrc?: string | null;
+  @Input() logoAlt = '';
+  @Input() title?: string | null;
+  @Input() titleHref?: string | null;
+  @Input() ariaLabel?: string | null;
 }

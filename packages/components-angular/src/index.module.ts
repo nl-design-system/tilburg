@@ -11,6 +11,7 @@ import { TilburgButton } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLink } from './button-link/component';
 import { TilburgCheckbox } from './checkbox/component';
+import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDocument } from './document/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
@@ -31,6 +32,7 @@ import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
 import { TilburgPageFooter } from './page-footer/component';
 import { TilburgPageHeader } from './page-header/component';
+import { TilburgPagination } from './pagination/component';
 import { TilburgParagraph } from './paragraph/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
@@ -62,6 +64,10 @@ const components = [
   TilburgButtonGroup,
   TilburgButtonLink,
   TilburgCheckbox,
+  TilburgDataList,
+  TilburgDataListItem,
+  TilburgDataListKey,
+  TilburgDataListValue,
   TilburgHeading1,
   TilburgHeading2,
   TilburgHeading3,
@@ -79,6 +85,7 @@ const components = [
   TilburgPageContent,
   TilburgPageFooter,
   TilburgPageHeader,
+  TilburgPagination,
   TilburgParagraph,
   TilburgProgressBar,
   TilburgTable,
@@ -97,7 +104,6 @@ const components = [
   TilburgTextarea,
   TilburgTextbox,
   TilburgRadioButton,
-  TilburgOrderedList,
   TilburgUnorderedList,
   TilburgValidationMessage,
 ];

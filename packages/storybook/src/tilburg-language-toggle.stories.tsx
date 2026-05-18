@@ -10,8 +10,37 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Flanguage-toggle',
     docs: {
       description: {
-        component:
-          'Two-option toggle for switching between Dutch and English. Active option uses the Tilburg interaction-active colour with white text.',
+        component: `Two-option toggle for switching between Dutch and English. Active option uses the Tilburg interaction-active colour with white text.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-language-toggle
+  [active]="currentLang"
+  ariaLabel="Schakel taal"
+  (toggle)="setLang($event)"
+/>
+\`\`\`
+
+Inputs: \`options\` (\`TilburgLanguageOption[]\`, default \`[{code:'NL',label:'NL'},{code:'EN',label:'EN'}]\`), \`active\` (option code), \`ariaLabel\`. Output: \`(toggle)\` emits the next option code.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<button
+  type="button"
+  role="switch"
+  aria-label="Schakel taal"
+  aria-checked="false"
+  class="tilburg-language-toggle utrecht-button utrecht-button--html-button utrecht-button--secondary-action"
+>
+  <span class="tilburg-language-toggle__option tilburg-language-toggle__option--active">NL</span>
+  <span class="tilburg-language-toggle__option">EN</span>
+</button>
+\`\`\`
+`,
       },
     },
   },

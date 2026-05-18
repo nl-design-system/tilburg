@@ -1,1 +1,15 @@
-<utrecht-page-footer><ng-content></ng-content></utrecht-page-footer>
+<footer class="tilburg-page-footer" [attr.aria-label]="ariaLabel || null">
+  <div class="tilburg-page-footer__container">
+    <ng-content></ng-content>
+    <ul *ngIf="primaryLink" class="tilburg-page-footer__primary">
+      <li>
+        <a class="tilburg-page-footer__primary-link" [href]="primaryLink.href">{{ primaryLink.label }}</a>
+      </li>
+    </ul>
+    <ul *ngIf="links?.length" class="tilburg-page-footer__list">
+      <li *ngFor="let link of links">
+        <a class="tilburg-page-footer__link" [href]="link.href">{{ link.label }}</a>
+      </li>
+    </ul>
+  </div>
+</footer>

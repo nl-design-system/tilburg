@@ -11,8 +11,40 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fradio-button',
     docs: {
       description: {
-        component:
-          'Radio button with Tilburg-specific focus, hover, active, and checked states layered on top of `.utrecht-radio-button`.',
+        component: `Radio button with Tilburg-specific focus, hover, active, and checked states layered on top of \`.utrecht-radio-button\`.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<fieldset>
+  <legend class="utrecht-form-label utrecht-form-label--radio">Hoe wilt u uw aanvraag ontvangen?</legend>
+
+  <tilburg-radio-button id="rb-email" name="delivery" value="email" [control]="form.controls.delivery" />
+  <label class="utrecht-form-label utrecht-form-label--radio" for="rb-email">E-mail</label>
+
+  <tilburg-radio-button id="rb-post" name="delivery" value="post" [control]="form.controls.delivery" />
+  <label class="utrecht-form-label utrecht-form-label--radio" for="rb-post">Per post</label>
+</fieldset>
+\`\`\`
+
+Inputs: \`id\`, \`name\`, \`value\`, \`control\` (\`FormControl\`), \`ariaLabel\`, \`ariaDescribedBy\`, \`invalid\`, \`required\`, \`disabled\`, \`checked\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<input
+  id="rb-email"
+  type="radio"
+  name="delivery"
+  value="email"
+  class="utrecht-radio-button utrecht-radio-button--html-input"
+  checked
+/>
+<label class="utrecht-form-label utrecht-form-label--radio" for="rb-email">E-mail</label>
+\`\`\`
+`,
       },
     },
   },
