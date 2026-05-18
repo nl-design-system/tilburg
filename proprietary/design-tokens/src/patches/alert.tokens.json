@@ -1,0 +1,14 @@
+{
+  "components/alert": {
+    "tilburg": {
+      "alert": {
+        "margin-block-end": {
+          "$value": "{tilburg.space.inline.mouse}"
+        },
+        "content-min-block-size": {
+          "$value": "30px"
+        }
+      }
+    }
+  }
+}

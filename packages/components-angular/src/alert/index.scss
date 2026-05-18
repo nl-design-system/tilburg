@@ -3,13 +3,13 @@
 // `.tilburg-alert *` selectors stay specific enough not to leak.
 .tilburg-alert {
   align-items: flex-start;
-  margin-block-end: 1rem;
+  margin-block-end: var(--tilburg-alert-margin-block-end);
 
   .utrecht-alert__content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-block-size: 30px;
+    min-block-size: var(--tilburg-alert-content-min-block-size);
   }
 
   .utrecht-alert__icon {

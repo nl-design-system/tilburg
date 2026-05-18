@@ -8,13 +8,13 @@
 .utrecht-accordion__section {
   background-color: var(--tilburg-color-slate-0, transparent);
   border: 1px solid var(--utrecht-accordion-button-hover-background-color);
-  margin-block-end: 0.25rem;
+  margin-block-end: var(--tilburg-accordion-section-margin-block-end);
   max-block-size: fit-content;
-  transition: transform 500ms;
+  transition: transform var(--tilburg-accordion-section-transition-duration);
 
   &:focus,
   &:focus-visible {
-    border-width: 2px;
+    border-width: var(--tilburg-accordion-section-focus-border-width);
   }
 }
 
@@ -27,7 +27,7 @@
   display: flex;
   flex-direction: row-reverse;
   min-inline-size: 100%;
-  padding-block: 11px;
+  padding-block: var(--tilburg-accordion-button-padding-block);
   z-index: 0;
 }
 
@@ -58,11 +58,11 @@
 // utrecht-css defaults.
 .utrecht-accordion__panel {
   border: none;
-  margin-block: 1rem;
-  margin-inline: 1rem;
+  margin-block: var(--tilburg-accordion-panel-margin);
+  margin-inline: var(--tilburg-accordion-panel-margin);
   padding-block: 0;
   padding-inline: 0;
-  transition: all 200ms ease-in-out;
+  transition: all var(--tilburg-accordion-panel-transition-duration) ease-in-out;
 }
 
 .utrecht-accordion__panel[hidden] {
