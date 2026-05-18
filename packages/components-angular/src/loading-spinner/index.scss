@@ -10,12 +10,12 @@
   inset: 0;
   position: fixed;
   vertical-align: middle;
-  z-index: 1010;
+  z-index: var(--tilburg-loading-spinner-z-index);
 }
 
 .tilburg-loading-spinner__panel {
   align-items: center;
-  background-color: rgb(255 255 255 / 90%);
+  background-color: var(--tilburg-loading-spinner-overlay-background-color);
   block-size: 100vh;
   display: flex;
   inline-size: 100vw;
@@ -32,11 +32,12 @@
 }
 
 .tilburg-loading-spinner__svg {
-  animation: tilburg-loading-spinner-spin 1000ms linear infinite;
-  block-size: 6rem;
+  animation: tilburg-loading-spinner-spin var(--tilburg-loading-spinner-animation-duration) linear infinite;
+  block-size: var(--tilburg-loading-spinner-svg-size);
   color: var(--tilburg-color-gray-300, #afafaf);
   fill: var(--tilburg-color-gray-950, #333);
-  inline-size: 6rem;
-  margin-block: 1.5rem 2rem;
+  inline-size: var(--tilburg-loading-spinner-svg-size);
+  margin-block: var(--tilburg-loading-spinner-svg-margin-block-start)
+    var(--tilburg-loading-spinner-svg-margin-block-end);
   margin-inline: 0;
 }

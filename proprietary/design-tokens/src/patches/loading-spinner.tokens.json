@@ -1,0 +1,28 @@
+{
+  "components/loading-spinner": {
+    "tilburg": {
+      "loading-spinner": {
+        "z-index": {
+          "$value": "1010"
+        },
+        "animation-duration": {
+          "$value": "1000ms"
+        },
+        "overlay-background-color": {
+          "$value": "rgb(255 255 255 / 90%)"
+        },
+        "svg": {
+          "size": {
+            "$value": "6rem"
+          },
+          "margin-block-start": {
+            "$value": "1.5rem"
+          },
+          "margin-block-end": {
+            "$value": "2rem"
+          }
+        }
+      }
+    }
+  }
+}

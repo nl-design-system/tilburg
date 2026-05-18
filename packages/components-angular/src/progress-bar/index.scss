@@ -6,11 +6,11 @@
   align-items: center;
   display: inline-flex;
   font-size: var(--tilburg-typography-font-size-md, 1rem);
-  gap: 0.5rem;
+  gap: var(--tilburg-progress-bar-back-gap);
   inline-size: fit-content;
   line-height: 150%;
-  margin-block-end: 1rem;
-  margin-inline-end: 1rem;
+  margin-block-end: var(--tilburg-progress-bar-back-margin);
+  margin-inline-end: var(--tilburg-progress-bar-back-margin);
   text-decoration: none !important;
 }
 
@@ -24,10 +24,10 @@
 }
 
 .tilburg-progress-bar__title {
-  block-size: 3rem;
+  block-size: var(--tilburg-progress-bar-title-block-size);
   display: flex;
   justify-content: center;
-  min-inline-size: 3rem;
+  min-inline-size: var(--tilburg-progress-bar-title-min-inline-size);
   order: 2;
 
   @media (width >= 1024px) {
@@ -37,10 +37,10 @@
 
 .tilburg-progress-bar__label {
   display: flex;
-  font-size: 0.875rem;
+  font-size: var(--tilburg-progress-bar-label-font-size);
   font-weight: 700;
   justify-content: center;
-  line-height: 21px;
+  line-height: var(--tilburg-progress-bar-label-line-height);
   margin-block: 0.5rem;
   margin-inline: 0;
   order: 1;
@@ -52,17 +52,18 @@
 
 .tilburg-progress-bar__track {
   background-color: var(--tilburg-color-gray-300, #afafaf);
-  block-size: 6px;
+  block-size: var(--tilburg-progress-bar-track-block-size);
   display: flex;
   inline-size: 100%;
   margin-block: 0.5rem 1.25rem;
   margin-inline: 0;
-  transition: all 200ms ease-in-out;
+  transition: all var(--tilburg-progress-bar-transition-duration) ease-in-out;
 }
 
 .tilburg-progress-bar__indicator {
   background-color: var(--tilburg-bar-active);
   block-size: 100%;
-  border-inline-end: 2px solid var(--utrecht-page-background-color, #fff);
-  transition: width 200ms ease-in-out;
+  border-inline-end: var(--tilburg-progress-bar-indicator-divider-inline-size) solid
+    var(--utrecht-page-background-color, #fff);
+  transition: width var(--tilburg-progress-bar-transition-duration) ease-in-out;
 }

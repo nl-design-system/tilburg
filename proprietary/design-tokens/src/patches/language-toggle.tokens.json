@@ -1,0 +1,27 @@
+{
+  "components/language-toggle": {
+    "tilburg": {
+      "language-toggle": {
+        "font-weight": {
+          "$value": "600"
+        },
+        "option": {
+          "min-block-size": {
+            "$value": "42px"
+          },
+          "padding-inline": {
+            "$value": "{tilburg.space.inline.beetle}"
+          },
+          "active": {
+            "color": {
+              "$value": "#fff"
+            },
+            "background-color": {
+              "$value": "{tilburg.interaction.active.color}"
+            }
+          }
+        }
+      }
+    }
+  }
+}

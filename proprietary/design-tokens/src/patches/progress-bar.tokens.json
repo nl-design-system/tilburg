@@ -1,0 +1,45 @@
+{
+  "components/progress-bar": {
+    "tilburg": {
+      "progress-bar": {
+        "transition-duration": {
+          "$value": "200ms"
+        },
+        "back": {
+          "gap": {
+            "$value": "{tilburg.space.inline.beetle}"
+          },
+          "margin": {
+            "$value": "{tilburg.space.inline.mouse}"
+          }
+        },
+        "title": {
+          "block-size": {
+            "$value": "3rem"
+          },
+          "min-inline-size": {
+            "$value": "3rem"
+          }
+        },
+        "label": {
+          "font-size": {
+            "$value": "0.875rem"
+          },
+          "line-height": {
+            "$value": "21px"
+          }
+        },
+        "track": {
+          "block-size": {
+            "$value": "6px"
+          }
+        },
+        "indicator": {
+          "divider-inline-size": {
+            "$value": "2px"
+          }
+        }
+      }
+    }
+  }
+}

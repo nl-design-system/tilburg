@@ -1,14 +1,14 @@
 .tilburg-breadcrumb {
-  --utrecht-breadcrumb-nav-separator-color: var(--tilburg-color-gray-400, #9ca3af);
-  --utrecht-breadcrumb-nav-link-current-font-weight: bold;
+  --utrecht-breadcrumb-nav-separator-color: var(--tilburg-breadcrumb-separator-color);
+  --utrecht-breadcrumb-nav-link-current-font-weight: var(--tilburg-breadcrumb-link-current-font-weight);
 
-  font-size: 0.875rem;
-  margin-block-end: 1rem;
+  font-size: var(--tilburg-breadcrumb-font-size);
+  margin-block-end: var(--tilburg-breadcrumb-margin-block-end);
 
   // Match original bq-tlb-frontend wrapper styling for the trail links:
   // blue, no underline by default, underline on hover.
   .utrecht-breadcrumb-nav__link {
-    color: var(--tilburg-color-blue-300, #0b5394);
+    color: var(--tilburg-breadcrumb-link-color);
     cursor: pointer;
     text-decoration: none;
 
@@ -18,7 +18,7 @@
   }
 
   .utrecht-breadcrumb-nav__link--current {
-    color: var(--tilburg-color-gray-500, #6b7280);
+    color: var(--tilburg-breadcrumb-link-current-color);
     cursor: default;
     text-decoration: none;
 
