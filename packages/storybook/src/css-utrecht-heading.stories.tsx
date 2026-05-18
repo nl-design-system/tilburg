@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Heading } from '@utrecht/component-library-react/dist/css-module';
+import { Heading } from '@utrecht/component-library-react';
 import readme from './documentation/heading.md?raw';
 
 const meta = {

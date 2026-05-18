@@ -1,0 +1,42 @@
+// Consumed by `tilburg-alert` (Angular) with `encapsulation: ViewEncapsulation.None`
+// so the `i` rule below reaches the projected `<app-icon>` content without `::ng-deep`.
+// The `.tilburg-alert *` selectors stay specific enough not to leak.
+.tilburg-alert {
+  align-items: flex-start;
+  margin-block-end: var(--tilburg-alert-margin-block-end);
+
+  .utrecht-alert__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-block-size: var(--tilburg-alert-content-min-block-size);
+  }
+
+  .utrecht-alert__icon {
+    color: var(--_utrecht-alert-icon-color, var(--utrecht-alert-icon-color));
+    font-size: var(--utrecht-alert-icon-size);
+
+    // Match the heading line-height so the icon vertically centers with the
+    // first line of the title (original bq-tlb-frontend wrapper used the same
+    // trick).
+    i {
+      line-height: var(--utrecht-heading-3-line-height);
+    }
+  }
+
+  .tilburg-alert__title {
+    flex-grow: 1;
+  }
+
+  /* Push the close button to the right edge of the alert via auto inline-start
+     margin. Combined with `align-items: flex-start` on the alert root, this
+     seats the close in the top-right corner. */
+  .tilburg-alert__close {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    margin-inline-start: auto;
+    padding-block: 0;
+    padding-inline: 0;
+  }
+}

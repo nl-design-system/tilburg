@@ -1,0 +1,9 @@
+utrecht-heading-4 {
+  --utrecht-heading-4-font-size: var(--tilburg-heading-4-large-vw-font-size);
+}
+
+@media (width <= 768px) {
+  utrecht-heading-4 {
+    --utrecht-heading-4-font-size: var(--tilburg-heading-4-small-vw-font-size);
+  }
+}

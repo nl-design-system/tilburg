@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { StatusBadge } from '@utrecht/component-library-react/dist/css-module';
+import { StatusBadge } from '@utrecht/component-library-react';
 import readme from './documentation/status-badge.md?raw';
 
 const meta = {

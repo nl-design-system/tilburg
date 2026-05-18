@@ -1,0 +1,43 @@
+@keyframes tilburg-loading-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tilburg-loading-spinner__overlay {
+  block-size: 100vh;
+  inline-size: 100vw;
+  inset: 0;
+  position: fixed;
+  vertical-align: middle;
+  z-index: var(--tilburg-loading-spinner-z-index);
+}
+
+.tilburg-loading-spinner__panel {
+  align-items: center;
+  background-color: var(--tilburg-loading-spinner-overlay-background-color);
+  block-size: 100vh;
+  display: flex;
+  inline-size: 100vw;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+}
+
+.tilburg-loading-spinner__content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tilburg-loading-spinner__svg {
+  animation: tilburg-loading-spinner-spin var(--tilburg-loading-spinner-animation-duration) linear infinite;
+  block-size: var(--tilburg-loading-spinner-svg-size);
+  color: var(--tilburg-color-gray-300, #afafaf);
+  fill: var(--tilburg-color-gray-950, #333);
+  inline-size: var(--tilburg-loading-spinner-svg-size);
+  margin-block: var(--tilburg-loading-spinner-svg-margin-block-start)
+    var(--tilburg-loading-spinner-svg-margin-block-end);
+  margin-inline: 0;
+}

@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { AccordionProvider } from '@utrecht/component-library-react/dist/css-module';
+import { AccordionProvider } from '@utrecht/component-library-react';
 import { ReactNode } from 'react';
 import readme from './documentation/accordion.md?raw';
 

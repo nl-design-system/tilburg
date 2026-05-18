@@ -1,0 +1,19 @@
+.tilburg-validation-message {
+  display: flex;
+  gap: var(--tilburg-validation-message-gap);
+  margin-block-end: var(--tilburg-validation-message-margin-block-end);
+}
+
+.tilburg-validation-message__icon {
+  align-items: center;
+  block-size: calc(var(--utrecht-document-font-size) * 1.5);
+  display: inline-flex;
+}
+
+.tilburg-validation-message--error .tilburg-validation-message__icon {
+  color: var(--utrecht-form-field-error-message-color);
+}
+
+.tilburg-validation-message--warning .tilburg-validation-message__icon {
+  color: var(--utrecht-feedback-warning-color);
+}

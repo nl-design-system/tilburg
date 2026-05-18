@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { UnorderedList, UnorderedListItem } from '@utrecht/component-library-react/dist/css-module';
+import { UnorderedList, UnorderedListItem } from '@utrecht/component-library-react';
 import readme from './documentation/unordered-list.md?raw';
 
 const meta = {
