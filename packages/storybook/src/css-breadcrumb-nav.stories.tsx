@@ -1,11 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  BreadcrumbNav,
-  BreadcrumbNavLink,
-  BreadcrumbNavSeparator,
-} from '@utrecht/component-library-react/dist/css-module';
+import { BreadcrumbNav, BreadcrumbNavLink, BreadcrumbNavSeparator } from '@utrecht/component-library-react';
 import readme from './documentation/breadcrumb-nav.md?raw';
 
 const meta = {

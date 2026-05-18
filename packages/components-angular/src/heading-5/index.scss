@@ -1,9 +1,1 @@
-utrecht-heading-5 {
-  --utrecht-heading-5-font-size: var(--tilburg-heading-5-large-vw-font-size);
-}
-
-@media (width <= 768px) {
-  utrecht-heading-5 {
-    --utrecht-heading-5-font-size: var(--tilburg-heading-5-small-vw-font-size);
-  }
-}
+@import "../../../components-css/heading-5/index";

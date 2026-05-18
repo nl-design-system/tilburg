@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { BadgeCounter } from '@utrecht/component-library-react/dist/css-module';
+import { BadgeCounter } from '@utrecht/component-library-react';
 import readme from './documentation/counter-badge.md?raw';
 
 const meta = {

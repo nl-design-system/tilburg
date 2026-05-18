@@ -10,7 +10,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@utrecht/component-library-react';
-import { Link } from '@utrecht/component-library-react/dist/css-module';
+import { Link } from '@utrecht/component-library-react';
 import readme from './documentation/table.md?raw';
 
 const meta = {

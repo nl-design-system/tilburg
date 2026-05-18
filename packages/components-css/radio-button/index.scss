@@ -1,0 +1,104 @@
+/* intentionally empty for now */
+.utrecht-form-label--radio {
+  font-weight: 400;
+}
+
+.utrecht-radio-button--html-input.utrecht-radio-button {
+  &:invalid:not(:checked) {
+    background-color: var(--utrecht-radio-button-invalid-background-color);
+  }
+
+  &:focus-visible:not([aria-disabled="true"], :disabled, :checked, .tilburg-radio-pressed) {
+    --_utrecht-radio-button-interactive-background-color: var(
+      --utrecht-radio-button-focus-background-color,
+      var(--utrecht-radio-button-focus-background-color)
+    );
+    --_utrecht-radio-button-interactive-border-color: var(
+      --utrecht-radio-button-focus-border-color,
+      var(--utrecht-radio-button-focus-border-color)
+    );
+    --_utrecht-radio-button-interactive-border-width: var(
+      --utrecht-radio-button-focus-border-width,
+      var(--utrecht-radio-button-focus-border-width)
+    );
+    --_utrecht-radio-button-interactive-color: var(
+      --utrecht-radio-button-focus-color,
+      var(--utrecht-radio-button-focus-color)
+    );
+  }
+
+  &:checked {
+    &:disabled {
+      border-color: #626262;
+      border-width: 7.8px;
+    }
+
+    &:active {
+      opacity: 90%;
+    }
+
+    &:hover {
+      filter: brightness(90%);
+    }
+
+    &:focus:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed, :active) {
+      --_utrecht-radio-button-background-color: var(--utrecht-radio-button-checked-background-color);
+      --_utrecht-radio-button-color: var(--utrecht-radio-button-checked-color);
+
+      background-color: var(--utrecht-radio-button-checked-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+    }
+
+    &:focus-visible:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+      background-color: var(--utrecht-radio-button-disabled-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+    }
+
+    &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled) {
+      outline-color: transparent;
+    }
+
+    &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled),
+    &:focus-visible:not(.tilburg-radio-pressed, [aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+      --utrecht-radio-button-color: black;
+      --_utrecht-radio-button-color: black;
+      --utrecht-radio-button-background-color: #e6f6ff;
+      --_utrecht-radio-button-background-color: #e6f6ff;
+      --_utrecht-radio-button-interactive-background-color: var(
+        --utrecht-radio-button-focus-background-color,
+        var(--utrecht-radio-button-focus-background-color)
+      );
+      --_utrecht-radio-button-interactive-border-color: var(
+        --utrecht-radio-button-focus-border-color,
+        var(--utrecht-radio-button-focus-border-color)
+      );
+      --_utrecht-radio-button-interactive-border-width: var(
+        --utrecht-radio-button-focus-border-width,
+        var(--utrecht-radio-button-focus-border-width)
+      );
+      --_utrecht-radio-button-interactive-color: var(
+        --utrecht-radio-button-focus-color,
+        var(--utrecht-radio-button-focus-color)
+      );
+
+      background-color: #e6f6ff;
+    }
+
+    &:focus:not([aria-disabled="true"], :disabled) {
+      background-color: var(--utrecht-radio-button-disabled-background-color);
+      border-color: var(--utrecht-form-control-focus-border-color);
+      border-width: 1px;
+    }
+  }
+}
+
+.utrecht-radio-button.utrecht-radio-button--html-input {
+  /* Wont be patched properly for some reason. The values set come after the patches. */
+  --utrecht-radio-button-icon-size: 5px;
+}
+
+.utrecht-radio-button--html-input {
+  --utrecht-radio-button-focus-color: var(--utrecht-radio-button-checked-color);
+}

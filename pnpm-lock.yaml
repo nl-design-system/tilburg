@@ -407,6 +407,9 @@ importers:
       '@types/react-dom':
         specifier: 18.3.1
         version: 18.3.1
+      '@utrecht/component-library-css':
+        specifier: 5.2.0
+        version: 5.2.0
       '@utrecht/component-library-react':
         specifier: 4.2.0
         version: 4.2.0(@babel/runtime@7.28.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4616,6 +4619,9 @@ packages:
 
   '@utrecht/component-library-angular@1.1.0':
     resolution: {integrity: sha512-BklhGfbt6dhS9e7CZoqTGBXi/sfu5R6TYjvQ7kYfbpABPh32JPb8mr1/3DtvQMq2rN1vgH6kWzV81K4GqUl/sw==}
+
+  '@utrecht/component-library-css@5.2.0':
+    resolution: {integrity: sha512-yyFx/1N7ZodEv7EYuGSpACGNF+H5f+OAVN0EEEvDiGOjhfjTG3XuXqB8mTSkRtnWSLBfLOXI2Wderh9XPwdULg==}
 
   '@utrecht/component-library-react@4.2.0':
     resolution: {integrity: sha512-xS6hpHtidYstCPjm1STc+iGTHmc02mc/dmvDcFAcRnwzweI4zunxawIxwF8cpG4SyjeK0b6iU8GJ3d7QXUe7mA==}
@@ -10570,6 +10576,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
@@ -15531,6 +15538,8 @@ snapshots:
   '@utrecht/component-library-angular@1.1.0':
     dependencies:
       tslib: 2.6.2
+
+  '@utrecht/component-library-css@5.2.0': {}
 
   '@utrecht/component-library-react@4.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

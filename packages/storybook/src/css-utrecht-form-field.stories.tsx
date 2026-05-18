@@ -11,7 +11,7 @@ import {
   Select,
   SelectOption,
   Textbox,
-} from '@utrecht/component-library-react/dist/css-module';
+} from '@utrecht/component-library-react';
 import readme from './documentation/form-field.md?raw';
 
 const meta = {
