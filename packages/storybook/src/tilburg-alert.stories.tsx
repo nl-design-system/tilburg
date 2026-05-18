@@ -11,8 +11,50 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Falert',
     docs: {
       description: {
-        component:
-          'Tilburg alert built on `.utrecht-alert` + `.tilburg-alert` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.',
+        component: `Tilburg alert built on \`.utrecht-alert\` + \`.tilburg-alert\` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-alert
+  variant="info"
+  title="Informatie"
+  [closable]="true"
+  liveRegion="polite"
+  (closed)="onAlertClosed()"
+>
+  <app-icon alertIcon name="info" />
+  De openingstijden zijn gewijzigd.
+</tilburg-alert>
+\`\`\`
+
+Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`), \`ariaLabel\`, \`closeButtonAriaLabel\`. Output: \`(closed)\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<div class="utrecht-alert tilburg-alert utrecht-alert--info" role="status" aria-live="polite" aria-atomic="true">
+  <div class="utrecht-alert__icon">
+    <i aria-hidden="true"><!-- icon svg --></i>
+  </div>
+  <div class="utrecht-alert__content">
+    <utrecht-heading-3 class="tilburg-alert__title">
+      <h3 class="utrecht-heading-3">Informatie</h3>
+    </utrecht-heading-3>
+    <div class="utrecht-alert__message">
+      <p class="utrecht-paragraph">De openingstijden zijn gewijzigd.</p>
+    </div>
+  </div>
+  <button type="button" class="tilburg-alert__close" aria-label="Sluit alert">
+    <i aria-hidden="true"><!-- close icon --></i>
+  </button>
+</div>
+\`\`\`
+
+Variant modifiers map: \`success\` → \`.utrecht-alert--ok\`, \`danger\` → \`.utrecht-alert--error\`; \`info\` and \`warning\` keep their names.
+`,
       },
     },
   },
@@ -21,7 +63,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Match the bq-tlb-frontend rendering for the title. `<tilburg-heading-3>`
+// Match the heading rendering used by Angular consumers. `<tilburg-heading-3>`
 // renders `<utrecht-heading-3><h3 class="utrecht-heading-3">…</h3></utrecht-heading-3>`
 // — the outer custom element triggers `components-css/heading-3`'s
 // `utrecht-heading-3 { --utrecht-heading-3-font-size: var(--tilburg-heading-3-…) }`
@@ -35,7 +77,7 @@ const Title = ({ children }: { children: ReactNode }) =>
     createElement('h3', { className: 'utrecht-heading-3' }, children),
   );
 
-// Match the bq-tlb-frontend `<app-icon>` rendering shape: wrap the glyph in
+// Match the icon rendering used by Angular consumers: wrap the glyph in
 // an `<i>` element so the `.utrecht-alert__icon i { line-height: heading-3 }`
 // rule applies and the icon vertically centers with the heading's first line.
 const Icon = ({ children }: { children: ReactNode }) => (

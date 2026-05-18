@@ -11,8 +11,38 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fcheckbox',
     docs: {
       description: {
-        component:
-          'Custom-styled checkbox built on `.utrecht-checkbox--custom`. Tilburg layer adds invalid-state background, focus-visible borders, and the inline SVG check mark on the focused-checked state.',
+        component: `Custom-styled checkbox built on \`.utrecht-checkbox--custom\`. Tilburg layer adds invalid-state background, focus-visible borders, and the inline SVG check mark on the focused-checked state.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-checkbox
+  id="consent"
+  name="consent"
+  [control]="form.controls.consent"
+  ariaLabel="Ik ga akkoord met de voorwaarden"
+  [required]="true"
+  [invalid]="form.controls.consent.invalid && form.controls.consent.touched"
+  (checkChanged)="onChange($event)"
+/>
+\`\`\`
+
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`name\`, \`ariaLabel\`, \`ariaDescribedBy\`, \`invalid\`, \`required\`, \`disabled\`, \`checked\`. Output: \`(checkChanged)\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<input
+  id="consent"
+  type="checkbox"
+  class="utrecht-checkbox utrecht-checkbox--html-input utrecht-checkbox--custom"
+  required
+/>
+<label class="utrecht-form-label" for="consent">Ik ga akkoord met de voorwaarden</label>
+\`\`\`
+`,
       },
     },
   },

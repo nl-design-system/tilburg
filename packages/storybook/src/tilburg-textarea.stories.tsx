@@ -11,8 +11,32 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextarea',
     docs: {
       description: {
-        component:
-          'Multi-line text input. Tilburg layer enforces minimum block/inline size and adds hover + focus-visible rules.',
+        component: `Multi-line text input. Tilburg layer enforces minimum block/inline size and adds hover + focus-visible rules.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<label class="utrecht-form-label" for="explanation">Toelichting</label>
+<tilburg-textarea
+  id="explanation"
+  [control]="form.controls.explanation"
+  placeholder="Schrijf hier uw toelichting…"
+  [rows]="4"
+  [required]="true"
+/>
+\`\`\`
+
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<label class="utrecht-form-label" for="explanation">Toelichting</label>
+<textarea id="explanation" class="utrecht-textarea" placeholder="Schrijf hier uw toelichting…"></textarea>
+\`\`\`
+`,
       },
     },
   },

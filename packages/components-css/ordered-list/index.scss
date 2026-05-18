@@ -1,0 +1,28 @@
+.tilburg-ordered-list {
+  list-style-type: decimal;
+  margin-block-end: var(--tilburg-space-block-rabbit);
+  margin-block-start: var(--tilburg-space-block-rabbit);
+}
+
+.tilburg-ordered-list--by-letter {
+  list-style-type: lower-alpha;
+}
+
+/* Nested lists collapse their outer margins. */
+.tilburg-ordered-list .tilburg-ordered-list,
+.tilburg-ordered-list .tilburg-unordered-list,
+.tilburg-unordered-list .tilburg-ordered-list {
+  margin-block-end: 0;
+  margin-block-start: 0;
+}
+
+.utrecht-ordered-list__item {
+  line-height: var(--utrecht-unordered-list-line-height, var(--utrecht-document-line-height, inherit));
+  margin-block-end: var(--utrecht-unordered-list-item-margin-block-end);
+  margin-block-start: var(--utrecht-unordered-list-item-margin-block-start);
+  padding-inline-start: var(--utrecht-unordered-list-item-padding-inline-start, 1ch);
+
+  &::marker {
+    color: var(--utrecht-unordered-list-marker-color);
+  }
+}

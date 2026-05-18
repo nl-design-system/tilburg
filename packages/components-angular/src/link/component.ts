@@ -5,16 +5,15 @@ export type AriaCurrent = 'page' | 'step' | 'location' | 'date' | 'time' | boole
 @Component({
   selector: 'tilburg-link',
   templateUrl: 'index.html',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgLink {
   @Input() external = false;
-  @Input() rel?;
-  @Input() href?;
-  @Input() target?;
+  @Input() rel?: string;
+  @Input() href?: string;
+  @Input() target?: string;
   @Input() ariaLabel?: string;
   @Input() ariaDescribedBy?: string;
   @Input() current?: AriaCurrent;
-
-  constructor() {}
 }

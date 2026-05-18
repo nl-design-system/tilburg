@@ -1,3 +1,11 @@
+/* Checkbox-group title: same treatment as the radio-group legend. */
+.utrecht-form-label--checkbox:where(legend) {
+  font-weight: 700;
+  margin-block-end: var(--tilburg-space-block-snail, 0.75rem);
+  padding-block: 0;
+  padding-inline: 0;
+}
+
 .utrecht-checkbox--html-input.utrecht-checkbox--custom {
   &:not(:checked) {
     background-image: none;

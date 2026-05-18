@@ -10,7 +10,50 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fprogress-bar',
     docs: {
       description: {
-        component: 'Step-progress indicator with optional back link, title, and "Stap X van Y" label.',
+        component: `Step-progress indicator with optional back link, title, and "Stap X van Y" label.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-progress-bar
+  [value]="currentStep"
+  [total]="totalSteps"
+  title="Adresgegevens"
+  label="Stap 2 van 4"
+  [showBack]="true"
+  backLabel="Vorige stap"
+  (backClick)="goBack()"
+/>
+\`\`\`
+
+Inputs: \`value\`, \`total\`, \`label\`, \`title\`, \`backLabel\`, \`showBack\`, \`ariaLabel\`. Output: \`(backClick)\`. The percentage is computed from \`value / total\` and clamped to 0–100.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<a class="tilburg-progress-bar__back utrecht-link utrecht-link--html-a" href="#" >
+  <span aria-hidden="true">←</span>
+  <span class="tilburg-progress-bar__back-label">Vorige stap</span>
+</a>
+<div class="tilburg-progress-bar__header">
+  <h2 class="tilburg-progress-bar__title tilburg-step-title">Adresgegevens</h2>
+  <div class="tilburg-progress-bar__label">Stap 2 van 4</div>
+</div>
+<div
+  class="tilburg-progress-bar__track"
+  role="progressbar"
+  aria-label="Voortgang"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="50"
+  aria-valuetext="Stap 2 van 4"
+>
+  <div class="tilburg-progress-bar__indicator progress-bar-indicator" style="width: 50%"></div>
+</div>
+\`\`\`
+`,
       },
     },
   },

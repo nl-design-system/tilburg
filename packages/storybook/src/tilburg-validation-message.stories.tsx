@@ -10,8 +10,39 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fvalidation-message',
     docs: {
       description: {
-        component:
-          'Inline validation message shown alongside a form field. Variant modifiers `--error` and `--warning` colour the icon.',
+        component: `Inline validation message shown alongside a form field. Variant modifiers \`--error\` and \`--warning\` colour the icon.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<tilburg-validation-message *ngIf="emailCtrl.invalid && emailCtrl.touched" type="error">
+  Vul een geldig e-mailadres in.
+</tilburg-validation-message>
+
+<tilburg-validation-message type="warning">
+  De aanvraagperiode sluit binnenkort.
+</tilburg-validation-message>
+\`\`\`
+
+Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`).
+
+### Plain HTML / CSS
+
+\`\`\`html
+<div
+  class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message"
+  role="alert"
+  aria-live="polite"
+>
+  <span class="tilburg-validation-message__icon" aria-hidden="true">
+    <svg><!-- icon --></svg>
+  </span>
+  <span>Vul een geldig e-mailadres in.</span>
+</div>
+\`\`\`
+`,
       },
     },
   },

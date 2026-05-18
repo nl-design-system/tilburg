@@ -1,0 +1,23 @@
+.tilburg-data-list {
+  margin-block-end: var(--tilburg-container-bottom-margin, var(--tilburg-space-block-rabbit));
+}
+
+.tilburg-data-list__item {
+  border-block-end: 1px solid var(--tilburg-color-gray-200);
+  padding-block: var(--tilburg-space-block-snail);
+}
+
+.tilburg-data-list__key {
+  font-weight: 700;
+  line-height: 2;
+}
+
+.tilburg-data-list__value {
+  line-height: 2;
+  margin-inline-start: 0;
+}
+
+.tilburg-data-list--large .tilburg-data-list__item {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}

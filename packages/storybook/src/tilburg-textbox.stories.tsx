@@ -11,8 +11,37 @@ const meta = {
     bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextbox',
     docs: {
       description: {
-        component:
-          'Single-line text input. Tilburg layer adds hover and focus-visible rules on top of utrecht-textbox.',
+        component: `Single-line text input. Tilburg layer adds hover and focus-visible rules on top of utrecht-textbox.
+
+## Usage
+
+### Angular
+
+\`\`\`html
+<label class="utrecht-form-label" for="email">E-mailadres</label>
+<tilburg-textbox
+  id="email"
+  type="email"
+  [control]="form.controls.email"
+  placeholder="naam@voorbeeld.nl"
+  [required]="true"
+/>
+\`\`\`
+
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`type\`, \`name\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.
+
+### Plain HTML / CSS
+
+\`\`\`html
+<label class="utrecht-form-label" for="email">E-mailadres</label>
+<input
+  id="email"
+  type="email"
+  class="utrecht-textbox utrecht-textbox--html-input"
+  placeholder="naam@voorbeeld.nl"
+/>
+\`\`\`
+`,
       },
     },
   },
