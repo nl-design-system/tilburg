@@ -5,7 +5,8 @@
 
 Optically centre button text by shifting the line-box down with asymmetric
 `padding-block` to compensate for TradeGothicCondensed18's font metrics.
-Per-size offsets (small 2px, medium 2px, large 4px) avoid skewing smaller
-buttons. The same fix is applied to `.utrecht-button-link` (2px). Adds a
-`pack:dist` script to `components-angular` and `design-tokens` for the
-local build-and-pack release flow.
+Adds `--tilburg-fix-button-{small,medium,large}-baseline-offset` and
+`--tilburg-fix-button-link-baseline-offset` design tokens
+(2px / 2px / 4px / 2px) and consumes them from the button and button-link
+SCSS. Adds a `pack:dist` script to `components-angular` and `design-tokens`
+for the local build-and-pack release flow.
