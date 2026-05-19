@@ -262,12 +262,6 @@ importers:
       '@types/testing-library__jest-dom':
         specifier: 5.14.9
         version: 5.14.9
-      '@utrecht/button-react':
-        specifier: 2.0.6
-        version: 2.0.6(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@utrecht/component-library-react':
-        specifier: 4.2.0
-        version: 4.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vitejs/plugin-react':
         specifier: 4.3.0
         version: 4.3.0(vite@5.4.10(@types/node@24.10.4)(less@4.4.0)(sass@1.77.8)(terser@5.43.1))
@@ -333,22 +327,6 @@ importers:
         version: 1.0.2(vite@5.4.10(@types/node@24.10.4)(less@4.4.0)(sass@1.77.8)(terser@5.43.1))
 
   packages/storybook:
-    dependencies:
-      '@amsterdam/design-system-assets':
-        specifier: 0.2.1
-        version: 0.2.1
-      '@amsterdam/design-system-css':
-        specifier: 0.11.1
-        version: 0.11.1(@amsterdam/design-system-assets@0.2.1)(@amsterdam/design-system-tokens@0.11.0)
-      '@amsterdam/design-system-react':
-        specifier: 0.11.1
-        version: 0.11.1(@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.1)(@amsterdam/design-system-tokens@0.11.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@amsterdam/design-system-tokens':
-        specifier: 0.11.0
-        version: 0.11.0
-      clsx:
-        specifier: 2.1.1
-        version: 2.1.1
     devDependencies:
       '@gemeente-tilburg/assets':
         specifier: workspace:*
@@ -585,31 +563,6 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
-
-  '@amsterdam/design-system-assets@0.2.1':
-    resolution: {integrity: sha512-byLLmmF1cv2niZMXETV30nprypZY8bAFpNKKuRlmYlIREA6blz9kVIJsQeH3IldmClW1mNa8ccJN4EKJglnuRw==}
-
-  '@amsterdam/design-system-css@0.11.1':
-    resolution: {integrity: sha512-ZRl+ag+jgYnHAWJWMIErRmS2x4sATrlyVYtVrV0hnxi6yC04o5g2PamjbQPA4/5ytx9gMg7ZxHQgHXUWyaSKEg==}
-    peerDependencies:
-      '@amsterdam/design-system-assets': 0.2.1
-      '@amsterdam/design-system-tokens': 0.11.0
-
-  '@amsterdam/design-system-react-icons@0.1.12':
-    resolution: {integrity: sha512-pBR7NnX2J8CsKaNbWSf+lxrPHvPqgSmgB2CYuIDD4RL472kUsNjzJNVOhR24QaKkUGCSUaskhVlUPqeJZIX/MA==}
-    peerDependencies:
-      react: 16 - 18
-      react-dom: 16 - 18
-
-  '@amsterdam/design-system-react@0.11.1':
-    resolution: {integrity: sha512-xFCXhaXbm2m5+xYUlT9aHlFQ3MyWMRqRY8byK2yU8yLW3MDfqTMoqwSTUMhmvA6dj1JtGfuYEdv7RoxYSp3irg==}
-    peerDependencies:
-      '@amsterdam/design-system-css': 0.11.1
-      react: 16 - 18
-      react-dom: 16 - 18
-
-  '@amsterdam/design-system-tokens@0.11.0':
-    resolution: {integrity: sha512-LgF8u5EDhNpjdhF4doaojoPV/cLJYWJR0ZPcJpJjjkkfKRsesEtO8cTZIQBCDMpXwvRUIuw7henmipdueLtsww==}
 
   '@angular-devkit/architect@0.2003.9':
     resolution: {integrity: sha512-p0GO2H8hiZjRHI9sm4tXTF3OpWaEnkqvB0GBGJfGp8RvpPfDA2t3j2NAUNtd75H+B0xdfyWLmNq9YJGpy6gznA==}
@@ -1953,10 +1906,6 @@ packages:
 
   '@babel/regjsgen@0.8.0':
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
-
-  '@babel/runtime@7.24.8':
-    resolution: {integrity: sha512-5F7SDGs1T72ZczbRwbGO9lQi0NLjQxzl6i4lJxLxfW9U5UluCSyEJeniWvnhl3/euNiqQVbo8zruhsDfid0esA==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.26.0':
     resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
@@ -4619,16 +4568,6 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     deprecated: Potential CWE-502 - Update to 1.3.1 or higher
-
-  '@utrecht/button-css@2.3.0':
-    resolution: {integrity: sha512-3RYtaqzG3ZvOH5RcGXbKLv3HizTacYXd4BPolzDKYMbw/1J/x6/A6wRovzsUoOIhoIIZp0S25/OpxdPnwt3QQw==}
-
-  '@utrecht/button-react@2.0.6':
-    resolution: {integrity: sha512-d2sTzyUFK7Iua+8Q0G2sk9Whq0H/TdYhC7QBk1epXSuSJ9sbPZugt4Fp+h1TqnQewXa2KlKQjNU4kcKrdfQkNA==}
-    peerDependencies:
-      '@babel/runtime': '*'
-      react: '18'
-      react-dom: '18'
 
   '@utrecht/component-library-angular@1.1.0':
     resolution: {integrity: sha512-BklhGfbt6dhS9e7CZoqTGBXi/sfu5R6TYjvQ7kYfbpABPh32JPb8mr1/3DtvQMq2rN1vgH6kWzV81K4GqUl/sw==}
@@ -11105,29 +11044,6 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@amsterdam/design-system-assets@0.2.1': {}
-
-  '@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.1)(@amsterdam/design-system-tokens@0.11.0)':
-    dependencies:
-      '@amsterdam/design-system-assets': 0.2.1
-      '@amsterdam/design-system-tokens': 0.11.0
-
-  '@amsterdam/design-system-react-icons@0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@amsterdam/design-system-react@0.11.1(@amsterdam/design-system-css@0.11.1(@amsterdam/design-system-assets@0.2.1)(@amsterdam/design-system-tokens@0.11.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@amsterdam/design-system-css': 0.11.1(@amsterdam/design-system-assets@0.2.1)(@amsterdam/design-system-tokens@0.11.0)
-      '@amsterdam/design-system-react-icons': 0.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@babel/runtime': 7.24.8
-      clsx: 2.1.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@amsterdam/design-system-tokens@0.11.0': {}
-
   '@angular-devkit/architect@0.2003.9(chokidar@4.0.3)':
     dependencies:
       '@angular-devkit/core': 20.3.9(chokidar@4.0.3)
@@ -12976,10 +12892,6 @@ snapshots:
       - supports-color
 
   '@babel/regjsgen@0.8.0': {}
-
-  '@babel/runtime@7.24.8':
-    dependencies:
-      regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.26.0':
     dependencies:
@@ -15518,29 +15430,11 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@utrecht/button-css@2.3.0': {}
-
-  '@utrecht/button-react@2.0.6(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.26.0
-      '@utrecht/button-css': 2.3.0
-      clsx: 2.1.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
   '@utrecht/component-library-angular@1.1.0':
     dependencies:
       tslib: 2.6.2
 
   '@utrecht/component-library-css@5.2.0': {}
-
-  '@utrecht/component-library-react@4.2.0(@babel/runtime@7.26.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.26.0
-      clsx: 2.1.1
-      lodash.chunk: 4.2.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   '@utrecht/component-library-react@4.2.0(@babel/runtime@7.28.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
