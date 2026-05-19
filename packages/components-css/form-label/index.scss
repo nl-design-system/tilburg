@@ -1,0 +1,19 @@
+/* Tilburg-themed form label: weight + colour + spacing tuned for the
+   form-field rhythm. utrecht-css already paints colour/size/weight from its
+   own tokens; the Tilburg theme overrides them via the
+   `--tilburg-form-field-label-*` chain. We only need a defensive ruleset for
+   labels rendered outside a TilburgFormField wrapper. */
+.utrecht-form-label {
+  color: var(--tilburg-form-field-label-color, var(--utrecht-form-label-color));
+  font-size: var(--tilburg-form-field-label-font-size, var(--utrecht-form-label-font-size));
+  font-weight: 700;
+  line-height: var(--tilburg-form-field-label-line-height, var(--utrecht-form-label-line-height, 1.4));
+}
+
+/* "(optional)" addon next to a label — lighter weight + muted colour so it
+   doesn't compete with the field name. */
+.tilburg-form-label__optional {
+  color: var(--tilburg-form-field-label-optional, var(--tilburg-color-gray-400));
+  font-weight: 400;
+  margin-inline-start: var(--tilburg-space-row-ant, 0.25rem);
+}

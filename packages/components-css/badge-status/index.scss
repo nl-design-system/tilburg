@@ -1,0 +1,27 @@
+/* Tilburg palette for utrecht-badge-status modifiers. utrecht-css's modifier
+   rules read from `--utrecht-feedback-{name}-fill-*` (not the base
+   `--utrecht-badge-*` tokens), so we override the feedback tokens scoped to
+   the badge. `--success`/`--active`/`--valid` cascade through `--safe`;
+   `--error` cascades through `--danger`. `--invalid` is pinned to red here
+   because utrecht's fallback is yellow. `--inactive` overrides utrecht's
+   danger-alias so it shows neutral gray. */
+.utrecht-badge-status {
+  --utrecht-feedback-neutral-fill-background-color: var(--tilburg-color-blue-300);
+  --utrecht-feedback-neutral-fill-color: var(--tilburg-color-white);
+  --utrecht-feedback-safe-fill-background-color: var(--tilburg-color-green-300);
+  --utrecht-feedback-safe-fill-color: var(--tilburg-color-white);
+  --utrecht-feedback-warning-fill-background-color: var(--tilburg-color-orange-300);
+  --utrecht-feedback-warning-fill-color: var(--tilburg-color-white);
+  --utrecht-feedback-danger-fill-background-color: var(--tilburg-color-red-300);
+  --utrecht-feedback-danger-fill-color: var(--tilburg-color-white);
+  --utrecht-feedback-invalid-fill-background-color: var(--tilburg-color-red-300);
+  --utrecht-feedback-invalid-fill-color: var(--tilburg-color-white);
+  --utrecht-feedback-inactive-fill-background-color: var(--tilburg-color-gray-300);
+  --utrecht-feedback-inactive-fill-color: var(--tilburg-color-white);
+}
+
+/* utrecht-css ships no `--info` modifier, so paint it directly. */
+.utrecht-badge-status--info {
+  background-color: var(--tilburg-color-blue-300);
+  color: var(--tilburg-color-white);
+}

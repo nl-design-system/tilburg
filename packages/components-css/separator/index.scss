@@ -1,0 +1,12 @@
+/* Thin horizontal divider used between sections. Matches the rhythm bq-tds
+   uses for content separators (e.g. between file-list rows, between page
+   sections). */
+.utrecht-separator,
+hr.utrecht-separator {
+  background-color: transparent;
+  block-size: 0;
+  border-block-start-color: var(--tilburg-line-border-color);
+  border-block-start-style: solid;
+  border-block-start-width: var(--tilburg-line-border-width);
+  margin-block: var(--tilburg-space-block-mouse, 1rem);
+}

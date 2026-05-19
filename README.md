@@ -6,6 +6,15 @@ This design system is based on the NL Design System architecture.
 
 For more info about the NL Design System and learn about things happening in our open source community, join the `#nl-design-system` Slack via [praatmee.codefor.nl](https://praatmee.codefor.nl)!
 
+## Framework support
+
+The Tilburg design system currently ships two layers:
+
+- **`@gemeente-tilburg/components-css`** — framework-agnostic BEM CSS. Works in any framework or plain HTML, including React (use the class names directly in JSX).
+- **`@gemeente-tilburg/components-angular`** — Angular wrappers that consume the CSS layer above and expose typed `@Input` / `@Output` APIs.
+
+**There is no official React component layer yet.** React consumers can use the pure-CSS layer today, but a typed `@gemeente-tilburg/components-react` package — analogous to the Angular wrappers — is on the roadmap. **Contributions welcome** — open a pull request or discussion at <https://github.com/nl-design-system/tilburg>.
+
 ---
 
 ✂ In your own repository: **remove the "Getting started" section below!**

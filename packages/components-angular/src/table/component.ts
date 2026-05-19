@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'tilburg-table',
   templateUrl: 'index.html',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgTable {
@@ -10,5 +11,4 @@ export class TilburgTable {
   @Input() ariaLabel?: string;
   @Input() ariaLabelledby?: string;
   @Input() ariaDescribedBy?: string;
-  constructor() {}
 }

@@ -28,7 +28,7 @@
     outline-color: var(--tilburg-color-white);
     outline-offset: 2px;
     outline-style: solid;
-    outline-width: 2px;
+    outline-width: var(--tilburg-border-width-md);
   }
 
   &:hover,

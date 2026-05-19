@@ -79,17 +79,6 @@ export const LogoOnly: Story = {
   ),
 };
 
-export const TitleOnly: Story = {
-  name: 'Title only',
-  render: () => (
-    <header className="tilburg-page-header">
-      <div className="tilburg-page-header__container">
-        <Brand logo={false} title="Gemeente Tilburg" />
-      </div>
-    </header>
-  ),
-};
-
 export const LogoAndTitle: Story = {
   name: 'Logo + title',
   render: () => (
