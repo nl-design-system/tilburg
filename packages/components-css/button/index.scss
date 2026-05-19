@@ -7,11 +7,13 @@
      the button. We compensate by shifting the line-box downward via
      asymmetric padding-block: more padding-block-start, less padding-
      block-end. Total height stays the same; only the letters move down.
-     Small buttons override this to 2px because their smaller padding-block
-     budget makes the full 4px shift visibly skew the text.
-     See the "Vertical baseline shift" section in the Button storybook
-     docs for the full rationale. */
-  --_tilburg-button-baseline-offset: 4px;
+     The per-size shift amount is owned by the design-token layer:
+     `--tilburg-fix-button-{small,medium,large}-baseline-offset` (see
+     `proprietary/design-tokens/src/patches/button.tokens.json`). Small
+     and medium use a smaller offset because their padding-block budget
+     is smaller — a 4px shift visibly skews the text. See the "Vertical
+     baseline shift" section in the Button storybook docs for the full
+     rationale. */
   --utrecht-button-line-height: 1;
 
   &:focus-visible {
@@ -19,7 +21,7 @@
   }
 
   &.tilburg-small {
-    --_tilburg-button-baseline-offset: 2px;
+    --_tilburg-button-baseline-offset: var(--tilburg-fix-button-small-baseline-offset);
     --utrecht-button-font-size: var(--tilburg-button-small-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-small-column-gap);
     --utrecht-button-font-size-medium: var(--tilburg-button-large-font-size);
@@ -36,7 +38,7 @@
   }
 
   &.tilburg-medium {
-    --_tilburg-button-baseline-offset: 2px;
+    --_tilburg-button-baseline-offset: var(--tilburg-fix-button-medium-baseline-offset);
     --utrecht-button-font-size: var(--tilburg-button-medium-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-medium-column-gap);
     --utrecht-button-padding-inline-start: var(--tilburg-fix-button-medium-padding-inline-start);
@@ -52,6 +54,7 @@
   }
 
   &.tilburg-large {
+    --_tilburg-button-baseline-offset: var(--tilburg-fix-button-large-baseline-offset);
     --utrecht-button-font-size: var(--tilburg-button-large-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-large-column-gap);
     --utrecht-button-padding-inline-start: var(--tilburg-fix-button-large-padding-inline-start);

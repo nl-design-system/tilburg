@@ -15,6 +15,9 @@
     "tilburg-fix": {
       "button": {
         "small": {
+          "baseline-offset": {
+            "$value": "2px"
+          },
           "padding-block-end": {
             "$value": "{tilburg.space.block.beetle}"
           },
@@ -29,6 +32,9 @@
           }
         },
         "medium": {
+          "baseline-offset": {
+            "$value": "2px"
+          },
           "padding-block-end": {
             "$value": "{tilburg.space.block.beetle}"
           },
@@ -43,6 +49,9 @@
           }
         },
         "large": {
+          "baseline-offset": {
+            "$value": "4px"
+          },
           "padding-block-end": {
             "$value": "{tilburg.space.block.snail}"
           },

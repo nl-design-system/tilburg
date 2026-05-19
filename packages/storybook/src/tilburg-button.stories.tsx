@@ -41,17 +41,17 @@ Tilburg buttons use **TradeGothicCondensed18**, whose vertical font metrics put 
 
 We compensate by shifting the line-box downward via **asymmetric padding-block**: more \`padding-block-start\`, less \`padding-block-end\`. Total button height is unchanged; only the letters move down.
 
-The amount is controlled by the local custom property \`--_tilburg-button-baseline-offset\`:
+The shift amount lives in the design-token layer (\`proprietary/design-tokens/src/patches/button.tokens.json\`), under the \`tilburg-fix\` namespace used for non-systematic visual compensations:
 
-| Size class | Offset |
-| --- | --- |
-| \`.tilburg-small\` | \`2px\` |
-| \`.tilburg-medium\` | \`2px\` |
-| \`.tilburg-large\` | \`4px\` |
+| Size class | Token | Value |
+| --- | --- | --- |
+| \`.tilburg-small\` | \`--tilburg-fix-button-small-baseline-offset\` | \`2px\` |
+| \`.tilburg-medium\` | \`--tilburg-fix-button-medium-baseline-offset\` | \`2px\` |
+| \`.tilburg-large\` | \`--tilburg-fix-button-large-baseline-offset\` | \`4px\` |
 
-Small buttons need a smaller shift because their padding-block budget is smaller — the same 4px that optically centres a medium/large button visibly skews a small one.
+Small and medium buttons need a smaller shift because their padding-block budget is smaller — the same 4px that optically centres a large button visibly skews a small one.
 
-See \`packages/components-css/button/index.scss\` for the exact rules; adjust the offset there if the optical centre still feels off after a font or token change.
+Adjust the values in \`button.tokens.json\` and rebuild the design-tokens package (\`pnpm pack:dist\`) if the optical centre still feels off after a font change.
 `,
       },
     },
@@ -65,17 +65,19 @@ const Btn = ({
   size,
   appearance,
   label = 'Label',
+  disabled,
 }: {
   size: 'tilburg-small' | 'tilburg-medium' | 'tilburg-large';
   appearance?: 'primary-action' | 'secondary-action' | 'subtle';
   label?: string;
+  disabled?: boolean;
 }) => {
   const classes = ['utrecht-button', size];
   if (appearance === 'primary-action') classes.push('utrecht-button--primary-action');
   if (appearance === 'secondary-action') classes.push('utrecht-button--secondary-action');
   if (appearance === 'subtle') classes.push('utrecht-button--subtle');
   return (
-    <button type="button" className={classes.join(' ')}>
+    <button type="button" className={classes.join(' ')} disabled={disabled}>
       {label}
     </button>
   );
@@ -125,6 +127,17 @@ export const Subtle: Story = {
       <Btn size="tilburg-small" appearance="subtle" label="Small" />
       <Btn size="tilburg-medium" appearance="subtle" label="Medium" />
       <Btn size="tilburg-large" appearance="subtle" label="Large" />
+    </Row>
+  ),
+};
+
+export const Disabled: Story = {
+  name: 'Disabled (each size)',
+  render: () => (
+    <Row>
+      <Btn size="tilburg-small" appearance="primary-action" label="Small" disabled />
+      <Btn size="tilburg-medium" appearance="primary-action" label="Medium" disabled />
+      <Btn size="tilburg-large" appearance="primary-action" label="Large" disabled />
     </Row>
   ),
 };
