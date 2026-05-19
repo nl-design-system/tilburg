@@ -13,7 +13,7 @@
   inline-size: 100%;
   margin-inline: auto;
   max-inline-size: var(--tilburg-page-header-max-inline-size, 1150px);
-  padding-block: var(--tilburg-space-block-snail);
+  padding-block: 0;
   padding-inline: var(--tilburg-space-block-snail);
 }
 
