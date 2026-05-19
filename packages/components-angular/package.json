@@ -20,6 +20,7 @@
     "build": "pnpm run '/^build:.*/' --passWithNoTests",
     "build:components": "ng build && pnpm test-results",
     "clean": "rimraf dist/ .angular/",
+    "pack:dist": "ng build && cd dist && rm -f gemeente-tilburg-components-angular-0.0.0.tgz && npm pack",
     "lint": "pnpm run '/^lint:.*/'",
     "lint:ts": "tsc --noEmit --project tsconfig.json",
     "watch:build": "ng build --watch",

@@ -19,6 +19,7 @@
   "scripts": {
     "clean": "rimraf dist/",
     "build": "node ./style-dictionary-build.mjs",
+    "pack:dist": "node ./style-dictionary-build.mjs && cd dist && rm -f *.tgz && npm pack",
     "watch": "npm-run-all watch:**",
     "watch:style-dictionary": "chokidar --follow-symlinks --initial --command 'pnpm run build' 'src/**/*.tokens.json'"
   },
