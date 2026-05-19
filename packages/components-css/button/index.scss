@@ -1,27 +1,52 @@
 .utrecht-button {
+  /* Tilburg buttons use TradeGothicCondensed18, whose vertical metrics put
+     more empty descent space below the baseline than ascent space above.
+     With `line-height: 1` the line-box still includes that descent zone,
+     and flex-centring the line-box places the visible letters (which sit
+     in the upper portion of the line-box) above the geometric centre of
+     the button. We compensate by shifting the line-box downward via
+     asymmetric padding-block: more padding-block-start, less padding-
+     block-end. Total height stays the same; only the letters move down.
+     Small buttons override this to 2px because their smaller padding-block
+     budget makes the full 4px shift visibly skew the text.
+     See the "Vertical baseline shift" section in the Button storybook
+     docs for the full rationale. */
+  --_tilburg-button-baseline-offset: 4px;
+  --utrecht-button-line-height: 1;
+
   &:focus-visible {
     outline: dashed black thin;
   }
 
   &.tilburg-small {
+    --_tilburg-button-baseline-offset: 2px;
     --utrecht-button-font-size: var(--tilburg-button-small-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-small-column-gap);
     --utrecht-button-font-size-medium: var(--tilburg-button-large-font-size);
     --utrecht-button-padding-inline-start: var(--tilburg-fix-button-small-padding-inline-start);
     --utrecht-button-padding-inline-end: var(--tilburg-fix-button-small-padding-inline-end);
-    --utrecht-button-padding-block-start: var(--tilburg-fix-button-small-padding-block-start);
-    --utrecht-button-padding-block-end: var(--tilburg-fix-button-small-padding-block-end);
+    --utrecht-button-padding-block-start: calc(
+      var(--tilburg-fix-button-small-padding-block-start) + var(--_tilburg-button-baseline-offset)
+    );
+    --utrecht-button-padding-block-end: calc(
+      var(--tilburg-fix-button-small-padding-block-end) - var(--_tilburg-button-baseline-offset)
+    );
 
     text-transform: var(--tilburg-button-small-text-case);
   }
 
   &.tilburg-medium {
+    --_tilburg-button-baseline-offset: 2px;
     --utrecht-button-font-size: var(--tilburg-button-medium-font-size);
     --utrecht-button-icon-gap: var(--tilburg-button-medium-column-gap);
     --utrecht-button-padding-inline-start: var(--tilburg-fix-button-medium-padding-inline-start);
     --utrecht-button-padding-inline-end: var(--tilburg-fix-button-medium-padding-inline-end);
-    --utrecht-button-padding-block-start: var(--tilburg-fix-button-medium-padding-block-start);
-    --utrecht-button-padding-block-end: var(--tilburg-fix-button-medium-padding-block-end);
+    --utrecht-button-padding-block-start: calc(
+      var(--tilburg-fix-button-medium-padding-block-start) + var(--_tilburg-button-baseline-offset)
+    );
+    --utrecht-button-padding-block-end: calc(
+      var(--tilburg-fix-button-medium-padding-block-end) - var(--_tilburg-button-baseline-offset)
+    );
 
     text-transform: var(--tilburg-button-medium-text-case);
   }
@@ -31,8 +56,12 @@
     --utrecht-button-icon-gap: var(--tilburg-button-large-column-gap);
     --utrecht-button-padding-inline-start: var(--tilburg-fix-button-large-padding-inline-start);
     --utrecht-button-padding-inline-end: var(--tilburg-fix-button-large-padding-inline-end);
-    --utrecht-button-padding-block-start: var(--tilburg-fix-button-large-padding-block-start);
-    --utrecht-button-padding-block-end: var(--tilburg-fix-button-large-padding-block-end);
+    --utrecht-button-padding-block-start: calc(
+      var(--tilburg-fix-button-large-padding-block-start) + var(--_tilburg-button-baseline-offset)
+    );
+    --utrecht-button-padding-block-end: calc(
+      var(--tilburg-fix-button-large-padding-block-end) - var(--_tilburg-button-baseline-offset)
+    );
 
     text-transform: var(--tilburg-button-large-text-case);
   }

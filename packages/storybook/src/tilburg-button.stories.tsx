@@ -34,6 +34,24 @@ Inputs: \`appearance\` (\`'primary-action' | 'secondary-action' | 'subtle'\`), \
 \`\`\`
 
 Combine one size class (\`tilburg-small | tilburg-medium | tilburg-large\`) with one appearance modifier (\`utrecht-button--primary-action | utrecht-button--secondary-action | utrecht-button--subtle\`).
+
+## Vertical baseline shift (why button text is nudged down)
+
+Tilburg buttons use **TradeGothicCondensed18**, whose vertical font metrics put more empty descent space below the baseline than ascent space above. With \`line-height: 1\` the line-box still includes that descent zone, and flex-centring the line-box places the visible letters in the upper half of the box — so the text reads as sitting *above* the geometric centre of the button.
+
+We compensate by shifting the line-box downward via **asymmetric padding-block**: more \`padding-block-start\`, less \`padding-block-end\`. Total button height is unchanged; only the letters move down.
+
+The amount is controlled by the local custom property \`--_tilburg-button-baseline-offset\`:
+
+| Size class | Offset |
+| --- | --- |
+| \`.tilburg-small\` | \`2px\` |
+| \`.tilburg-medium\` | \`2px\` |
+| \`.tilburg-large\` | \`4px\` |
+
+Small buttons need a smaller shift because their padding-block budget is smaller — the same 4px that optically centres a medium/large button visibly skews a small one.
+
+See \`packages/components-css/button/index.scss\` for the exact rules; adjust the offset there if the optical centre still feels off after a font or token change.
 `,
       },
     },
