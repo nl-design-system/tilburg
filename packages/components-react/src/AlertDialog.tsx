@@ -1,8 +1,8 @@
 import '@gemeente-tilburg/components-css/modal/index.scss';
-import { Button } from '@utrecht/button-react/dist/css';
-import { Heading } from '@utrecht/component-library-react';
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { Button } from './Button';
+import { Heading2 } from './Heading2';
 
 const CloseIcon = () => (
   <svg aria-hidden="true" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,13 +39,11 @@ export const AlertDialog = React.forwardRef<HTMLDialogElement, AlertDialogProps>
       (ref as React.RefObject<HTMLDialogElement>)?.current?.close();
     };
 
-    const _CLASSES = clsx('tilburg-modal', isOpen && 'open');
-
     return (
-      <dialog id={id} className={_CLASSES} ref={ref} onClick={onBackdropClick}>
+      <dialog id={id} className={clsx('tilburg-modal', isOpen && 'open')} ref={ref} onClick={onBackdropClick}>
         <div className="tilburg-modal__header">
-          <Heading level={2}>{title}</Heading>
-          <button className="tilburg-modal__close-button" onClick={onCloseHandler}>
+          <Heading2>{title}</Heading2>
+          <button type="button" className="tilburg-modal__close-button" onClick={onCloseHandler}>
             <CloseIcon />
             Close
           </button>

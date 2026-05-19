@@ -1,9 +1,13 @@
-utrecht-heading-3 {
+/* Dual-target Angular's custom-element render (`<utrecht-heading-3>`) and
+   React's class-based render (`<h3 class="utrecht-heading-3">`). */
+utrecht-heading-3,
+.utrecht-heading-3 {
   --utrecht-heading-3-font-size: var(--tilburg-heading-3-large-vw-font-size);
 }
 
 @media (width <= 768px) {
-  utrecht-heading-3 {
+  utrecht-heading-3,
+  .utrecht-heading-3 {
     --utrecht-heading-3-font-size: var(--tilburg-heading-3-small-vw-font-size);
   }
 }
