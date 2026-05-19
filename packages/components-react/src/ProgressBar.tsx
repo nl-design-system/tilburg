@@ -36,11 +36,15 @@ export const ProgressBar = forwardRef(
       onBackClick?.(event);
     };
 
+    /* Default to the same `←` glyph the CSS-class storybook uses. Consumer
+       can override via `backIcon` or pass `null` to render none. */
+    const renderedBackIcon = backIcon === undefined ? <span aria-hidden="true">←</span> : backIcon;
+
     return (
       <div ref={ref} {...restProps}>
         {showBack && (
           <a className="tilburg-progress-bar__back utrecht-link utrecht-link--html-a" href="" onClick={handleBack}>
-            {backIcon}
+            {renderedBackIcon}
             <span className="tilburg-progress-bar__back-label">{backLabel}</span>
           </a>
         )}
