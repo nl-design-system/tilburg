@@ -40,7 +40,7 @@
 
   &:checked {
     &:disabled {
-      border-color: #626262;
+      border-color: var(--tilburg-color-gray-400);
       border-width: 7.8px;
     }
 
@@ -58,13 +58,13 @@
 
       background-color: var(--utrecht-radio-button-checked-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
-      border-width: 1px;
+      border-width: var(--tilburg-border-width-sm);
     }
 
     &:focus-visible:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
       background-color: var(--utrecht-radio-button-disabled-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
-      border-width: 1px;
+      border-width: var(--tilburg-border-width-sm);
     }
 
     &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled) {
@@ -73,10 +73,10 @@
 
     &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled),
     &:focus-visible:not(.tilburg-radio-pressed, [aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
-      --utrecht-radio-button-color: black;
-      --_utrecht-radio-button-color: black;
-      --utrecht-radio-button-background-color: #e6f6ff;
-      --_utrecht-radio-button-background-color: #e6f6ff;
+      --utrecht-radio-button-color: var(--tilburg-color-black);
+      --_utrecht-radio-button-color: var(--tilburg-color-black);
+      --utrecht-radio-button-background-color: var(--tilburg-color-blue-100);
+      --_utrecht-radio-button-background-color: var(--tilburg-color-blue-100);
       --_utrecht-radio-button-interactive-background-color: var(
         --utrecht-radio-button-focus-background-color,
         var(--utrecht-radio-button-focus-background-color)
@@ -94,13 +94,13 @@
         var(--utrecht-radio-button-focus-color)
       );
 
-      background-color: #e6f6ff;
+      background-color: var(--tilburg-color-blue-100);
     }
 
     &:focus:not([aria-disabled="true"], :disabled) {
       background-color: var(--utrecht-radio-button-disabled-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
-      border-width: 1px;
+      border-width: var(--tilburg-border-width-sm);
     }
   }
 }

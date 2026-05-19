@@ -12,7 +12,7 @@ export type AppearanceType = 'primary-action-button' | 'secondary-action-button'
     '[attr.rel]': 'external ? "external noopener noreferrer" : ""',
     '[class.utrecht-button-link--primary-action]': 'appearance === "primary-action-button"',
     '[class.utrecht-button-link--secondary-action]': 'appearance === "secondary-action-button"',
-    '[class.utrecht-button-link--subtle-action]': 'appearance === "subtle-button"',
+    '[class.utrecht-button-link--subtle]': 'appearance === "subtle-button"',
     '[class.utrecht-button-link--html-a]': 'true',
     '[class.utrecht-button-link]': 'true',
   },

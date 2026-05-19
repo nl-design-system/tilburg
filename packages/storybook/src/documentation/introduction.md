@@ -13,6 +13,16 @@ Daarom gaan we tussen overheidsorganisaties principes, interactiepatronen en cod
 > We zouden het op prijs stellen als je wilt bijdragen om het NLDS tot een succes te maken.
 > Dit kan in onze GitHub of met een mailtje aan: [info@nldesignsystem.nl](mailto:info@nldesignsystem.nl)
 
+---
+
+> 🧪 **Framework-ondersteuning**
+>
+> De Tilburg-componenten worden vandaag als **pure CSS** en als **Angular**-wrappers
+> verspreid. Er is **nog geen officiële React-laag** — React-projecten kunnen
+> de pure CSS direct gebruiken (BEM-classes werken probleemloos in JSX).
+> Bijdragen aan een toekomstige `@gemeente-tilburg/components-react`-laag zijn
+> welkom: open een PR op <https://github.com/nl-design-system/tilburg>.
+
 ## Wat is een Design System
 
 Een Design System, oftewel een ontwerpsysteem, is een verzameling afspraken tussen ontwerpers en ontwikkelaars voor het maken van digitale producten, zoals websites en apps. Het doel van deze afspraken is om de producten consistent en de gebruikerservaring zo prettig mogelijk te maken. Een Design System ‘leeft’: dankzij nieuwe inzichten en feedback van gebruikers worden de afspraken continu verbeterd.
@@ -38,6 +48,8 @@ De POC is te vinden op:
 ## Tilburg-componenten gebruiken
 
 De Tilburg-componenten worden in twee lagen verspreid: een **pure CSS**-laag voor iedereen, en een **Angular**-laag bovenop voor projecten die Angular gebruiken. Beide lagen leunen op `@utrecht/component-library-css` als basis en op `@gemeente-tilburg/design-tokens` voor kleuren, ruimtes en typografie.
+
+> **React-ondersteuning:** er is op dit moment nog geen officiële React-laag voor de Tilburg-componenten. Wel kunt u de pure-CSS-laag direct gebruiken in React (zie hieronder) — alle BEM-markup werkt zoals verwacht binnen JSX. Wij hebben graag bijdragen aan een toekomstige `@gemeente-tilburg/components-react`-laag: open een PR op <https://github.com/nl-design-system/tilburg>.
 
 ### Installatie
 
@@ -115,4 +127,4 @@ Alle componenten kunnen via CSS-custom-properties getuned worden. De Tilburg-tok
 }
 ```
 
-Zie de [Tokens](/?path=/docs/tokens--docs) story voor het complete overzicht.
+Zie de [Tokens](?path=/docs/tilburg-tokens--docs) story voor het complete overzicht.

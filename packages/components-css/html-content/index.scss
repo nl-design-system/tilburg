@@ -1,0 +1,60 @@
+/* `.utrecht-html-content` wraps CMS-authored HTML so bare tags inherit the
+   Tilburg/utrecht typography without per-element classes. utrecht-css ships
+   no rules for the class itself, so we map each descendant tag to the
+   utrecht-document / utrecht-paragraph / utrecht-link token chain. */
+.utrecht-html-content {
+  color: var(--utrecht-document-color, inherit);
+  font-family: var(--utrecht-document-font-family, inherit);
+  font-size: var(--utrecht-document-font-size, inherit);
+  font-weight: var(--utrecht-document-font-weight, inherit);
+  line-height: var(--utrecht-document-line-height, inherit);
+}
+
+.utrecht-html-content p {
+  color: var(--utrecht-paragraph-color, var(--utrecht-document-color, inherit));
+  font-family: var(--utrecht-paragraph-font-family, inherit);
+  font-size: var(--utrecht-paragraph-font-size, inherit);
+  font-weight: var(--utrecht-paragraph-font-weight, inherit);
+  line-height: var(--utrecht-paragraph-line-height, inherit);
+  margin-block-end: var(--utrecht-paragraph-margin-block-end, 1em);
+  margin-block-start: var(--utrecht-paragraph-margin-block-start, 0);
+}
+
+.utrecht-html-content a {
+  color: var(--utrecht-link-color, inherit);
+  text-decoration: var(--utrecht-link-text-decoration, underline);
+}
+
+.utrecht-html-content a:hover {
+  color: var(--utrecht-link-hover-color, var(--utrecht-link-color, inherit));
+}
+
+.utrecht-html-content a:focus,
+.utrecht-html-content a:focus-visible {
+  color: var(--utrecht-link-focus-color, var(--utrecht-link-color, inherit));
+}
+
+.utrecht-html-content a:visited {
+  color: var(--utrecht-link-visited-color, var(--utrecht-link-color, inherit));
+}
+
+.utrecht-html-content ul,
+.utrecht-html-content ol {
+  margin-block: 1em;
+  padding-inline-start: 2.5ch;
+}
+
+.utrecht-html-content li {
+  line-height: var(--utrecht-document-line-height, inherit);
+  margin-block: 0.25em;
+}
+
+.utrecht-html-content strong,
+.utrecht-html-content b {
+  font-weight: 700;
+}
+
+.utrecht-html-content em,
+.utrecht-html-content i {
+  font-style: italic;
+}
