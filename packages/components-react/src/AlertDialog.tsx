@@ -4,14 +4,10 @@ import React, { useState } from 'react';
 import { Button } from './Button';
 import { Heading2 } from './Heading2';
 
+/* Matches the modal CSS-class storybook reference (thin-stroke X). */
 const CloseIcon = () => (
-  <svg aria-hidden="true" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M.293.293a1 1 0 0 1 1.414 0L7 5.586 12.293.293a1 1 0 1 1 1.414 1.414L8.414 7l5.293 5.293a1 1 0 0 1-1.414 1.414L7 8.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L5.586 7 .293 1.707a1 1 0 0 1 0-1.414Z"
-      fill="currentColor"
-    />
+  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
