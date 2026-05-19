@@ -4,3 +4,7 @@ node_modules
 # Ignore generated files
 dist
 CHANGELOG.md
+
+# Ignore tooling-consumed files
+.changeset/*.md
+!.changeset/README.md
