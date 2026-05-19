@@ -3,12 +3,15 @@
   --tilburg-modal-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
   --tilburg-modal-offset: 7.5vh;
 
-  background: var(--tilburg-color-white);
-  border: none;
-  border-radius: var(--tilburg-border-radius-lg);
+  background-color: var(--tilburg-color-white);
+  border: 0;
+  border-radius: 0;
   box-shadow: var(--tilburg-box-shadow-lg);
-  inline-size: min(80%, 450px);
+  color: currentColor;
+  inline-size: min(90%, 32rem);
   opacity: 0%;
+  padding-block: var(--tilburg-space-block-rabbit);
+  padding-inline: var(--tilburg-space-block-rabbit);
   translate: 0 var(--tilburg-modal-offset);
 }
 
@@ -59,23 +62,24 @@
   }
 }
 
-.tilburg-modal h2 {
-  color: var(--tilburg-color-gray-900, #0a2750);
-  font-family: var(--tilburg-typography-font-family-secondary), sans-serif;
-  font-size: var(--tilburg-typography-font-size-md);
-}
-
 .tilburg-modal__header {
-  align-items: center;
-  border-block-end: 1px solid var(--tilburg-color-gray-300);
+  align-items: flex-start;
   display: flex;
   gap: var(--tilburg-space-row-cat);
   justify-content: space-between;
-  padding-block: var(--tilburg-space-block-snail);
+  margin-block-end: var(--tilburg-space-block-snail);
+}
+
+.tilburg-modal__header h2 {
+  font-family: var(--tilburg-typography-font-family-secondary), sans-serif;
+  font-size: var(--tilburg-typography-font-size-xl, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-block: 0;
 }
 
 .tilburg-modal__content {
-  padding-block: var(--tilburg-space-block-cat) var(--tilburg-space-block-rat);
+  margin-block-end: var(--tilburg-space-block-rabbit);
 }
 
 .tilburg-modal__content > * + * {
@@ -89,20 +93,23 @@
 .tilburg-modal__footer {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: var(--tilburg-space-row-cat);
-  padding-block: var(--tilburg-space-block-snail);
+  justify-content: flex-end;
 }
 
-/* Button styles for close button */
 .tilburg-modal__close-button {
   align-items: center;
-  background: none;
-  border: none;
+  background-color: transparent;
+  border: 0;
   color: var(--tilburg-interaction-color);
   cursor: pointer;
   display: flex;
-  font-size: var(--tilburg-typography-font-size-md);
+  flex-shrink: 0;
+  font: inherit;
   gap: var(--tilburg-space-column-snail);
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 .tilburg-modal__close-button svg {
@@ -113,8 +120,27 @@
   text-decoration: underline;
 }
 
+.tilburg-modal__close-button:focus-visible {
+  outline-color: var(--utrecht-focus-outline-color, revert);
+  outline-offset: var(--utrecht-focus-outline-offset, 2px);
+  outline-style: var(--utrecht-focus-outline-style, revert);
+  outline-width: var(--utrecht-focus-outline-width, revert);
+}
+
 .tilburg-modal__close-button:where(:hover, :focus-visible) svg {
   rotate: -90deg;
+}
+
+@media (width <= 480px) {
+  .tilburg-modal {
+    padding-block: var(--tilburg-space-block-snail);
+    padding-inline: var(--tilburg-space-block-snail);
+  }
+
+  .tilburg-modal__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 body:has(.tilburg-modal[open]) {

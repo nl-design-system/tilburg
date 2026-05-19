@@ -6,17 +6,18 @@
 // (root) and `TilburgAccordionSection` are separate components with separate
 // emulated encapsulation IDs, so a nested rule never matches across the boundary.
 // Top-level selectors work for both Angular and plain HTML consumers.
+// Tilburg's design tokens model the visible accordion divider as a SECTION
+// border (`--tilburg-accordion-section-border-{color,width}`) while the
+// utrecht button border is set transparent in default/hover/active and only
+// turns pink on focus. So we paint the blue section border here; utrecht's
+// subtle-button rules layer the focus colour on top without interfering.
 .utrecht-accordion__section {
-  background-color: var(--tilburg-color-slate-0, transparent);
-  border: 1px solid var(--utrecht-accordion-button-hover-background-color);
+  border-color: var(--tilburg-accordion-section-border-color);
+  border-style: solid;
+  border-width: var(--tilburg-accordion-section-border-width);
   margin-block-end: var(--tilburg-accordion-section-margin-block-end);
   max-block-size: fit-content;
   transition: transform var(--tilburg-accordion-section-transition-duration);
-
-  &:focus,
-  &:focus-visible {
-    border-width: var(--tilburg-accordion-section-focus-border-width);
-  }
 }
 
 .tilburg-accordion__display-name {

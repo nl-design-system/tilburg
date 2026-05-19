@@ -44,11 +44,10 @@
   }
 
   &:focus-visible {
-    --_utrecht-focus-ring-box-shadow: 0 0 0 var(--utrecht-focus-outline-width, 2px)
-      var(--utrecht-focus-outline-color, currentColor);
-
-    box-shadow: var(--_utrecht-focus-ring-box-shadow);
-    outline: 0;
+    outline-color: var(--utrecht-focus-outline-color, revert);
+    outline-offset: var(--utrecht-focus-outline-offset, 2px);
+    outline-style: var(--utrecht-focus-outline-style, revert);
+    outline-width: var(--utrecht-focus-outline-width, revert);
   }
 
   &:hover:not(:disabled) {
@@ -63,7 +62,7 @@
 
 .tilburg-pagination__range {
   color: var(--tilburg-color-gray-500);
-  font-size: var(--tilburg-typography-font-size-xs, 0.75rem);
+  font-size: var(--tilburg-typography-font-size-sm, 0.875rem);
 }
 
 .tilburg-pagination__pages {
@@ -91,11 +90,10 @@
 }
 
 .tilburg-pagination__page:focus-visible {
-  --_utrecht-focus-ring-box-shadow: 0 0 0 var(--utrecht-focus-outline-width, 2px)
-    var(--utrecht-focus-outline-color, currentColor);
-
-  box-shadow: var(--_utrecht-focus-ring-box-shadow);
-  outline: 0;
+  outline-color: var(--utrecht-focus-outline-color, revert);
+  outline-offset: var(--utrecht-focus-outline-offset, 2px);
+  outline-style: var(--utrecht-focus-outline-style, revert);
+  outline-width: var(--utrecht-focus-outline-width, revert);
 }
 
 .tilburg-pagination__page:hover:not(:disabled, .tilburg-pagination__page--current) {
@@ -103,7 +101,7 @@
 }
 
 .tilburg-pagination__page--current {
-  color: var(--tilburg-color-gray-900, currentColor);
+  color: var(--tilburg-color-gray-500, currentColor);
   cursor: default;
   font-weight: 700;
   text-decoration: none;

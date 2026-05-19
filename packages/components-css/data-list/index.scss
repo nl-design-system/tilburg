@@ -3,7 +3,8 @@
 }
 
 .tilburg-data-list__item {
-  border-block-end: 1px solid var(--tilburg-color-gray-200);
+  border-block-end: var(--tilburg-container-border-width, 1px) solid
+    var(--tilburg-container-border-color, var(--tilburg-color-gray-200));
   padding-block: var(--tilburg-space-block-snail);
 }
 
