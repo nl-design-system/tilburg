@@ -41,6 +41,17 @@ export class TilburgAlert {
     return `utrecht-alert--${VARIANT_TO_UTRECHT[this.resolvedVariant]}`;
   }
 
+  get resolvedRole(): 'alert' | 'status' {
+    return this.resolvedVariant === 'danger' ? 'alert' : 'status';
+  }
+
+  get resolvedLiveRegion(): TilburgAlertLiveRegion {
+    if (this.resolvedVariant === 'danger' && this.liveRegion === 'polite') {
+      return 'assertive';
+    }
+    return this.liveRegion;
+  }
+
   onClose(): void {
     this.closed.emit();
   }

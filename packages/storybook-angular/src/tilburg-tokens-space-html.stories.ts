@@ -1,0 +1,22 @@
+/* @license CC0-1.0 */
+
+import type { Meta, StoryObj } from '@storybook/angular';
+import { bugs, examples } from '../../storybook-shared/src/tilburg-tokens.examples';
+
+const meta: Meta = {
+  title: 'Tokens/Space',
+  id: 'tokens-space',
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'padded',
+    bugs,
+  },
+};
+
+export default meta;
+type Story = StoryObj;
+
+export const Reference: Story = {
+  name: 'Reference',
+  render: () => ({ template: examples.space.html }),
+};

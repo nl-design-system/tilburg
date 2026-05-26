@@ -1,0 +1,58 @@
+{/* @license CC0-1.0 */}
+
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Tokens/Intro" />
+
+# Design tokens
+
+Browseable reference for the `--tilburg-*` design tokens shipped via `@gemeente-tilburg/design-tokens`. Tokens are scoped to `.tilburg-theme` (the storybook decorator wraps each story in that scope), so the names you see in the per-category pages resolve to live values throughout the design system.
+
+Tokens are grouped by purpose:
+
+- **Colors** — brand palette + neutral scale
+- **Space** — block / row / column / inline gaps on the animal-named scale
+- **Typography** — font sizes (and font families)
+- **Interaction** — link / focus / active accents
+
+## Two token families: Tilburg-owned vs utrecht-owned
+
+The Tilburg design system uses **two custom-property namespaces** that live on the same `.tilburg-theme` scope. Both resolve at runtime — what differs is who owns each name and what it controls.
+
+### 1. `--tilburg-*` — Tilburg's own decisions
+
+The brand palette (`--tilburg-color-*`), the animal-named space scale (`--tilburg-space-{block,row,column,inline}-*`), typography (`--tilburg-typography-font-size-*`, `--tilburg-typography-font-family-*`), borders (`--tilburg-border-width-sm/md/lg`), interaction accents (`--tilburg-interaction-color`), and component-specific slots (`--tilburg-table-footer-border-width`, `--tilburg-accordion-section-border-color`, …). Authored in `proprietary/design-tokens/src/` and built into `dist/tilburg/theme.css`. Reference these directly in app CSS.
+
+### 2. `--utrecht-*` — Plumbing inherited from @utrecht/component-library-css
+
+[utrecht](https://github.com/nl-design-system/utrecht) defines hundreds of `--utrecht-<component>-*` slots (`--utrecht-button-primary-action-background-color`, `--utrecht-form-control-border-width`, …). The Tilburg theme **points each one at the right `--tilburg-*` token**, so utrecht components automatically inherit the Tilburg look without any per-component CSS rewrites:
+
+```css
+.tilburg-theme {
+  --utrecht-button-primary-action-background-color: var(--tilburg-color-blue-300);
+  --utrecht-form-control-border-width: var(--tilburg-border-width-sm);
+  --utrecht-table-header-background-color: var(--tilburg-color-blue-100);
+  /* …hundreds more */
+}
+```
+
+When you read CSS in `@gemeente-tilburg/components-css/*/index.scss` you'll see one of two patterns:
+
+1. **Consume a utrecht token** when utrecht already defines a slot for the property — e.g. `border-block-end-color: var(--utrecht-table-row-border-color)`. The Tilburg theme already aliases that to `--tilburg-color-blue-200`.
+2. **Consume a Tilburg token directly** when there's no matching utrecht slot, or when the rule is Tilburg-specific (e.g. zebra striping, badge counter brand colour, page-header logo). Example: `background-color: var(--tilburg-color-pink-300)`.
+
+## Overriding tokens
+
+Override values app-wide by re-declaring them on `.tilburg-theme`, or per-section with a more specific selector:
+
+```css
+.tilburg-theme .promo-zone {
+  --tilburg-color-blue-300: #c4007a;
+}
+```
+
+For more, see the package readme at `proprietary/design-tokens/README.md`.
+
+## Resolved values
+
+Each category page shows the **token name**, a **visual sample** that resolves the token via `var(--…)`, and a **resolved value** column filled at runtime by the small enhancement script at `@gemeente-tilburg/components-css/tokens/resolve`. The two storybook previews import + invoke that script on every render; raw HTML/CSS consumers opt in by importing it themselves (or accept the static `—` fallback shown in the markup).

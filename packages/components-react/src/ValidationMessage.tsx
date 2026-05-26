@@ -63,7 +63,7 @@ export const ValidationMessage = forwardRef(
         <span className="tilburg-validation-message__icon" aria-hidden="true">
           {renderedIcon}
         </span>
-        <span className="tilburg-validation-message__body">{children}</span>
+        <span>{children}</span>
       </div>
     );
   },

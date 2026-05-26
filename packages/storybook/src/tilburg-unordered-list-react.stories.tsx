@@ -2,12 +2,17 @@
 
 import { UnorderedList } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-unordered-list.examples';
 
 const meta = {
   title: 'Tilburg React/Unordered List',
   id: 'tilburg-unordered-list-react',
   component: UnorderedList,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof UnorderedList>;
 
 export default meta;

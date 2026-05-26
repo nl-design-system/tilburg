@@ -48,6 +48,7 @@
   },
   "scripts": {
     "build": "pnpm --recursive run build",
+    "build:storybook-bundle": "pnpm --recursive run build && rm -rf packages/storybook/dist/angular && cp -R packages/storybook-angular/dist packages/storybook/dist/angular",
     "clean": "pnpm --recursive run clean",
     "lint": "npm-run-all --continue-on-error lint:** lint-workspaces",
     "lint:css": "stylelint --allow-empty-input '**/*.{css,scss}'",
@@ -65,12 +66,15 @@
     "publish": "changeset publish",
     "start": "node_modules/http-server/bin packages/storybook/dist/",
     "storybook": "npm-run-all --parallel watch:**",
+    "storybook:react": "pnpm run watch:storybook",
+    "storybook:angular": "pnpm run watch:storybook-angular",
     "test": "pnpm --recursive run test",
     "test-update": "npm-run-all --sequential clean lint build test",
     "update-patch": "npm-check-updates --configFileName .ncurc.patch.cjs",
     "update-minor": "npm-check-updates --configFileName .ncurc.minor.cjs",
     "update-major": "npm-check-updates --configFileName .ncurc.major.cjs",
-    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build:style-dictionary && pnpm --filter @gemeente-tilburg/storybook run storybook",
+    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/storybook run storybook",
+    "watch:storybook-angular": "pnpm --filter @gemeente-tilburg/components-angular run build:components && pnpm --filter @gemeente-tilburg/storybook-angular run storybook",
     "watch:style-dictionary": "pnpm --filter @gemeente-tilburg/design-tokens run watch:style-dictionary"
   },
   "dependencies": {

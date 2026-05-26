@@ -1,1 +1,13 @@
 @import "../../../components-css/data-list/index";
+
+/* Each data-list sub-component renders as a custom element host
+   (`<tilburg-data-list-item>`, `<tilburg-data-list-key>`,
+   `<tilburg-data-list-value>`) which the browser treats as `display: inline`.
+   The HTML/CSS reference uses semantic `<div>`/`<dt>`/`<dd>` which are block
+   by default — block these hosts so the rows stack vertically and the per-row
+   border + padding actually paint. */
+:host(tilburg-data-list-item),
+:host(tilburg-data-list-key),
+:host(tilburg-data-list-value) {
+  display: block;
+}

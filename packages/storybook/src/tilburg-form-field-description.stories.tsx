@@ -1,64 +1,39 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-form-field-description.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-form-field-description.examples.ts`).
+   The Angular storybook's `tilburg-form-field-description-html.stories.ts`
+   consumes the same source. */
 
 const meta = {
-  title: 'Tilburg/Form Field Description',
+  title: 'Tilburg HTML/Form Field Description',
   id: 'tilburg-form-field-description',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-field-description',
-    docs: {
-      description: {
-        component: `Inline helper text rendered between a label and its input. Three modifier flavours: default, \`--invalid\` (error), \`--warning\`. Connect to the input via \`aria-describedby\` referencing the description's \`id\`.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<tilburg-form-field-description id="email-desc">
-  We gebruiken dit alleen om u te bereiken.
-</tilburg-form-field-description>
-\`\`\`
-
-Inputs: \`id\`, \`valid\`, \`invalid\`, \`warning\`, \`class\`.
-
-### Plain HTML / CSS
-
-\`\`\`html
-<div id="email-desc" class="utrecht-form-field-description">
-  We gebruiken dit alleen om u te bereiken.
-</div>
-\`\`\`
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
+
 export const Default: Story = {
-  name: 'Default',
-  render: () => <div className="utrecht-form-field-description">We gebruiken dit alleen om u te bereiken.</div>,
+  name: examples.default.name,
+  render: () => <HtmlExample html={examples.default.html} />,
 };
 
 export const Invalid: Story = {
-  name: 'Invalid (error)',
-  render: () => (
-    <div className="utrecht-form-field-description utrecht-form-field-description--invalid" role="alert">
-      Vul een geldig e-mailadres in.
-    </div>
-  ),
+  name: examples.invalid.name,
+  render: () => <HtmlExample html={examples.invalid.html} />,
 };
 
 export const Warning: Story = {
-  name: 'Warning',
-  render: () => (
-    <div className="utrecht-form-field-description utrecht-form-field-description--warning">
-      De aanvraagperiode sluit binnenkort.
-    </div>
-  ),
+  name: examples.warning.name,
+  render: () => <HtmlExample html={examples.warning.html} />,
 };

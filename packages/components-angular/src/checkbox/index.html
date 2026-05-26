@@ -7,11 +7,11 @@
   [required]="required"
   [checked]="checked"
   [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
   [attr.aria-describedby]="ariaDescribedBy || null"
   [attr.aria-invalid]="invalid ? 'true' : null"
   [attr.aria-required]="required ? 'true' : null"
   (change)="onCheckChange($event)"
-  (mouseup)="mouseUp($event)"
-  (mousedown)="mouseDown($event)"
   utrecht-checkbox
+  appearance="custom"
 />

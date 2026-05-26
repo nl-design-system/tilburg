@@ -1,114 +1,43 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ReactNode } from 'react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-checkbox.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-checkbox.examples.ts`). The Angular
+   storybook's `tilburg-checkbox-html.stories.ts` consumes the same source. */
 
 const meta = {
-  title: 'Tilburg/Checkbox',
+  title: 'Tilburg HTML/Checkbox',
   id: 'tilburg-checkbox',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fcheckbox',
-    docs: {
-      description: {
-        component: `Custom-styled checkbox built on \`.utrecht-checkbox--custom\`. Tilburg layer adds invalid-state background, focus-visible borders, and the inline SVG check mark on the focused-checked state.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<tilburg-checkbox
-  id="consent"
-  name="consent"
-  [control]="form.controls.consent"
-  ariaLabel="Ik ga akkoord met de voorwaarden"
-  [required]="true"
-  [invalid]="form.controls.consent.invalid && form.controls.consent.touched"
-  (checkChanged)="onChange($event)"
-/>
-\`\`\`
-
-Inputs: \`id\`, \`control\` (\`FormControl\`), \`name\`, \`ariaLabel\`, \`ariaDescribedBy\`, \`invalid\`, \`required\`, \`disabled\`, \`checked\`. Output: \`(checkChanged)\`.
-
-### Plain HTML / CSS
-
-\`\`\`html
-<input
-  id="consent"
-  type="checkbox"
-  class="utrecht-checkbox utrecht-checkbox--html-input utrecht-checkbox--custom"
-  required
-/>
-<label class="utrecht-form-label" for="consent">Ik ga akkoord met de voorwaarden</label>
-\`\`\`
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const Row = ({ children }: { children: ReactNode }) => (
-  <div style={{ alignItems: 'center', display: 'flex', gap: '0.5rem', marginBlockEnd: '0.5rem' }}>{children}</div>
-);
-
-const baseClasses = 'utrecht-checkbox utrecht-checkbox--html-input utrecht-checkbox--custom';
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
 
 export const Unchecked: Story = {
-  name: 'Unchecked',
-  render: () => (
-    <Row>
-      <input id="cb-unchecked" type="checkbox" className={baseClasses} />
-      <label className="utrecht-form-label" htmlFor="cb-unchecked">
-        Ik ga akkoord met de voorwaarden
-      </label>
-    </Row>
-  ),
+  name: examples.unchecked.name,
+  render: () => <HtmlExample html={examples.unchecked.html} />,
 };
 
 export const Checked: Story = {
-  name: 'Checked',
-  render: () => (
-    <Row>
-      <input id="cb-checked" type="checkbox" className={baseClasses} defaultChecked />
-      <label className="utrecht-form-label" htmlFor="cb-checked">
-        Ik ga akkoord met de voorwaarden
-      </label>
-    </Row>
-  ),
+  name: examples.checked.name,
+  render: () => <HtmlExample html={examples.checked.html} />,
 };
 
 export const Invalid: Story = {
-  name: 'Invalid',
-  render: () => (
-    <Row>
-      <input id="cb-invalid" type="checkbox" className={baseClasses} required aria-invalid="true" />
-      <label className="utrecht-form-label" htmlFor="cb-invalid">
-        Verplicht akkoord
-      </label>
-    </Row>
-  ),
+  name: examples.invalid.name,
+  render: () => <HtmlExample html={examples.invalid.html} />,
 };
 
 export const Disabled: Story = {
-  name: 'Disabled',
-  render: () => (
-    <>
-      <Row>
-        <input id="cb-disabled" type="checkbox" className={baseClasses} disabled />
-        <label className="utrecht-form-label" htmlFor="cb-disabled">
-          Disabled (unchecked)
-        </label>
-      </Row>
-      <Row>
-        <input id="cb-disabled-checked" type="checkbox" className={baseClasses} defaultChecked disabled />
-        <label className="utrecht-form-label" htmlFor="cb-disabled-checked">
-          Disabled (checked)
-        </label>
-      </Row>
-    </>
-  ),
+  name: examples.disabled.name,
+  render: () => <HtmlExample html={examples.disabled.html} />,
 };

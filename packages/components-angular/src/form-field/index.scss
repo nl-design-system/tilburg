@@ -1,1 +1,10 @@
 @import "../../../components-css/form-field/index";
+
+/* The custom-element host (`<tilburg-form-field>`) defaults to `display: inline`
+   in the browser, which collapses the form field onto a single line with any
+   siblings. Force block flow on the host so the inner `.utrecht-form-field`
+   div lays out as a stacked container, matching the HTML/CSS reference where
+   the consumer renders `<div class="utrecht-form-field">` directly. */
+:host {
+  display: block;
+}

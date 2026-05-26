@@ -6,8 +6,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.utrecht-table__table-cell]': 'true',
-    role: 'cell',
+    '[class.utrecht-table__cell]': 'true',
   },
   standalone: false,
 })

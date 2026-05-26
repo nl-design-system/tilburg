@@ -2,12 +2,17 @@
 
 import { Breadcrumb } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-breadcrumb.examples';
 
 const meta = {
   title: 'Tilburg React/Breadcrumb',
   id: 'tilburg-breadcrumb-react',
   component: Breadcrumb,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Breadcrumb>;
 
 export default meta;

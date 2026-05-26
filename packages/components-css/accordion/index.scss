@@ -39,6 +39,20 @@
   flex-direction: row-reverse;
 }
 
+/* Default `+` / `−` glyph painted into `.utrecht-accordion__button-icon`
+   when the consumer leaves it empty. `:empty` rejects both element AND text
+   children, so when an HTML/CSS or React/Angular consumer writes the glyph
+   directly (e.g. `<span class="utrecht-accordion__button-icon">+</span>`),
+   the span isn't empty and CSS sits out — preventing a doubled glyph. */
+.utrecht-accordion__button-icon:empty::before {
+  content: "+";
+  font-weight: 700;
+}
+
+.utrecht-accordion__button[aria-expanded="true"] .utrecht-accordion__button-icon:empty::before {
+  content: "\2212"; /* minus sign U+2212 */
+}
+
 // Utrecht's accordion rotates the icon container 180deg when expanded (so its
 // default chevron flips between down and up). Tilburg swaps the projected
 // glyph explicitly (minus/plus), and with `flex-direction: row-reverse` on the

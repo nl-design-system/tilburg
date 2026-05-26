@@ -1,4 +1,5 @@
 import '@gemeente-tilburg/components-css/pagination/index.scss';
+import clsx from 'clsx';
 import { ForwardedRef, forwardRef, HTMLAttributes, ReactNode } from 'react';
 
 export type PaginationStep = 'first' | 'previous' | 'next' | 'last' | 'page';
@@ -92,6 +93,7 @@ export const Pagination = forwardRef(
       lastLabel = 'Laatste pagina',
       pageLabel = (n: number) => `Pagina ${n}`,
       onNavigate,
+      className,
       ...restProps
     }: PaginationProps,
     ref: ForwardedRef<HTMLElement>,
@@ -104,7 +106,7 @@ export const Pagination = forwardRef(
     };
 
     return (
-      <nav ref={ref} className="tilburg-pagination" aria-label={ariaLabel} {...restProps}>
+      <nav ref={ref} className={clsx('tilburg-pagination', className)} aria-label={ariaLabel} {...restProps}>
         {feedback && <div className="tilburg-pagination__feedback">{feedback}</div>}
         <div className="tilburg-pagination__controls">
           <button

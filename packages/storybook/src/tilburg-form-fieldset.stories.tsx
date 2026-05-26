@@ -1,64 +1,29 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-form-fieldset.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-form-fieldset.examples.ts`). The
+   Angular storybook's `tilburg-form-fieldset-html.stories.ts` consumes the
+   same source. */
 
 const meta = {
-  title: 'Tilburg/Form Fieldset',
+  title: 'Tilburg HTML/Form Fieldset',
   id: 'tilburg-form-fieldset',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-fieldset',
-    docs: {
-      description: {
-        component: `Groups related form fields under a single legend so assistive tech announces the group label before each field. Wraps the native \`<fieldset>\` + \`<legend>\` pair with utrecht-fieldset styling.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<tilburg-form-fieldset ariaLabel="Persoonsgegevens">
-  <legend class="utrecht-form-label">Persoonsgegevens</legend>
-  <!-- form fields -->
-</tilburg-form-fieldset>
-\`\`\`
-
-Inputs: \`disabled\`, \`invalid\`, \`ariaLabel\`, \`ariaLabelledby\`, \`ariaDescribedBy\`.
-
-### Plain HTML / CSS
-
-\`\`\`html
-<fieldset class="utrecht-fieldset">
-  <legend class="utrecht-form-label">Persoonsgegevens</legend>
-  <!-- form fields -->
-</fieldset>
-\`\`\`
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
+
 export const Default: Story = {
-  name: 'Default',
-  render: () => (
-    <fieldset className="utrecht-fieldset" style={{ maxWidth: '24rem' }}>
-      <legend className="utrecht-form-label">Persoonsgegevens</legend>
-      <div className="utrecht-form-field utrecht-form-field--text">
-        <label className="utrecht-form-label" htmlFor="fs-naam">
-          Naam
-        </label>
-        <input id="fs-naam" type="text" className="utrecht-textbox utrecht-textbox--html-input" />
-      </div>
-      <div className="utrecht-form-field utrecht-form-field--text">
-        <label className="utrecht-form-label" htmlFor="fs-email">
-          E-mailadres
-        </label>
-        <input id="fs-email" type="email" className="utrecht-textbox utrecht-textbox--html-input" />
-      </div>
-    </fieldset>
-  ),
+  name: examples.default.name,
+  render: () => <HtmlExample html={examples.default.html} />,
 };

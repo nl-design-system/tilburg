@@ -3,12 +3,17 @@
 import { Pagination } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-pagination.examples';
 
 const meta = {
   title: 'Tilburg React/Pagination',
   id: 'tilburg-pagination-react',
   component: Pagination,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Pagination>;
 
 export default meta;

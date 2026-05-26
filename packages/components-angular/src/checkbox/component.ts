@@ -12,6 +12,7 @@ export class TilburgCheckbox {
   @Input() control?: FormControl;
   @Input() name: string = '';
   @Input() ariaLabel: string = '';
+  @Input() ariaLabelledBy?: string;
   @Input() ariaDescribedBy?: string;
   @Input() invalid?: boolean = false;
   @Input() required: boolean = false;
@@ -20,12 +21,5 @@ export class TilburgCheckbox {
   @Output() checkChanged = new EventEmitter<Event>();
   onCheckChange(event: Event) {
     this.checkChanged.emit(event);
-  }
-
-  mouseUp(event: MouseEvent) {
-    (event.target as HTMLInputElement).classList.remove('tilburg-checkbox-pressed');
-  }
-  mouseDown(event: MouseEvent) {
-    (event.target as HTMLInputElement).classList.add('tilburg-checkbox-pressed');
   }
 }

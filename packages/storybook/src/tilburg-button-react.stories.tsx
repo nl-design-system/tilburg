@@ -3,12 +3,17 @@
 import { Button } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ReactNode } from 'react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-button.examples';
 
 const meta = {
   title: 'Tilburg React/Button',
   id: 'tilburg-button-react',
   component: Button,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Button>;
 
 export default meta;

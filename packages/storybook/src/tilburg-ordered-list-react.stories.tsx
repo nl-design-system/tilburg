@@ -2,12 +2,17 @@
 
 import { OrderedList } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-ordered-list.examples';
 
 const meta = {
   title: 'Tilburg React/Ordered List',
   id: 'tilburg-ordered-list-react',
   component: OrderedList,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof OrderedList>;
 
 export default meta;

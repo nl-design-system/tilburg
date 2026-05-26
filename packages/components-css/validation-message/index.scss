@@ -17,3 +17,26 @@
 .tilburg-validation-message--warning .tilburg-validation-message__icon {
   color: var(--utrecht-feedback-warning-color);
 }
+
+/* Default icon painted into `.tilburg-validation-message__icon` when the
+   consumer leaves it empty. Works the same for raw HTML/CSS and for the
+   React + Angular wrappers (which both render the icon span with an empty
+   projection unless the consumer fills it). */
+.tilburg-validation-message__icon:empty::before {
+  background-color: currentColor;
+  block-size: 20px;
+  content: "";
+  display: block;
+  inline-size: 20px;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.tilburg-validation-message--error .tilburg-validation-message__icon:empty::before {
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M10 1a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm1 13H9v-2h2v2Zm0-4H9V5h2v5Z'/></svg>");
+}
+
+.tilburg-validation-message--warning .tilburg-validation-message__icon:empty::before {
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M10 1 1 19h18L10 1Zm0 5 1 7h-2l1-7Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z'/></svg>");
+}

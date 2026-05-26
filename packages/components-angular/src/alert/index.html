@@ -1,8 +1,8 @@
 <div
   class="utrecht-alert tilburg-alert"
   [ngClass]="variantClass"
-  role="status"
-  [attr.aria-live]="liveRegion"
+  [attr.role]="resolvedRole"
+  [attr.aria-live]="resolvedLiveRegion"
   [attr.aria-label]="ariaLabel || null"
   aria-atomic="true"
 >

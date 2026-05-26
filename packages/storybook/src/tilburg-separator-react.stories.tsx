@@ -2,12 +2,17 @@
 
 import { Separator } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-separator.examples';
 
 const meta = {
   title: 'Tilburg React/Separator',
   id: 'tilburg-separator-react',
   component: Separator,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Separator>;
 
 export default meta;

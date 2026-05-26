@@ -22,7 +22,9 @@ export class TilburgTextbox {
   @Input() placeholder?: string;
 
   @Input() ariaLabel?: string = '';
+  @Input() ariaLabelledBy?: string;
   @Input() ariaDescribedBy?: string;
+  @Input() autocomplete?: string;
 
   constructor() {}
 }

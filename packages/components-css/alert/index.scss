@@ -23,6 +23,54 @@
     }
   }
 
+  /* Default icon painted into `.utrecht-alert__icon` when the consumer leaves
+     it empty. Works the same for raw HTML/CSS (`<div class="utrecht-alert__icon">
+     </div>`) and for the React + Angular components (whose templates render the
+     icon container with an `<ng-content>` / `{icon}` projection that's empty
+     unless the consumer provides one). Painted as a CSS mask so it inherits
+     `currentColor` from the variant token, matching the SVG fill the
+     components would otherwise produce. */
+  .utrecht-alert__icon:empty::before {
+    background-color: var(--_utrecht-alert-icon-color, var(--utrecht-alert-icon-color, currentColor));
+    block-size: var(--utrecht-alert-icon-size, 1.5rem);
+    content: "";
+    display: block;
+    inline-size: var(--utrecht-alert-icon-size, 1.5rem);
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+  }
+
+  &.utrecht-alert--info .utrecht-alert__icon:empty::before {
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z'/></svg>");
+  }
+
+  &.utrecht-alert--ok .utrecht-alert__icon:empty::before {
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.4 14.6L6 12l1.4-1.4 3.2 3.2 6-6L18 9.2l-7.4 7.4Z'/></svg>");
+  }
+
+  &.utrecht-alert--warning .utrecht-alert__icon:empty::before {
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M1 21h22L12 2 1 21Zm12-3h-2v-2h2v2Zm0-4h-2v-4h2v4Z'/></svg>");
+  }
+
+  &.utrecht-alert--error .utrecht-alert__icon:empty::before {
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6Z'/></svg>");
+  }
+
+  /* Default close-icon for the `.tilburg-alert__close` button when the consumer
+     hasn't placed an icon inside it. */
+  .tilburg-alert__close:empty::before {
+    background-color: currentColor;
+    block-size: var(--utrecht-alert-icon-size, 1.5rem);
+    content: "";
+    display: block;
+    inline-size: var(--utrecht-alert-icon-size, 1.5rem);
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='m18.3 5.71-1.42-1.42L12 9.17 7.12 4.29 5.71 5.71 10.59 10.59 5.71 15.46l1.41 1.42L12 12l4.88 4.88 1.42-1.42-4.88-4.87 4.87-4.88Z'/></svg>");
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+  }
+
   .tilburg-alert__title {
     flex-grow: 1;
   }

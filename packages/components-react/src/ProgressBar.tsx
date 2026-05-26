@@ -1,6 +1,5 @@
 import '@gemeente-tilburg/components-css/progress-bar/index.scss';
 import { ForwardedRef, forwardRef, HTMLAttributes, MouseEvent, ReactNode } from 'react';
-import { Heading2 } from './Heading2';
 
 export interface ProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   value?: number;
@@ -43,22 +42,22 @@ export const ProgressBar = forwardRef(
     return (
       <div ref={ref} {...restProps}>
         {showBack && (
-          <a className="tilburg-progress-bar__back utrecht-link utrecht-link--html-a" href="" onClick={handleBack}>
+          <a className="tilburg-progress-bar__back utrecht-link utrecht-link--html-a" href="#" onClick={handleBack}>
             {renderedBackIcon}
             <span className="tilburg-progress-bar__back-label">{backLabel}</span>
           </a>
         )}
         <div className="tilburg-progress-bar__header">
-          {title && <Heading2 className="tilburg-progress-bar__title tilburg-step-title">{title}</Heading2>}
+          {title && <h2 className="tilburg-progress-bar__title tilburg-step-title">{title}</h2>}
           {label && <div className="tilburg-progress-bar__label">{label}</div>}
         </div>
         <div
           className="tilburg-progress-bar__track"
           role="progressbar"
-          aria-label={ariaLabel ?? title ?? undefined}
+          aria-label={ariaLabel ?? title ?? 'Voortgang'}
           aria-valuemin={0}
-          aria-valuemax={total}
-          aria-valuenow={value}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(percentage)}
           aria-valuetext={label ?? undefined}
         >
           <div className="tilburg-progress-bar__indicator progress-bar-indicator" style={{ width: `${percentage}%` }} />

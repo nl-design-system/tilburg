@@ -1,77 +1,39 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-button-link.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-button-link.examples.ts`). The
+   Angular storybook's `tilburg-button-link-html.stories.ts` consumes the
+   same source. */
 
 const meta = {
-  title: 'Tilburg/Button Link',
+  title: 'Tilburg HTML/Button Link',
   id: 'tilburg-button-link',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fbutton-link',
-    docs: {
-      description: {
-        component: `Anchor styled like a button — same visual treatment as \`<tilburg-button>\` but rendered as an \`<a>\` for navigation that needs URL semantics (right-click, copy link, middle-click new tab, etc.). Three appearance modifiers: \`--primary-action\`, \`--secondary-action\`, \`--subtle\`.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<a tilburg-button-link appearance="primary-action-button" href="/aanvraag/nieuw">
-  Nieuwe aanvraag starten
-</a>
-\`\`\`
-
-Inputs: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`external\` (sets \`rel="external noopener noreferrer"\`).
-
-### Plain HTML / CSS
-
-\`\`\`html
-<a href="/aanvraag/nieuw"
-   class="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--primary-action">
-  Nieuwe aanvraag starten
-</a>
-\`\`\`
-
-## Vertical baseline shift
-
-Button-link uses the same TradeGothicCondensed18 font as \`<tilburg-button>\`, which has more empty descent space below the baseline than ascent space above. With \`line-height: 1\` this makes the visible letters read as sitting *above* the geometric centre of the control.
-
-We compensate the same way as the button: more \`padding-block-start\`, less \`padding-block-end\`, with total height unchanged. Button-link has no size variants, so a single offset is applied via the design token \`--tilburg-fix-button-link-baseline-offset\` (\`2px\`, defined in \`proprietary/design-tokens/src/patches/button-link.tokens.json\`).
-
-See the "Vertical baseline shift" section in the **Button** story for the full rationale (font metrics, why the shift is needed, why the value differs per size).
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
+
 export const PrimaryAction: Story = {
-  name: 'Primary action',
-  render: () => (
-    <a href="#" className="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--primary-action">
-      Nieuwe aanvraag starten
-    </a>
-  ),
+  name: examples.primaryAction.name,
+  render: () => <HtmlExample html={examples.primaryAction.html} />,
 };
 
 export const SecondaryAction: Story = {
-  name: 'Secondary action',
-  render: () => (
-    <a href="#" className="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--secondary-action">
-      Meer informatie
-    </a>
-  ),
+  name: examples.secondaryAction.name,
+  render: () => <HtmlExample html={examples.secondaryAction.html} />,
 };
 
 export const Subtle: Story = {
-  name: 'Subtle',
-  render: () => (
-    <a href="#" className="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--subtle">
-      Ga terug
-    </a>
-  ),
+  name: examples.subtle.name,
+  render: () => <HtmlExample html={examples.subtle.html} />,
 };
