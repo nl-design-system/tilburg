@@ -1,1 +1,8 @@
 @import "../../../components-css/button/index";
+
+/* `<tilburg-...>` defaults to `display: inline`; the wrapped control is an
+   inline-block element (button/badge/toggle). Match that so the host is sized
+   by its content and participates correctly in inline flow. */
+:host {
+  display: inline-block;
+}

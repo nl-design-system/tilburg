@@ -16,4 +16,12 @@ export class TilburgLink {
   @Input() ariaLabel?: string;
   @Input() ariaDescribedBy?: string;
   @Input() current?: AriaCurrent;
+
+  get resolvedRel(): string | null {
+    if (this.external) {
+      const prefix = this.rel ? `${this.rel} ` : '';
+      return `${prefix}external noopener noreferrer`;
+    }
+    return this.rel || null;
+  }
 }

@@ -2,12 +2,17 @@
 
 import { Checkbox, FormLabel } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-checkbox.examples';
 
 const meta = {
   title: 'Tilburg React/Checkbox',
   id: 'tilburg-checkbox-react',
   component: Checkbox,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Checkbox>;
 
 export default meta;

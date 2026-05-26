@@ -1,10 +1,10 @@
 <table
-  utrecht-table
+  class="utrecht-table"
   [attr.aria-label]="ariaLabel || null"
   [attr.aria-labelledby]="ariaLabelledby || null"
   [attr.aria-describedby]="ariaDescribedBy || null"
 >
-  <caption *ngIf="caption">
+  <caption *ngIf="caption" class="utrecht-table__caption">
     {{ caption }}
   </caption>
   <ng-content></ng-content>

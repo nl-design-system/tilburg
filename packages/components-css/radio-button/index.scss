@@ -19,7 +19,7 @@
     background-color: var(--utrecht-radio-button-invalid-background-color);
   }
 
-  &:focus-visible:not([aria-disabled="true"], :disabled, :checked, .tilburg-radio-pressed) {
+  &:focus-visible:not([aria-disabled="true"], :disabled, :checked, :active) {
     --_utrecht-radio-button-interactive-background-color: var(
       --utrecht-radio-button-focus-background-color,
       var(--utrecht-radio-button-focus-background-color)
@@ -52,7 +52,7 @@
       filter: brightness(90%);
     }
 
-    &:focus:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed, :active) {
+    &:focus:not([aria-disabled="true"], :disabled, :active) {
       --_utrecht-radio-button-background-color: var(--utrecht-radio-button-checked-background-color);
       --_utrecht-radio-button-color: var(--utrecht-radio-button-checked-color);
 
@@ -61,18 +61,18 @@
       border-width: var(--tilburg-border-width-sm);
     }
 
-    &:focus-visible:not([aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+    &:focus-visible:not([aria-disabled="true"], :disabled, :active) {
       background-color: var(--utrecht-radio-button-disabled-background-color);
       border-color: var(--utrecht-form-control-focus-border-color);
       border-width: var(--tilburg-border-width-sm);
     }
 
-    &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled) {
+    &:active:not([aria-disabled="true"], :disabled) {
       outline-color: transparent;
     }
 
-    &:active.tilburg-radio-pressed:not([aria-disabled="true"], :disabled),
-    &:focus-visible:not(.tilburg-radio-pressed, [aria-disabled="true"], :disabled, .tilburg-radio-pressed) {
+    &:active:not([aria-disabled="true"], :disabled),
+    &:focus-visible:not(:active, [aria-disabled="true"], :disabled) {
       --utrecht-radio-button-color: var(--tilburg-color-black);
       --_utrecht-radio-button-color: var(--tilburg-color-black);
       --utrecht-radio-button-background-color: var(--tilburg-color-blue-100);

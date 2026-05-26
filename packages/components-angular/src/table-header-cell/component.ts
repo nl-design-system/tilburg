@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@a
   host: {
     '[attr.role]': "scope === 'col' ? 'columnheader' : scope === 'row' ? 'rowheader' : undefined",
     '[attr.scope]': 'scope || null',
-    '[class.utrecht-table__table-header-cell]': 'true',
+    '[class.utrecht-table__header-cell]': 'true',
   },
   standalone: false,
 })

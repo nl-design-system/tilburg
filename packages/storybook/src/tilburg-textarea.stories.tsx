@@ -1,113 +1,43 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import type { CSSProperties, ReactNode } from 'react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-textarea.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-textarea.examples.ts`). The Angular
+   storybook's `tilburg-textarea-html.stories.ts` consumes the same source. */
 
 const meta = {
-  title: 'Tilburg/Textarea',
+  title: 'Tilburg HTML/Textarea',
   id: 'tilburg-textarea',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextarea',
-    docs: {
-      description: {
-        component: `Multi-line text input. Tilburg layer enforces minimum block/inline size and adds hover + focus-visible rules.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<label class="utrecht-form-label" for="explanation">Toelichting</label>
-<tilburg-textarea
-  id="explanation"
-  [control]="form.controls.explanation"
-  placeholder="Schrijf hier uw toelichting…"
-  [rows]="4"
-  [required]="true"
-/>
-\`\`\`
-
-Inputs: \`id\`, \`control\` (\`FormControl\`), \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.
-
-### Plain HTML / CSS
-
-\`\`\`html
-<label class="utrecht-form-label" for="explanation">Toelichting</label>
-<textarea id="explanation" class="utrecht-textarea" placeholder="Schrijf hier uw toelichting…"></textarea>
-\`\`\`
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const Row = ({ children }: { children: ReactNode }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '32rem' }}>{children}</div>
-);
-
-const labelStyle: CSSProperties = {
-  display: 'block',
-  fontWeight: 700,
-  marginBottom: '0.25rem',
-};
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
 
 export const Default: Story = {
-  name: 'Default',
-  render: () => (
-    <Row>
-      <label className="utrecht-form-label" style={labelStyle} htmlFor="ta-default">
-        Toelichting
-      </label>
-      <textarea id="ta-default" className="utrecht-textarea" placeholder="Schrijf hier uw toelichting…" />
-    </Row>
-  ),
+  name: examples.default.name,
+  render: () => <HtmlExample html={examples.default.html} />,
 };
 
 export const Filled: Story = {
-  name: 'With value',
-  render: () => (
-    <Row>
-      <label className="utrecht-form-label" style={labelStyle} htmlFor="ta-filled">
-        Toelichting
-      </label>
-      <textarea
-        id="ta-filled"
-        className="utrecht-textarea"
-        defaultValue="Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning."
-      />
-    </Row>
-  ),
+  name: examples.filled.name,
+  render: () => <HtmlExample html={examples.filled.html} />,
 };
 
 export const Invalid: Story = {
-  name: 'Invalid',
-  render: () => (
-    <Row>
-      <label className="utrecht-form-label" style={labelStyle} htmlFor="ta-invalid">
-        Toelichting
-      </label>
-      <textarea id="ta-invalid" className="utrecht-textarea" defaultValue="ongeldige inhoud" aria-invalid="true" />
-    </Row>
-  ),
+  name: examples.invalid.name,
+  render: () => <HtmlExample html={examples.invalid.html} />,
 };
 
 export const Disabled: Story = {
-  name: 'Disabled',
-  render: () => (
-    <Row>
-      <label className="utrecht-form-label" style={labelStyle} htmlFor="ta-disabled">
-        Toelichting
-      </label>
-      <textarea
-        id="ta-disabled"
-        className="utrecht-textarea"
-        defaultValue="Deze toelichting kan niet bewerkt worden."
-        disabled
-      />
-    </Row>
-  ),
+  name: examples.disabled.name,
+  render: () => <HtmlExample html={examples.disabled.html} />,
 };

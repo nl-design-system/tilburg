@@ -93,7 +93,7 @@ export const Alert = forwardRef(
       title,
       headingLevel = 3,
       closable = false,
-      liveRegion = 'polite',
+      liveRegion,
       closeButtonAriaLabel = 'sluit alert',
       icon,
       closeIcon,
@@ -107,11 +107,13 @@ export const Alert = forwardRef(
     const HeadingTag = HEADINGS[headingLevel];
     const renderedIcon = icon === undefined ? VARIANT_GLYPH[variant] : icon;
     const renderedCloseIcon = closeIcon === undefined ? <CloseGlyph /> : closeIcon;
+    const role = variant === 'danger' ? 'alert' : 'status';
+    const resolvedLiveRegion = liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
     return (
       <div
         ref={ref}
-        role="status"
-        aria-live={liveRegion}
+        role={role}
+        aria-live={resolvedLiveRegion}
         aria-atomic="true"
         className={clsx('utrecht-alert', 'tilburg-alert', `utrecht-alert--${VARIANT_TO_UTRECHT[variant]}`, className)}
         {...restProps}

@@ -2,12 +2,17 @@
 
 import { ValidationMessage } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-validation-message.examples';
 
 const meta = {
   title: 'Tilburg React/Validation Message',
   id: 'tilburg-validation-message-react',
   component: ValidationMessage,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof ValidationMessage>;
 
 export default meta;

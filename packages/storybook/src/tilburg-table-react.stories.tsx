@@ -11,12 +11,17 @@ import {
   TableRow,
 } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-table.examples';
 
 const meta = {
   title: 'Tilburg React/Table',
   id: 'tilburg-table-react',
   component: Table,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Table>;
 
 export default meta;

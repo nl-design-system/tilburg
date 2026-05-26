@@ -17,31 +17,26 @@ export class TilburgDataList {
 
 @Component({
   selector: 'tilburg-data-list-item',
-  template: '<ng-content></ng-content>',
-  host: { class: 'tilburg-data-list__item' },
+  template: '<div class="tilburg-data-list__item"><ng-content></ng-content></div>',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgDataListItem {}
 
 @Component({
   selector: 'tilburg-data-list-key',
-  template: '<ng-content></ng-content>',
-  host: { class: 'tilburg-data-list__key' },
+  template: '<dt class="tilburg-data-list__key" [attr.id]="id || null"><ng-content></ng-content></dt>',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgDataListKey {
   @Input() id?: string;
-
-  @HostBinding('attr.id')
-  get hostId(): string | null {
-    return this.id ?? null;
-  }
 }
 
 @Component({
   selector: 'tilburg-data-list-value',
-  template: '<ng-content></ng-content>',
-  host: { class: 'tilburg-data-list__value' },
+  template: '<dd class="tilburg-data-list__value"><ng-content></ng-content></dd>',
+  styleUrls: ['index.scss'],
   standalone: false,
 })
 export class TilburgDataListValue {}

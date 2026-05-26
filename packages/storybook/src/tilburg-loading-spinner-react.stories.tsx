@@ -2,6 +2,7 @@
 
 import { LoadingSpinner } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-loading-spinner.examples';
 
 const meta = {
   title: 'Tilburg React/Loading Spinner',
@@ -10,12 +11,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
-    docs: {
-      description: {
-        component:
-          'Loading Spinner is a full-viewport overlay (`position: fixed`). Each story is wrapped so the spinner is visible inside the docs frame.',
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta<typeof LoadingSpinner>;
 

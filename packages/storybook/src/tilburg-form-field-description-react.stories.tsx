@@ -2,12 +2,17 @@
 
 import { FormFieldDescription } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-form-field-description.examples';
 
 const meta = {
   title: 'Tilburg React/Form Field Description',
   id: 'tilburg-form-field-description-react',
   component: FormFieldDescription,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof FormFieldDescription>;
 
 export default meta;

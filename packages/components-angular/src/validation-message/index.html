@@ -8,10 +8,10 @@
   role="alert"
   [attr.aria-live]="ariaLive"
 >
-  <span class="tilburg-validation-message__icon">
+  <span class="tilburg-validation-message__icon" aria-hidden="true">
     <ng-content select="[slot=icon]"></ng-content>
   </span>
-  <span class="tilburg-validation-message__body">
+  <span>
     <ng-content></ng-content>
   </span>
 </div>

@@ -1,4 +1,5 @@
 import '@gemeente-tilburg/components-css/page-footer/index.scss';
+import clsx from 'clsx';
 import { ForwardedRef, forwardRef, HTMLAttributes, PropsWithChildren } from 'react';
 
 export interface PageFooterLink {
@@ -13,10 +14,10 @@ export interface PageFooterProps extends HTMLAttributes<HTMLElement> {
 
 export const PageFooter = forwardRef(
   (
-    { links = [], primaryLink, children, ...restProps }: PropsWithChildren<PageFooterProps>,
+    { links = [], primaryLink, className, children, ...restProps }: PropsWithChildren<PageFooterProps>,
     ref: ForwardedRef<HTMLElement>,
   ) => (
-    <footer ref={ref} className="tilburg-page-footer" {...restProps}>
+    <footer ref={ref} className={clsx('tilburg-page-footer', className)} {...restProps}>
       <div className="tilburg-page-footer__container">
         {children}
         {primaryLink && (

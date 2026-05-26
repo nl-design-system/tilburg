@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 export class TilburgRadioButton {
   @Input() id?: string = undefined;
   @Input() ariaLabel: string = '';
+  @Input() ariaLabelledBy?: string;
   @Input() ariaDescribedBy?: string;
   @Input() name: string = '';
   @Input() value: any;
@@ -21,10 +22,4 @@ export class TilburgRadioButton {
   @Input() checked: boolean = false;
 
   constructor() {}
-  mouseUp(event: MouseEvent) {
-    (event.target as HTMLInputElement).classList.remove('tilburg-radio-pressed');
-  }
-  mouseDown(event: MouseEvent) {
-    (event.target as HTMLInputElement).classList.add('tilburg-radio-pressed');
-  }
 }

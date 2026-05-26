@@ -19,6 +19,8 @@ export class TilburgTextarea {
   @Input() rows?: number;
   @Input() cols?: number;
   @Input() ariaLabel?: string = '';
+  @Input() ariaLabelledBy?: string;
   @Input() ariaDescribedBy?: string;
+  @Input() autocomplete?: string;
   constructor() {}
 }

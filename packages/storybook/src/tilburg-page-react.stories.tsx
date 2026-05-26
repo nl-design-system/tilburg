@@ -2,12 +2,17 @@
 
 import { Page, PageContent, PageFooter, PageHeader, Paragraph } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-page.examples';
 
 const meta = {
   title: 'Tilburg React/Page',
   id: 'tilburg-page-react',
   component: Page,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Page>;
 
 export default meta;

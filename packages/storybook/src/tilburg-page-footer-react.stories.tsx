@@ -2,12 +2,17 @@
 
 import { PageFooter } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-page-footer.examples';
 
 const meta = {
   title: 'Tilburg React/Page Footer',
   id: 'tilburg-page-footer-react',
   component: PageFooter,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof PageFooter>;
 
 export default meta;

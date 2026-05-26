@@ -10,12 +10,17 @@ import {
   ValidationMessage,
 } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-form-field.examples';
 
 const meta = {
   title: 'Tilburg React/Form Field',
   id: 'tilburg-form-field-react',
   component: FormField,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof FormField>;
 
 export default meta;

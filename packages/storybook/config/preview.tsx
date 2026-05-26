@@ -40,6 +40,13 @@ import '@gemeente-tilburg/components-css/textbox/index.scss';
 import '@gemeente-tilburg/components-css/unordered-list/index.scss';
 import '@gemeente-tilburg/components-css/validation-message/index.scss';
 import '@gemeente-tilburg/font/src/index.scss';
+/* Opt-in accordion enhancement (toggle + keyboard nav) for the HTML/CSS
+   reference stories. Angular/React wrapper stories aren't affected — the
+   script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`. */
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+/* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
+   token reference tables with `getComputedStyle()` output at runtime. */
+import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
 import { Controls, Description, Primary, Stories } from '@storybook/addon-docs';
 import type { Preview } from '@storybook/react';
@@ -48,13 +55,39 @@ import { theme } from './theme';
 
 defineCustomElements();
 
+/* Storybook hot-rerenders stories on arg/control changes. Watch the body
+   for new accordion roots and enhance them — the script itself is idempotent
+   so re-running on the same root is a no-op. */
+if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
+  const reenhance = () => {
+    enhanceAccordion(document);
+    resolveTokens(document);
+  };
+  new MutationObserver(reenhance).observe(document.body, { childList: true, subtree: true });
+  reenhance();
+}
+
 const preview: Preview = {
   parameters: {
     controls: { expanded: false },
     options: {
       panelPosition: 'right',
       storySort: {
-        order: ['Tilburg', 'CSS Component'],
+        /* Pin `Intro` to the top of each section; everything else falls back
+           to its default alphabetical position via the `*` wildcard.
+           `Tokens` sits at the top — it's the foundation every other
+           section builds on. */
+        order: [
+          'Tokens',
+          ['Intro', '*'],
+          'Tilburg HTML',
+          ['Intro', '*'],
+          'Tilburg React',
+          ['Intro', '*'],
+          'Tilburg Angular',
+          ['Intro', '*'],
+          'CSS Component',
+        ],
       },
     },
     docs: {

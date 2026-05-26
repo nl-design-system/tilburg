@@ -82,6 +82,7 @@
         "project": [
           "packages/components-angular/tsconfig.json",
           "packages/storybook/tsconfig.json",
+          "packages/storybook-angular/tsconfig.json",
           "packages/web-components-react/tsconfig.json",
           "packages/components-react/tsconfig.json",
           "packages/components-react/tsconfig.test.json",

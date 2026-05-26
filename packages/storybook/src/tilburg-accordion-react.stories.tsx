@@ -3,12 +3,17 @@
 import { Accordion, AccordionSection, Paragraph } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { type ReactNode, useState } from 'react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-accordion.examples';
 
 const meta = {
   title: 'Tilburg React/Accordion',
   id: 'tilburg-accordion-react',
   component: Accordion,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Accordion>;
 
 export default meta;

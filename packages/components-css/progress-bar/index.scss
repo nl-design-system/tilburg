@@ -10,6 +10,14 @@
   text-decoration: none !important;
 }
 
+/* CSS-painted default back arrow for raw HTML/CSS consumers. React +
+   Angular components project a `←` text glyph as fallback content; `:has()`
+   suppresses the pseudo-element when the link already has a leading glyph. */
+.tilburg-progress-bar__back:not(:has(> *:not(.tilburg-progress-bar__back-label)))::before {
+  content: "\2190"; /* leftwards arrow U+2190 */
+  font-weight: 700;
+}
+
 .tilburg-progress-bar__back-label {
   text-decoration: underline;
 }

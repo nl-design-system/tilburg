@@ -2,12 +2,17 @@
 
 import { Link } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-link.examples';
 
 const meta = {
   title: 'Tilburg React/Link',
   id: 'tilburg-link-react',
   component: Link,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Link>;
 
 export default meta;

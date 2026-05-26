@@ -2,12 +2,17 @@
 
 import { Paragraph } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-paragraph.examples';
 
 const meta = {
   title: 'Tilburg React/Paragraph',
   id: 'tilburg-paragraph-react',
   component: Paragraph,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Paragraph>;
 
 export default meta;

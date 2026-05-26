@@ -3,12 +3,17 @@
 import { Textbox } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ReactNode } from 'react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-textbox.examples';
 
 const meta = {
   title: 'Tilburg React/Textbox',
   id: 'tilburg-textbox-react',
   component: Textbox,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Textbox>;
 
 export default meta;

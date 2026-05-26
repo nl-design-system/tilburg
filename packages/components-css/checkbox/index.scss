@@ -54,8 +54,10 @@
       border-color: var(--utrecht-checkbox-disabled-border-color, var(--utrecht-checkbox-border-color));
     }
 
-    &:focus.tilburg-checkbox-pressed:active:not([aria-disabled="true"]),
-    &:focus-visible:not(:active, .tilburg-checkbox-pressed, [aria-disabled="true"]) {
+    /* Focus ring only when keyboard-focused AND not currently being clicked.
+       `:focus-visible` natively suppresses on mouse-press in modern browsers;
+       the `:not(:active)` clamps the click-and-hold edge case. */
+    &:focus-visible:not(:active, [aria-disabled="true"]) {
       background-color: var(--tilburg-color-blue-100);
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
       border-color: var(--utrecht-form-control-focus-border-color, var(--utrecht-form-control-focus-border-color));

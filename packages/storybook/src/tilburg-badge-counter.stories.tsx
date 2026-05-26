@@ -1,66 +1,49 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-badge-counter.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-badge-counter.examples.ts`). The
+   Angular storybook's `tilburg-badge-counter-html.stories.ts` consumes the
+   same source. */
 
 const meta = {
-  title: 'Tilburg/Counter Badge',
+  title: 'Tilburg HTML/Counter Badge',
   id: 'tilburg-badge-counter',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fbadge-counter',
-    docs: {
-      description: {
-        component: `Small inline counter for unread notifications, message counts, or cart items. Tilburg theme paints it in the brand pink accent (\`--tilburg-color-pink-300\`) with white text for a vibrant notification dot.
-
-## Usage
-
-### Plain HTML / CSS
-
-\`\`\`html
-<a class="utrecht-link" href="/berichten">
-  Berichten
-  <span class="utrecht-badge-counter" aria-label="9 ongelezen berichten">9</span>
-</a>
-\`\`\`
-
-Pair the badge with an \`aria-label\` so screen readers announce what the number means. The badge itself is just visual decoration on top of a link / button / nav-item.
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
+
 export const Single: Story = {
-  name: 'Single digit',
-  render: () => <span className="utrecht-badge-counter">9</span>,
+  name: examples.single.name,
+  render: () => <HtmlExample html={examples.single.html} />,
 };
 
 export const Double: Story = {
-  name: 'Double digits',
-  render: () => <span className="utrecht-badge-counter">42</span>,
+  name: examples.double.name,
+  render: () => <HtmlExample html={examples.double.html} />,
 };
 
 export const Triple: Story = {
-  name: 'Triple digits',
-  render: () => <span className="utrecht-badge-counter">128</span>,
+  name: examples.triple.name,
+  render: () => <HtmlExample html={examples.triple.html} />,
 };
 
 export const Overflow: Story = {
-  name: 'Overflow (99+)',
-  render: () => <span className="utrecht-badge-counter">99+</span>,
+  name: examples.overflow.name,
+  render: () => <HtmlExample html={examples.overflow.html} />,
 };
 
 export const InContext: Story = {
-  name: 'On a link (with aria-label)',
-  render: () => (
-    <a className="utrecht-link utrecht-link--html-a" href="#">
-      Berichten{' '}
-      <span className="utrecht-badge-counter" aria-label="9 ongelezen berichten">
-        9
-      </span>
-    </a>
-  ),
+  name: examples.inContext.name,
+  render: () => <HtmlExample html={examples.inContext.html} />,
 };

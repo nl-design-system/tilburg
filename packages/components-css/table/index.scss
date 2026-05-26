@@ -6,14 +6,18 @@
   border-block-end-width: var(--utrecht-table-header-border-width);
   color: var(--utrecht-table-header-color);
   font-weight: 700;
+  overflow-wrap: anywhere;
   text-align: start;
 }
 
-/* Body cell — hairline bottom border between rows. */
+/* Body cell — hairline bottom border between rows. `overflow-wrap: anywhere`
+   so long unbroken strings (URLs, IDs) factor into min-content width and the
+   column doesn't push into its neighbour. See audit finding TIL-49. */
 .utrecht-table__cell {
   border-block-end-color: var(--utrecht-table-row-border-color);
   border-block-end-style: solid;
   border-block-end-width: var(--utrecht-table-row-border-width);
+  overflow-wrap: anywhere;
 }
 
 /* Caption — left-aligned heading above the table. */

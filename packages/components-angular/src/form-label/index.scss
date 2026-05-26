@@ -1,1 +1,7 @@
 @import "../../../components-css/form-label/index";
+
+/* `<tilburg-form-label>` defaults to inline; without this, the label sits on
+   the same line as the textbox inside `.utrecht-form-field`. */
+:host {
+  display: block;
+}

@@ -1,74 +1,34 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description, examples } from '../../storybook-shared/src/tilburg-button-group.examples';
+
+/* Thin React wrapper around the shared HTML/CSS reference markup
+   (`packages/storybook-shared/src/tilburg-button-group.examples.ts`). The
+   Angular storybook's `tilburg-button-group-html.stories.ts` consumes the
+   same source. */
 
 const meta = {
-  title: 'Tilburg/Button Group',
+  title: 'Tilburg HTML/Button Group',
   id: 'tilburg-button-group',
   tags: ['autodocs'],
   parameters: {
-    bugs: 'https://github.com/nl-design-system/tilburg/labels/component%2Fbutton-group',
-    docs: {
-      description: {
-        component: `Inline cluster of related buttons (e.g. form submit + cancel). Lays out children with a consistent gap and wraps on small viewports.
-
-## Usage
-
-### Angular
-
-\`\`\`html
-<tilburg-button-group ariaLabel="Aanvraag verzenden">
-  <tilburg-button appearance="primary-action">Bevestigen</tilburg-button>
-  <tilburg-button appearance="secondary-action">Annuleren</tilburg-button>
-</tilburg-button-group>
-\`\`\`
-
-Inputs: \`role\`, \`ariaLabel\`, \`ariaLabelledby\`. Project the buttons via \`<ng-content>\`.
-
-### Plain HTML / CSS
-
-\`\`\`html
-<div class="utrecht-button-group" role="group" aria-label="Aanvraag verzenden">
-  <button class="utrecht-button utrecht-button--primary-action tilburg-medium">Bevestigen</button>
-  <button class="utrecht-button utrecht-button--secondary-action tilburg-medium">Annuleren</button>
-</div>
-\`\`\`
-`,
-      },
-    },
+    bugs,
+    docs: { description: { component: description } },
   },
 } satisfies Meta;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const HtmlExample = ({ html }: { html: string }) => <div dangerouslySetInnerHTML={{ __html: html }} />;
+
 export const Default: Story = {
-  name: 'Primary + secondary',
-  render: () => (
-    <div className="utrecht-button-group" role="group" aria-label="Aanvraag verzenden">
-      <button type="button" className="utrecht-button utrecht-button--primary-action tilburg-medium">
-        Bevestigen
-      </button>
-      <button type="button" className="utrecht-button utrecht-button--secondary-action tilburg-medium">
-        Annuleren
-      </button>
-    </div>
-  ),
+  name: examples.default.name,
+  render: () => <HtmlExample html={examples.default.html} />,
 };
 
 export const Three: Story = {
-  name: 'Three buttons',
-  render: () => (
-    <div className="utrecht-button-group" role="group" aria-label="Bestand">
-      <button type="button" className="utrecht-button utrecht-button--primary-action tilburg-medium">
-        Opslaan
-      </button>
-      <button type="button" className="utrecht-button utrecht-button--secondary-action tilburg-medium">
-        Concept
-      </button>
-      <button type="button" className="utrecht-button utrecht-button--subtle tilburg-medium">
-        Annuleren
-      </button>
-    </div>
-  ),
+  name: examples.three.name,
+  render: () => <HtmlExample html={examples.three.html} />,
 };

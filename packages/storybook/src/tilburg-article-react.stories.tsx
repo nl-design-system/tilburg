@@ -2,12 +2,17 @@
 
 import { Article, Heading2, Paragraph } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { bugs, description } from '../../storybook-shared/src/tilburg-article.examples';
 
 const meta = {
   title: 'Tilburg React/Article',
   id: 'tilburg-article-react',
   component: Article,
   tags: ['autodocs'],
+  parameters: {
+    bugs,
+    docs: { description: { component: description } },
+  },
 } satisfies Meta<typeof Article>;
 
 export default meta;

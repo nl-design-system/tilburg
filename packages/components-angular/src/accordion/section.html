@@ -9,9 +9,13 @@
       [attr.aria-controls]="panelId"
       (click)="onToggle()"
     >
-      <span class="utrecht-accordion__button-icon">
-        <ng-content *ngIf="expanded" select="[slot=icon-expanded]"></ng-content>
-        <ng-content *ngIf="!expanded" select="[slot=icon-collapsed]"></ng-content>
+      <span class="utrecht-accordion__button-icon" aria-hidden="true">
+        <ng-container *ngIf="expanded">
+          <ng-content select="[slot=icon-expanded]">&minus;</ng-content>
+        </ng-container>
+        <ng-container *ngIf="!expanded">
+          <ng-content select="[slot=icon-collapsed]">+</ng-content>
+        </ng-container>
       </span>
       <span class="utrecht-accordion__button-label tilburg-accordion__display-name">{{ label }}</span>
     </button>

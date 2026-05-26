@@ -1,1 +1,7 @@
 @import "../../../components-css/textbox/index";
+
+/* Block host so the textbox stacks above/below its siblings inside a form
+   field, instead of running inline with the label. */
+:host {
+  display: block;
+}

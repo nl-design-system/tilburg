@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'tilburg-button-group',
   templateUrl: 'index.html',
+  styles: [':host { display: block; }'],
   standalone: false,
 })
 export class TilburgButtonGroup {
