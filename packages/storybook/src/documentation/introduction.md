@@ -13,6 +13,16 @@ Daarom gaan we tussen overheidsorganisaties principes, interactiepatronen en cod
 > We zouden het op prijs stellen als je wilt bijdragen om het NLDS tot een succes te maken.
 > Dit kan in onze GitHub of met een mailtje aan: [info@nldesignsystem.nl](mailto:info@nldesignsystem.nl)
 
+---
+
+> 🧪 **Framework-ondersteuning**
+>
+> De Tilburg-componenten worden vandaag als **pure CSS** en als **Angular**-wrappers
+> verspreid. Er is **nog geen officiële React-laag** — React-projecten kunnen
+> de pure CSS direct gebruiken (BEM-classes werken probleemloos in JSX).
+> Bijdragen aan een toekomstige `@gemeente-tilburg/components-react`-laag zijn
+> welkom: open een PR op <https://github.com/nl-design-system/tilburg>.
+
 ## Wat is een Design System
 
 Een Design System, oftewel een ontwerpsysteem, is een verzameling afspraken tussen ontwerpers en ontwikkelaars voor het maken van digitale producten, zoals websites en apps. Het doel van deze afspraken is om de producten consistent en de gebruikerservaring zo prettig mogelijk te maken. Een Design System ‘leeft’: dankzij nieuwe inzichten en feedback van gebruikers worden de afspraken continu verbeterd.
@@ -34,3 +44,87 @@ Het is belangrijk dat iedereen de online dienstverlening van de overheid kan geb
 De POC is te vinden op:
 
 <http://github.com/nl-design-system>
+
+## Tilburg-componenten gebruiken
+
+De Tilburg-componenten worden in twee lagen verspreid: een **pure CSS**-laag voor iedereen, en een **Angular**-laag bovenop voor projecten die Angular gebruiken. Beide lagen leunen op `@utrecht/component-library-css` als basis en op `@gemeente-tilburg/design-tokens` voor kleuren, ruimtes en typografie.
+
+> **React-ondersteuning:** er is op dit moment nog geen officiële React-laag voor de Tilburg-componenten. Wel kunt u de pure-CSS-laag direct gebruiken in React (zie hieronder) — alle BEM-markup werkt zoals verwacht binnen JSX. Wij hebben graag bijdragen aan een toekomstige `@gemeente-tilburg/components-react`-laag: open een PR op <https://github.com/nl-design-system/tilburg>.
+
+### Installatie
+
+```bash
+# Pure CSS / elk framework
+npm install @gemeente-tilburg/components-css @gemeente-tilburg/design-tokens @utrecht/component-library-css
+
+# Angular (bevat de CSS-laag al transitief)
+npm install @gemeente-tilburg/components-angular @gemeente-tilburg/design-tokens
+```
+
+### Pure CSS gebruiken (elk framework)
+
+Importeer de design tokens, de utrecht-basis, en alleen de componenten die u nodig heeft. Dit kan in een `styles.scss`, `app.css`, of bovenin een Vite/Webpack entry-point:
+
+```scss
+@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
+@import "@utrecht/component-library-css/dist/index.css";
+
+@import "@gemeente-tilburg/components-css/alert/index";
+@import "@gemeente-tilburg/components-css/accordion/index";
+@import "@gemeente-tilburg/components-css/button/index";
+/* …of alleen de componenten die u nodig heeft */
+```
+
+Schrijf vervolgens de BEM-markup zoals te zien is in elke story onder **Plain HTML / CSS**:
+
+```html
+<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Versturen</button>
+```
+
+De Tilburg-klassen (`tilburg-*` / `.tilburg-…__*`) cascaden bovenop de utrecht-klassen — utrecht levert de basis, Tilburg geeft de huisstijl.
+
+### Angular gebruiken
+
+Registreer de module één keer in uw root- of feature-module:
+
+```ts
+import { NgModule } from "@angular/core";
+import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
+
+@NgModule({
+  imports: [TilburgComponentsModule],
+  /* … */
+})
+export class AppModule {}
+```
+
+Zorg dat de design tokens en utrecht-basis in uw globale `styles.scss` staan (de Angular-laag bundelt de Tilburg-component-CSS automatisch mee):
+
+```scss
+@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
+@import "@utrecht/component-library-css/dist/index.css";
+```
+
+Gebruik vervolgens de componenten direct in uw templates:
+
+```html
+<tilburg-alert variant="info" title="Informatie" [closable]="true" (closed)="dismiss()">
+  De openingstijden zijn gewijzigd.
+</tilburg-alert>
+
+<tilburg-textbox id="email" type="email" [control]="form.controls.email" placeholder="naam@voorbeeld.nl" />
+```
+
+Elke story onder **Tilburg/\*** documenteert de beschikbare `@Input`s en `@Output`s in de **Usage**-sectie van zijn auto-docs-pagina.
+
+### Design tokens
+
+Alle componenten kunnen via CSS-custom-properties getuned worden. De Tilburg-tokens (`--tilburg-*`) en de bovenliggende utrecht-tokens (`--utrecht-*`) zijn in DevTools onder de root te inspecteren; overschrijven kan per scope:
+
+```scss
+.brand-zone {
+  --tilburg-interaction-color: #c4007a;
+}
+```
+
+Zie de [Tokens](?path=/docs/tilburg-tokens--docs) story voor het complete overzicht.

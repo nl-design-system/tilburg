@@ -1,0 +1,14 @@
+<button
+  utrecht-button
+  [class.utrecht-button--subtle]="appearance === 'subtle-button'"
+  [appearance]="appearance"
+  [disabled]="disabled"
+  [type]="type"
+  [title]="title"
+  [attr.aria-label]="ariaLabel || title || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-pressed]="pressed === undefined ? null : (pressed ? 'true' : 'false')"
+  [ngClass]="'tilburg-' + size"
+>
+  <ng-content></ng-content>
+</button>

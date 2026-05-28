@@ -1,0 +1,32 @@
+{
+  "components/accordion": {
+    "tilburg": {
+      "accordion": {
+        "section": {
+          "margin-block-end": {
+            "$value": "{tilburg.space.row.ant}"
+          },
+          "transition-duration": {
+            "$value": "500ms"
+          },
+          "focus-border-width": {
+            "$value": "2px"
+          }
+        },
+        "button": {
+          "padding-block": {
+            "$value": "11px"
+          }
+        },
+        "panel": {
+          "margin": {
+            "$value": "{tilburg.space.inline.mouse}"
+          },
+          "transition-duration": {
+            "$value": "200ms"
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@
       "typography": {
         "font-family": {
           "primary": {
-            "$value": "\"TradeGothic LT CondEighteen\", \"TradeGothic LT\", \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
+            "$value": "\"TradeGothicCondensed18\", \"TradeGothic LT\", \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
             "$type": "fontFamilies"
           },
           "secondary": {

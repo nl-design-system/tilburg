@@ -1,6 +1,6 @@
 import '@gemeente-tilburg/components-css/modal/index.scss';
 import { Button } from '@utrecht/button-react/dist/css';
-import { Heading } from '@utrecht/component-library-react/dist/css-module';
+import { Heading } from '@utrecht/component-library-react';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 

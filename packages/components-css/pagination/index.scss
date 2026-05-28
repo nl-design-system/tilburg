@@ -1,0 +1,113 @@
+.tilburg-pagination {
+  align-items: center;
+  display: flex;
+  gap: var(--tilburg-space-row-cat);
+  justify-content: space-between;
+  padding-block: var(--tilburg-space-block-snail);
+  padding-inline: var(--tilburg-space-block-snail);
+}
+
+@media (width >= 640px) {
+  .tilburg-pagination {
+    padding-inline: var(--tilburg-space-block-rabbit);
+  }
+}
+
+.tilburg-pagination__feedback {
+  align-items: center;
+  display: flex;
+  font-size: var(--tilburg-typography-font-size-sm, 0.875rem);
+}
+
+.tilburg-pagination__controls {
+  align-items: center;
+  display: flex;
+  gap: var(--tilburg-space-row-cat);
+  justify-content: center;
+}
+
+.tilburg-pagination__button {
+  align-items: center;
+  background-color: transparent;
+  border: 0;
+  color: var(--tilburg-interaction-color);
+  cursor: pointer;
+  display: inline-flex;
+  inline-size: 1.75rem;
+  justify-content: center;
+  padding-block: 0;
+  padding-inline: 0;
+
+  &:disabled {
+    color: var(--tilburg-color-gray-300);
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline-color: var(--utrecht-focus-outline-color, revert);
+    outline-offset: var(--utrecht-focus-outline-offset, 2px);
+    outline-style: var(--utrecht-focus-outline-style, revert);
+    outline-width: var(--utrecht-focus-outline-width, revert);
+  }
+
+  &:hover:not(:disabled) {
+    color: var(--tilburg-interaction-active-color, var(--tilburg-interaction-color));
+  }
+}
+
+.tilburg-pagination__icon {
+  block-size: 1.5em;
+  inline-size: 1.5em;
+}
+
+.tilburg-pagination__range {
+  color: var(--tilburg-color-gray-500);
+  font-size: var(--tilburg-typography-font-size-sm, 0.875rem);
+}
+
+.tilburg-pagination__pages {
+  align-items: center;
+  display: flex;
+  gap: var(--tilburg-space-row-ant, 0.25rem);
+  list-style: none;
+  margin-block: 0;
+  margin-inline: 0;
+  padding-block: 0;
+  padding-inline: 0;
+}
+
+.tilburg-pagination__page {
+  background-color: transparent;
+  border: 0;
+  color: var(--tilburg-interaction-color);
+  cursor: pointer;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  min-inline-size: 1.75rem;
+  padding-block: var(--tilburg-space-row-ant, 0.25rem);
+  padding-inline: var(--tilburg-space-row-ant, 0.25rem);
+  text-align: center;
+}
+
+.tilburg-pagination__page:focus-visible {
+  outline-color: var(--utrecht-focus-outline-color, revert);
+  outline-offset: var(--utrecht-focus-outline-offset, 2px);
+  outline-style: var(--utrecht-focus-outline-style, revert);
+  outline-width: var(--utrecht-focus-outline-width, revert);
+}
+
+.tilburg-pagination__page:hover:not(:disabled, .tilburg-pagination__page--current) {
+  text-decoration: underline;
+}
+
+.tilburg-pagination__page--current {
+  color: var(--tilburg-color-gray-500, currentColor);
+  cursor: default;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tilburg-pagination__ellipsis {
+  color: var(--tilburg-color-gray-500);
+  padding-inline: var(--tilburg-space-row-ant, 0.25rem);
+}

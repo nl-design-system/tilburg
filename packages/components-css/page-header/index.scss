@@ -1,0 +1,84 @@
+.tilburg-page-header {
+  background-color: var(--tilburg-page-header-background-color, var(--tilburg-color-blue-300));
+  color: var(--tilburg-page-header-color, var(--tilburg-color-white));
+  inline-size: 100%;
+  margin-block-end: var(--tilburg-space-block-snail);
+}
+
+.tilburg-page-header__container {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tilburg-space-row-cat);
+  inline-size: 100%;
+  margin-inline: auto;
+  max-inline-size: var(--tilburg-page-header-max-inline-size, 1150px);
+  padding-block: 0;
+  padding-inline: var(--tilburg-space-block-snail);
+}
+
+.tilburg-page-header__brand {
+  align-items: center;
+  color: inherit;
+  display: inline-flex;
+  gap: var(--tilburg-space-row-cat);
+  text-decoration: none;
+
+  &:focus-visible {
+    outline-color: var(--tilburg-color-white);
+    outline-offset: 2px;
+    outline-style: solid;
+    outline-width: var(--tilburg-border-width-md);
+  }
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+  }
+}
+
+.tilburg-page-header__title {
+  display: inline-flex;
+  font-family: var(--utrecht-heading-font-family, var(--tilburg-typography-font-family-secondary), sans-serif);
+  font-size: var(--tilburg-page-header-title-font-size, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.tilburg-page-header__logo {
+  block-size: auto;
+  display: block;
+  inline-size: 200px;
+}
+
+@media (width >= 480px) {
+  .tilburg-page-header__logo {
+    inline-size: 240px;
+  }
+}
+
+@media (width >= 640px) {
+  .tilburg-page-header__logo {
+    inline-size: 280px;
+  }
+}
+
+@media (width >= 768px) {
+  .tilburg-page-header__logo {
+    inline-size: 340px;
+  }
+}
+
+.tilburg-page-header__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tilburg-space-row-cat);
+  margin-inline-start: auto;
+}
+
+.tilburg-page-header__user {
+  font-size: 1.1875rem;
+  font-weight: 700;
+}

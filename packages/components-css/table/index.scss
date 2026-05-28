@@ -1,0 +1,52 @@
+/* Header cell — bold weight, blue tint background, blue bottom border. */
+.utrecht-table__header-cell {
+  background-color: var(--utrecht-table-header-background-color);
+  border-block-end-color: var(--utrecht-table-header-border-color);
+  border-block-end-style: solid;
+  border-block-end-width: var(--utrecht-table-header-border-width);
+  color: var(--utrecht-table-header-color);
+  font-weight: 700;
+  text-align: start;
+}
+
+/* Body cell — hairline bottom border between rows. */
+.utrecht-table__cell {
+  border-block-end-color: var(--utrecht-table-row-border-color);
+  border-block-end-style: solid;
+  border-block-end-width: var(--utrecht-table-row-border-width);
+}
+
+/* Caption — left-aligned heading above the table. */
+.utrecht-table__caption {
+  caption-side: top;
+  font-weight: 700;
+  padding-block-end: var(--tilburg-space-block-snail);
+  text-align: start;
+}
+
+/* Footer base. */
+.utrecht-table__footer {
+  background-color: var(--utrecht-table-footer-background-color);
+  color: var(--utrecht-table-footer-color);
+}
+
+/* Footer cell — heavier top border + bold weight to anchor totals / summary
+   rows; overrides the body cell rule above. (`tfoot` doesn't match the
+   `tbody tr` zebra rules below.) */
+.utrecht-table__footer .utrecht-table__cell {
+  border-block-end: 0;
+  border-block-start-color: var(--tilburg-table-footer-border-block-start-color);
+  border-block-start-style: solid;
+  border-block-start-width: var(--tilburg-table-footer-border-width);
+  font-weight: 700;
+}
+
+/* Zebra striping — odd-indexed rows pick up the uneven background. */
+.utrecht-table tbody tr:nth-child(odd) .utrecht-table__cell {
+  background-color: var(--utrecht-table-row-uneven-background-color);
+}
+
+/* Even rows fall back to the even background (white in the Tilburg theme). */
+.utrecht-table tbody tr:nth-child(even) .utrecht-table__cell {
+  background-color: var(--utrecht-table-row-even-background-color);
+}

@@ -1,0 +1,72 @@
+.utrecht-accordion {
+  margin-block-end: var(--tilburg-container-bottom-margin);
+}
+
+// De-nested from `.utrecht-accordion`: in the Angular wrapper, `TilburgAccordion`
+// (root) and `TilburgAccordionSection` are separate components with separate
+// emulated encapsulation IDs, so a nested rule never matches across the boundary.
+// Top-level selectors work for both Angular and plain HTML consumers.
+// Tilburg's design tokens model the visible accordion divider as a SECTION
+// border (`--tilburg-accordion-section-border-{color,width}`) while the
+// utrecht button border is set transparent in default/hover/active and only
+// turns pink on focus. So we paint the blue section border here; utrecht's
+// subtle-button rules layer the focus colour on top without interfering.
+.utrecht-accordion__section {
+  border-color: var(--tilburg-accordion-section-border-color);
+  border-style: solid;
+  border-width: var(--tilburg-accordion-section-border-width);
+  margin-block-end: var(--tilburg-accordion-section-margin-block-end);
+  max-block-size: fit-content;
+  transition: transform var(--tilburg-accordion-section-transition-duration);
+}
+
+.tilburg-accordion__display-name {
+  font-family: var(--utrecht-document-font-family, inherit);
+  font-weight: 700;
+}
+
+.utrecht-accordion__button {
+  display: flex;
+  flex-direction: row-reverse;
+  min-inline-size: 100%;
+  padding-block: var(--tilburg-accordion-button-padding-block);
+  z-index: 0;
+}
+
+.utrecht-accordion__button-icon {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: row-reverse;
+}
+
+// Utrecht's accordion rotates the icon container 180deg when expanded (so its
+// default chevron flips between down and up). Tilburg swaps the projected
+// glyph explicitly (minus/plus), and with `flex-direction: row-reverse` on the
+// icon container the rotation would move the glyph from the right edge to the
+// left edge — visually pushing the icon next to the label. Cancel the rotation
+// so both expanded and collapsed states keep the glyph at the right.
+.utrecht-accordion__button[aria-expanded="true"] .utrecht-accordion__button-icon {
+  transform: none;
+}
+
+.utrecht-accordion__button-label {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+// Earlier consumers used a bare panel `<div>` without the
+// `.utrecht-accordion__panel` class, so utrecht's panel padding + border
+// never applied. Zero those defaults and re-emit only the margin and
+// transition so the panel matches that legacy look.
+.utrecht-accordion__panel {
+  border: none;
+  margin-block: var(--tilburg-accordion-panel-margin);
+  margin-inline: var(--tilburg-accordion-panel-margin);
+  padding-block: 0;
+  padding-inline: 0;
+  transition: all var(--tilburg-accordion-panel-transition-duration) ease-in-out;
+}
+
+.utrecht-accordion__panel[hidden] {
+  display: none;
+}

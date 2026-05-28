@@ -1,3 +1,0 @@
-# Table
-
-The table component.

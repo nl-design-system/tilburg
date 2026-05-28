@@ -1,0 +1,11 @@
+<div class="utrecht-accordion" [attr.aria-label]="ariaLabel || null" [attr.role]="ariaLabel ? 'region' : null">
+  <ng-container [ngSwitch]="headingLevel">
+    <tilburg-heading-1 *ngSwitchCase="1" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-1>
+    <tilburg-heading-2 *ngSwitchCase="2" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-2>
+    <tilburg-heading-3 *ngSwitchCase="3" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-3>
+    <tilburg-heading-4 *ngSwitchCase="4" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-4>
+    <tilburg-heading-5 *ngSwitchCase="5" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-5>
+    <tilburg-heading-6 *ngSwitchCase="6" class="tilburg-accordion__display-name">{{ displayName }}</tilburg-heading-6>
+  </ng-container>
+  <ng-content></ng-content>
+</div>

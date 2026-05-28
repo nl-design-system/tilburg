@@ -1,0 +1,11 @@
+{
+  "common": {
+    "utrecht": {
+      "action": {
+        "activate-cursor": {
+          "$value": "pointer"
+        }
+      }
+    }
+  }
+}

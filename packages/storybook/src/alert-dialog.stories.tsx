@@ -1,7 +1,7 @@
 import { AlertDialog } from '@gemeente-tilburg/components-react/src/index';
-import '@gemeente-tilburg/design-tokens/dist/theme.css';
+import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button, Paragraph } from '@utrecht/component-library-react/dist/css-module';
+import { Button, Paragraph } from '@utrecht/component-library-react';
 import { useRef } from 'react';
 
 const meta = {

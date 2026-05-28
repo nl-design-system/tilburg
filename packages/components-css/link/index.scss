@@ -1,0 +1,14 @@
+.utrecht-link {
+  &:visited {
+    text-decoration: underline;
+  }
+
+  &:hover {
+    color: var(--utrecht-link-visited-color);
+  }
+
+  &:focus,
+  &:focus-visible {
+    color: var(--tilburg-color-white);
+  }
+}
