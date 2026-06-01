@@ -52,10 +52,11 @@ const preview: Preview = {
     controls: { expanded: false },
     options: {
       storySort: {
-        /* `Tokens` at the top (foundation), then this Storybook's Angular
-           wrappers with their Intro pinned, then the shared `Tilburg HTML/…`
-           reference. */
-        order: ['Tokens', ['Intro', '*'], 'Tilburg Angular', ['Intro', '*'], 'Tilburg HTML'],
+        /* `Tilburg Angular` at the top so the cold-start landing story is
+           `Tilburg Angular/Intro`, then the shared `Tilburg HTML/…` reference,
+           then `Tokens` — still discoverable but no longer the default
+           landing. */
+        order: ['Tilburg Angular', ['Intro', '*'], 'Tilburg HTML', 'Tokens', ['Intro', '*']],
       },
     },
     docs: {

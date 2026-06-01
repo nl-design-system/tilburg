@@ -30,6 +30,8 @@ export class TilburgAlert {
   @Input() liveRegion: TilburgAlertLiveRegion = 'polite';
   @Input() ariaLabel?: string | null;
   @Input() closeButtonAriaLabel = 'sluit alert';
+  /** Visually hidden text prepended to the alert message for screen readers (e.g. "Fout:", "Waarschuwing:"). */
+  @Input() srPrefix?: string | null;
 
   @Output() closed = new EventEmitter<void>();
 

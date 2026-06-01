@@ -29,13 +29,14 @@ export const description = `Tilburg alert built on \`.utrecht-alert\` + \`.tilbu
 </tilburg-alert>
 \`\`\`
 
-Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`), \`ariaLabel\`, \`closeButtonAriaLabel\`. Output: \`(closed)\`.
+Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.
 
 ### Plain HTML / CSS
 
 \`\`\`html
+<!-- info / success / warning: role="status" aria-live="polite" -->
 <div class="utrecht-alert tilburg-alert utrecht-alert--info" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">
+  <div class="utrecht-alert__icon" aria-hidden="true">
     <i aria-hidden="true"><!-- icon svg --></i>
   </div>
   <div class="utrecht-alert__content">
@@ -43,12 +44,23 @@ Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'i
       <h3 class="utrecht-heading-3">Informatie</h3>
     </utrecht-heading-3>
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Informatie:</span>
       <p class="utrecht-paragraph">De openingstijden zijn gewijzigd.</p>
     </div>
   </div>
-  <button type="button" class="tilburg-alert__close" aria-label="Sluit alert">
-    <i aria-hidden="true"><!-- close icon --></i>
-  </button>
+</div>
+
+<!-- danger/error: role="alert" aria-live="assertive" so screen readers interrupt -->
+<div class="utrecht-alert tilburg-alert utrecht-alert--error" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="utrecht-alert__icon" aria-hidden="true">
+    <i aria-hidden="true"><!-- error icon svg --></i>
+  </div>
+  <div class="utrecht-alert__content">
+    <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Fout:</span>
+      <p class="utrecht-paragraph">Er is een fout opgetreden.</p>
+    </div>
+  </div>
 </div>
 \`\`\`
 
@@ -77,7 +89,7 @@ export const examples = {
   info: {
     name: 'Info',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--info" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(infoGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(infoGlyph)}</div>
   <div class="utrecht-alert__content">
     ${title('Informatie')}
     <div class="utrecht-alert__message">
@@ -89,7 +101,7 @@ export const examples = {
   success: {
     name: 'Success (ok)',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--ok" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(checkGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(checkGlyph)}</div>
   <div class="utrecht-alert__content">
     ${title('Aanvraag verstuurd')}
     <div class="utrecht-alert__message">
@@ -101,7 +113,7 @@ export const examples = {
   warning: {
     name: 'Warning',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--warning" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(warnGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(warnGlyph)}</div>
   <div class="utrecht-alert__content">
     ${title('Let op')}
     <div class="utrecht-alert__message">
@@ -113,10 +125,11 @@ export const examples = {
   danger: {
     name: 'Danger (error)',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--error" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(errorGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(errorGlyph)}</div>
   <div class="utrecht-alert__content">
     ${title('Er ging iets mis')}
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Fout:</span>
       <p class="utrecht-paragraph">Probeer het opnieuw of neem contact op met de gemeente.</p>
     </div>
   </div>
@@ -125,7 +138,7 @@ export const examples = {
   closable: {
     name: 'Closable',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--info" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(infoGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(infoGlyph)}</div>
   <div class="utrecht-alert__content">
     ${title('Informatie')}
     <div class="utrecht-alert__message">
@@ -138,7 +151,7 @@ export const examples = {
   messageOnly: {
     name: 'Message only (no title)',
     html: `<div class="utrecht-alert tilburg-alert utrecht-alert--info" role="status" aria-live="polite" aria-atomic="true">
-  <div class="utrecht-alert__icon">${icon(infoGlyph)}</div>
+  <div class="utrecht-alert__icon" aria-hidden="true">${icon(infoGlyph)}</div>
   <div class="utrecht-alert__content">
     <div class="utrecht-alert__message">
       <p class="utrecht-paragraph">Deze melding heeft geen titel — alleen een korte tekst.</p>

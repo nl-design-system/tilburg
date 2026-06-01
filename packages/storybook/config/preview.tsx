@@ -75,18 +75,18 @@ const preview: Preview = {
       storySort: {
         /* Pin `Intro` to the top of each section; everything else falls back
            to its default alphabetical position via the `*` wildcard.
-           `Tokens` sits at the top — it's the foundation every other
-           section builds on. */
+           `Tilburg` (the project-wide intro section) sits at the top so the
+           cold-start landing story is `Tilburg/Intro`. `Tokens` is demoted to
+           the end — still discoverable, but no longer the default landing. */
         order: [
-          'Tokens',
+          'Tilburg',
           ['Intro', '*'],
           'Tilburg HTML',
           ['Intro', '*'],
           'Tilburg React',
           ['Intro', '*'],
-          'Tilburg Angular',
+          'Tokens',
           ['Intro', '*'],
-          'CSS Component',
         ],
       },
     },

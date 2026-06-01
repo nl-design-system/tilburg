@@ -1,3 +1,16 @@
+// Standard visually-hidden utility rendered inside live regions (srPrefix text).
+// Scoped under .tilburg-alert to avoid leaking into other components.
+.tilburg-alert .utrecht-visually-hidden {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  margin-block: -1px;
+  margin-inline: -1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
 // Consumed by `tilburg-alert` (Angular) with `encapsulation: ViewEncapsulation.None`
 // so the `i` rule below reaches the projected `<app-icon>` content without `::ng-deep`.
 // The `.tilburg-alert *` selectors stay specific enough not to leak.

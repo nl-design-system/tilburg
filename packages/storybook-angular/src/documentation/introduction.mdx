@@ -18,64 +18,11 @@ De Tilburg-componenten bestaan in drie lagen — pure CSS, React en Angular — 
 De twee zijn niet aan elkaar gekoppeld; start de andere Storybook apart als je beide framework-lagen wilt zien. De HTML/CSS-stories zijn in beide identiek — ze documenteren dezelfde gedeelde markup.
 
 <figure style={{ margin: "1.5rem 0" }}>
-  <svg
-    viewBox="0 0 760 340"
-    xmlns="http://www.w3.org/2000/svg"
-    role="img"
-    aria-labelledby="layers-title layers-desc"
-    style={{ width: "100%", maxWidth: "760px", height: "auto", fontFamily: "'Roboto', sans-serif" }}
-  >
-    <title id="layers-title">Tilburg-lagen-architectuur</title>
-    <desc id="layers-desc">
-      React- en Angular-wrappers bouwen op de Tilburg HTML/CSS-laag, die zelf op de design-tokens leunt. Consumenten
-      kunnen HTML/CSS direct gebruiken of via een wrapper.
-    </desc>
-    <defs>
-      <marker id="layers-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-        <path d="M0,0 L0,6 L8,3 z" fill="#5B6E8A" />
-      </marker>
-    </defs>
-    <rect x="100" y="20" width="240" height="74" rx="6" fill="#E6F6FF" stroke="#5B6E8A" strokeWidth="1.5" />
-    <text x="220" y="48" textAnchor="middle" fontSize="14" fontWeight="700" fill="#333">
-      React-wrapper
-    </text>
-    <text x="220" y="68" textAnchor="middle" fontSize="11" fill="#5B6E8A" fontFamily="monospace">
-      components-react
-    </text>
-    <text x="220" y="86" textAnchor="middle" fontSize="10" fill="#5B6E8A">
-      &lt;Alert /&gt; &lt;Textbox /&gt;
-    </text>
-    <rect x="420" y="20" width="240" height="74" rx="6" fill="#E6F6FF" stroke="#5B6E8A" strokeWidth="1.5" />
-    <text x="540" y="48" textAnchor="middle" fontSize="14" fontWeight="700" fill="#333">
-      Angular-wrapper
-    </text>
-    <text x="540" y="68" textAnchor="middle" fontSize="11" fill="#5B6E8A" fontFamily="monospace">
-      components-angular
-    </text>
-    <text x="540" y="86" textAnchor="middle" fontSize="10" fill="#5B6E8A">
-      &lt;tilburg-alert&gt; &lt;tilburg-textbox&gt;
-    </text>
-    <line x1="220" y1="94" x2="280" y2="139" stroke="#5B6E8A" strokeWidth="1.5" markerEnd="url(#layers-arrow)" />
-    <line x1="540" y1="94" x2="480" y2="139" stroke="#5B6E8A" strokeWidth="1.5" markerEnd="url(#layers-arrow)" />
-    <rect x="40" y="144" width="680" height="76" rx="6" fill="#C8006C" stroke="#C8006C" strokeWidth="1.5" />
-    <text x="380" y="172" textAnchor="middle" fontSize="16" fontWeight="700" fill="#fff">
-      Gedeelde HTML / CSS
-    </text>
-    <text x="380" y="194" textAnchor="middle" fontSize="11" fill="#fff" fontFamily="monospace">
-      @gemeente-tilburg/components-css · @utrecht/component-library-css
-    </text>
-    <text x="380" y="210" textAnchor="middle" fontSize="10" fill="#fff" fontStyle="italic">
-      BEM-markup — direct te gebruiken óf via een wrapper
-    </text>
-    <line x1="380" y1="220" x2="380" y2="259" stroke="#5B6E8A" strokeWidth="1.5" markerEnd="url(#layers-arrow)" />
-    <rect x="160" y="264" width="440" height="60" rx="6" fill="#fff" stroke="#5B6E8A" strokeWidth="1.5" />
-    <text x="380" y="290" textAnchor="middle" fontSize="14" fontWeight="700" fill="#333">
-      Design tokens
-    </text>
-    <text x="380" y="310" textAnchor="middle" fontSize="11" fill="#5B6E8A" fontFamily="monospace">
-      @gemeente-tilburg/design-tokens
-    </text>
-  </svg>
+  <img
+    src="/diagrams/layers.svg"
+    alt="Tilburg-lagen-architectuur: React- en Angular-wrappers bouwen op de Tilburg HTML/CSS-laag, die op de design-tokens leunt."
+    style={{ width: "100%", maxWidth: "760px", height: "auto" }}
+  />
   <figcaption style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#5B6E8A", textAlign: "center" }}>
     Pijlen wijzen naar onderliggende lagen. React/Angular-wrappers zijn optioneel — de HTML/CSS-laag is rechtstreeks te
     gebruiken in elke stack.
