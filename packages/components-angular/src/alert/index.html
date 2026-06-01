@@ -6,7 +6,7 @@
   [attr.aria-label]="ariaLabel || null"
   aria-atomic="true"
 >
-  <div class="utrecht-alert__icon">
+  <div class="utrecht-alert__icon" aria-hidden="true">
     <ng-content select="[slot=icon]"></ng-content>
   </div>
   <div class="utrecht-alert__content">
@@ -19,6 +19,7 @@
       <tilburg-heading-6 *ngSwitchCase="6" class="tilburg-alert__title">{{ title }}</tilburg-heading-6>
     </ng-container>
     <div class="utrecht-alert__message">
+      <span *ngIf="srPrefix" class="utrecht-visually-hidden">{{ srPrefix }}</span>
       <ng-content></ng-content>
     </div>
   </div>
