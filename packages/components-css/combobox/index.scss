@@ -80,8 +80,24 @@
       :focus-within,
       :has(.tilburg-combobox__input[aria-expanded="true"])
     ) {
-    background-color: var(--tilburg-form-control-hover-background-color);
-    border-color: var(--tilburg-form-control-hover-border-color);
+    /* Same defensive fallback chain as `utrecht-textbox--html-input:hover` /
+       `utrecht-textarea:hover` so that a missing `--tilburg-form-control-hover-*`
+       token degrades to the form-control focus colours, then to the textbox/
+       form-control base colours, instead of silently rendering as `initial`. */
+    background-color: var(
+      --tilburg-form-control-hover-background-color,
+      var(
+        --utrecht-form-control-focus-background-color,
+        var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-color: var(
+      --tilburg-form-control-hover-border-color,
+      var(
+        --utrecht-form-control-focus-border-color,
+        var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
   }
 
   &:focus-within:not(:has(:disabled)),
@@ -213,12 +229,12 @@
 .tilburg-combobox__clear {
   align-items: center;
   background: transparent;
-  block-size: 20px;
+  block-size: var(--tilburg-combobox-icon-size, 20px);
   border: 0;
   color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
   cursor: pointer;
   display: inline-flex;
-  inline-size: 20px;
+  inline-size: var(--tilburg-combobox-icon-size, 20px);
   inset-block-start: 50%;
   justify-content: center;
   line-height: 1;
@@ -240,8 +256,8 @@
 
 .tilburg-combobox__clear {
   inset-inline-end: calc(
-    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
-      var(--tilburg-space-inline-ant, 4px)
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) +
+      var(--tilburg-combobox-icon-size, 20px) + var(--tilburg-space-inline-ant, 4px)
   );
 }
 
@@ -251,15 +267,16 @@
    to ~60px. */
 .utrecht-combobox .tilburg-combobox__value-container {
   padding-inline-end: calc(
-    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
-      var(--tilburg-space-inline-ant, 4px)
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) +
+      var(--tilburg-combobox-icon-size, 20px) + var(--tilburg-space-inline-ant, 4px)
   );
 }
 
 .utrecht-combobox:has(.tilburg-combobox__clear) .tilburg-combobox__value-container {
   padding-inline-end: calc(
-    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
-      var(--tilburg-space-inline-ant, 4px) + 20px + var(--tilburg-space-inline-ant, 4px)
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) +
+      var(--tilburg-combobox-icon-size, 20px) + var(--tilburg-space-inline-ant, 4px) +
+      var(--tilburg-combobox-icon-size, 20px) + var(--tilburg-space-inline-ant, 4px)
   );
 }
 
@@ -325,8 +342,22 @@
   word-break: break-word;
 
   &:hover {
-    background-color: var(--tilburg-form-control-hover-background-color);
-    border-color: var(--tilburg-form-control-hover-border-color);
+    /* Same defensive chain as the field above. Falls through textbox tokens
+       because chips are styled to match the field's bordered-tile look. */
+    background-color: var(
+      --tilburg-form-control-hover-background-color,
+      var(
+        --utrecht-form-control-focus-background-color,
+        var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-color: var(
+      --tilburg-form-control-hover-border-color,
+      var(
+        --utrecht-form-control-focus-border-color,
+        var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
   }
 
   &:focus,

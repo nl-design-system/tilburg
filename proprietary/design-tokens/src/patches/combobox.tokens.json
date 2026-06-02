@@ -1,0 +1,11 @@
+{
+  "components/combobox": {
+    "tilburg": {
+      "combobox": {
+        "icon-size": {
+          "$value": "20px"
+        }
+      }
+    }
+  }
+}
