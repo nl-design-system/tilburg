@@ -12,6 +12,7 @@ import '@gemeente-tilburg/components-css/breadcrumb/index.scss';
 import '@gemeente-tilburg/components-css/button/index.scss';
 import '@gemeente-tilburg/components-css/button-link/index.scss';
 import '@gemeente-tilburg/components-css/checkbox/index.scss';
+import '@gemeente-tilburg/components-css/combobox/index.scss';
 import '@gemeente-tilburg/components-css/data-list/index.scss';
 import '@gemeente-tilburg/components-css/form-field/index.scss';
 import '@gemeente-tilburg/components-css/form-fieldset/index.scss';
@@ -44,6 +45,10 @@ import '@gemeente-tilburg/font/src/index.scss';
    reference stories. Angular/React wrapper stories aren't affected — the
    script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`. */
 import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+/* Opt-in combobox enhancement (toggle + keyboard nav + chip add/remove) for
+   the HTML/CSS reference stories. Same idempotency rule — only enhances
+   `.utrecht-combobox[data-tilburg-combobox-enhance]`. */
+import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
@@ -61,6 +66,7 @@ defineCustomElements();
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const reenhance = () => {
     enhanceAccordion(document);
+    enhanceCombobox(document);
     resolveTokens(document);
   };
   new MutationObserver(reenhance).observe(document.body, { childList: true, subtree: true });

@@ -17,6 +17,8 @@ export { ButtonLink } from './ButtonLink';
 export type { ButtonLinkAppearance, ButtonLinkProps } from './ButtonLink';
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
+export { Combobox } from './Combobox';
+export type { ComboboxItem, ComboboxProps, MultiComboboxProps, SingleComboboxProps } from './Combobox';
 export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';
 export type { DataListItemProps, DataListKeyProps, DataListProps, DataListValueProps } from './DataList';
 export { Document } from './Document';

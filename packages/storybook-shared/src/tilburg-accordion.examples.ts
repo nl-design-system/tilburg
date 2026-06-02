@@ -42,13 +42,42 @@ export const description = `Tilburg accordion built on \`.utrecht-accordion\`. S
 
 ### Plain HTML / CSS
 
-De toggle (\`aria-expanded\` + \`[hidden]\` + keyboard-navigatie) zit niet in pure CSS. Laad het kleine enhancement-script en zet \`data-tilburg-accordion-enhance\` op het accordion-root:
+The CSS in \`@gemeente-tilburg/components-css/accordion/index.scss\` paints the panels, borders, and the \`+\` / \`−\` glyph (driven off \`[aria-expanded]\` via \`:empty::before\` rules on \`utrecht-accordion__button-icon\`) — but it can't toggle \`aria-expanded\` or hide a panel on its own. To get the same UX as the Angular/React wrappers without writing your own controller, opt in to the bundled JS enhancement.
+
+**How to load it.** The enhancement ships as an ES module alongside the SCSS:
 
 \`\`\`html
-<script type="module">
-  import '@gemeente-tilburg/components-css/accordion';
-</script>
+<script type="module" src="/node_modules/@gemeente-tilburg/components-css/accordion/index.js"></script>
+\`\`\`
 
+or, if you bundle your own JS:
+
+\`\`\`ts
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+enhanceAccordion();           // walk \`document\` and enhance every opt-in host
+enhanceAccordion(myFragment); // or scope to a subtree
+\`\`\`
+
+When loaded as a \`<script type="module">\`, it auto-runs once on \`DOMContentLoaded\` (or immediately if the DOM is already parsed). SSR-safe — the browser-only branch is guarded on \`typeof document\`.
+
+**Opting in.** Add \`data-tilburg-accordion-enhance\` to the \`.utrecht-accordion\` root. Roots without that attribute are skipped — that's how the Angular/React wrappers stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced root with \`data-tilburg-accordion-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup.
+
+**What it wires up.**
+
+- *Click to toggle.* Clicking a \`.utrecht-accordion__button\` flips its \`aria-expanded\` and adds/removes \`[hidden]\` on the matching \`.utrecht-accordion__panel\` (resolved via \`aria-controls\`). Disabled buttons are no-ops.
+- *Keyboard nav.* On a focused section button: ArrowDown/Up move focus to the next/previous enabled section (wraps), Home/End jump to the first/last. Tab/Shift+Tab stay native and move out of the accordion entirely.
+- *Glyph swap.* The script doesn't touch the \`<span class="utrecht-accordion__button-icon">\` — the \`+\` / \`−\` swap is pure CSS, keyed on the button's \`[aria-expanded]\`. Keep the span empty to use the default; fill it with your own icon and the CSS \`:empty::before\` rule sits out.
+
+**State lives in the DOM.** There's no internal store — every behaviour is driven by attributes you can also inspect or set yourself:
+
+- \`button[aria-expanded]\` — section open/closed
+- \`panel[hidden]\` — kept in sync with the button (the enhancer adds/removes it as the button toggles)
+- \`button[aria-controls]\` — id link from button to panel (the enhancer needs this to find the panel)
+- \`button[disabled]\` — locks the section closed and excludes it from keyboard nav
+
+**The reference markup.**
+
+\`\`\`html
 <div class="utrecht-accordion" data-tilburg-accordion-enhance role="region" aria-label="Veelgestelde vragen">
   <div class="utrecht-accordion__section">
     <span class="utrecht-accordion__header">
@@ -70,7 +99,7 @@ De toggle (\`aria-expanded\` + \`[hidden]\` + keyboard-navigatie) zit niet in pu
 </div>
 \`\`\`
 
-De lege \`<span class="utrecht-accordion__button-icon">\` laat CSS \`+\` / \`−\` schilderen op basis van \`[aria-expanded]\` — zie \`components-css/accordion/index.scss\`. Wil je een eigen glyph, vul de span en CSS sit out.
+The first section ships expanded (\`aria-expanded="true"\` + no \`[hidden]\` on its panel); for any section that should start collapsed, set \`aria-expanded="false"\` on the button and \`hidden\` on its panel. The two attributes must agree on first paint — after that the enhancer keeps them in sync.
 `;
 
 export interface Example {

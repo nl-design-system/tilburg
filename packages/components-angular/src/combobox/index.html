@@ -1,0 +1,82 @@
+<div
+  class="utrecht-combobox"
+  [class.tilburg-combobox--multiple]="multiple"
+>
+  <!-- Click anywhere on the value container (empty space between chips, around the
+       input, etc.) toggles the popover. chip-remove and clear buttons stop their
+       own click from bubbling here, so they don't double-toggle. -->
+  <div class="tilburg-combobox__value-container" (click)="toggle()">
+    <ng-container *ngIf="multiple">
+      <span *ngFor="let item of selectedItems" class="tilburg-combobox__chip">
+        {{ getLabel(item) }}
+        <button
+          type="button"
+          class="tilburg-combobox__chip-remove"
+          [attr.aria-label]="'Verwijder ' + getLabel(item)"
+          [disabled]="disabled || control?.disabled"
+          (click)="removeChip(getValue(item), $event)"
+        >×</button>
+      </span>
+    </ng-container>
+    <input
+      #inputEl
+      class="tilburg-combobox__input"
+      type="text"
+      role="combobox"
+      [id]="internalId"
+      [attr.aria-label]="ariaLabel || null"
+      [attr.aria-describedby]="ariaDescribedBy || null"
+      [attr.aria-expanded]="isOpen() ? 'true' : 'false'"
+      [attr.aria-controls]="listboxId()"
+      [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? optionId(activeIndex()) : null"
+      [attr.aria-invalid]="invalid || control?.invalid ? 'true' : null"
+      [attr.aria-required]="required ? 'true' : null"
+      [attr.placeholder]="(multiple && selectedItems.length > 0) ? null : (placeholder || null)"
+      [value]="displayValue"
+      [disabled]="disabled || control?.disabled"
+      readonly
+      (keydown)="onInputKeydown($event)"
+    />
+    <button
+      *ngIf="clearable && hasValue()"
+      type="button"
+      class="tilburg-combobox__clear"
+      aria-label="Wis selectie"
+      [disabled]="disabled || control?.disabled"
+      (click)="clear($event)"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="tilburg-combobox__chevron"
+      [attr.aria-label]="isOpen() ? 'Sluit opties' : 'Toon opties'"
+      [attr.tabindex]="-1"
+      [disabled]="disabled || control?.disabled"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </button>
+  </div>
+  <ul
+    [id]="listboxId()"
+    role="listbox"
+    class="utrecht-listbox utrecht-combobox__popover utrecht-combobox__popover--block-end"
+    [class.utrecht-combobox__popover--hidden]="!isOpen()"
+    [attr.aria-multiselectable]="multiple ? 'true' : null"
+  >
+    <li
+      *ngFor="let item of items; let i = index"
+      role="option"
+      class="utrecht-listbox__option"
+      [id]="optionId(i)"
+      [attr.data-active]="activeIndex() === i ? 'true' : null"
+      [attr.aria-selected]="isSelected(item) ? 'true' : 'false'"
+      (mousedown)="$event.preventDefault(); selectOption(i)"
+      (mouseenter)="activeIndex.set(i)"
+    >{{ getLabel(item) }}</li>
+  </ul>
+</div>

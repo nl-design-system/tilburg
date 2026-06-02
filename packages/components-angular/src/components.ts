@@ -8,6 +8,7 @@ export * from './button-group/component';
 export * from './button-link/component';
 export * from './button/component';
 export * from './checkbox/component';
+export * from './combobox/component';
 export * from './data-list/component';
 export * from './document/component';
 export * from './form-field-description/component';
