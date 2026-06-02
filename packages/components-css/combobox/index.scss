@@ -1,0 +1,478 @@
+/**
+ * Tilburg combobox — visual layer over `utrecht-combobox` / `utrecht-listbox`.
+ *
+ * Visually mirrors `bq-tlb-frontend/.../combobox.component.scss` rule-for-rule
+ * (ng-select selectors → WAI-ARIA combobox/listbox selectors) so the same look
+ * is available in pure HTML/CSS, Angular, and React.
+ *
+ * DOM contract (the framework wrappers render this exact tree):
+ *
+ *   .utrecht-combobox[.tilburg-combobox--multiple]   ← field-level appearance
+ *     .tilburg-combobox__value-container             ← padding, gap, min size
+ *       .tilburg-combobox__chip*                     ← multi-mode only
+ *       input.tilburg-combobox__input[role=combobox] ← borderless inner input
+ *       button.tilburg-combobox__clear?              ← optional × for clear-all
+ *       button.tilburg-combobox__chevron             ← ▾ / ▴ (inline SVG)
+ *     ul.utrecht-listbox.utrecht-combobox__popover   ← popover
+ *       li.utrecht-listbox__option[role=option]      ← `[data-active]` + `[aria-selected]`
+ *
+ * State cues:
+ *   - Open / focus:                    `[aria-expanded="true"]` or `:focus-within` → blue-100 bg, red-400 border.
+ *   - Active option (kb / pointer):    `[data-active="true"]` OR `:hover` → pink-300 left border.
+ *   - Selected option:                 `[aria-selected="true"]` → blue-100 background.
+ *   - Both:                            blue-400 left border.
+ *
+ * Tokens used (all from `@gemeente-tilburg/design-tokens`):
+ *   --utrecht-textbox-* / --utrecht-form-control-* (field appearance, padding)
+ *   --tilburg-form-control-hover-* (hover state)
+ *   --tilburg-color-pink-300 / -blue-100 / -blue-400 / -red-100 / -red-400 / -gray-50
+ *   --tilburg-space-inline-* / --tilburg-space-block-*
+ *   --tilburg-border-width-md (invalid outline)
+ *   --utrecht-pointer-target-min-size (chip + row min height)
+ */
+
+.utrecht-combobox {
+  background-color: var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color));
+  block-size: initial;
+  border-block-end-width: var(
+    --utrecht-textbox-border-bottom-width,
+    var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width))
+  );
+  border-color: var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color));
+  border-radius: var(--utrecht-textbox-border-radius, var(--utrecht-form-control-border-radius, 0));
+  border-style: solid;
+  border-width: var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width));
+  box-sizing: border-box;
+  color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+  cursor: pointer;
+  font-family: var(--utrecht-textbox-font-family, var(--utrecht-form-control-font-family));
+  font-size: var(--utrecht-textbox-font-size, var(--utrecht-form-control-font-size, inherit));
+  inline-size: 100%;
+  line-height: var(--utrecht-textbox-line-height, var(--utrecht-form-control-line-height, initial));
+  max-inline-size: var(--utrecht-textbox-max-inline-size, var(--utrecht-form-control-max-inline-size));
+  min-block-size: 0;
+
+  /* Floor the field at enough room for the chevron + clear icons and a
+     handful of placeholder characters, so a too-narrow parent grid cell
+     doesn't collapse the combobox to a single chevron. Tokenised via the
+     same `--utrecht-textbox-* → --utrecht-form-control-*` fallback chain
+     as the other size knobs, so consumers can override per-instance (set
+     `--utrecht-form-control-min-inline-size: 0` to opt out entirely).
+     Mirrors what `utrecht-select` does for the same problem. */
+  min-inline-size: var(--utrecht-textbox-min-inline-size, var(--utrecht-form-control-min-inline-size, 12rem));
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    outline-color 120ms ease;
+
+  /* The state rules below are intentionally in cascade-order (open/focus must
+     follow hover so the open-state colours win when both apply), not specificity
+     order — stylelint's `no-descending-specificity` would have us flip them and
+     re-introduce the hover-beats-open-state bug. */
+  /* stylelint-disable no-descending-specificity */
+
+  /* Hover is gated on `:not(:focus-within)` and `:not([aria-expanded="true"])` so it
+     never overrides the open/focus state — when the pointer is still over the field
+     after the user has clicked it open, the blue-100 open style stays put. Mirrors
+     bq-tlb-frontend's behavior where the panel-open style trumps hover. */
+  &:has(.tilburg-combobox__input:hover, .tilburg-combobox__chevron:hover, .tilburg-combobox__clear:hover):not(
+      :has(:disabled),
+      :focus-within,
+      :has(.tilburg-combobox__input[aria-expanded="true"])
+    ) {
+    background-color: var(--tilburg-form-control-hover-background-color);
+    border-color: var(--tilburg-form-control-hover-border-color);
+  }
+
+  &:focus-within:not(:has(:disabled)),
+  &:has(.tilburg-combobox__input[aria-expanded="true"]):not(:has(:disabled)) {
+    background-color: var(--tilburg-color-blue-100);
+    border-color: var(--tilburg-color-red-400);
+  }
+
+  &:has(.tilburg-combobox__input:focus-visible) {
+    outline: dashed black thin;
+  }
+
+  /* Invalid state mirrors `utrecht-textbox--invalid` / `utrecht-textarea--invalid`:
+     widen the existing border via the `--utrecht-form-control-invalid-border-width`
+     token chain (which Tilburg's design-tokens point at `--tilburg-border-width-md`),
+     don't add an extra outline. Keeping the colours/background in the same token
+     fallback order as those controls so the look matches when consumers theme
+     the form-control tokens. */
+  &:has(.tilburg-combobox__input[aria-invalid="true"]) {
+    --_utrecht-combobox-invalid-border-width: var(
+      --utrecht-textbox-invalid-border-width,
+      var(
+        --utrecht-form-control-invalid-border-width,
+        var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width))
+      )
+    );
+
+    background-color: var(
+      --utrecht-textbox-invalid-background-color,
+      var(
+        --utrecht-form-control-invalid-background-color,
+        var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-block-end-width: var(
+      --utrecht-textbox-invalid-border-block-end-width,
+      var(
+        --utrecht-form-control-invalid-border-block-end-width,
+        var(
+          --utrecht-textbox-border-block-end-width,
+          var(--utrecht-form-control-border-block-end-width, var(--_utrecht-combobox-invalid-border-width))
+        )
+      )
+    );
+    border-color: var(
+      --utrecht-textbox-invalid-border-color,
+      var(
+        --utrecht-form-control-invalid-border-color,
+        var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
+    border-width: var(--_utrecht-combobox-invalid-border-width);
+    color: var(
+      --utrecht-textbox-invalid-color,
+      var(--utrecht-form-control-invalid-color, var(--utrecht-textbox-color, var(--utrecht-form-control-color)))
+    );
+  }
+
+  &:has(.tilburg-combobox__input:disabled) {
+    background-color: var(--tilburg-color-gray-50);
+    cursor: not-allowed;
+  }
+  /* stylelint-enable no-descending-specificity */
+}
+
+/* Inner value container: holds chips (multi-mode) + the input + chevron.
+   Mirrors `.ng-value-container` in bq-tlb-frontend — gap, padding, min-size
+   live here, not on the field host. `box-sizing: border-box` keeps the
+   `inline-size: 100%` plus the form-control's inline padding inside the host
+   width; without it the container overflows by ~24px and the chevron / clear
+   icons render past the right border. */
+.tilburg-combobox__value-container {
+  align-items: center;
+  box-sizing: border-box;
+  color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--utrecht-textbox-font-family, var(--utrecht-form-control-font-family));
+  font-size: var(--utrecht-textbox-font-size, var(--utrecht-form-control-font-size, inherit));
+  font-weight: initial;
+  gap: var(--tilburg-space-inline-ant, 4px);
+  inline-size: 100%;
+  line-height: var(--utrecht-textbox-line-height, var(--utrecht-form-control-line-height, initial));
+  min-block-size: var(--utrecht-pointer-target-min-size, 44px);
+  min-inline-size: var(--utrecht-pointer-target-min-size, 44px);
+  padding-block-end: var(--utrecht-textbox-padding-block-end, var(--utrecht-form-control-padding-block-end, 0));
+  padding-block-start: var(--utrecht-textbox-padding-block-start, var(--utrecht-form-control-padding-block-start, 0));
+  padding-inline-end: var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 0));
+  padding-inline-start: var(
+    --utrecht-textbox-padding-inline-start,
+    var(--utrecht-form-control-padding-inline-start, 0)
+  );
+}
+
+.tilburg-combobox__input {
+  background: transparent;
+  border: 0;
+
+  /* Until v1 ships type-to-filter (`searchable`), the input is read-only — hide
+     the caret so it doesn't blink. */
+  caret-color: transparent;
+  color: inherit;
+  cursor: inherit;
+  flex: 1 1 0%;
+  font: inherit;
+  min-inline-size: 0;
+  outline: 0;
+  padding-block-end: 0;
+  padding-block-start: 0;
+  padding-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+.tilburg-combobox__input::placeholder {
+  color: var(--utrecht-textbox-placeholder-color, var(--utrecht-form-control-placeholder-color, currentColor));
+}
+
+.tilburg-combobox__input:disabled {
+  cursor: not-allowed;
+}
+
+/* Chevron / clear buttons inside the field. Absolutely positioned against
+   the `.utrecht-combobox` host (which is `position: relative` from utrecht)
+   so they stay pinned to the right edge and vertically centred regardless
+   of how many chips are rendered or how tall the field grows when chips
+   wrap to multiple lines. Inline SVG sits inside the button so the look
+   matches bq-tlb-frontend's tabler chevron without depending on a font icon. */
+.tilburg-combobox__chevron,
+.tilburg-combobox__clear {
+  align-items: center;
+  background: transparent;
+  block-size: 20px;
+  border: 0;
+  color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+  cursor: pointer;
+  display: inline-flex;
+  inline-size: 20px;
+  inset-block-start: 50%;
+  justify-content: center;
+  line-height: 1;
+  padding-block-end: 0;
+  padding-block-start: 0;
+  padding-inline-end: 0;
+  padding-inline-start: 0;
+  position: absolute;
+  transform: translateY(-50%);
+  transition: color 120ms ease;
+}
+
+/* Chevron always sits at the right edge of the field (one form-control
+   end-padding in from the border). Clear `×` (when present) sits to its
+   left with a small inline gap. */
+.tilburg-combobox__chevron {
+  inset-inline-end: var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px));
+}
+
+.tilburg-combobox__clear {
+  inset-inline-end: calc(
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
+      var(--tilburg-space-inline-ant, 4px)
+  );
+}
+
+/* Reserve room on the right of the value container so chips and the input
+   don't run underneath the absolutely-positioned icons. Chevron-only reserves
+   ~36px; when the clear button is also rendered, `:has()` bumps the reserve
+   to ~60px. */
+.utrecht-combobox .tilburg-combobox__value-container {
+  padding-inline-end: calc(
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
+      var(--tilburg-space-inline-ant, 4px)
+  );
+}
+
+.utrecht-combobox:has(.tilburg-combobox__clear) .tilburg-combobox__value-container {
+  padding-inline-end: calc(
+    var(--utrecht-textbox-padding-inline-end, var(--utrecht-form-control-padding-inline-end, 12px)) + 20px +
+      var(--tilburg-space-inline-ant, 4px) + 20px + var(--tilburg-space-inline-ant, 4px)
+  );
+}
+
+/* Chiplist mode tweak: extra block padding to accommodate the chip row. */
+.utrecht-combobox.tilburg-combobox--multiple .tilburg-combobox__value-container {
+  gap: var(--tilburg-space-inline-beetle, 8px);
+  padding-block-end: var(--tilburg-space-block-ant, 4px);
+  padding-block-start: var(--tilburg-space-block-ant, 4px);
+}
+
+.tilburg-combobox__chevron svg,
+.tilburg-combobox__clear svg {
+  block-size: 100%;
+  display: block;
+  inline-size: 100%;
+}
+
+.tilburg-combobox__chevron:disabled,
+.tilburg-combobox__clear:disabled {
+  cursor: not-allowed;
+}
+
+.tilburg-combobox__chevron:hover:not(:disabled),
+.tilburg-combobox__clear:hover:not(:disabled) {
+  color: var(--tilburg-color-pink-300);
+}
+
+/* Rotate the chevron in the open state — single source of truth so the icon
+   markup is the same whether the popover is open or closed. */
+.utrecht-combobox:has(.tilburg-combobox__input[aria-expanded="true"]) .tilburg-combobox__chevron svg {
+  transform: rotate(180deg);
+}
+
+/* Multi-value chips render inline inside the value-container so they
+   flex-wrap together with the input. */
+.tilburg-combobox__chip {
+  align-items: center;
+  background-color: var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color));
+  border-color: var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color));
+  border-radius: 0;
+  border-style: solid;
+  border-width: var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width, 1px));
+  color: var(--utrecht-form-control-color, currentColor);
+  display: inline-flex;
+  font-size: var(--utrecht-textbox-font-size, var(--utrecht-form-control-font-size, inherit));
+  gap: var(--tilburg-space-inline-beetle, 8px);
+  margin-block-end: 0;
+  margin-block-start: 0;
+  margin-inline-end: 0;
+  margin-inline-start: 0;
+
+  /* Long multi-value labels wrap rather than overflow. Mirrors
+     bq-tlb-frontend's `.ng-value` rule. */
+  max-inline-size: 100%;
+  padding-block-end: 0;
+  padding-block-start: 0;
+  padding-inline-end: 0;
+  padding-inline-start: var(--tilburg-space-inline-beetle, 8px);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  &:hover {
+    background-color: var(--tilburg-form-control-hover-background-color);
+    border-color: var(--tilburg-form-control-hover-border-color);
+  }
+
+  &:focus,
+  &:focus-within {
+    background-color: var(--tilburg-color-blue-100);
+    border-color: var(--tilburg-color-pink-300);
+  }
+}
+
+.tilburg-combobox__chip-remove {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  padding-block-end: 0;
+  padding-block-start: 0;
+  padding-inline-end: var(--tilburg-space-inline-beetle, 8px);
+  padding-inline-start: 0;
+  transition: color 120ms ease;
+
+  &:hover {
+    color: var(--tilburg-color-pink-300);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Popover sits below the combobox host; align flush against the host's bottom
+   edge — bq-tlb-frontend's ng-select renders the panel touching the field, no
+   gap. `.utrecht-combobox__popover` base (position absolute, z-index) comes
+   from `@utrecht/components/combobox`. */
+.utrecht-combobox__popover {
+  inline-size: 100%;
+  margin-block-start: 0;
+}
+
+/* `.utrecht-listbox` (from `@utrecht/component-library-css`) drives its
+   border/colour through `--utrecht-listbox-*` tokens that Tilburg's design
+   tokens never set, so the listbox falls back to the UA default — a chunky
+   `border: medium currentcolor`. Override here to a subtle 1px border with
+   a soft drop shadow that matches the bq-tlb-frontend popover.
+   No block padding: bq-tlb-frontend's ng-dropdown panel has the first/last
+   option flush against the panel border, so any internal padding here would
+   render as a white band above the first row and below the last. */
+.utrecht-combobox .utrecht-listbox {
+  background-color: var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color, canvas));
+  border-color: var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color));
+  border-radius: var(--utrecht-textbox-border-radius, var(--utrecht-form-control-border-radius, 0));
+  border-style: solid;
+  border-width: var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width, 1px));
+  box-shadow: 0 var(--tilburg-space-block-flea, 2px) var(--tilburg-space-block-beetle, 8px) rgb(0 0 0 / 8%);
+  padding-block-end: 0;
+  padding-block-start: 0;
+}
+
+/* Listbox options inside the popover — visible state cues.
+ *
+ * WCAG 1.4.1: don't rely on colour alone. A pink left border on the active
+ * (keyboard- or pointer-hovered) option and a blue left border on the
+ * selected option communicate state by shape as well as colour.
+ * Padding-inline-start is reduced by the border width to prevent layout
+ * shift.
+ */
+
+/* Compact rows: `.utrecht-listbox__option` defaults to `min-block-size: var(
+   --utrecht-listbox-option-min-block-size, var(--utrecht-pointer-target-min-size,
+   24px))` — and Tilburg's pointer-target token is 44px, so each row reserves
+   ~48px even though the text is ~20px. That extra ~28px of empty space above
+   and below the text reads as a "whitespace divider" between adjacent rows,
+   even though the rows themselves touch. Override to a compact size + explicit
+   block padding so the rows look like a continuous list, matching bq-tlb-frontend's
+   ng-dropdown panel. */
+
+/* Rows sized to match bq-tlb-frontend's ng-option: 8px block padding on each
+   side around the text, 10px inline-start so the label clears the active-state
+   stripe, and a 2px `margin-block-end` strip of the listbox's white background
+   between consecutive rows so each option reads as its own line. The active
+   stripe (border-inline-start) starts transparent so layout doesn't shift
+   when an option gains [data-active]. */
+.utrecht-listbox__option {
+  --utrecht-listbox-option-min-block-size: 0;
+
+  border-inline-start: var(--tilburg-space-inline-ant, 4px) solid transparent;
+  cursor: pointer;
+  line-height: var(--tilburg-line-height-md, 1.5);
+  margin-block-end: var(--tilburg-space-block-flea, 2px);
+  min-block-size: 0;
+  padding-block-end: var(--tilburg-space-block-beetle, 8px);
+  padding-block-start: var(--tilburg-space-block-beetle, 8px);
+  padding-inline-start: var(--tilburg-space-inline-snail, 10px);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.utrecht-listbox__option:last-child {
+  margin-block-end: 0;
+}
+
+.utrecht-listbox__option[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Pointer hover doubles as "active" — bq-tlb-frontend's ng-select sets
+   `.ng-option-marked` on `mouseenter` automatically. We mirror that here so
+   plain CSS produces the same pink-stripe cue even before the enhancement JS
+   has had a chance to wire `data-active`. No `padding-inline-start` override:
+   the base rule already keeps a 4px transparent `border-inline-start`, so the
+   label sits 14px in from the outer edge whether or not a stripe colour is
+   filled in. (bq shrinks padding by the stripe width because its default has
+   no border; ours reserves the slot, so overriding would shift the label.) */
+.utrecht-combobox .utrecht-listbox__option:hover:not([aria-disabled="true"]),
+.utrecht-listbox__option[data-active="true"]:not([aria-disabled="true"]) {
+  background-color: var(--tilburg-color-blue-50);
+  border-inline-start-color: var(--tilburg-color-pink-300);
+}
+
+/* Selected (without marked): soft blue-50 tint AND a persistent blue-400
+   stripe — the bar should always advertise the selected option(s) even
+   before the user hovers or keyboard-navigates. The base rule already
+   reserves the 4px stripe slot with a transparent border, so we only
+   colour it in here — no padding override needed, no layout shift. */
+.utrecht-listbox__option[aria-selected="true"] {
+  background-color: var(--tilburg-color-blue-50);
+  border-inline-start-color: var(--tilburg-color-blue-400);
+}
+
+/* Marked + Selected: deeper bg (blue-100) AND the pink-300 hover stripe wins
+   over the persistent blue-400 selected stripe. The pointer/keyboard activity
+   indicator (pink) takes priority — the option is still selected (already
+   indicated by the deeper bg) but the user is currently focused on it. */
+.utrecht-listbox__option[data-active="true"][aria-selected="true"]:not([aria-disabled="true"]),
+.utrecht-combobox .utrecht-listbox__option:hover[aria-selected="true"]:not([aria-disabled="true"]) {
+  background-color: var(--tilburg-color-blue-100);
+  border-inline-start-color: var(--tilburg-color-pink-300);
+}
+
+/* BAT brand: clear-button alignment quirk mirrored from bq-tlb-frontend.
+   `.bat-theme` is a third-party brand-scope class that predates Tilburg's
+   `tilburg-*` selector-class-pattern convention, so disable that lint rule
+   for this one selector. */
+/* stylelint-disable-next-line selector-class-pattern */
+.bat-theme .utrecht-combobox .tilburg-combobox__clear {
+  inline-size: 24px;
+}

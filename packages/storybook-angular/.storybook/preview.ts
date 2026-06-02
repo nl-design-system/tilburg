@@ -13,6 +13,10 @@ import { theme } from './theme';
    script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`,
    and the wrapper's template never emits that attribute. */
 import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+/* Opt-in combobox enhancement for the HTML/CSS reference stories.
+   `.utrecht-combobox[data-tilburg-combobox-enhance]` only — the Angular
+   wrapper template doesn't emit that attribute. */
+import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
@@ -20,6 +24,7 @@ import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const reenhance = () => {
     enhanceAccordion(document);
+    enhanceCombobox(document);
     resolveTokens(document);
   };
   new MutationObserver(reenhance).observe(document.body, { childList: true, subtree: true });
