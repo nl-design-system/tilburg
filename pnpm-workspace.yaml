@@ -5,6 +5,11 @@ packages:
   - "packages/*"
   - "proprietary/*"
 
+allowBuilds:
+  '@bundled-es-modules/glob': true
+  esbuild: true
+  style-dictionary: true
+
 # Configure pnpm so peer dependencies must be explicitly added instead of being automatically installed.
 autoInstallPeers: false
 
@@ -41,3 +46,5 @@ savePrefix: ""
 
 # Configure pnpm to not fail when there are missing or invalid peer dependencies in the tree.
 strictPeerDependencies: false
+
+provenance: true
