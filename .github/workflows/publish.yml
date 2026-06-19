@@ -3,16 +3,17 @@ name: Publish
 on:
   push:
     branches: main
-
-permissions:
-  contents: read # since GH_TOKEN is provided, we only need 'read'
-  id-token: write
-  pull-requests: write # Needed to create and update pull requests
+permissions: {}
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment: publish
+    permissions:
+      contents: read # since GH_TOKEN is provided, we only need 'read'
+      id-token: write
+      pull-requests: write # Needed to create and update pull requests
+
 
     steps:
       - name: Checkout
