@@ -6,7 +6,7 @@ packages:
   - "proprietary/*"
 
 allowBuilds:
-  '@bundled-es-modules/glob': true
+  "@bundled-es-modules/glob": true
   esbuild: true
   style-dictionary: true
 
