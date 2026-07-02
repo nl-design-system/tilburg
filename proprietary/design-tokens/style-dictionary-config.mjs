@@ -4,90 +4,82 @@ const sortByName = (a, b) => stringSort(a.name, b.name);
 
 export const createStyleDictionaryConfig = ({
   selector,
-  source = [
-    "src/**/tokens.json",
-    "src/**/*.tokens.json",
-    "figma/**/*.tokens.json",
-  ],
+  source = ['src/**/tokens.json', 'src/**/*.tokens.json', 'figma/**/*.tokens.json'],
 }) => {
-  const prefix = selector.replace(/^\.(.+)-theme/, "$1");
+  const prefix = selector.replace(/^\.(.+)-theme/, '$1');
   const themeName = `${prefix}-theme`;
 
   return {
     hooks: {
       formats: {
-        "json/list": function ({ dictionary }) {
-          return JSON.stringify(
-            dictionary.allTokens.sort(sortByName),
-            null,
-            "  ",
-          );
+        'json/list': function ({ dictionary }) {
+          return JSON.stringify(dictionary.allTokens.sort(sortByName), null, '  ');
         },
       },
     },
     source,
     platforms: {
       js: {
-        transformGroups: "tokens-studio",
-        transforms: ["name/camel", "color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['name/camel', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "variables.cjs",
-            format: "javascript/module-flat",
+            destination: 'variables.cjs',
+            format: 'javascript/module-flat',
           },
           {
-            destination: "variables.mjs",
-            format: "javascript/es6",
+            destination: 'variables.mjs',
+            format: 'javascript/es6',
           },
         ],
       },
       tokenTree: {
-        transformGroups: "tokens-studio",
-        transforms: ["color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            format: "javascript/module",
-            destination: "tokens.cjs",
+            format: 'javascript/module',
+            destination: 'tokens.cjs',
           },
         ],
       },
       json: {
-        transformGroups: "tokens-studio",
-        transforms: ["name/camel", "color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['name/camel', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "tokens.json",
-            format: "json",
+            destination: 'tokens.json',
+            format: 'json',
           },
           {
-            destination: "list.json",
-            format: "json/list",
+            destination: 'list.json',
+            format: 'json/list',
           },
           {
-            destination: "variables.json",
-            format: "json/flat",
+            destination: 'variables.json',
+            format: 'json/flat',
           },
         ],
       },
       css: {
-        transformGroups: "tokens-studio",
-        transforms: ["name/kebab", "color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['name/kebab', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "theme.css",
-            format: "css/variables",
+            destination: 'theme.css',
+            format: 'css/variables',
             options: {
               selector: `.${themeName}`,
               outputReferences: true,
             },
           },
           {
-            destination: "variables.css",
-            format: "css/variables",
+            destination: 'variables.css',
+            format: 'css/variables',
             options: {
               selector: `:root`,
               outputReferences: true,
@@ -96,26 +88,26 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       scss: {
-        transformGroups: "tokens-studio",
-        transforms: ["name/kebab", "color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['name/kebab', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "_variables.scss",
-            format: "scss/variables",
+            destination: '_variables.scss',
+            format: 'scss/variables',
             options: {
               outputReferences: true,
             },
           },
         ],
       },
-      "scss-theme-mixin": {
-        transforms: ["name/kebab", "color/hsl-4"],
-        buildPath: "dist/",
+      'scss-theme-mixin': {
+        transforms: ['name/kebab', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "_mixin.scss",
-            format: "css/variables",
+            destination: '_mixin.scss',
+            format: 'css/variables',
             options: {
               selector: `@mixin ${themeName}`,
               outputReferences: true,
@@ -124,13 +116,13 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       less: {
-        transformGroups: "tokens-studio",
-        transforms: ["name/kebab", "color/hsl-4"],
-        buildPath: "dist/",
+        transformGroups: 'tokens-studio',
+        transforms: ['name/kebab', 'color/hsl-4'],
+        buildPath: 'dist/',
         files: [
           {
-            destination: "variables.less",
-            format: "less/variables",
+            destination: 'variables.less',
+            format: 'less/variables',
             options: {
               outputReferences: true,
             },
@@ -138,17 +130,17 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       typescript: {
-        transforms: ["name/camel", "color/hsl-4"],
-        transformGroup: "js",
-        buildPath: "dist/",
+        transforms: ['name/camel', 'color/hsl-4'],
+        transformGroup: 'js',
+        buildPath: 'dist/',
         files: [
           {
-            format: "typescript/es6-declarations",
-            destination: "variables.d.ts",
+            format: 'typescript/es6-declarations',
+            destination: 'variables.d.ts',
           },
           {
-            format: "typescript/module-declarations",
-            destination: "tokens.d.ts",
+            format: 'typescript/module-declarations',
+            destination: 'tokens.d.ts',
           },
         ],
       },
