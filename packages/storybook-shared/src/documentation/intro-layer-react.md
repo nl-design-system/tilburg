@@ -23,9 +23,9 @@ Importeer drie stylesheets één keer, bv. in `main.tsx`. **De component-CSS laa
 bestand, `dist/style.css`.
 
 ```tsx
-import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-import "@utrecht/component-library-css/dist/index.css";
-import "@gemeente-tilburg/components-react/dist/style.css";
+import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+import '@utrecht/component-library-css/dist/index.css';
+import '@gemeente-tilburg/components-react/dist/style.css';
 ```
 
 Zet daarna `tilburg-theme` en `utrecht-document` op een wrapper (zie de basis hierboven).
@@ -33,7 +33,7 @@ Zet daarna `tilburg-theme` en `utrecht-document` op een wrapper (zie de basis hi
 ### Gebruik (React)
 
 ```tsx
-import { Alert, Button } from "@gemeente-tilburg/components-react";
+import { Alert, Button } from '@gemeente-tilburg/components-react';
 
 export function App() {
   return (

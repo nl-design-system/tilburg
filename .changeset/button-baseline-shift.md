@@ -1,6 +1,6 @@
 ---
-"@gemeente-tilburg/components-angular": patch
-"@gemeente-tilburg/design-tokens": patch
+'@gemeente-tilburg/components-angular': patch
+'@gemeente-tilburg/design-tokens': patch
 ---
 
 Optically centre button text by shifting the line-box down with asymmetric

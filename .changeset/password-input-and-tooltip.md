@@ -1,7 +1,7 @@
 ---
-"@gemeente-tilburg/components-react": minor
-"@gemeente-tilburg/components-angular": minor
-"@gemeente-tilburg/design-tokens": patch
+'@gemeente-tilburg/components-react': minor
+'@gemeente-tilburg/components-angular': minor
+'@gemeente-tilburg/design-tokens': patch
 ---
 
 New Tilburg components, brought over from bq-tlb-frontend:

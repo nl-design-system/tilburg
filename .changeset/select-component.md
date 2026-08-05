@@ -1,7 +1,7 @@
 ---
-"@gemeente-tilburg/components-react": minor
-"@gemeente-tilburg/components-angular": minor
-"@gemeente-tilburg/design-tokens": patch
+'@gemeente-tilburg/components-react': minor
+'@gemeente-tilburg/components-angular': minor
+'@gemeente-tilburg/design-tokens': patch
 ---
 
 Add the Select component: a native `<select class="utrecht-select utrecht-select--html-select">` with the Tilburg

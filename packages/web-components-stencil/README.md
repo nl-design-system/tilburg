@@ -18,7 +18,7 @@ The components render the HTML/CSS layer's markup into **light DOM**, so the sam
 <link rel="stylesheet" href="@gemeente-tilburg/design-tokens/dist/tilburg/theme.css" />
 <link rel="stylesheet" href="@utrecht/component-library-css/dist/index.css" />
 <script type="module">
-  import { defineCustomElements } from "@gemeente-tilburg/web-components-stencil/loader";
+  import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader';
   defineCustomElements();
 </script>
 

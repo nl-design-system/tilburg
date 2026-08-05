@@ -1,7 +1,7 @@
 ---
-"@gemeente-tilburg/components-angular": minor
-"@gemeente-tilburg/components-react": patch
-"@gemeente-tilburg/design-tokens": patch
+'@gemeente-tilburg/components-angular': minor
+'@gemeente-tilburg/components-react': patch
+'@gemeente-tilburg/design-tokens': patch
 ---
 
 Polish pass (additive; old names stay as deprecated aliases):

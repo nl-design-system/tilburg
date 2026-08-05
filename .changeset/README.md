@@ -6,7 +6,7 @@ Kopieer en plak het onderstaande sjabloon. Je kunt hiervoor de kopieer knop link
 
 ```markdown
 ---
-"@gemeente-tilburg/<package-name>": major
+'@gemeente-tilburg/<package-name>': major
 ---
 
 Beschrijving

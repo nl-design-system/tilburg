@@ -1,6 +1,6 @@
 ---
-"@gemeente-tilburg/components-react": minor
-"@gemeente-tilburg/components-angular": minor
+'@gemeente-tilburg/components-react': minor
+'@gemeente-tilburg/components-angular': minor
 ---
 
 Accessibility fixes brought over from bq-tlb-frontend (the Tilburg Blueriq app):

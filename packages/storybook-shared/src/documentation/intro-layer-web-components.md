@@ -27,7 +27,7 @@ laadt zijn eigen `components-css`-regels zelf.
 <link rel="stylesheet" href="…/@utrecht/component-library-css/dist/index.css" />
 
 <script type="module">
-  import { defineCustomElements } from "@gemeente-tilburg/web-components-stencil/loader";
+  import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader';
   defineCustomElements();
 </script>
 
