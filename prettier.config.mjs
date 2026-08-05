@@ -2,6 +2,8 @@
  * @type {import('prettier').Config}
  */
 export default {
+  printWidth: 120,
+  singleQuote: true,
   overrides: [
     {
       files: ['*.yml', '*.yaml'],
@@ -13,15 +15,12 @@ export default {
       files: ['*.js', '*.jsx', '*.cjs', '*.mjs'],
       options: {
         parser: 'flow',
-        printWidth: 120,
-        singleQuote: true,
       },
     },
     {
       files: ['*.json'],
       options: {
         parser: 'json',
-        printWidth: 120,
       },
     },
     {
@@ -34,21 +33,18 @@ export default {
       files: ['*.ts', '*.tsx'],
       options: {
         parser: 'typescript',
-        printWidth: 120,
-        singleQuote: true,
       },
     },
     {
       files: ['*.css', '*.scss'],
       options: {
-        parser: 'css',
+        singleQuote: false,
       },
     },
     {
       files: ['*.html', '*.vue'],
       options: {
         parser: 'html',
-        printWidth: 120,
       },
     },
     {
