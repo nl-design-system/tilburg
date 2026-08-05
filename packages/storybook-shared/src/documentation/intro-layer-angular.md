@@ -27,8 +27,8 @@ De componenten zitten in één NgModule (er zijn geen standalone exports). Impor
 in de `imports` van een standalone component:
 
 ```ts
-import { NgModule } from "@angular/core";
-import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
+import { NgModule } from '@angular/core';
+import { TilburgComponentsModule } from '@gemeente-tilburg/components-angular';
 
 @NgModule({
   imports: [TilburgComponentsModule],
@@ -39,8 +39,8 @@ export class AppModule {}
 Laad de tokens en de Utrecht-basis globaal, via de `styles`-array in `angular.json` of bovenin `styles.scss`:
 
 ```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+@import '@utrecht/component-library-css/dist/index.css';
 ```
 
 De CSS per component zit al in de Angular-componenten zelf; aparte imports per component zijn niet nodig. Zet

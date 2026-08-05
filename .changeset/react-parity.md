@@ -1,5 +1,5 @@
 ---
-"@gemeente-tilburg/components-react": minor
+'@gemeente-tilburg/components-react': minor
 ---
 
 Port the full Angular component catalogue (43 components) to React as

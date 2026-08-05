@@ -19,11 +19,11 @@ npm install @gemeente-tilburg/design-tokens @utrecht/component-library-css
 De component-CSS is SCSS, per component een map. Compileer alleen wat je gebruikt:
 
 ```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+@import '@utrecht/component-library-css/dist/index.css';
 
-@import "@gemeente-tilburg/components-css/alert/index";
-@import "@gemeente-tilburg/components-css/button/index";
+@import '@gemeente-tilburg/components-css/alert/index';
+@import '@gemeente-tilburg/components-css/button/index';
 /* …alleen de componenten die je nodig hebt */
 ```
 
@@ -45,7 +45,7 @@ Een paar componenten hebben gedrag nodig. Daarvoor zijn er kleine scripts, en je
 Of in een bundler, zelf aanroepen, bijvoorbeeld na het renderen van nieuwe markup:
 
 ```js
-import { enhanceAccordion } from "@gemeente-tilburg/components-css/accordion/index.js";
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion/index.js';
 enhanceAccordion(document);
 ```
 

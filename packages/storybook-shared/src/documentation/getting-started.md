@@ -49,7 +49,7 @@ npm install @utrecht/component-library-css
 ```
 
 ```css
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@utrecht/component-library-css/dist/index.css';
 ```
 
 De Storybooks gebruiken versie `5.2.0`.

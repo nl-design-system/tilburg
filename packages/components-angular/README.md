@@ -11,7 +11,7 @@ npm install @gemeente-tilburg/components-angular @gemeente-tilburg/design-tokens
 ```
 
 ```ts
-import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
+import { TilburgComponentsModule } from '@gemeente-tilburg/components-angular';
 
 @NgModule({ imports: [TilburgComponentsModule] })
 export class AppModule {}
