@@ -1,0 +1,11 @@
+<a
+  class="utrecht-skip-link"
+  [class.utrecht-skip-link--visible-on-focus]="visibility === 'visible-on-focus'"
+  [class.utrecht-skip-link--visible]="visibility === 'visible'"
+  [class.utrecht-skip-link--hidden]="visibility === 'hidden'"
+  [class.utrecht-skip-link--focus]="visibility === 'focus'"
+  [attr.href]="href || null"
+  [attr.aria-label]="ariaLabel || null"
+>
+  <ng-content></ng-content>
+</a>

@@ -71,6 +71,8 @@ export { RadioButton } from './RadioButton';
 export type { RadioButtonProps } from './RadioButton';
 export { Separator } from './Separator';
 export type { SeparatorProps } from './Separator';
+export { SkipLink } from './SkipLink';
+export type { SkipLinkProps, SkipLinkVisibility } from './SkipLink';
 export {
   Table,
   TableBody,
