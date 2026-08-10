@@ -44,46 +44,65 @@ const build = async () => {
     excludeParentKeys: true,
   });
 
-  const sd = new StyleDictionary({
-    ...createStyleDictionaryConfig({
-      selector: `.${themeConfig.prefix}-theme`,
-      source: ['figma/figma.tokens.json', 'src/**/tokens.json', 'src/**/*.tokens.json'],
-    }),
-    log: {
-      verbosity: 'verbose',
-    },
-    preprocessors: ['tokens-studio', 'dtcg-delegate'],
-  });
+  /* One Style Dictionary run per theme. The figma export is split per theme
+     (`figma/tilburg/…`, `figma/bat/…`) and each theme emits into its own
+     `dist/<theme>/` folder, which is what consumers import — e.g.
+     `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`. */
+  for (const theme of themeConfig.themes) {
+    console.log(`Instantiating theme: ${theme}`);
 
-  // Ensure custom action is directly attached to the platform
-  sd.platforms = {
-    ...sd.platforms,
-    ...{
-      'css-for-backwards-compatibility': {
-        transformGroups: 'tokens-studio',
-        transforms: ['name/kebab', 'color/hsl-4'],
-        buildPath: 'dist/',
-        actions: ['log-missing-tokens'], // Attach custom action here
-        files: [
-          {
-            destination: 'index.css',
-            format: 'css/variables',
-            options: {
-              selector: `.tilburg-theme`,
-              outputReferences: true,
-            },
-          },
-        ],
+    const source = [`figma/${theme}/figma.tokens.json`, 'src/**/tokens.json', 'src/**/*.tokens.json'];
+
+    /* The bat theme layers extra patches on top of the shared ones. */
+    if (theme === 'bat') {
+      source.push('src/patches/bat/**/*.tokens.json');
+    }
+
+    const sd = new StyleDictionary({
+      ...createStyleDictionaryConfig({
+        selector: `.${theme}-theme`,
+        source,
+      }),
+      log: {
+        verbosity: 'verbose',
       },
-    },
-  };
+      preprocessors: ['tokens-studio', 'dtcg-delegate'],
+    });
 
-  console.log('Cleaning platforms...'); // Debugging statement
-  await sd.cleanAllPlatforms();
+    /* Flat `dist/index.css` for backwards compatibility — the path
+       `config.json`'s `cdn` field points at. Only the primary theme owns it;
+       emitting it for every theme would just overwrite it with the last one. */
+    if (theme === themeConfig.prefix) {
+      sd.platforms = {
+        ...sd.platforms,
+        'css-for-backwards-compatibility': {
+          transformGroups: 'tokens-studio',
+          transforms: ['name/kebab', 'color/hsl-4'],
+          buildPath: 'dist/',
+          actions: ['log-missing-tokens'], // Attach custom action here
+          files: [
+            {
+              destination: 'index.css',
+              format: 'css/variables',
+              options: {
+                selector: `.${theme}-theme`,
+                outputReferences: true,
+              },
+            },
+          ],
+        },
+      };
+    }
 
-  console.log('Building platforms...'); // Debugging statement
-  await sd.buildAllPlatforms();
-  console.log('Build complete!'); // Debugging statement
+    console.log('Cleaning platforms...'); // Debugging statement
+    await sd.cleanAllPlatforms();
+
+    console.log('Building platforms...'); // Debugging statement
+    await sd.buildAllPlatforms();
+    console.log(`Build complete for theme: ${theme}!`); // Debugging statement
+  }
+
+  console.log('Build process finished!');
 };
 
 build();
