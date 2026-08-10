@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fradio-button';
 
-export const description = `Radio button with Tilburg-specific focus, hover, active, and checked states layered on top of \`.utrecht-radio-button\`.
+const intro = `Radio button with Tilburg-specific focus, hover, active, and checked states layered on top of \`.utrecht-radio-button\`.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <fieldset>
@@ -24,9 +22,9 @@ export const description = `Radio button with Tilburg-specific focus, hover, act
 </fieldset>
 \`\`\`
 
-Inputs: \`id\`, \`name\`, \`value\`, \`control\` (\`FormControl\`), \`ariaLabel\`, \`ariaDescribedBy\`, \`invalid\`, \`required\`, \`disabled\`, \`checked\`.
+Inputs: \`id\`, \`name\`, \`value\`, \`control\` (\`FormControl\`), \`ariaLabel\`, \`ariaDescribedBy\`, \`invalid\`, \`required\`, \`disabled\`, \`checked\`.`;
 
-### Plain HTML / CSS
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <input
@@ -38,7 +36,60 @@ Inputs: \`id\`, \`name\`, \`value\`, \`control\` (\`FormControl\`), \`ariaLabel\
   checked
 />
 <label class="utrecht-form-label utrecht-form-label--radio" for="rb-email">E-mail</label>
+\`\`\``;
+
+const usageReact = `### React
+
+\`RadioButton\` renders a bare \`<input type="radio">\`. There is no \`[control]\` input — the selected value of a group is ordinary React state that you compare against each button's \`value\`, and a single shared \`onChange\` handler writes it back.
+
+\`\`\`tsx
+import { Fieldset, FormLabel, RadioButton } from '@gemeente-tilburg/components-react';
+import { ChangeEvent, useState } from 'react';
+
+export function DeliveryField() {
+  const [delivery, setDelivery] = useState('email');
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => setDelivery(event.target.value);
+
+  return (
+    <Fieldset>
+      <legend className="utrecht-form-label utrecht-form-label--radio">Hoe wil je je aanvraag ontvangen?</legend>
+
+      <RadioButton id="rb-email" name="delivery" value="email" checked={delivery === 'email'} onChange={handleChange} />
+      <FormLabel type="radio" htmlFor="rb-email">
+        E-mail
+      </FormLabel>
+
+      <RadioButton id="rb-post" name="delivery" value="post" checked={delivery === 'post'} onChange={handleChange} />
+      <FormLabel type="radio" htmlFor="rb-post">
+        Per post
+      </FormLabel>
+    </Fieldset>
+  );
+}
 \`\`\`
+
+The component is wrapped in \`forwardRef\` and forwards the ref straight to the \`<input>\`; any prop it does not consume is spread onto that input. Registering that ref (react-hook-form's \`register('delivery')\`, Formik, or a plain \`.focus()\`) is the React answer to Angular's \`[control]\` / \`[(ngModel)]\`. For uncontrolled groups use \`defaultChecked\` on one button and read the value from the surrounding \`<form>\` on submit.
+
+\`ariaLabel\` / \`ariaDescribedBy\` become the real DOM attributes \`aria-label\` / \`aria-describedby\`.
+
+Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-radio-button--invalid\`), plus every native input attribute except \`type\` (fixed to \`"radio"\`) — \`name\`, \`value\`, \`checked\`, \`defaultChecked\`, \`onChange\`, \`id\`, \`required\`, \`disabled\`, \`className\`, \`aria-*\`, … \`RadioButtonProps\` is exported as a type alias.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

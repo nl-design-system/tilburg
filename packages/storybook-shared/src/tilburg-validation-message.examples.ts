@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fvalidation-message';
 
-export const description = `Inline validation message shown alongside a form field. Variant modifiers \`--error\` and \`--warning\` colour the icon.
+const intro = `Inline validation message shown alongside a form field. Variant modifiers \`--error\` and \`--warning\` colour the icon.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-validation-message *ngIf="emailCtrl.invalid && emailCtrl.touched" type="error">
@@ -22,9 +20,34 @@ export const description = `Inline validation message shown alongside a form fie
 </tilburg-validation-message>
 \`\`\`
 
-Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`).
+Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`).`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { ValidationMessage } from '@gemeente-tilburg/components-react';
+
+export function EmailField({ invalid }: { invalid: boolean }) {
+  return (
+    <>
+      {invalid && <ValidationMessage type="error">Vul een geldig e-mailadres in.</ValidationMessage>}
+      <ValidationMessage type="warning">De aanvraagperiode sluit binnenkort.</ValidationMessage>
+    </>
+  );
+}
+\`\`\`
+
+Where Angular projects the glyph through \`slot="icon"\`, React ships a default icon per type — a circled \`!\` for \`error\`, a triangle for \`warning\` — and lets you swap it with the \`icon\` prop. Pass \`null\` to render no glyph at all:
+
+\`\`\`tsx
+<ValidationMessage type="error" icon={<span aria-hidden="true">!</span>}>
+  Vul een geldig e-mailadres in.
+</ValidationMessage>
+\`\`\`
+
+Props: \`type\` (\`ValidationMessageType\` = \`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`ValidationLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), \`icon\` (\`ReactNode\`), plus any \`<div>\` attribute (\`className\`, \`id\`, …) and a forwarded \`ref\`. \`ValidationMessageProps\`, \`ValidationMessageType\` and \`ValidationLiveRegion\` are exported as types. \`role="alert"\` is always set, so point the field's \`aria-describedby\` at this element's \`id\` to tie the message to its input.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <div
@@ -37,7 +60,24 @@ Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\
   </span>
   <span>Vul een geldig e-mailadres in.</span>
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

@@ -8,11 +8,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextbox';
 
-export const description = `Single-line text input. Tilburg layer adds hover and focus-visible rules on top of utrecht-textbox.
+const intro = `Single-line text input. Tilburg layer adds hover and focus-visible rules on top of utrecht-textbox.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <label class="utrecht-form-label" for="email">E-mailadres</label>
@@ -25,9 +23,9 @@ export const description = `Single-line text input. Tilburg layer adds hover and
 />
 \`\`\`
 
-Inputs: \`id\`, \`control\` (\`FormControl\`), \`type\`, \`name\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`type\`, \`name\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.`;
 
-### Plain HTML / CSS
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <label class="utrecht-form-label" for="email">E-mailadres</label>
@@ -37,7 +35,62 @@ Inputs: \`id\`, \`control\` (\`FormControl\`), \`type\`, \`name\`, \`placeholder
   class="utrecht-textbox utrecht-textbox--html-input"
   placeholder="naam@voorbeeld.nl"
 />
+\`\`\``;
+
+const usageReact = `### React
+
+\`Textbox\` is a styled \`<input>\` and nothing more — there is no \`[control]\` input, so bind it like any React input: \`value\` + \`onChange\` when controlled, \`defaultValue\` when uncontrolled.
+
+\`\`\`tsx
+import { FormLabel, Textbox } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function EmailField() {
+  const [email, setEmail] = useState('');
+  const invalid = email.length > 0 && !email.includes('@');
+
+  return (
+    <>
+      <FormLabel htmlFor="email">E-mailadres</FormLabel>
+      <Textbox
+        id="email"
+        name="email"
+        type="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder="naam@voorbeeld.nl"
+        required
+        invalid={invalid}
+        aria-describedby="email-hint"
+      />
+      <span id="email-hint">We gebruiken je e-mailadres alleen voor deze aanvraag.</span>
+    </>
+  );
+}
 \`\`\`
+
+The component is wrapped in \`forwardRef\` and forwards the ref to the \`<input>\`, and everything it does not consume itself is spread onto that input. Spreading \`{...register('email')}\` from react-hook-form (or Formik's \`getFieldProps('email')\`) therefore just works, and that is the React replacement for Angular's \`[control]\` / \`[(ngModel)]\`.
+
+Watch the naming: Angular's \`readonly\` is React's \`readOnly\`, and \`ariaLabel\` / \`ariaDescribedBy\` are written as the DOM attributes \`aria-label\` / \`aria-describedby\`.
+
+Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-textbox--invalid\`), plus every native input attribute — \`type\` (default \`'text'\`), \`value\`, \`defaultValue\`, \`onChange\`, \`name\`, \`id\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`required\`, \`readOnly\`, \`disabled\`, \`className\`, \`aria-*\`, … \`TextboxProps\` is exported as a type alias.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 const rowStyle = 'display:flex;flex-direction:column;gap:1rem;max-width:24rem';

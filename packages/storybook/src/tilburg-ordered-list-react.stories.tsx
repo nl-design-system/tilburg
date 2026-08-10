@@ -2,7 +2,7 @@
 
 import { OrderedList } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-ordered-list.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-ordered-list.examples';
 
 const meta = {
   title: 'Tilburg React/Ordered List',
@@ -11,7 +11,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof OrderedList>;
 

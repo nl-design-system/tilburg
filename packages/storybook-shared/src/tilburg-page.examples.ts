@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage';
 
-export const description = `Page-level grid container. Sets up the named grid areas (\`header\`, \`content\`, \`footer\`) and the min-block-size so the footer sticks to the bottom of short pages.
+const intro = `Page-level grid container. Sets up the named grid areas (\`header\`, \`content\`, \`footer\`) and the min-block-size so the footer sticks to the bottom of short pages.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page>
@@ -20,9 +18,37 @@ export const description = `Page-level grid container. Sets up the named grid ar
   </tilburg-page-content>
   <tilburg-page-footer [links]="legalLinks" />
 </tilburg-page>
+\`\`\``;
+
+const usageReact = `### React
+
+\`Page\` renders a single \`<div class="utrecht-page">\` and passes its children straight through, so it is the outermost layout wrapper you compose the header, content and footer into.
+
+\`\`\`tsx
+import { Page, PageContent, PageFooter, PageHeader, Paragraph } from '@gemeente-tilburg/components-react';
+
+export function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Page>
+      <PageHeader logoSrc="/logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
+      <PageContent id="main" tabIndex={-1}>
+        {children}
+        <Paragraph>Pagina-inhoud staat hier.</Paragraph>
+      </PageContent>
+      <PageFooter
+        links={[
+          { label: 'Privacystatement', href: '/privacystatement' },
+          { label: 'Cookies', href: '/cookies' },
+        ]}
+      />
+    </Page>
+  );
+}
 \`\`\`
 
-### Plain HTML / CSS
+Props: \`children\`, \`className\` (merged with \`utrecht-page\`), plus any standard \`<div>\` attribute (\`id\`, \`style\`, \`aria-*\`, …) — \`PageProps\` is exported as an alias for \`HTMLAttributes<HTMLDivElement>\`. The component forwards its ref to the underlying \`<div>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <div class="utrecht-page">
@@ -30,7 +56,24 @@ export const description = `Page-level grid container. Sets up the named grid ar
   <main class="utrecht-page-content">…</main>
   <footer class="utrecht-page-footer tilburg-page-footer">…</footer>
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

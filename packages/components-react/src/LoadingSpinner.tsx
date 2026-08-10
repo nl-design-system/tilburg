@@ -44,9 +44,12 @@ export const LoadingSpinner = forwardRef(
         {...restProps}
       >
         <div className="tilburg-loading-spinner__panel">
-          <div className="tilburg-loading-spinner__content">
+          {/* The live region wraps the title and message as well as the spinner:
+              the <svg> is aria-hidden, so a role="status" around it alone would
+              announce nothing when the spinner appears. */}
+          <div className="tilburg-loading-spinner__content" role="status">
             {title && <span className="tilburg-loading-spinner__title">{title}</span>}
-            <div role="status">
+            <div>
               <svg
                 aria-hidden="true"
                 className="tilburg-loading-spinner__svg"

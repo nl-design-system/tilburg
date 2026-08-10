@@ -6,23 +6,58 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fseparator';
 
-export const description = `Thin horizontal divider between content sections, using \`--tilburg-line-border-color\` and \`--tilburg-line-border-width\`. Pass \`decorative\` for purely visual dividers so the element is hidden from assistive technology.
+const intro = `Thin horizontal divider between content sections, using \`--tilburg-line-border-color\` and \`--tilburg-line-border-width\`. Pass \`decorative\` for purely visual dividers so the element is hidden from assistive technology.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-separator [decorative]="true"></tilburg-separator>
 \`\`\`
 
-Inputs: \`decorative\` (when \`true\`, sets \`aria-hidden\` so screen readers skip the divider).
+Inputs: \`decorative\` (when \`true\`, sets \`aria-hidden\` so screen readers skip the divider).`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { Paragraph, Separator } from '@gemeente-tilburg/components-react';
+
+export function Aanvraagdetails() {
+  return (
+    <>
+      <Paragraph>Eerste sectie met wat tekst boven de scheidingslijn.</Paragraph>
+      <Separator decorative />
+      <Paragraph>Tweede sectie onder de scheidingslijn.</Paragraph>
+    </>
+  );
+}
+\`\`\`
+
+\`Separator\` renders a void \`<hr class="utrecht-separator" />\`: always self-closing, it accepts no \`children\`. Leave \`decorative\` off when the divider marks a real thematic break in the content — then screen readers keep announcing the separator.
+
+Props: \`decorative\` (\`boolean\`, default \`false\`; when \`true\` it sets \`aria-hidden="true"\` so screen readers skip the divider), plus any standard \`<hr>\` attribute (\`className\`, merged after \`utrecht-separator\`, \`id\`, \`role\`, …). \`SeparatorProps\` is exported as a type. The \`ref\` is forwarded to the \`<hr>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <hr class="utrecht-separator" aria-hidden="true" />
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

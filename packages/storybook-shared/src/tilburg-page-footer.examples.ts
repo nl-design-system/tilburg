@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-footer';
 
-export const description = `Bottom-of-page link bar. Centered horizontal list of legal / accessibility links on a darker blue background, white text, with an optional primary call-to-action row above.
+const intro = `Bottom-of-page link bar. Centered horizontal list of legal / accessibility links on a darker blue background, white text, with an optional primary call-to-action row above.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page-footer
@@ -24,9 +22,34 @@ export const description = `Bottom-of-page link bar. Centered horizontal list of
 />
 \`\`\`
 
-Inputs: \`primaryLink\` (optional \`{ label, href }\`), \`links\` (array of \`{ label, href }\`), \`ariaLabel\`. You can also project extra content via \`<ng-content>\`.
+Inputs: \`primaryLink\` (optional \`{ label, href }\`), \`links\` (array of \`{ label, href }\`), \`ariaLabel\`. You can also project extra content via \`<ng-content>\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`PageFooter\` renders a \`<footer class="tilburg-page-footer">\` and builds both link lists from data — you do not write the \`<ul>\`/\`<li>\`/\`<a>\` markup yourself. Links are typed as \`PageFooterLink\`, i.e. \`{ label: string; href: string }\`.
+
+\`\`\`tsx
+import { Page, PageFooter, type PageFooterLink } from '@gemeente-tilburg/components-react';
+
+const legalLinks: PageFooterLink[] = [
+  { label: 'Privacystatement', href: '/privacystatement' },
+  { label: 'Cookies', href: '/cookies' },
+  { label: 'Toegankelijkheid', href: '/toegankelijkheid' },
+  { label: 'Proclaimer', href: '/proclaimer' },
+];
+
+export function AppFooter() {
+  return (
+    <Page>
+      <PageFooter primaryLink={{ label: 'Contact', href: '/contact' }} links={legalLinks} aria-label="Footer" />
+    </Page>
+  );
+}
+\`\`\`
+
+Props: \`links\` (\`PageFooterLink[]\`, default \`[]\`), \`primaryLink\` (\`PageFooterLink | null\`, optional — rendered as the call-to-action row above the list), \`children\` (extra content, rendered inside the container before both lists), \`className\` (merged with \`tilburg-page-footer\`), plus any standard \`<footer>\` attribute — use \`aria-label\` rather than an \`ariaLabel\` prop. \`PageFooterLink\` and \`PageFooterProps\` are exported as types. The component forwards its ref to the underlying \`<footer>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <footer class="tilburg-page-footer">
@@ -42,9 +65,30 @@ Inputs: \`primaryLink\` (optional \`{ label, href }\`), \`links\` (array of \`{ 
     </ul>
   </div>
 </footer>
-\`\`\`
+\`\`\``;
 
-Theming via custom properties: \`--tilburg-page-footer-background-color\`, \`--tilburg-page-footer-color\`, \`--tilburg-page-footer-margin-block-start\` (default 5rem), \`--tilburg-page-footer-max-inline-size\` (default 1150px).
+const theming = `Theming via custom properties: \`--tilburg-page-footer-background-color\`, \`--tilburg-page-footer-color\`, \`--tilburg-page-footer-margin-block-start\` (default 5rem), \`--tilburg-page-footer-max-inline-size\` (default 1150px).`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+
+${theming}
 `;
 
 export interface Example {

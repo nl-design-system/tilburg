@@ -39,6 +39,111 @@ describe('Accordion', () => {
     );
     expect(screen.getByRole('region', { name: 'FAQ' })).toBeInTheDocument();
   });
+
+  /* Roving focus, ported from the Angular TilburgAccordion host listener. */
+  describe('keyboard navigation', () => {
+    const renderThree = () =>
+      render(
+        <Accordion>
+          <AccordionSection sectionKey="a" label="A">
+            a
+          </AccordionSection>
+          <AccordionSection sectionKey="b" label="B">
+            b
+          </AccordionSection>
+          <AccordionSection sectionKey="c" label="C">
+            c
+          </AccordionSection>
+        </Accordion>,
+      );
+
+    const buttons = () => screen.getAllByRole('button');
+
+    it('moves focus down and wraps at the end with ArrowDown', () => {
+      renderThree();
+      const [a, b, c] = buttons();
+      a.focus();
+      fireEvent.keyDown(a, { key: 'ArrowDown' });
+      expect(b).toHaveFocus();
+      fireEvent.keyDown(b, { key: 'ArrowDown' });
+      expect(c).toHaveFocus();
+      fireEvent.keyDown(c, { key: 'ArrowDown' });
+      expect(a).toHaveFocus();
+    });
+
+    it('moves focus up and wraps at the start with ArrowUp', () => {
+      renderThree();
+      const [a, , c] = buttons();
+      a.focus();
+      fireEvent.keyDown(a, { key: 'ArrowUp' });
+      expect(c).toHaveFocus();
+    });
+
+    it('jumps to the first and last section with Home and End', () => {
+      renderThree();
+      const [a, b, c] = buttons();
+      b.focus();
+      fireEvent.keyDown(b, { key: 'End' });
+      expect(c).toHaveFocus();
+      fireEvent.keyDown(c, { key: 'Home' });
+      expect(a).toHaveFocus();
+    });
+
+    it('skips disabled sections', () => {
+      render(
+        <Accordion>
+          <AccordionSection sectionKey="a" label="A">
+            a
+          </AccordionSection>
+          <AccordionSection sectionKey="b" label="B" disabled>
+            b
+          </AccordionSection>
+          <AccordionSection sectionKey="c" label="C">
+            c
+          </AccordionSection>
+        </Accordion>,
+      );
+      const all = screen.getAllByRole('button', { hidden: true });
+      const a = all[0];
+      const c = all[2];
+      a.focus();
+      fireEvent.keyDown(a, { key: 'ArrowDown' });
+      expect(c).toHaveFocus();
+    });
+
+    it('ignores keys it does not handle', () => {
+      renderThree();
+      const [a] = buttons();
+      a.focus();
+      fireEvent.keyDown(a, { key: 'ArrowRight' });
+      expect(a).toHaveFocus();
+    });
+
+    it('does not steal navigation from a nested accordion', () => {
+      render(
+        <Accordion aria-label="outer">
+          <AccordionSection sectionKey="outer-a" label="Outer A" expanded>
+            <Accordion aria-label="inner">
+              <AccordionSection sectionKey="inner-a" label="Inner A">
+                x
+              </AccordionSection>
+              <AccordionSection sectionKey="inner-b" label="Inner B">
+                y
+              </AccordionSection>
+            </Accordion>
+          </AccordionSection>
+          <AccordionSection sectionKey="outer-b" label="Outer B">
+            z
+          </AccordionSection>
+        </Accordion>,
+      );
+      const innerA = screen.getByRole('button', { name: /Inner A/ });
+      const innerB = screen.getByRole('button', { name: /Inner B/ });
+      innerA.focus();
+      fireEvent.keyDown(innerA, { key: 'ArrowDown' });
+      expect(innerB).toHaveFocus();
+    });
+  });
 });
 
 describe('AccordionSection', () => {

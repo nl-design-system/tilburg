@@ -3,7 +3,7 @@
 import { LanguageToggle } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-language-toggle.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-language-toggle.examples';
 
 const meta = {
   title: 'Tilburg React/Language Toggle',
@@ -12,7 +12,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof LanguageToggle>;
 

@@ -2,7 +2,7 @@
 
 import { Heading1, Heading2, Heading3, Heading4, Heading5, Heading6 } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-heading.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-heading.examples';
 
 const meta = {
   title: 'Tilburg React/Heading',
@@ -10,7 +10,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta;
 

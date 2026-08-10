@@ -4,11 +4,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fbreadcrumb';
 
-export const description = `Tilburg breadcrumb. Trail links are blue with no underline by default and underlined on hover; the current item is bold gray-500.
+const intro = `Tilburg breadcrumb. Trail links are blue with no underline by default and underlined on hover; the current item is bold gray-500.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`ts
 items: TilburgBreadcrumbItem[] = [
@@ -26,9 +24,35 @@ items: TilburgBreadcrumbItem[] = [
 />
 \`\`\`
 
-Inputs: \`ariaLabel\` (default \`'Kruimelpad'\`), \`items\` (\`{ label, href?, current?, data? }[]\`). Output: \`(itemClick)\` emits \`{ item, event }\`.
+Inputs: \`ariaLabel\` (default \`'Kruimelpad'\`), \`items\` (\`{ label, href?, current?, data? }[]\`). Output: \`(itemClick)\` emits \`{ item, event }\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { Breadcrumb, type BreadcrumbItem } from '@gemeente-tilburg/components-react';
+import type { MouseEvent } from 'react';
+
+const items: BreadcrumbItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Parkeren', href: '/parkeren' },
+  { label: 'Bewonersvergunning', current: true },
+];
+
+export function Kruimelpad() {
+  const onCrumbClick = ({ item, event }: { item: BreadcrumbItem; event: MouseEvent<HTMLAnchorElement> }) => {
+    event.preventDefault();
+    console.log('Kruimel aangeklikt:', item.label);
+  };
+
+  return <Breadcrumb ariaLabel="Kruimelpad" items={items} onItemClick={onCrumbClick} />;
+}
+\`\`\`
+
+A crumb is rendered as the current page — a \`<span aria-current="page">\` instead of an \`<a>\` — when it carries \`current: true\` **or** when it is the last item in the array, so the trailing crumb needs no extra flag. \`aria-current\` is set by the component itself; you never pass it (the package's exported \`AriaCurrent\` type belongs to \`Link\`, not to \`Breadcrumb\`). With an empty \`items\` array the component renders \`null\`.
+
+Props: \`items\` (\`BreadcrumbItem[]\`, default \`[]\`; \`BreadcrumbItem\` is \`{ label: string | null | undefined; href?: string | null; current?: boolean; data?: unknown }\`), \`ariaLabel\` (default \`'Kruimelpad'\`), \`onItemClick\` (\`(payload: { item: BreadcrumbItem; event: MouseEvent<HTMLAnchorElement> }) => void\`), plus any standard \`<nav>\` attribute (\`className\`, \`id\`, …). \`BreadcrumbItem\` and \`BreadcrumbProps\` are exported as type aliases.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <nav class="utrecht-breadcrumb-nav tilburg-breadcrumb" aria-label="Kruimelpad">
@@ -44,7 +68,24 @@ Inputs: \`ariaLabel\` (default \`'Kruimelpad'\`), \`items\` (\`{ label, href?, c
     </li>
   </ol>
 </nav>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

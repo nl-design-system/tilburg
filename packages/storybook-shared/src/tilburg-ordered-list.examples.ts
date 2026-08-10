@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fordered-list';
 
-export const description = `Numbered list built on \`.tilburg-ordered-list\` + \`.utrecht-ordered-list__item\`. The Tilburg layer adds a \`--by-letter\` modifier that switches the marker to lower-case alphabet (\`a, b, c, …\`) and inherits utrecht spacing tokens for the list items.
+const intro = `Numbered list built on \`.tilburg-ordered-list\` + \`.utrecht-ordered-list__item\`. The Tilburg layer adds a \`--by-letter\` modifier that switches the marker to lower-case alphabet (\`a, b, c, …\`) and inherits utrecht spacing tokens for the list items.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-ordered-list [byLetter]="true">
@@ -20,9 +18,29 @@ export const description = `Numbered list built on \`.tilburg-ordered-list\` + \
 </tilburg-ordered-list>
 \`\`\`
 
-Inputs: \`byLetter\` (boolean — switches markers from decimal to lower-alpha).
+Inputs: \`byLetter\` (boolean — switches markers from decimal to lower-alpha).`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { OrderedList } from '@gemeente-tilburg/components-react';
+
+export function Stappenplan() {
+  return (
+    <OrderedList byLetter>
+      <li className="utrecht-ordered-list__item">Eerste stap</li>
+      <li className="utrecht-ordered-list__item">Tweede stap</li>
+      <li className="utrecht-ordered-list__item">Derde stap</li>
+    </OrderedList>
+  );
+}
+\`\`\`
+
+There is no separate list-item component: the children are plain \`<li>\` elements. Add \`className="utrecht-ordered-list__item"\` yourself to pick up the utrecht item spacing and marker colour — \`OrderedList\` only decorates the \`<ol>\`. Nesting works by rendering another \`<OrderedList>\` (or \`<UnorderedList>\`) inside an \`<li>\`; the nested list collapses its outer margins automatically.
+
+Props: \`byLetter?: boolean\` (default \`false\` — switches markers from decimal to lower-alpha), plus every standard \`<ol>\` attribute (\`className\`, \`start\`, \`reversed\`, \`aria-label\`, …) via \`OlHTMLAttributes<HTMLOListElement>\`. Forwards its ref to the \`<ol>\`. \`OrderedListProps\` is exported as a type.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <ol class="tilburg-ordered-list utrecht-ordered-list utrecht-ordered-list--html-ol">
@@ -34,7 +52,24 @@ Inputs: \`byLetter\` (boolean — switches markers from decimal to lower-alpha).
 <ol class="tilburg-ordered-list tilburg-ordered-list--by-letter utrecht-ordered-list utrecht-ordered-list--html-ol">
   …
 </ol>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

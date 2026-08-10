@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Floading-spinner';
 
-export const description = `Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.
+const intro = `Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-loading-spinner
@@ -21,9 +19,39 @@ export const description = `Full-screen loading overlay with an animated SVG spi
 />
 \`\`\`
 
-Inputs: \`visible\`, \`title\`, \`message\`, \`delayMs\` (overlay only appears after this many ms; default 1000), \`ariaLabel\`. The grace timer prevents flicker for quick operations.
+Inputs: \`visible\`, \`title\`, \`message\`, \`delayMs\` (overlay only appears after this many ms; default 1000), \`ariaLabel\`. The grace timer prevents flicker for quick operations.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { LoadingSpinner } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function AanvraagFormulier() {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <>
+      <LoadingSpinner
+        visible={loading}
+        title="Bezig met laden"
+        message="Een momentje alstublieft..."
+        delayMs={1000}
+        aria-label="Bezig met laden"
+      />
+      <button onClick={() => setLoading(true)}>Aanvraag versturen</button>
+    </>
+  );
+}
+\`\`\`
+
+The grace timer lives inside the component: flipping \`visible\` to \`true\` starts a \`delayMs\` timer and only then mounts the overlay, so quick operations never flicker. Flipping it back to \`false\` hides immediately and cancels a pending timer. While hidden the component renders \`null\` — nothing is left in the DOM. Pass \`delayMs={0}\` to skip the grace period entirely (that is what the stories do).
+
+Accessibility: the overlay \`<div>\` carries \`aria-busy="true"\`, and the spinner sits in a nested \`<div role="status">\` while the \`<svg>\` itself is \`aria-hidden="true"\`. The \`title\` and \`message\` spans render *outside* that live region, so they are not announced on their own — give the overlay an accessible name with \`aria-label\` (there is no dedicated \`ariaLabel\` prop in React; use the standard \`aria-label\` attribute, which is forwarded to the overlay). That is the step consumers most often skip.
+
+Props: \`visible?: boolean\` (default \`false\`), \`title?: string | null\`, \`message?: string | null\`, \`delayMs?: number\` (default \`1000\`), plus every \`<div>\` attribute except \`title\` — \`Omit<HTMLAttributes<HTMLDivElement>, 'title'>\`, since \`title\` is repurposed as the overlay heading rather than the native tooltip attribute. Forwards its ref to the overlay \`<div>\`. \`LoadingSpinnerProps\` is exported as a type.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
@@ -37,7 +65,24 @@ Inputs: \`visible\`, \`title\`, \`message\`, \`delayMs\` (overlay only appears a
     </div>
   </div>
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 const spinnerSvg = `<svg aria-hidden="true" class="tilburg-loading-spinner__svg" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

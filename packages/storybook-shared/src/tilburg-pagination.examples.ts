@@ -10,11 +10,13 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpagination';
 
-export const description = `Compact pagination bar with first / previous / next / last chevron controls. Optionally renders either a numeric page button list (with leading/trailing ellipsis when total pages > 7) **or** a plain range text like "Pagina 3 van 12" when no \`pageCount\`/\`currentPage\` is provided. The Angular wrapper takes plain inputs so any controller can drive it.
+const introShared = `Compact pagination bar with first / previous / next / last chevron controls. Optionally renders either a numeric page button list (with leading/trailing ellipsis when total pages > 7) **or** a plain range text like "Pagina 3 van 12" when no \`pageCount\`/\`currentPage\` is provided.`;
 
-## Usage
+const intro = `${introShared} The Angular wrapper takes plain inputs so any controller can drive it.`;
 
-### Angular
+const introReact = `${introShared} The React wrapper takes plain props and reports navigation intent through a callback, so any state container can drive it.`;
+
+const usageAngular = `### Angular
 
 \`\`\`html
 <!-- Numeric variant -->
@@ -31,9 +33,53 @@ export const description = `Compact pagination bar with first / previous / next 
 
 Inputs: \`ariaLabel\` (default \`'Paginering'\`), \`feedback\`, \`range\`, \`pageCount\`, \`currentPage\`, \`firstDisabled\` / \`previousDisabled\` / \`nextDisabled\` / \`lastDisabled\`, plus button \`*Label\` overrides and a \`pageLabel\` function (\`(n) => 'Pagina ' + n\` by default).
 
-Output: \`(navigate)\` emits \`{ step: 'first' | 'previous' | 'next' | 'last' | 'page', page?: number }\` — the \`page\` field is set only on numeric clicks.
+Output: \`(navigate)\` emits \`{ step: 'first' | 'previous' | 'next' | 'last' | 'page', page?: number }\` — the \`page\` field is set only on numeric clicks.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`Pagination\` is fully controlled: it never changes the page itself. It reports intent through the \`onNavigate\` callback (the React equivalent of the Angular \`(navigate)\` output) and you feed the new \`currentPage\` back in.
+
+\`\`\`tsx
+import { Pagination } from '@gemeente-tilburg/components-react';
+import type { PaginationEvent } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function Zoekresultaten({ pageCount }: { pageCount: number }) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const onNavigate = ({ step, page }: PaginationEvent) => {
+    if (step === 'first') setCurrentPage(1);
+    if (step === 'previous') setCurrentPage((p) => Math.max(1, p - 1));
+    if (step === 'next') setCurrentPage((p) => Math.min(pageCount, p + 1));
+    if (step === 'last') setCurrentPage(pageCount);
+    if (step === 'page' && page) setCurrentPage(page);
+  };
+
+  return (
+    <Pagination
+      feedback="Toont 21–30 van 117"
+      pageCount={pageCount}
+      currentPage={currentPage}
+      firstDisabled={currentPage === 1}
+      previousDisabled={currentPage === 1}
+      nextDisabled={currentPage === pageCount}
+      lastDisabled={currentPage === pageCount}
+      onNavigate={onNavigate}
+    />
+  );
+}
+
+/* Range-text variant (no page list) */
+export function CompacteNavigatie({ onNavigate }: { onNavigate: (event: PaginationEvent) => void }) {
+  return <Pagination feedback="Toont 1–10 van 47" range="Pagina 1 van 5" onNavigate={onNavigate} />;
+}
+\`\`\`
+
+Props: \`ariaLabel\` (default \`'Paginering'\`), \`feedback\`, \`range\`, \`pageCount\`, \`currentPage\` (the last four accept \`string | null\` / \`number | null\`), \`firstDisabled\` / \`previousDisabled\` / \`nextDisabled\` / \`lastDisabled\` (all default \`false\`), \`firstLabel\` (\`'Eerste pagina'\`), \`previousLabel\` (\`'Vorige pagina'\`), \`nextLabel\` (\`'Volgende pagina'\`), \`lastLabel\` (\`'Laatste pagina'\`), \`pageLabel\` (\`(n: number) => 'Pagina ' + n\` by default), and \`onNavigate\`. Any other \`<nav>\` attribute is forwarded.
+
+\`onNavigate\` receives a \`PaginationEvent\` — \`{ step: PaginationStep; page?: number }\` where \`PaginationStep\` is \`'first' | 'previous' | 'next' | 'last' | 'page'\`. \`page\` is only set for numeric clicks, and clicking the current page fires nothing. \`PaginationProps\`, \`PaginationEvent\`, and \`PaginationStep\` are all exported.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <nav class="tilburg-pagination" aria-label="Paginering">
@@ -56,7 +102,24 @@ Output: \`(navigate)\` emits \`{ step: 'first' | 'previous' | 'next' | 'last' | 
     <button type="button" class="tilburg-pagination__button" aria-label="Volgende pagina">›</button>
   </div>
 </nav>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${introReact}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

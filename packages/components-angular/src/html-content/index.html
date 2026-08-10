@@ -1,1 +1,13 @@
-<div class="utrecht-html-content" [attr.lang]="lang || null"><ng-content></ng-content></div>
+<!-- Two branches so the CMS HTML lands INSIDE the styled `.utrecht-html-content`
+     div. Binding `[innerHTML]` on the host `<tilburg-html-content>` element (as
+     earlier docs suggested) writes outside this div, so the Tilburg typography
+     rules never apply to it. -->
+<div
+  *ngIf="html != null; else projected"
+  class="utrecht-html-content"
+  [attr.lang]="lang || null"
+  [innerHTML]="html"
+></div>
+<ng-template #projected>
+  <div class="utrecht-html-content" [attr.lang]="lang || null"><ng-content></ng-content></div>
+</ng-template>

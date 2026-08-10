@@ -1,7 +1,4 @@
-<div
-  class="utrecht-combobox"
-  [class.tilburg-combobox--multiple]="multiple"
->
+<div class="utrecht-combobox" [class.tilburg-combobox--multiple]="multiple">
   <!-- Click anywhere on the value container (empty space between chips, around the
        input, etc.) toggles the popover. chip-remove and clear buttons stop their
        own click from bubbling here, so they don't double-toggle. -->
@@ -15,7 +12,9 @@
           [attr.aria-label]="'Verwijder ' + getLabel(item)"
           [disabled]="disabled || control?.disabled"
           (click)="removeChip(getValue(item), $event)"
-        >×</button>
+        >
+          ×
+        </button>
       </span>
     </ng-container>
     <input
@@ -45,8 +44,16 @@
       [disabled]="disabled || control?.disabled"
       (click)="clear($event)"
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M18 6L6 18M6 6l12 12"/>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
     <button
@@ -56,8 +63,16 @@
       [attr.tabindex]="-1"
       [disabled]="disabled || control?.disabled"
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M6 9l6 6 6-6"/>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M6 9l6 6 6-6" />
       </svg>
     </button>
   </div>
@@ -77,6 +92,8 @@
       [attr.aria-selected]="isSelected(item) ? 'true' : 'false'"
       (mousedown)="$event.preventDefault(); selectOption(i)"
       (mouseenter)="activeIndex.set(i)"
-    >{{ getLabel(item) }}</li>
+    >
+      {{ getLabel(item) }}
+    </li>
   </ul>
 </div>

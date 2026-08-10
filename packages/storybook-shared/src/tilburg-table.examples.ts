@@ -6,33 +6,97 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Ftable';
 
-export const description = `Data table built on \`.utrecht-table\` + \`__header\`, \`__body\`, \`__row\`, \`__header-cell\`, \`__cell\`. The Tilburg layer adds bold header cells with a blue-tint background, zebra-striped body rows (light-blue on odd, white on even), and a heavier top border on the footer row for totals / summaries.
+const intro = `Data table built on \`.utrecht-table\` + \`__header\`, \`__body\`, \`__row\`, \`__header-cell\`, \`__cell\`. The Tilburg layer adds bold header cells with a blue-tint background, zebra-striped body rows (light-blue on odd, white on even), and a heavier top border on the footer row for totals / summaries.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-table caption="Open aanvragen">
-  <tilburg-table-header>
-    <tr utrecht-table-row>
-      <th utrecht-table-header-cell>Zaaknummer</th>
-      <th utrecht-table-header-cell>Status</th>
-      <th utrecht-table-header-cell>Datum</th>
+  <thead tilburg-table-header>
+    <tr tilburg-table-row>
+      <th tilburg-table-header-cell scope="col">Zaaknummer</th>
+      <th tilburg-table-header-cell scope="col">Status</th>
+      <th tilburg-table-header-cell scope="col">Datum</th>
     </tr>
-  </tilburg-table-header>
-  <tilburg-table-body>
-    <tr utrecht-table-row>
-      <td utrecht-table-cell>2025-TLB-001</td>
-      <td utrecht-table-cell>In behandeling</td>
-      <td utrecht-table-cell>15-03-2025</td>
+  </thead>
+  <tbody tilburg-table-body>
+    <tr tilburg-table-row>
+      <th tilburg-table-header-cell scope="row">2025-TLB-001</th>
+      <td tilburg-table-cell>In behandeling</td>
+      <td tilburg-table-cell>15-03-2025</td>
     </tr>
     …
-  </tilburg-table-body>
+  </tbody>
 </tilburg-table>
 \`\`\`
 
-### Plain HTML / CSS
+Only \`tilburg-table\` is an element. The other seven are **attribute directives** applied to the native table elements — \`[tilburg-table-caption]\`, \`[tilburg-table-header]\`, \`[tilburg-table-body]\`, \`[tilburg-table-footer]\`, \`[tilburg-table-row]\`, \`[tilburg-table-header-cell]\`, \`[tilburg-table-cell]\` — and each is \`tilburg-\`-prefixed, not \`utrecht-\`.`;
+
+const usageReact = `### React
+
+React ships a compound family of real components instead of the attribute directives Angular uses. Every part renders its own native element (\`<thead>\`, \`<tbody>\`, \`<tr>\`, \`<th>\`, \`<td>\`, …) with the matching \`utrecht-table__*\` class already applied, so you never write those classes by hand.
+
+\`\`\`tsx
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from '@gemeente-tilburg/components-react';
+
+const aanvragen = [
+  { id: '2025-TLB-001', status: 'In behandeling', datum: '15-03-2025' },
+  { id: '2025-TLB-002', status: 'Goedgekeurd', datum: '12-03-2025' },
+];
+
+export function OpenAanvragen() {
+  return (
+    <Table caption="Open aanvragen">
+      <TableHeader>
+        <TableRow>
+          <TableHeaderCell scope="col">Zaaknummer</TableHeaderCell>
+          <TableHeaderCell scope="col">Status</TableHeaderCell>
+          <TableHeaderCell scope="col">Datum</TableHeaderCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {aanvragen.map((aanvraag) => (
+          <TableRow key={aanvraag.id}>
+            <TableHeaderCell scope="row">{aanvraag.id}</TableHeaderCell>
+            <TableCell>{aanvraag.status}</TableCell>
+            <TableCell>{aanvraag.datum}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+      <TableFooter>
+        <TableRow>
+          <TableCell colSpan={3}>2 aanvragen</TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
+  );
+}
+\`\`\`
+
+The caption can be written two ways: pass \`caption="Open aanvragen"\` to \`<Table>\` (it renders the \`<caption class="utrecht-table__caption">\` for you, always as the first child), or render \`<TableCaption>Open aanvragen</TableCaption>\` yourself as the first child when the caption needs markup instead of a plain string. Do not do both — you'd get two \`<caption>\` elements.
+
+Props:
+
+- \`Table\` — \`caption?: string\`, plus every \`<table>\` attribute via \`TableHTMLAttributes<HTMLTableElement>\`. Type \`TableProps\`.
+- \`TableCaption\` — no component-specific props; \`HTMLAttributes<HTMLTableCaptionElement>\` on \`<caption>\`. Type \`TableCaptionProps\`.
+- \`TableHeader\` — no component-specific props; \`HTMLAttributes<HTMLTableSectionElement>\` on \`<thead>\`. Type \`TableHeaderProps\`.
+- \`TableBody\` — no component-specific props; \`HTMLAttributes<HTMLTableSectionElement>\` on \`<tbody>\`. Type \`TableBodyProps\`.
+- \`TableFooter\` — no component-specific props; \`HTMLAttributes<HTMLTableSectionElement>\` on \`<tfoot>\`. Type \`TableFooterProps\`.
+- \`TableRow\` — no component-specific props; \`HTMLAttributes<HTMLTableRowElement>\` on \`<tr>\`. Type \`TableRowProps\`.
+- \`TableHeaderCell\` — no component-specific props; \`ThHTMLAttributes<HTMLTableCellElement>\` on \`<th>\`, so \`scope\`, \`colSpan\`, \`rowSpan\`, \`abbr\`. Type \`TableHeaderCellProps\`.
+- \`TableCell\` — no component-specific props; \`TdHTMLAttributes<HTMLTableCellElement>\` on \`<td>\`, so \`colSpan\`, \`rowSpan\`, \`headers\`. Type \`TableCellProps\`.
+
+All eight forward their ref to the underlying element and merge any \`className\` you pass on top of the \`utrecht-table*\` class. Always set \`scope="col"\` / \`scope="row"\` on header cells — nothing does it for you.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <table class="utrecht-table">
@@ -50,7 +114,24 @@ export const description = `Data table built on \`.utrecht-table\` + \`__header\
     </tr>
   </tbody>
 </table>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

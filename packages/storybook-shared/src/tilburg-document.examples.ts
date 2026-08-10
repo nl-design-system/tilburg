@@ -4,25 +4,64 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fdocument';
 
-export const description = `Top-level document scope: sets the default font family, body text colour, and link colour that everything inside the page inherits. Apply once near the root of the app so child components pick up the Tilburg typography defaults via the \`--tilburg-document-*\` token chain.
+const intro = `Top-level document scope: sets the default font family, body text colour, and link colour that everything inside the page inherits. Apply once near the root of the app so child components pick up the Tilburg typography defaults via the \`--tilburg-document-*\` token chain.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-document>
   <tilburg-page>…</tilburg-page>
 </tilburg-document>
+\`\`\``;
+
+const usageReact = `### React
+
+\`Document\` renders a single \`<div class="utrecht-document">\` around its children. Mount it once, as high in the tree as possible — typically wrapping the router outlet — and put the \`Page\` layout inside it.
+
+\`\`\`tsx
+import { Document, Page, PageContent, PageFooter, PageHeader } from '@gemeente-tilburg/components-react';
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <Document>
+      <Page>
+        <PageHeader logoSrc="/logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
+        <PageContent id="main" tabIndex={-1}>
+          {children}
+        </PageContent>
+        <PageFooter links={[{ label: 'Privacystatement', href: '/privacystatement' }]} />
+      </Page>
+    </Document>
+  );
+}
 \`\`\`
 
-### Plain HTML / CSS
+Props: \`children\`, \`className\` (merged with \`utrecht-document\`), plus any standard \`<div>\` attribute (\`id\`, \`lang\`, \`style\`, …) — \`DocumentProps\` is exported as an alias for \`HTMLAttributes<HTMLDivElement>\`. The component forwards its ref to the underlying \`<div>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <div class="utrecht-document">
   <!-- everything inside inherits the Tilburg body font + colour -->
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

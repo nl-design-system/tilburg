@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-header';
 
-export const description = `Top-of-page brand bar. Dark navy background with a responsive logo and/or wordmark title on the inline-start, and an actions slot pushed to the inline-end (username, logout, menu toggle, etc.). The brand area is rendered as a single \`<a>\` so the whole logo + title block is clickable.
+const intro = `Top-of-page brand bar. Dark navy background with a responsive logo and/or wordmark title on the inline-start, and an actions slot pushed to the inline-end (username, logout, menu toggle, etc.). The brand area is rendered as a single \`<a>\` so the whole logo + title block is clickable.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page-header
@@ -24,9 +22,32 @@ export const description = `Top-of-page brand bar. Dark navy background with a r
 </tilburg-page-header>
 \`\`\`
 
-Inputs: \`logoSrc\`, \`logoAlt\` (default \`''\`), \`title\` (configurable header text), \`titleHref\` (link target for the brand area; defaults to \`/\`), \`ariaLabel\`. Project anything else as the actions slot (\`<ng-content>\`).
+Inputs: \`logoSrc\`, \`logoAlt\` (default \`''\`), \`title\` (configurable header text), \`titleHref\` (link target for the brand area; defaults to \`/\`), \`ariaLabel\`. Project anything else as the actions slot (\`<ng-content>\`).`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`PageHeader\` renders the whole \`<header class="tilburg-page-header">\` structure for you — container, brand \`<a>\`, logo \`<img>\` and title \`<span>\`. Anything you pass as \`children\` becomes the actions slot on the inline-end; the actions \`<div>\` is only rendered when there is at least one child.
+
+\`\`\`tsx
+import { Button, Page, PageHeader } from '@gemeente-tilburg/components-react';
+
+export function AppHeader() {
+  return (
+    <Page>
+      <PageHeader logoSrc="/logo-on-dark.svg" logoAlt="" title="Gemeente Tilburg" titleHref="/">
+        <span className="tilburg-page-header__user">Jan Janssen</span>
+        <Button appearance="subtle-button" onClick={() => logout()}>
+          Uitloggen
+        </Button>
+      </PageHeader>
+    </Page>
+  );
+}
+\`\`\`
+
+Props: \`logoSrc\` (\`string | null\`), \`logoAlt\` (\`string\`, default \`''\`), \`title\` (\`string | null\`, the header text), \`titleHref\` (\`string | null\`, default \`'/'\`), \`children\` (the actions slot), \`className\` (merged with \`tilburg-page-header\`), plus any standard \`<header>\` attribute except \`title\` — use \`aria-label\` rather than an \`ariaLabel\` prop. \`PageHeaderProps\` is exported as a type. The component forwards its ref to the underlying \`<header>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <header class="tilburg-page-header">
@@ -41,9 +62,30 @@ Inputs: \`logoSrc\`, \`logoAlt\` (default \`''\`), \`title\` (configurable heade
     </div>
   </div>
 </header>
-\`\`\`
+\`\`\``;
 
-Theming via custom properties: \`--tilburg-page-header-background-color\`, \`--tilburg-page-header-color\`, \`--tilburg-page-header-border-color\`, \`--tilburg-page-header-title-font-size\`, \`--tilburg-page-header-max-inline-size\` (default 1150px).
+const theming = `Theming via custom properties: \`--tilburg-page-header-background-color\`, \`--tilburg-page-header-color\`, \`--tilburg-page-header-border-color\`, \`--tilburg-page-header-title-font-size\`, \`--tilburg-page-header-max-inline-size\` (default 1150px).`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+
+${theming}
 `;
 
 export interface Example {

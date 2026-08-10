@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextarea';
 
-export const description = `Multi-line text input. Tilburg layer enforces minimum block/inline size and adds hover + focus-visible rules.
+const intro = `Multi-line text input. Tilburg layer enforces minimum block/inline size and adds hover + focus-visible rules.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <label class="utrecht-form-label" for="explanation">Toelichting</label>
@@ -23,14 +21,67 @@ export const description = `Multi-line text input. Tilburg layer enforces minimu
 />
 \`\`\`
 
-Inputs: \`id\`, \`control\` (\`FormControl\`), \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.`;
 
-### Plain HTML / CSS
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <label class="utrecht-form-label" for="explanation">Toelichting</label>
 <textarea id="explanation" class="utrecht-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
+\`\`\``;
+
+const usageReact = `### React
+
+\`Textarea\` is a styled \`<textarea>\`. There is no \`[control]\` input: use \`value\` + \`onChange\` for a controlled field, or \`defaultValue\` for an uncontrolled one.
+
+\`\`\`tsx
+import { FormLabel, Textarea } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function ExplanationField() {
+  const [explanation, setExplanation] = useState('');
+
+  return (
+    <>
+      <FormLabel htmlFor="explanation">Toelichting</FormLabel>
+      <Textarea
+        id="explanation"
+        name="explanation"
+        value={explanation}
+        onChange={(event) => setExplanation(event.target.value)}
+        placeholder="Schrijf hier je toelichting…"
+        rows={4}
+        required
+        aria-describedby="explanation-hint"
+      />
+      <span id="explanation-hint">Maximaal 500 tekens.</span>
+    </>
+  );
+}
 \`\`\`
+
+The component is wrapped in \`forwardRef\` and forwards the ref to the \`<textarea>\`, spreading every prop it does not consume onto it — so \`{...register('explanation')}\` from react-hook-form, Formik's \`getFieldProps()\`, or a manual \`.focus()\` all work. That is what replaces Angular's \`[control]\` / \`[(ngModel)]\`.
+
+Two React-specific rules: the initial text goes in \`value\` / \`defaultValue\`, never as children (unlike the plain-HTML \`<textarea>…</textarea>\`), and Angular's \`readonly\` is spelled \`readOnly\`.
+
+Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-textarea--invalid\`), plus every native textarea attribute — \`value\`, \`defaultValue\`, \`onChange\`, \`name\`, \`id\`, \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`required\`, \`readOnly\`, \`disabled\`, \`className\`, \`aria-*\`, … \`TextareaProps\` is exported as a type alias.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

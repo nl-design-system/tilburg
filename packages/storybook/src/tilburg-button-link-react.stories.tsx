@@ -3,7 +3,7 @@
 import { ButtonLink } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ReactNode } from 'react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-button-link.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-button-link.examples';
 
 const meta = {
   title: 'Tilburg React/Button Link',
@@ -12,7 +12,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof ButtonLink>;
 
