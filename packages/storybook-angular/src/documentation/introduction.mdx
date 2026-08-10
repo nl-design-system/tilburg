@@ -1,206 +1,34 @@
 {/* @license CC0-1.0 */}
 
-import { Meta } from "@storybook/addon-docs/blocks";
+{/* Composed from shared fragments in `storybook-shared/src/documentation/` so the React Storybook renders the same prose. */}
+{/* Only `intro-this-storybook.md` is local — the one part that depends on which Storybook you are looking at. */}
+{/* Keep the comments on one line each: Prettier rewrites multi-line MDX comments into `{/_ … _/}`, which is not a comment. */}
+
+import { Markdown, Meta } from "@storybook/addon-docs/blocks";
+import thisStorybook from "./intro-this-storybook.md?raw";
+import angularApi from "../../../storybook-shared/src/documentation/intro-angular-api.md?raw";
+import contributing from "../../../storybook-shared/src/documentation/intro-contributing.md?raw";
+import defaultIcons from "../../../storybook-shared/src/documentation/intro-default-icons.md?raw";
+import designSystem from "../../../storybook-shared/src/documentation/intro-design-system.md?raw";
+import designTokens from "../../../storybook-shared/src/documentation/intro-design-tokens.md?raw";
+import devNotes from "../../../storybook-shared/src/documentation/intro-dev-notes.md?raw";
+import layerAngular from "../../../storybook-shared/src/documentation/intro-layer-angular.md?raw";
+import layerHtmlCss from "../../../storybook-shared/src/documentation/intro-layer-html-css.md?raw";
+import layerReact from "../../../storybook-shared/src/documentation/intro-layer-react.md?raw";
 
 <Meta title="Tilburg Angular/Intro" />
 
-# Tilburg Angular componenten
-
-Deze Storybook documenteert `@gemeente-tilburg/components-angular` — de Angular-laag van de Tilburg-componentenbibliotheek. Hij bevat zowel de **Angular-componenten** (`Tilburg Angular/…`) als de **HTML/CSS-referentie** (`Tilburg HTML/…`) zodat je beide naast elkaar kunt vergelijken zonder van Storybook te wisselen.
-
-## Hoe deze Storybook past in het geheel
-
-De Tilburg-componenten bestaan in drie lagen — pure CSS, React en Angular — die elk dezelfde DOM en CSS-klassen emitten. Er zijn **twee onafhankelijke Storybooks**:
-
-- **Deze Storybook** — voor Angular-werk. Toont de HTML/CSS-referentie + de Angular-componenten.
-- **React / HTML-CSS Storybook** — voor React- en CSS-werk. Toont de HTML/CSS-referentie + de React-componenten.
-
-De twee zijn niet aan elkaar gekoppeld; start de andere Storybook apart als je beide framework-lagen wilt zien. De HTML/CSS-stories zijn in beide identiek — ze documenteren dezelfde gedeelde markup.
-
-<figure style={{ margin: "1.5rem 0" }}>
-  <img
-    src="/diagrams/layers.svg"
-    alt="Tilburg-lagen-architectuur: React- en Angular-wrappers bouwen op de Tilburg HTML/CSS-laag, die op de design-tokens leunt."
-    style={{ width: "100%", maxWidth: "760px", height: "auto" }}
-  />
-  <figcaption style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#5B6E8A", textAlign: "center" }}>
-    Pijlen wijzen naar onderliggende lagen. React/Angular-wrappers zijn optioneel — de HTML/CSS-laag is rechtstreeks te
-    gebruiken in elke stack.
-  </figcaption>
-</figure>
-
-## De HTML/CSS-laag is leidend
-
-Elke Angular-component (`<tilburg-alert>`, `<tilburg-textbox>`, etc.) is een dunne wrapper die exact dezelfde DOM en BEM-classes emit als de gedeelde HTML/CSS-referentie onder `Tilburg HTML/…`. Wanneer je twijfelt over hoe een component eruit moet zien: kijk daar. De Angular-stories hier zijn parity-checks bovenop — geen aparte interpretatie van het ontwerp.
-
-## Plain HTML / CSS
-
-De HTML/CSS-laag is voor elk framework bruikbaar. Je schrijft de BEM-classes direct in je markup — geen JS-runtime nodig.
-
-### Installatie
-
-```bash
-npm install @gemeente-tilburg/components-css \
-            @gemeente-tilburg/design-tokens \
-            @utrecht/component-library-css
-```
-
-### Gebruik
-
-Laad de design tokens en utrecht-basis, en importeer per-component SCSS:
-
-```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
-
-@import "@gemeente-tilburg/components-css/alert/index";
-@import "@gemeente-tilburg/components-css/textbox/index";
-/* …alleen de componenten die je nodig hebt */
-```
-
-Schrijf de BEM-markup zoals onder `Tilburg HTML/…` in de zijbalk getoond:
-
-```html
-<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Versturen</button>
-```
-
-## Angular
-
-De Angular-laag wrap de gedeelde HTML/CSS in `<tilburg-…>` custom-elementen + attribuut-directives.
-
-### Installatie
-
-```bash
-npm install @gemeente-tilburg/components-angular \
-            @gemeente-tilburg/design-tokens \
-            @utrecht/component-library-angular
-```
-
-Peer-dependencies: `@angular/core`, `@angular/common`, `@angular/forms` ≥ 20.
-
-### Setup
-
-Registreer de module één keer in je root- of feature-module:
-
-```ts
-import { NgModule } from "@angular/core";
-import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
-
-@NgModule({
-  imports: [TilburgComponentsModule],
-})
-export class AppModule {}
-```
-
-Laad de design tokens en utrecht-basis-CSS globaal — bv. via `angular.json`'s `styles`-array of bovenin je `styles.scss`:
-
-```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
-```
-
-De Angular-laag bundelt zijn eigen Tilburg-component-CSS automatisch mee, dus aparte `@import`s per component zijn niet nodig.
-
-### Gebruik
-
-Gebruik de componenten direct in je templates:
-
-```html
-<tilburg-alert variant="info" title="Informatie" [closable]="true" (closed)="dismiss()">
-  De openingstijden zijn gewijzigd.
-</tilburg-alert>
-
-<tilburg-form-field [invalid]="emailCtrl.invalid && emailCtrl.touched">
-  <tilburg-form-label for="email">E-mailadres</tilburg-form-label>
-  <tilburg-textbox id="email" type="email" [control]="emailCtrl" placeholder="naam@voorbeeld.nl" />
-  <tilburg-validation-message *ngIf="emailCtrl.invalid && emailCtrl.touched" type="error">
-    Vul een geldig e-mailadres in.
-  </tilburg-validation-message>
-</tilburg-form-field>
-```
-
-Elke Angular-story onder `Tilburg Angular/…` documenteert de beschikbare `@Input`s en `@Output`s in de **Usage**-sectie van zijn auto-docs-pagina.
-
-React-projecten vinden hun installatie + API in de andere Storybook.
-
-## API-conventies
-
-### Custom-element selectoren
-
-De meeste componenten worden gebruikt als custom-elementen (`<tilburg-alert>`, `<tilburg-textbox>`, …). Deze hosts hebben `display: block` (of `inline-block` voor compacte controls als `<tilburg-button>`) zodat ze zich transparant gedragen in de pagina-layout.
-
-### Directives (attribuut-selectoren)
-
-Een handvol componenten worden als directive op een bestaand HTML-element toegepast:
-
-| Selector                                                                 | Toepassen op                 |
-| ------------------------------------------------------------------------ | ---------------------------- |
-| `[tilburg-button-link]`                                                  | `<a>`                        |
-| `[tilburg-table-body]`, `[tilburg-table-row]`, `[tilburg-table-cell]`, … | `<tbody>`, `<tr>`, `<td>`, … |
-
-```html
-<a [tilburg-button-link]="'primary-action-button'" routerLink="/aanvragen"> Aanvragen </a>
-```
-
-### Standaard-iconen overschrijven
-
-Componenten met iconen (Alert, Validation Message, Accordion-section, Progress Bar) renderen een passende standaard-glyph op basis van hun `variant` / `type`. Wil je een eigen icon, projecteer het via een named slot:
-
-```html
-<tilburg-alert variant="info" title="Informatie">
-  <my-icon slot="icon" name="bell" />
-  De openingstijden zijn gewijzigd.
-</tilburg-alert>
-```
-
-Beschikbare slots: `slot="icon"`, `slot="close-icon"` (Alert), `slot="back-icon"` (Progress Bar), `slot="icon-collapsed"` / `slot="icon-expanded"` (Accordion-section).
-
-### Reactive forms
-
-Form-controls (`<tilburg-textbox>`, `<tilburg-textarea>`, `<tilburg-checkbox>`, `<tilburg-radio-button>`) accepteren een `[control]`-`FormControl` voor reactive-forms-binding. `ngModel` werkt ook via `[(ngModel)]` op het onderliggende native input — zie de stories voor concrete voorbeelden.
-
-## Design tokens
-
-Alle componenten zijn via CSS-custom-properties te tunen. De Tilburg-tokens (`--tilburg-*`) en bovenliggende utrecht-tokens (`--utrecht-*`) overschrijf je per scope:
-
-```scss
-.brand-zone {
-  --tilburg-interaction-color: #c4007a;
-}
-```
-
-Zie de **Tokens**-story in de hoofd-Storybook voor het complete overzicht.
-
-## Bijdragen
-
-De broncode staat op [github.com/nl-design-system/tilburg](https://github.com/nl-design-system/tilburg) onder `packages/components-angular/`. Pull requests voor nieuwe componenten en bug-fixes zijn welkom — zorg dat de Angular-component dezelfde DOM en klassen blijft emitten als de HTML/CSS-referentie in de hoofd-Storybook.
-
----
-
-## Voor ontwikkelaars
-
-Technische details over de twee Storybooks — relevant als je lokaal werkt of de Storybook-output deployt:
-
-- **Deze Storybook** — `packages/storybook-angular`, draait in dev op port **`6007`**, builder `@storybook/angular` (Webpack + Angular CLI).
-- **React/HTML-CSS Storybook** — `packages/storybook`, draait in dev op port **`6006`**, builder `@storybook/react-vite` (Vite).
-
-### Lokaal starten
-
-```bash
-# Beide Storybooks tegelijk (parallel — port 6006 + 6007)
-pnpm storybook
-
-# Alleen deze Angular Storybook (port 6007)
-pnpm storybook:angular
-
-# Alleen de React Storybook (port 6006)
-pnpm storybook:react
-```
-
-De prerequisite-builds (`components-angular` voor deze Storybook; `design-tokens` en `web-components-stencil` voor de React-kant) draaien automatisch mee in elk van bovenstaande commando's.
-
-### Gedeelde HTML/CSS-stories
-
-De HTML/CSS-stories worden uit één bron gegenereerd: `packages/storybook-shared/src/tilburg-{name}.examples.ts`. Beide Storybooks importeren die bestanden — de Angular-laag rendert via een `template`-string, de React-laag via `dangerouslySetInnerHTML`. Pas de markup daar één keer aan en beide Storybooks volgen.
-
-De aparte builds zijn nodig omdat `@storybook/angular` alleen op Webpack + Angular CLI werkt, terwijl de andere Storybook op Vite draait.
+<Markdown>
+  {[
+    thisStorybook,
+    designSystem,
+    layerHtmlCss,
+    layerReact,
+    layerAngular,
+    angularApi,
+    defaultIcons,
+    designTokens,
+    contributing,
+    devNotes,
+  ].join("\n\n")}
+</Markdown>
