@@ -29,12 +29,12 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/variables.cjs",
-            format: "javascript/module-flat",
+            destination: prefix + '/variables.cjs',
+            format: 'javascript/module-flat',
           },
           {
-            destination: prefix + "/variables.mjs",
-            format: "javascript/es6",
+            destination: prefix + '/variables.mjs',
+            format: 'javascript/es6',
           },
         ],
       },
@@ -44,8 +44,8 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            format: "javascript/module",
-            destination: prefix + "/tokens.cjs",
+            format: 'javascript/module',
+            destination: prefix + '/tokens.cjs',
           },
         ],
       },
@@ -55,16 +55,16 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/tokens.json",
-            format: "json",
+            destination: prefix + '/tokens.json',
+            format: 'json',
           },
           {
-            destination: prefix + "/list.json",
-            format: "json/list",
+            destination: prefix + '/list.json',
+            format: 'json/list',
           },
           {
-            destination: prefix + "/variables.json",
-            format: "json/flat",
+            destination: prefix + '/variables.json',
+            format: 'json/flat',
           },
         ],
       },
@@ -74,16 +74,16 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/theme.css",
-            format: "css/variables",
+            destination: prefix + '/theme.css',
+            format: 'css/variables',
             options: {
               selector: `.${themeName}`,
               outputReferences: true,
             },
           },
           {
-            destination: prefix + "/variables.css",
-            format: "css/variables",
+            destination: prefix + '/variables.css',
+            format: 'css/variables',
             options: {
               selector: `:root`,
               outputReferences: true,
@@ -97,8 +97,8 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/_variables.scss",
-            format: "scss/variables",
+            destination: prefix + '/_variables.scss',
+            format: 'scss/variables',
             options: {
               outputReferences: true,
             },
@@ -110,8 +110,8 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/_mixin.scss",
-            format: "css/variables",
+            destination: prefix + '/_mixin.scss',
+            format: 'css/variables',
             options: {
               selector: `@mixin ${themeName}`,
               outputReferences: true,
@@ -125,8 +125,8 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: prefix + "/variables.less",
-            format: "less/variables",
+            destination: prefix + '/variables.less',
+            format: 'less/variables',
             options: {
               outputReferences: true,
             },
@@ -139,12 +139,12 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            format: "typescript/es6-declarations",
-            destination: prefix + "/variables.d.ts",
+            format: 'typescript/es6-declarations',
+            destination: prefix + '/variables.d.ts',
           },
           {
-            format: "typescript/module-declarations",
-            destination: prefix + "/tokens.d.ts",
+            format: 'typescript/module-declarations',
+            destination: prefix + '/tokens.d.ts',
           },
         ],
       },

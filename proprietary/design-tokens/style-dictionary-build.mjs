@@ -64,70 +64,65 @@ const build = async () => {
     // Add other sd-transforms options if necessary
   });
 
-  const themes = themeConfig.themes;
+  /* One Style Dictionary run per theme. The figma export is split per theme
+     (`figma/tilburg/…`, `figma/bat/…`) and each theme emits into its own
+     `dist/<theme>/` folder, which is what consumers import — e.g.
+     `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`. */
+  for (const theme of themeConfig.themes) {
+    console.log(`Instantiating theme: ${theme}`);
 
-  // --- Theme Loop ---
-  for (const theme of themes) {
-    console.log("Instantiating theme: " + theme);
+    const source = [`figma/${theme}/figma.tokens.json`, 'src/**/tokens.json', 'src/**/*.tokens.json'];
 
-    // --- MINIMAL CHANGE START ---
-    // Define base source files
-    const baseSource = [
-      `figma/${theme}/figma.tokens.json`,
-      "src/**/*.tokens.json",
-    ];
-
-    // Conditionally add patch files for 'bat' theme
-    let sourceFiles = [...baseSource]; // Start with base sources
-    if (theme === "bat") {
-      // Use a glob pattern to include all .tokens.json files in the directory and subdirectories
-      sourceFiles.push("src/patches/bat/**/*.tokens.json");
-      console.log(
-        `   - Including 'patches/bat/**/*.tokens.json' for theme '${theme}'`,
-      ); // Optional log
+    /* The bat theme layers extra patches on top of the shared ones. */
+    if (theme === 'bat') {
+      source.push('src/patches/bat/**/*.tokens.json');
     }
-    // --- MINIMAL CHANGE END ---
 
     const sd = new StyleDictionary({
-      // Pass the dynamically created sourceFiles array
       ...createStyleDictionaryConfig({
         selector: `.${theme}-theme`,
-        source: sourceFiles, // Use the dynamic array here
+        source,
       }),
       log: {
-        // verbosity: "verbose", // Deprecated, use level
-        level: "verbose",
+        verbosity: 'verbose',
       },
-      preprocessors: ["tokens-studio", "dtcg-delegate"],
-      // **Important Reminder**: Ensure 'log-missing-tokens' action is added
-      // to the relevant platform's 'actions' array within your
-      // `createStyleDictionaryConfig` function for it to execute.
-      // This script part assumes createStyleDictionaryConfig handles that.
+      preprocessors: ['tokens-studio', 'dtcg-delegate'],
     });
 
-    // Ensure custom action is directly attached to the platform
-    // This part might be redundant if createStyleDictionaryConfig handles actions properly.
-    // sd.platforms = {
-    //   ...sd.platforms,
-    // };
+    /* Flat `dist/index.css` for backwards compatibility — the path
+       `config.json`'s `cdn` field points at. Only the primary theme owns it;
+       emitting it for every theme would just overwrite it with the last one. */
+    if (theme === themeConfig.prefix) {
+      sd.platforms = {
+        ...sd.platforms,
+        'css-for-backwards-compatibility': {
+          transformGroups: 'tokens-studio',
+          transforms: ['name/kebab', 'color/hsl-4'],
+          buildPath: 'dist/',
+          actions: ['log-missing-tokens'], // Attach custom action here
+          files: [
+            {
+              destination: 'index.css',
+              format: 'css/variables',
+              options: {
+                selector: `.${theme}-theme`,
+                outputReferences: true,
+              },
+            },
+          ],
+        },
+      };
+    }
 
-    console.log("Cleaning platforms..."); // Debugging statement
+    console.log('Cleaning platforms...'); // Debugging statement
     await sd.cleanAllPlatforms();
 
-    console.log("Building platforms..."); // Debugging statement
+    console.log('Building platforms...'); // Debugging statement
     await sd.buildAllPlatforms();
     console.log(`Build complete for theme: ${theme}!`); // Debugging statement
   }
-  console.log("Build process finished!");
 
-  const { scripts, devDependencies, ...publishFields } = JSON.parse(
-    await readFile("./package.json", "utf-8"),
-  );
-  await writeFile(
-    "./dist/package.json",
-    JSON.stringify(publishFields, null, 2),
-  );
-  console.log("✅ dist/package.json written.");
+  console.log('Build process finished!');
 };
 
 // --- Run Build ---
