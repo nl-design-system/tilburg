@@ -65,12 +65,15 @@
     "publish": "changeset publish",
     "start": "node_modules/http-server/bin packages/storybook/dist/",
     "storybook": "npm-run-all --parallel watch:**",
+    "storybook:angular": "pnpm run watch:storybook-angular",
+    "storybook:react": "pnpm run watch:storybook",
     "test": "pnpm --recursive run test",
     "test-update": "npm-run-all --sequential clean lint build test",
     "update-patch": "npm-check-updates --configFileName .ncurc.patch.mjs",
     "update-minor": "npm-check-updates --configFileName .ncurc.minor.mjs",
     "update-major": "npm-check-updates --configFileName .ncurc.major.mjs",
-    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build:style-dictionary && pnpm --filter @gemeente-tilburg/storybook run storybook",
+    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/storybook run storybook",
+    "watch:storybook-angular": "pnpm --filter @gemeente-tilburg/components-angular run build:components && pnpm --filter @gemeente-tilburg/storybook-angular run storybook",
     "watch:style-dictionary": "pnpm --filter @gemeente-tilburg/design-tokens run watch:style-dictionary"
   },
   "dependencies": {
