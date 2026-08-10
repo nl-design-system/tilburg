@@ -94,13 +94,17 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<div class="utrecht-html-content" lang="nl" style="max-width:32rem">
+    /* The `max-width` lives on an unclassed demo wrapper: it frames the
+       example, it is not part of the component. */
+    html: `<div style="max-width:32rem">
+<div class="utrecht-html-content" lang="nl">
   <p>CMS-geleverde HTML krijgt automatisch de Tilburg-typografie zonder per tag een class te zetten.</p>
   <ul>
     <li>Eerste item</li>
     <li>Tweede item</li>
   </ul>
   <p>Inline <strong>nadruk</strong> en <a href="#">links</a> werken zoals verwacht.</p>
+</div>
 </div>`,
   },
 } satisfies Record<string, Example>;

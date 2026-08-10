@@ -101,7 +101,6 @@ ${usagePlainHtml}
 `;
 
 const rowStyle = 'display:flex;flex-direction:column;gap:1rem;max-width:24rem';
-const labelStyle = 'display:block;font-weight:700;margin-bottom:0.25rem';
 
 export interface Example {
   name: string;
@@ -116,28 +115,28 @@ export const examples = {
   default: {
     name: 'Default',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="tb-default">E-mailadres</label>
+  <label class="utrecht-form-label" for="tb-default">E-mailadres</label>
   <input id="tb-default" type="text" class="utrecht-textbox utrecht-textbox--html-input" placeholder="naam@voorbeeld.nl" />
 </div>`,
   },
   filled: {
     name: 'With value',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="tb-filled">Voornaam</label>
+  <label class="utrecht-form-label" for="tb-filled">Voornaam</label>
   <input id="tb-filled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="Jan" />
 </div>`,
   },
   invalid: {
     name: 'Invalid',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="tb-invalid">E-mailadres</label>
+  <label class="utrecht-form-label" for="tb-invalid">E-mailadres</label>
   <input id="tb-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input" value="niet-geldig" aria-invalid="true" />
 </div>`,
   },
   disabled: {
     name: 'Disabled',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="tb-disabled">Burgerservicenummer</label>
+  <label class="utrecht-form-label" for="tb-disabled">Burgerservicenummer</label>
   <input id="tb-disabled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="123456789" disabled />
 </div>`,
   },

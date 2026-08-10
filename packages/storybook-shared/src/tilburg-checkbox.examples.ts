@@ -102,40 +102,45 @@ export interface Example {
   html: string;
 }
 
-const rowStyle = 'align-items:center;display:flex;gap:0.5rem;margin-block-end:0.5rem';
+/* The row layout (flex, gap, vertical rhythm) comes from
+   `.utrecht-form-label--checkbox:has(> .utrecht-checkbox)` in
+   `packages/components-css/checkbox/index.scss`, so the reference markup carries
+   no inline styles: a label that wraps its own control is the canonical
+   structure and is exactly what the React `<FormLabel type="checkbox">` renders. */
 const baseClasses = 'utrecht-checkbox utrecht-checkbox--html-input utrecht-checkbox--custom';
+const labelClasses = 'utrecht-form-label utrecht-form-label--checkbox';
 
 export const examples = {
   unchecked: {
     name: 'Unchecked',
-    html: `<div style="${rowStyle}">
+    html: `<label class="${labelClasses}" for="cb-unchecked">
   <input id="cb-unchecked" type="checkbox" class="${baseClasses}" />
-  <label class="utrecht-form-label" for="cb-unchecked">Ik ga akkoord met de voorwaarden</label>
-</div>`,
+  Ik ga akkoord met de voorwaarden
+</label>`,
   },
   checked: {
     name: 'Checked',
-    html: `<div style="${rowStyle}">
+    html: `<label class="${labelClasses}" for="cb-checked">
   <input id="cb-checked" type="checkbox" class="${baseClasses}" checked />
-  <label class="utrecht-form-label" for="cb-checked">Ik ga akkoord met de voorwaarden</label>
-</div>`,
+  Ik ga akkoord met de voorwaarden
+</label>`,
   },
   invalid: {
     name: 'Invalid',
-    html: `<div style="${rowStyle}">
+    html: `<label class="${labelClasses}" for="cb-invalid">
   <input id="cb-invalid" type="checkbox" class="${baseClasses}" required aria-invalid="true" />
-  <label class="utrecht-form-label" for="cb-invalid">Verplicht akkoord</label>
-</div>`,
+  Verplicht akkoord
+</label>`,
   },
   disabled: {
     name: 'Disabled',
-    html: `<div style="${rowStyle}">
+    html: `<label class="${labelClasses}" for="cb-disabled">
   <input id="cb-disabled" type="checkbox" class="${baseClasses}" disabled />
-  <label class="utrecht-form-label" for="cb-disabled">Disabled (unchecked)</label>
-</div>
-<div style="${rowStyle}">
+  Disabled (unchecked)
+</label>
+<label class="${labelClasses}" for="cb-disabled-checked">
   <input id="cb-disabled-checked" type="checkbox" class="${baseClasses}" checked disabled />
-  <label class="utrecht-form-label" for="cb-disabled-checked">Disabled (checked)</label>
-</div>`,
+  Disabled (checked)
+</label>`,
   },
 } satisfies Record<string, Example>;

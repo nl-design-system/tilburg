@@ -97,34 +97,33 @@ export interface Example {
 }
 
 const rowStyle = 'display:flex;flex-direction:column;gap:1rem;max-width:32rem';
-const labelStyle = 'display:block;font-weight:700;margin-bottom:0.25rem';
 
 export const examples = {
   default: {
     name: 'Default',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="ta-default">Toelichting</label>
+  <label class="utrecht-form-label" for="ta-default">Toelichting</label>
   <textarea id="ta-default" class="utrecht-textarea utrecht-textarea--html-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
 </div>`,
   },
   filled: {
     name: 'With value',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="ta-filled">Toelichting</label>
+  <label class="utrecht-form-label" for="ta-filled">Toelichting</label>
   <textarea id="ta-filled" class="utrecht-textarea utrecht-textarea--html-textarea">Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning.</textarea>
 </div>`,
   },
   invalid: {
     name: 'Invalid',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="ta-invalid">Toelichting</label>
+  <label class="utrecht-form-label" for="ta-invalid">Toelichting</label>
   <textarea id="ta-invalid" class="utrecht-textarea utrecht-textarea--html-textarea" aria-invalid="true">ongeldige inhoud</textarea>
 </div>`,
   },
   disabled: {
     name: 'Disabled',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="ta-disabled">Toelichting</label>
+  <label class="utrecht-form-label" for="ta-disabled">Toelichting</label>
   <textarea id="ta-disabled" class="utrecht-textarea utrecht-textarea--html-textarea" disabled>Deze toelichting kan niet bewerkt worden.</textarea>
 </div>`,
   },

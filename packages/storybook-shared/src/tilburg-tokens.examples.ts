@@ -77,7 +77,16 @@ const swatchStyle =
 const monoStyle =
   "font-family:var(--tilburg-typography-font-family-code, ui-monospace, 'SF Mono', Menlo, Consolas, monospace);font-size:0.8125rem";
 const grayValueColor = 'color:var(--tilburg-color-gray-400, #666)';
-const sectionStyle = 'margin-block-end:2.5rem';
+/* Demo-page chrome only. The section is an unclassed documentation wrapper, so
+   its layout lives here rather than in `components-css` — but the gap between
+   the section heading and its table belongs on *this* wrapper, not on the
+   `.utrecht-heading-2` inside it. The Tilburg theme deliberately leaves
+   `--utrecht-space-around` (and therefore every `--utrecht-heading-*-margin-*`)
+   at 0, so headings ship with no margin of their own; an inline
+   `margin-block-end` on the heading would be this page overriding that
+   decision. `row-gap` on the grid container spaces the two children instead
+   and leaves the heading's own box exactly as the design system defines it. */
+const sectionStyle = 'display:grid;margin-block-end:2.5rem;row-gap:0.75rem';
 
 const COLOR_GROUPS: Array<{ label: string; tokens: string[] }> = [
   {
@@ -151,7 +160,10 @@ const SPACE_AXES: Array<{ label: string; prefix: string }> = [
   { label: 'Inline (horizontal start/end)', prefix: '--tilburg-space-inline-' },
 ];
 
-const SPACE_SCALE = ['flea', 'ant', 'beetle', 'snail', 'rat', 'mouse', 'rabbit', 'cat', 'pig', 'dog'];
+/* Ascending by value on every axis. `mouse` < `rat` and `dog` < `pig` — the
+   animal-size naming is easy to get the wrong way round, and this list used to
+   have both pairs swapped, so the scale tables rendered out of order. */
+const SPACE_SCALE = ['flea', 'ant', 'beetle', 'snail', 'mouse', 'rat', 'rabbit', 'cat', 'dog', 'pig'];
 
 const TYPOGRAPHY_TOKENS = [
   { name: '--tilburg-typography-font-size-sm', sample: 'Aa — Small' },
@@ -199,7 +211,7 @@ const valueRow = (name: string): string => `<tr>
 </tr>`;
 
 const tokenSection = (title: string, body: string): string => `<section style="${sectionStyle}">
-  <h2 class="utrecht-heading-2" style="margin-block-end:0.75rem">${title}</h2>
+  <h2 class="utrecht-heading-2">${title}</h2>
   ${body}
 </section>`;
 

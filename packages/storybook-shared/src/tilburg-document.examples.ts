@@ -79,8 +79,13 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Document scope',
-    html: `<div class="utrecht-document" style="padding:1rem;max-width:32rem">
+    /* Padding and width live on an unclassed demo wrapper: they frame the
+       example. `.utrecht-document` only sets typography — it deliberately
+       owns no box model, so it must not be shown carrying one. */
+    html: `<div style="padding:1rem;max-width:32rem">
+<div class="utrecht-document">
   <p class="utrecht-paragraph">Tekst binnen een <code>utrecht-document</code> erft de Tilburg-typografie en body-kleur via de design tokens.</p>
+</div>
 </div>`,
   },
 } satisfies Record<string, Example>;

@@ -79,9 +79,18 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<main class="utrecht-page-content" style="max-width:1150px;margin-inline:auto;padding:1rem">
+    /* `.utrecht-page-content` reads its padding from
+       `--utrecht-page-content-padding-block-*` / `--utrecht-page-padding-inline-*`
+       and has no max-inline-size of its own; the Tilburg theme defines none of
+       those, so the class is currently a no-op. Until those tokens are decided
+       the demo canvas — matching the 1150px container of the page header and
+       footer — sits on an unclassed wrapper instead of being inlined onto the
+       component. */
+    html: `<div style="max-width:1150px;margin-inline:auto;padding:1rem">
+<main class="utrecht-page-content">
   <utrecht-heading-1><h1 class="utrecht-heading-1">Aanvraag indienen</h1></utrecht-heading-1>
   <p class="utrecht-paragraph">Vul de gegevens in om de aanvraag te starten.</p>
-</main>`,
+</main>
+</div>`,
   },
 } satisfies Record<string, Example>;
