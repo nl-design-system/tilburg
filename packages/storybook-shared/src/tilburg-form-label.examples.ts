@@ -30,7 +30,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 const usageReact = `### React
 
-\`FormLabel\` renders a real \`<label>\`, so the association attribute is React's \`htmlFor\` — not \`for\`. The label text and the "(optioneel)" addon are ordinary children instead of Angular content projection.
+\`FormLabel\` renders a real \`<label>\`, so the association attribute is React's \`htmlFor\` — not \`for\`. The label text and the "(optioneel)" addon are ordinary children.
 
 \`\`\`tsx
 import { Checkbox, FormLabel, Textbox } from '@gemeente-tilburg/components-react';
@@ -75,6 +75,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

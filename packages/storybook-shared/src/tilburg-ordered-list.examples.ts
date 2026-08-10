@@ -28,15 +28,15 @@ import { OrderedList } from '@gemeente-tilburg/components-react';
 export function Stappenplan() {
   return (
     <OrderedList byLetter>
-      <li className="utrecht-ordered-list__item">Eerste stap</li>
-      <li className="utrecht-ordered-list__item">Tweede stap</li>
-      <li className="utrecht-ordered-list__item">Derde stap</li>
+      <li>Eerste stap</li>
+      <li>Tweede stap</li>
+      <li>Derde stap</li>
     </OrderedList>
   );
 }
 \`\`\`
 
-There is no separate list-item component: the children are plain \`<li>\` elements. Add \`className="utrecht-ordered-list__item"\` yourself to pick up the utrecht item spacing and marker colour — \`OrderedList\` only decorates the \`<ol>\`. Nesting works by rendering another \`<OrderedList>\` (or \`<UnorderedList>\`) inside an \`<li>\`; the nested list collapses its outer margins automatically.
+There is no separate list-item component: the children are plain \`<li>\` elements and they need no class of their own. \`OrderedList\` always emits the \`utrecht-ordered-list--html-ol\` modifier on the \`<ol>\`, and the Tilburg CSS layer styles that list's direct \`<li>\` children with the same item spacing and marker colour as an explicit \`.utrecht-ordered-list__item\`. Nesting works by rendering another \`<OrderedList>\` (or \`<UnorderedList>\`) inside an \`<li>\`; the nested list collapses its outer margins automatically.
 
 Props: \`byLetter?: boolean\` (default \`false\` — switches markers from decimal to lower-alpha), plus every standard \`<ol>\` attribute (\`className\`, \`start\`, \`reversed\`, \`aria-label\`, …) via \`OlHTMLAttributes<HTMLOListElement>\`. Forwards its ref to the \`<ol>\`. \`OrderedListProps\` is exported as a type.`;
 
@@ -68,6 +68,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

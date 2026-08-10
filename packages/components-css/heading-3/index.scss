@@ -1,3 +1,12 @@
+/* An unknown custom element defaults to `display: inline`, so the host would
+   wrap its block-level `<h3>` in an inline box: the heading no longer forms a
+   block of its own and collapses when the host is the layout box a parent
+   (flex/grid item, margin collapsing) reads. Angular forces this on its
+   `:host`; do it here so the plain HTML and React renders get the same box. */
+utrecht-heading-3 {
+  display: block;
+}
+
 /* Dual-target Angular's custom-element render (`<utrecht-heading-3>`) and
    React's class-based render (`<h3 class="utrecht-heading-3">`). */
 utrecht-heading-3,

@@ -33,7 +33,7 @@ export function Nieuwsbericht() {
 }
 \`\`\`
 
-Content goes in \`children\` instead of Angular's content projection; the component renders a single \`<article class="utrecht-article">\` around it.
+Content goes in \`children\`; the component renders a single \`<article class="utrecht-article">\` around it.
 
 Props: no component-specific props. \`ArticleProps\` is an exported type alias of \`HTMLAttributes<HTMLElement>\`, so you pass \`children\` plus any standard attribute — \`className\` (merged after \`utrecht-article\`), \`id\`, \`lang\`, \`aria-labelledby\` to tie the landmark to its heading, and so on. The \`ref\` is forwarded to the \`<article>\`.`;
 
@@ -59,6 +59,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

@@ -16,6 +16,14 @@
   margin-block-start: 0;
 }
 
+/* `--html-ol` marks an `<ol>` whose list items are plain `<li>` elements that
+   do not carry the BEM item class — the same escape hatch utrecht offers with
+   its `--html-content` variant. Both wrappers (`<tilburg-ordered-list>` and
+   `<OrderedList>`) always emit this modifier, so bare `<li>` children pick up
+   exactly the same item styling as an explicit `.utrecht-ordered-list__item`.
+   Without this, React lists rendered with plain `<li>` lost the line height,
+   the item spacing, the marker gap and the marker colour. */
+.utrecht-ordered-list--html-ol > li,
 .utrecht-ordered-list__item {
   line-height: var(--utrecht-unordered-list-line-height, var(--utrecht-document-line-height, inherit));
   margin-block-end: var(--utrecht-unordered-list-item-margin-block-end);

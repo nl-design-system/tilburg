@@ -33,10 +33,6 @@
   padding-inline: 0;
 }
 
-.tilburg-page-footer__primary-link {
-  font-weight: 700;
-}
-
 .tilburg-page-footer__link,
 .tilburg-page-footer__primary-link {
   background-color: transparent;
@@ -48,6 +44,13 @@
   padding-block: var(--tilburg-space-block-snail);
   padding-inline: var(--tilburg-space-block-rabbit);
   text-decoration: none;
+}
+
+/* Must come after the `font: inherit` shorthand above — the shorthand resets
+   `font-weight` to the inherited 300 of `.tilburg-page-footer`, so declaring
+   the bold call-to-action weight earlier would silently be overridden. */
+.tilburg-page-footer__primary-link {
+  font-weight: 700;
 }
 
 .tilburg-page-footer__link:focus-visible,

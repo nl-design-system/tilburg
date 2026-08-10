@@ -45,7 +45,7 @@ export function AppHeader() {
 }
 \`\`\`
 
-Props: \`logoSrc\` (\`string | null\`), \`logoAlt\` (\`string\`, default \`''\`), \`title\` (\`string | null\`, the header text), \`titleHref\` (\`string | null\`, default \`'/'\`), \`children\` (the actions slot), \`className\` (merged with \`tilburg-page-header\`), plus any standard \`<header>\` attribute except \`title\` — use \`aria-label\` rather than an \`ariaLabel\` prop. \`PageHeaderProps\` is exported as a type. The component forwards its ref to the underlying \`<header>\`.`;
+Props: \`logoSrc\` (\`string | null\`), \`logoAlt\` (\`string\`, default \`''\`), \`title\` (\`string | null\`, the header text), \`titleHref\` (\`string | null\`, default \`'/'\`), \`children\` (the actions slot), \`className\` (merged with \`tilburg-page-header\`), plus any standard \`<header>\` attribute except \`title\` — write the native \`aria-label\` attribute when you need to name the landmark. \`PageHeaderProps\` is exported as a type. The component forwards its ref to the underlying \`<header>\`.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -82,6 +82,15 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 

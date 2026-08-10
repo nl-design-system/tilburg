@@ -1,8 +1,11 @@
 <div *ngIf="showLoader" class="tilburg-loading-spinner__overlay" aria-busy="true" [attr.aria-label]="ariaLabel || null">
   <div class="tilburg-loading-spinner__panel">
-    <div class="tilburg-loading-spinner__content">
+    <!-- The live region wraps the title and message as well as the spinner: the
+         <svg> is aria-hidden, so a role="status" around it alone would announce
+         nothing when the overlay appears. -->
+    <div class="tilburg-loading-spinner__content" role="status">
       <span *ngIf="title" class="tilburg-loading-spinner__title">{{ title }}</span>
-      <div role="status">
+      <div>
         <svg
           aria-hidden="true"
           class="tilburg-loading-spinner__svg"

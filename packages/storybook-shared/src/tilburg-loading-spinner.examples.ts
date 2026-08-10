@@ -47,7 +47,7 @@ export function AanvraagFormulier() {
 
 The grace timer lives inside the component: flipping \`visible\` to \`true\` starts a \`delayMs\` timer and only then mounts the overlay, so quick operations never flicker. Flipping it back to \`false\` hides immediately and cancels a pending timer. While hidden the component renders \`null\` — nothing is left in the DOM. Pass \`delayMs={0}\` to skip the grace period entirely (that is what the stories do).
 
-Accessibility: the overlay \`<div>\` carries \`aria-busy="true"\`, and the spinner sits in a nested \`<div role="status">\` while the \`<svg>\` itself is \`aria-hidden="true"\`. The \`title\` and \`message\` spans render *outside* that live region, so they are not announced on their own — give the overlay an accessible name with \`aria-label\` (there is no dedicated \`ariaLabel\` prop in React; use the standard \`aria-label\` attribute, which is forwarded to the overlay). That is the step consumers most often skip.
+Accessibility: the overlay \`<div>\` carries \`aria-busy="true"\`, and \`role="status"\` sits on \`.tilburg-loading-spinner__content\` so the live region covers the \`title\` and \`message\` spans as well as the spinner — the \`<svg>\` is \`aria-hidden="true"\`, so a live region around it alone would announce nothing. Still give the overlay an accessible name with the standard \`aria-label\` attribute, which is forwarded to the overlay \`<div>\`. That is the step consumers most often skip.
 
 Props: \`visible?: boolean\` (default \`false\`), \`title?: string | null\`, \`message?: string | null\`, \`delayMs?: number\` (default \`1000\`), plus every \`<div>\` attribute except \`title\` — \`Omit<HTMLAttributes<HTMLDivElement>, 'title'>\`, since \`title\` is repurposed as the overlay heading rather than the native tooltip attribute. Forwards its ref to the overlay \`<div>\`. \`LoadingSpinnerProps\` is exported as a type.`;
 
@@ -56,9 +56,9 @@ const usagePlainHtml = `### Plain HTML / CSS
 \`\`\`html
 <div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
   <div class="tilburg-loading-spinner__panel">
-    <div class="tilburg-loading-spinner__content">
+    <div class="tilburg-loading-spinner__content" role="status">
       <span class="tilburg-loading-spinner__title">Bezig met laden</span>
-      <div role="status">
+      <div>
         <svg class="tilburg-loading-spinner__svg" viewBox="0 0 100 101"><!-- … --></svg>
       </div>
       <span class="tilburg-loading-spinner__message">Een momentje alstublieft...</span>
@@ -85,6 +85,13 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
 const spinnerSvg = `<svg aria-hidden="true" class="tilburg-loading-spinner__svg" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
   <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
@@ -100,9 +107,9 @@ export const examples = {
     name: 'Visible overlay (title + message)',
     html: `<div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
   <div class="tilburg-loading-spinner__panel">
-    <div class="tilburg-loading-spinner__content">
+    <div class="tilburg-loading-spinner__content" role="status">
       <span class="tilburg-loading-spinner__title">Bezig met laden</span>
-      <div role="status">
+      <div>
         ${spinnerSvg}
       </div>
       <span class="tilburg-loading-spinner__message">Een momentje alstublieft...</span>

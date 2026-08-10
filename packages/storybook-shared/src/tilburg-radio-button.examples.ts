@@ -40,7 +40,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 const usageReact = `### React
 
-\`RadioButton\` renders a bare \`<input type="radio">\`. There is no \`[control]\` input — the selected value of a group is ordinary React state that you compare against each button's \`value\`, and a single shared \`onChange\` handler writes it back.
+\`RadioButton\` renders a bare \`<input type="radio">\`. The selected value of a group is ordinary React state that you compare against each button's \`value\`, and a single shared \`onChange\` handler writes it back.
 
 \`\`\`tsx
 import { Fieldset, FormLabel, RadioButton } from '@gemeente-tilburg/components-react';
@@ -68,9 +68,9 @@ export function DeliveryField() {
 }
 \`\`\`
 
-The component is wrapped in \`forwardRef\` and forwards the ref straight to the \`<input>\`; any prop it does not consume is spread onto that input. Registering that ref (react-hook-form's \`register('delivery')\`, Formik, or a plain \`.focus()\`) is the React answer to Angular's \`[control]\` / \`[(ngModel)]\`. For uncontrolled groups use \`defaultChecked\` on one button and read the value from the surrounding \`<form>\` on submit.
+The component is wrapped in \`forwardRef\` and forwards the ref straight to the \`<input>\`; any prop it does not consume is spread onto that input. That ref is what form libraries register against — react-hook-form's \`register('delivery')\`, Formik, or a plain \`.focus()\` call. For uncontrolled groups use \`defaultChecked\` on one button and read the value from the surrounding \`<form>\` on submit.
 
-\`ariaLabel\` / \`ariaDescribedBy\` become the real DOM attributes \`aria-label\` / \`aria-describedby\`.
+Write the native \`aria-label\` / \`aria-describedby\` attributes directly on the component; they are spread onto the \`<input>\` as-is.
 
 Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-radio-button--invalid\`), plus every native input attribute except \`type\` (fixed to \`"radio"\`) — \`name\`, \`value\`, \`checked\`, \`defaultChecked\`, \`onChange\`, \`id\`, \`required\`, \`disabled\`, \`className\`, \`aria-*\`, … \`RadioButtonProps\` is exported as a type alias.`;
 
@@ -88,6 +88,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

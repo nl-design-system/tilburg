@@ -29,7 +29,7 @@ const usageReact = `### React
 \`\`\`tsx
 import { HtmlContent } from '@gemeente-tilburg/components-react';
 
-/* CMS-geleverde HTML: het React-equivalent van Angulars [html]-input. */
+/* CMS-geleverde HTML als string: injecteer die met dangerouslySetInnerHTML. */
 export function CmsBlok({ cmsHtml }: { cmsHtml: string }) {
   return <HtmlContent lang="nl" dangerouslySetInnerHTML={{ __html: cmsHtml }} />;
 }
@@ -50,7 +50,7 @@ export function Uitleg() {
 
 Pass either \`children\` or \`dangerouslySetInnerHTML\`, never both — React throws when both are set. As the prop name warns, \`dangerouslySetInnerHTML\` injects the string unescaped: only feed it HTML you have sanitised (server-side, or with something like DOMPurify), otherwise the CMS becomes an XSS vector.
 
-Props: no component-specific props. \`HtmlContentProps\` is an exported type alias of \`HTMLAttributes<HTMLDivElement>\`, so \`lang\` is simply the native attribute rather than a declared input like in Angular. Everything else you pass — \`children\`, \`className\` (merged after \`utrecht-html-content\`), \`dangerouslySetInnerHTML\`, \`id\`, \`aria-*\` — is spread onto the rendered \`<div>\`, which is also what the forwarded \`ref\` points at.`;
+Props: no component-specific props. \`HtmlContentProps\` is an exported type alias of \`HTMLAttributes<HTMLDivElement>\`, so \`lang\` is simply the native attribute. Everything else you pass — \`children\`, \`className\` (merged after \`utrecht-html-content\`), \`dangerouslySetInnerHTML\`, \`id\`, \`aria-*\` — is spread onto the rendered \`<div>\`, which is also what the forwarded \`ref\` points at.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -75,6 +75,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

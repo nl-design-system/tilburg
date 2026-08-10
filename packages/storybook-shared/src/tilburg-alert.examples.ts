@@ -44,7 +44,7 @@ export function OpeningHoursAlert() {
 }
 \`\`\`
 
-Angular projects a custom icon through \`slot="icon"\` / \`slot="close-icon"\`; React has no named slots, so both icons are plain \`ReactNode\` props. Leave them off to get the default per-variant glyph, pass your own node to replace it, or pass \`null\` to render no icon at all:
+Both icons are plain \`ReactNode\` props — \`icon\` for the severity glyph, \`closeIcon\` for the dismiss button. Leave them off to get the default per-variant glyph, pass your own node to replace it, or pass \`null\` to render no icon at all:
 
 \`\`\`tsx
 <Alert variant="danger" title="Er ging iets mis" icon={<ErrorIcon />} closable closeIcon={<CrossIcon />}>
@@ -53,7 +53,7 @@ Angular projects a custom icon through \`slot="icon"\` / \`slot="close-icon"\`; 
 </Alert>
 \`\`\`
 
-Props: \`variant\` (\`AlertVariant\` = \`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\` (default \`false\`), \`liveRegion\` (\`AlertLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, defaults to \`'assertive'\` when \`variant="danger"\` and \`'polite'\` otherwise), \`closeButtonAriaLabel\` (default \`'sluit alert'\`), \`icon\` and \`closeIcon\` (\`ReactNode\`), \`onClose\` (\`() => void\`), plus any \`<div>\` attribute (\`className\`, \`aria-label\`, …) and a forwarded \`ref\`. \`AlertProps\`, \`AlertVariant\` and \`AlertLiveRegion\` are exported as types. There is no \`srPrefix\` prop — render the visually-hidden severity prefix yourself as the first child, as above. As in Angular, \`role\` (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+Props: \`variant\` (\`AlertVariant\` = \`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\` (default \`false\`), \`liveRegion\` (\`AlertLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, defaults to \`'assertive'\` when \`variant="danger"\` and \`'polite'\` otherwise), \`closeButtonAriaLabel\` (default \`'sluit alert'\`), \`icon\` and \`closeIcon\` (\`ReactNode\`), \`onClose\` (\`() => void\`), plus any \`<div>\` attribute (\`className\`, \`aria-label\`, …) and a forwarded \`ref\`. \`AlertProps\`, \`AlertVariant\` and \`AlertLiveRegion\` are exported as types. There is no \`srPrefix\` prop — render the visually-hidden severity prefix yourself as the first child, as above. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -106,6 +106,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

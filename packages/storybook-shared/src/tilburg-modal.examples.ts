@@ -12,13 +12,13 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fmodal';
 
-export const description = `Native \`<dialog>\`-based modal styled with the \`tilburg-modal\` BEM class set. The Tilburg layer adds drop-shadow, rounded corners, a soft drop-in animation, and a backdrop blur. Reduced-motion users skip the animation.
+const intro = `Native \`<dialog>\`-based modal styled with the \`tilburg-modal\` BEM class set. The Tilburg layer adds drop-shadow, rounded corners, a soft drop-in animation, and a backdrop blur. Reduced-motion users skip the animation.`;
 
-## Usage
+const usageLead = `This component is pure CSS — there is no Angular wrapper. Use the platform \`<dialog>\` element together with the BEM classes; call \`.showModal()\` to open and \`.close()\` to dismiss.`;
 
-This component is pure CSS — there is no Angular wrapper. Use the platform \`<dialog>\` element together with the BEM classes; call \`.showModal()\` to open and \`.close()\` to dismiss.
+const usageLeadHtml = `This component is pure CSS. Use the platform \`<dialog>\` element together with the BEM classes; call \`.showModal()\` to open and \`.close()\` to dismiss.`;
 
-### Plain HTML / CSS
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <button type="button" onclick="document.getElementById('confirm').showModal()">
@@ -41,9 +41,9 @@ This component is pure CSS — there is no Angular wrapper. Use the platform \`<
     <button type="button" class="utrecht-button utrecht-button--secondary-action">Annuleren</button>
   </footer>
 </dialog>
-\`\`\`
+\`\`\``;
 
-### Angular (using the platform element)
+const usageAngular = `### Angular (using the platform element)
 
 \`\`\`ts
 @ViewChild('confirmDialog', { static: true }) confirm!: ElementRef<HTMLDialogElement>;
@@ -56,7 +56,26 @@ close() { this.confirm.nativeElement.close(); }
 <dialog #confirmDialog class="tilburg-modal" aria-labelledby="t">
   …same structure as above…
 </dialog>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageLead}
+
+${usagePlainHtml}
+
+${usageAngular}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usageLeadHtml}
+
+${usagePlainHtml}
 `;
 
 const closeIconSvg = `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">

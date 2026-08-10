@@ -27,12 +27,12 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <label class="utrecht-form-label" for="explanation">Toelichting</label>
-<textarea id="explanation" class="utrecht-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
+<textarea id="explanation" class="utrecht-textarea utrecht-textarea--html-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
 \`\`\``;
 
 const usageReact = `### React
 
-\`Textarea\` is a styled \`<textarea>\`. There is no \`[control]\` input: use \`value\` + \`onChange\` for a controlled field, or \`defaultValue\` for an uncontrolled one.
+\`Textarea\` is a styled \`<textarea>\`. Bind it like any React field: \`value\` + \`onChange\` for a controlled field, or \`defaultValue\` for an uncontrolled one.
 
 \`\`\`tsx
 import { FormLabel, Textarea } from '@gemeente-tilburg/components-react';
@@ -60,9 +60,9 @@ export function ExplanationField() {
 }
 \`\`\`
 
-The component is wrapped in \`forwardRef\` and forwards the ref to the \`<textarea>\`, spreading every prop it does not consume onto it — so \`{...register('explanation')}\` from react-hook-form, Formik's \`getFieldProps()\`, or a manual \`.focus()\` all work. That is what replaces Angular's \`[control]\` / \`[(ngModel)]\`.
+The component is wrapped in \`forwardRef\` and forwards the ref to the \`<textarea>\`, spreading every prop it does not consume onto it — so \`{...register('explanation')}\` from react-hook-form, Formik's \`getFieldProps()\`, or a manual \`.focus()\` all work without extra wiring.
 
-Two React-specific rules: the initial text goes in \`value\` / \`defaultValue\`, never as children (unlike the plain-HTML \`<textarea>…</textarea>\`), and Angular's \`readonly\` is spelled \`readOnly\`.
+Two React-specific rules: the initial text goes in \`value\` / \`defaultValue\`, never as children (unlike the plain-HTML \`<textarea>…</textarea>\`), and note the casing — the prop is \`readOnly\`, not \`readonly\`.
 
 Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-textarea--invalid\`), plus every native textarea attribute — \`value\`, \`defaultValue\`, \`onChange\`, \`name\`, \`id\`, \`placeholder\`, \`rows\`, \`cols\`, \`dir\`, \`required\`, \`readOnly\`, \`disabled\`, \`className\`, \`aria-*\`, … \`TextareaProps\` is exported as a type alias.`;
 
@@ -84,6 +84,13 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
 export interface Example {
   name: string;
   html: string;
@@ -97,28 +104,28 @@ export const examples = {
     name: 'Default',
     html: `<div style="${rowStyle}">
   <label class="utrecht-form-label" style="${labelStyle}" for="ta-default">Toelichting</label>
-  <textarea id="ta-default" class="utrecht-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
+  <textarea id="ta-default" class="utrecht-textarea utrecht-textarea--html-textarea" placeholder="Schrijf hier je toelichting…"></textarea>
 </div>`,
   },
   filled: {
     name: 'With value',
     html: `<div style="${rowStyle}">
   <label class="utrecht-form-label" style="${labelStyle}" for="ta-filled">Toelichting</label>
-  <textarea id="ta-filled" class="utrecht-textarea">Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning.</textarea>
+  <textarea id="ta-filled" class="utrecht-textarea utrecht-textarea--html-textarea">Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning.</textarea>
 </div>`,
   },
   invalid: {
     name: 'Invalid',
     html: `<div style="${rowStyle}">
   <label class="utrecht-form-label" style="${labelStyle}" for="ta-invalid">Toelichting</label>
-  <textarea id="ta-invalid" class="utrecht-textarea" aria-invalid="true">ongeldige inhoud</textarea>
+  <textarea id="ta-invalid" class="utrecht-textarea utrecht-textarea--html-textarea" aria-invalid="true">ongeldige inhoud</textarea>
 </div>`,
   },
   disabled: {
     name: 'Disabled',
     html: `<div style="${rowStyle}">
   <label class="utrecht-form-label" style="${labelStyle}" for="ta-disabled">Toelichting</label>
-  <textarea id="ta-disabled" class="utrecht-textarea" disabled>Deze toelichting kan niet bewerkt worden.</textarea>
+  <textarea id="ta-disabled" class="utrecht-textarea utrecht-textarea--html-textarea" disabled>Deze toelichting kan niet bewerkt worden.</textarea>
 </div>`,
   },
 } satisfies Record<string, Example>;

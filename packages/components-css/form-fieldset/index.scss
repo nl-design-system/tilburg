@@ -10,3 +10,17 @@ fieldset.utrecht-fieldset {
   padding-block: 0;
   padding-inline: 0;
 }
+
+/* A bare `<legend>` inside a fieldset gets the form-label treatment without the
+   consumer having to hand-add `utrecht-form-label` — the same escape hatch the
+   lists get from `--html-ol > li` / `--html-ul > li`. Mirrors the
+   `.utrecht-form-label:where(legend)` rule in the radio-button layer, so a
+   legend renders identically whether or not it carries the class. */
+.utrecht-fieldset > legend {
+  color: var(--tilburg-form-field-label-color, var(--utrecht-form-label-color));
+  font-size: var(--tilburg-form-field-label-font-size, var(--utrecht-form-label-font-size));
+  font-weight: 700;
+  margin-block-end: var(--tilburg-space-block-snail, 0.75rem);
+  padding-block: 0;
+  padding-inline: 0;
+}

@@ -27,20 +27,20 @@ import { UnorderedList } from '@gemeente-tilburg/components-react';
 export function Aanvragen() {
   return (
     <UnorderedList>
-      <li className="utrecht-unordered-list__item">
+      <li>
         Aanvragen
         <UnorderedList>
-          <li className="utrecht-unordered-list__item">Vergunningen</li>
-          <li className="utrecht-unordered-list__item">Subsidies</li>
+          <li>Vergunningen</li>
+          <li>Subsidies</li>
         </UnorderedList>
       </li>
-      <li className="utrecht-unordered-list__item">Contact</li>
+      <li>Contact</li>
     </UnorderedList>
   );
 }
 \`\`\`
 
-There is no separate list-item component: the children are plain \`<li>\` elements. Add \`className="utrecht-unordered-list__item"\` yourself for the utrecht item spacing and marker colour — \`UnorderedList\` only decorates the \`<ul>\`. Nest by rendering another \`<UnorderedList>\` (or \`<OrderedList>\`) inside an \`<li>\`; the nested list collapses its outer margins automatically.
+Write plain \`<li>\` children — no class needed. \`UnorderedList\` emits the \`utrecht-unordered-list--html-ul\` modifier on the \`<ul>\`, and the Tilburg CSS styles \`--html-ul > li\` exactly like an explicit \`.utrecht-unordered-list__item\`: item line height, the block spacing between items, the \`1ch\` inline padding that sets the marker gap, and the Tilburg marker colour all apply automatically. \`UnorderedListItem\` is available as an optional typed convenience if you prefer a component per item, but it is not required. Nest by rendering another \`<UnorderedList>\` (or \`<OrderedList>\`) inside an item; the nested list collapses its outer margins automatically.
 
 Props: no component-specific props. It accepts every standard \`<ul>\` attribute (\`className\`, \`aria-label\`, \`id\`, …) via \`HTMLAttributes<HTMLUListElement>\` and forwards its ref to the \`<ul>\`. \`UnorderedListProps\` is exported as a type alias for that attribute set.`;
 
@@ -67,6 +67,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

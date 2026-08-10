@@ -19,16 +19,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/* Every story passes `aria-label`, like the canonical HTML reference markup
+   does: the overlay has no text of its own that assistive tech can use as its
+   accessible name. */
 export const ImmediateWithTitleAndMessage: Story = {
-  render: () => <LoadingSpinner visible delayMs={0} title="Aan het laden" message="Even geduld..." />,
+  render: () => (
+    <LoadingSpinner visible delayMs={0} title="Aan het laden" message="Even geduld..." aria-label="Aan het laden" />
+  ),
 };
 
 export const ImmediateWithoutMessage: Story = {
-  render: () => <LoadingSpinner visible delayMs={0} title="Bezig" />,
+  render: () => <LoadingSpinner visible delayMs={0} title="Bezig" aria-label="Bezig" />,
 };
 
 export const ImmediateOnlySpinner: Story = {
-  render: () => <LoadingSpinner visible delayMs={0} />,
+  render: () => <LoadingSpinner visible delayMs={0} aria-label="Bezig met laden" />,
 };
 
 export const Hidden: Story = {

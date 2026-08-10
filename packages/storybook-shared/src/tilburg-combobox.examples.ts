@@ -37,9 +37,12 @@ const intro = `Combobox primitive on top of \`utrecht-combobox\` + \`utrecht-lis
 
 Active option (keyboard hover) is signalled with \`[data-active="true"]\` on the listbox option; selected is signalled with \`[aria-selected="true"]\`. WCAG 1.4.1 is satisfied by also drawing a coloured left border (pink for active, blue for selected) so state is communicated by shape as well as colour. The visible field is the \`.utrecht-combobox\` host; the inner input is borderless.`;
 
-const usagePlainHtml = `### Plain HTML / CSS
+/* The reference doc names the framework wrappers twice. The Angular storybook
+   wants them spelled out; the React storybook must not mention Angular at all,
+   so the wording is a parameter instead of two copies of the same prose. */
+const usagePlainHtmlFor = (wrappers: string) => `### Plain HTML / CSS
 
-The CSS in \`@gemeente-tilburg/components-css/combobox/index.scss\` paints the field but doesn't make it work — it has no idea when the popover should open, what an option click means, or how to add/remove chips. To get the same UX as the Angular/React wrappers without writing your own controller, opt in to the bundled JS enhancement.
+The CSS in \`@gemeente-tilburg/components-css/combobox/index.scss\` paints the field but doesn't make it work — it has no idea when the popover should open, what an option click means, or how to add/remove chips. To get the same UX as the ${wrappers} wrappers without writing your own controller, opt in to the bundled JS enhancement.
 
 **How to load it.** The enhancement is shipped as an ES module alongside the SCSS:
 
@@ -57,7 +60,7 @@ enhanceCombobox(myFragment); // or scope to a subtree
 
 When loaded as a \`<script type="module">\`, the file auto-runs once on \`DOMContentLoaded\` (or immediately if the DOM is already parsed). It's safe in SSR — every browser-only call is guarded on \`typeof document\`.
 
-**Opting in.** Add \`data-tilburg-combobox-enhance\` to the \`.utrecht-combobox\` host. Hosts without that attribute are skipped — that's how the Angular/React wrappers stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced host with \`data-tilburg-combobox-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup (e.g. via a SPA mutation observer).
+**Opting in.** Add \`data-tilburg-combobox-enhance\` to the \`.utrecht-combobox\` host. Hosts without that attribute are skipped — that's how the ${wrappers} wrappers stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced host with \`data-tilburg-combobox-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup (e.g. via a SPA mutation observer).
 
 **What it wires up.**
 
@@ -101,6 +104,10 @@ When loaded as a \`<script type="module">\`, the file auto-runs once on \`DOMCon
 \`\`\`
 
 For chiplist mode, add the \`tilburg-combobox--multiple\` modifier to the host, set \`aria-multiselectable="true"\` on the listbox, and ship a pre-rendered \`<span class="tilburg-combobox__chip">\` for each already-selected option — the enhancer will keep the chip row and the option \`aria-selected\` attributes in sync from there.`;
+
+const usagePlainHtml = usagePlainHtmlFor('Angular/React');
+
+const usagePlainHtmlFrameworkNeutral = usagePlainHtmlFor('framework');
 
 const usageReact = `### React
 
@@ -175,9 +182,16 @@ export const descriptionReact = `${intro}
 
 ## Usage
 
-${usagePlainHtml}
+${usagePlainHtmlFrameworkNeutral}
 
 ${usageReact}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtmlFrameworkNeutral}
 `;
 
 const rowStyle = 'display:flex;flex-direction:column;gap:0.5rem;max-width:24rem';

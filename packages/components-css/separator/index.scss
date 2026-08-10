@@ -9,4 +9,10 @@ hr.utrecht-separator {
   border-block-start-style: solid;
   border-block-start-width: var(--tilburg-line-border-width);
   margin-block: var(--tilburg-space-block-mouse, 1rem);
+
+  /* The UA stylesheet gives `<hr>` `margin-inline: auto`. In normal flow that
+     resolves to 0 (the element is already full width), but as a flex or grid
+     item an auto cross-axis margin suppresses stretching, so the divider
+     shrinks to its zero-width content and disappears. Reset it. */
+  margin-inline: 0;
 }

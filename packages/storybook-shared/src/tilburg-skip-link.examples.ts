@@ -69,6 +69,13 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 Drop the markup above into the first child of \`<body>\`. No JS, no React, no Angular needed — utrecht's CSS provides the off-screen / on-focus / on-screen behaviour, Tilburg's design tokens provide the colours.`;
 
+/* Same content as `usagePlainHtml`, worded without framework comparisons, for
+   the React and HTML/CSS storybook pages. `usagePlainHtml` itself must stay
+   untouched: `description` (the Angular storybook page) interpolates it. */
+const usagePlainHtmlReact = `### Plain HTML / CSS
+
+Drop the markup above into the first child of \`<body>\`. No JavaScript and no framework needed — utrecht's CSS provides the off-screen / on-focus / on-screen behaviour, Tilburg's design tokens provide the colours.`;
+
 const usageReact = `### React
 
 \`\`\`tsx
@@ -115,9 +122,16 @@ export const descriptionReact = `${intro}
 
 ## Usage
 
-${usagePlainHtml}
+${usagePlainHtmlReact}
 
 ${usageReact}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtmlReact}
 `;
 
 export interface Example {

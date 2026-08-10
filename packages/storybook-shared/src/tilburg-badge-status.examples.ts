@@ -26,7 +26,7 @@ export function AanvraagStatus() {
 
 Props: \`status\` (\`string\`, appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), plus any standard \`<span>\` attribute (\`aria-label\`, \`className\`, …). \`BadgeStatusProps\` is exported as a type alias.
 
-\`role="status"\` and \`aria-live\` are set for you. If you don't pass an \`aria-label\`, the \`status\` value is used as the accessible name — same cascade as the Angular component.`;
+\`role="status"\` and \`aria-live\` are set for you. If you don't pass an \`aria-label\`, the \`status\` value is used as the accessible name.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -48,6 +48,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

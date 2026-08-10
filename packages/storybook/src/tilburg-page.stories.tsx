@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { bugs, description, examples } from '../../storybook-shared/src/tilburg-page.examples';
+import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilburg-page.examples';
 
 /* Thin React wrapper around the shared HTML/CSS reference markup
    (`packages/storybook-shared/src/tilburg-page.examples.ts`). The Angular
@@ -14,7 +14,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionHtml } },
   },
 } satisfies Meta;
 

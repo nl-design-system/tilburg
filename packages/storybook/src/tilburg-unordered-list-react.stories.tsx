@@ -18,28 +18,34 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/* Plain `<li>` children. `UnorderedList` emits `utrecht-unordered-list--html-ul`,
+   and the CSS layer styles `--html-ul > li` identically to an explicit
+   `.utrecht-unordered-list__item`, so item spacing, the `1ch` inline padding and
+   the Tilburg marker colour apply without the consumer adding any class. */
 export const AllPermutations: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <div>
         <h4>Default</h4>
         <UnorderedList>
-          <li>Eerste</li>
-          <li>Tweede</li>
-          <li>Derde</li>
+          <li>
+            In deze app staan niet de dagen waarop wij de wijkcontainers legen, alleen de huiscontainers (kliko&apos;s).
+          </li>
+          <li>Je kunt je afval gescheiden aanbieden via de kliko of de milieustraat.</li>
+          <li>Op feestdagen kan de ophaaldag verschuiven; controleer de afvalkalender.</li>
         </UnorderedList>
       </div>
       <div>
         <h4>Nested</h4>
         <UnorderedList>
           <li>
-            Bovenste
+            Aanvragen
             <UnorderedList>
-              <li>Geneste 1</li>
-              <li>Geneste 2</li>
+              <li>Vergunningen</li>
+              <li>Subsidies</li>
             </UnorderedList>
           </li>
-          <li>Volgende</li>
+          <li>Contact</li>
         </UnorderedList>
       </div>
     </div>

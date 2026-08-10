@@ -34,7 +34,7 @@ Only \`tilburg-table\` is an element. The other seven are **attribute directives
 
 const usageReact = `### React
 
-React ships a compound family of real components instead of the attribute directives Angular uses. Every part renders its own native element (\`<thead>\`, \`<tbody>\`, \`<tr>\`, \`<th>\`, \`<td>\`, …) with the matching \`utrecht-table__*\` class already applied, so you never write those classes by hand.
+React ships a compound family of real components. Every part renders its own native element (\`<thead>\`, \`<tbody>\`, \`<tr>\`, \`<th>\`, \`<td>\`, …) with the matching \`utrecht-table__*\` class already applied, so you never write those classes by hand.
 
 \`\`\`tsx
 import {
@@ -130,6 +130,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

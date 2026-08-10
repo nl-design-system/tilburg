@@ -24,17 +24,17 @@ export const AllPermutations: Story = {
       <div>
         <h4>Default (numeric)</h4>
         <OrderedList>
-          <li>Eerste stap</li>
-          <li>Tweede stap</li>
-          <li>Derde stap</li>
+          <li>Gemeente Tilburg rekenkamer</li>
+          <li>Gemeente Tilburg college</li>
+          <li>Gemeente Tilburg contact</li>
         </OrderedList>
       </div>
       <div>
         <h4>byLetter</h4>
         <OrderedList byLetter>
-          <li>Eerste</li>
-          <li>Tweede</li>
-          <li>Derde</li>
+          <li>Eerste stap</li>
+          <li>Tweede stap</li>
+          <li>Derde stap</li>
         </OrderedList>
       </div>
       <div>
