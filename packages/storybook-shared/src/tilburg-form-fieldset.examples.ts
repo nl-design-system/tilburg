@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-fieldset';
 
-export const description = `Groups related form fields under a single legend so assistive tech announces the group label before each field. Wraps the native \`<fieldset>\` + \`<legend>\` pair with utrecht-fieldset styling.
+const intro = `Groups related form fields under a single legend so assistive tech announces the group label before each field. Wraps the native \`<fieldset>\` + \`<legend>\` pair with utrecht-fieldset styling.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-form-fieldset ariaLabel="Persoonsgegevens">
@@ -19,16 +17,57 @@ export const description = `Groups related form fields under a single legend so 
 </tilburg-form-fieldset>
 \`\`\`
 
-Inputs: \`disabled\`, \`invalid\`, \`ariaLabel\`, \`ariaLabelledby\`, \`ariaDescribedBy\`.
+Inputs: \`disabled\`, \`invalid\`, \`ariaLabel\`, \`ariaLabelledby\`, \`ariaDescribedBy\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+The component is \`Fieldset\` (not \`FormFieldset\`). There is no \`legend\` prop — pass a real \`<legend class="utrecht-form-label">\` as the first child, exactly like the plain HTML version, so the native fieldset/legend relationship stays intact.
+
+\`\`\`tsx
+import { Checkbox, Fieldset, FormLabel } from '@gemeente-tilburg/components-react';
+
+export function Persoonsgegevens({ invalid }: { invalid: boolean }) {
+  return (
+    <Fieldset invalid={invalid}>
+      <legend className="utrecht-form-label">Persoonsgegevens</legend>
+      <FormLabel type="checkbox">
+        <Checkbox name="nieuwsbrief" /> Nieuwsbrief ontvangen
+      </FormLabel>
+      <FormLabel type="checkbox">
+        <Checkbox name="updates" /> Updates over mijn aanvraag
+      </FormLabel>
+    </Fieldset>
+  );
+}
+\`\`\`
+
+Props: \`invalid\` (adds \`utrecht-fieldset--invalid\` and \`aria-invalid="true"\`), plus any standard \`<fieldset>\` attribute — \`disabled\` is the native one (it also adds \`utrecht-fieldset--disabled\`), and the Angular \`ariaLabel\` / \`ariaLabelledby\` / \`ariaDescribedBy\` inputs have no React counterparts: pass \`aria-label\`, \`aria-labelledby\`, and \`aria-describedby\` directly. \`FieldsetProps\` is exported as a type alias.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <fieldset class="utrecht-fieldset">
   <legend class="utrecht-form-label">Persoonsgegevens</legend>
   <!-- form fields -->
 </fieldset>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

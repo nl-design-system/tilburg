@@ -2,7 +2,7 @@
 
 import { Alert } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-alert.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-alert.examples';
 
 const meta = {
   title: 'Tilburg React/Alert',
@@ -11,7 +11,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof Alert>;
 

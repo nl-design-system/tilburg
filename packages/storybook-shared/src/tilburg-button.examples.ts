@@ -4,21 +4,39 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fbutton';
 
-export const description = `Tilburg-specific button variants on top of utrecht: \`.tilburg-small / .tilburg-medium / .tilburg-large\` size classes and \`--secondary-action\` / \`--subtle\` focus overrides.
+const intro = `Tilburg-specific button variants on top of utrecht: \`.tilburg-small / .tilburg-medium / .tilburg-large\` size classes and \`--secondary-action\` / \`--subtle\` focus overrides.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
-<tilburg-button appearance="primary-action" size="medium" (click)="submit()">
+<tilburg-button appearance="primary-action-button" size="medium" (click)="submit()">
   Versturen
 </tilburg-button>
 \`\`\`
 
-Inputs: \`appearance\` (\`'primary-action' | 'secondary-action' | 'subtle'\`), \`size\` (\`'small' | 'medium' | 'large'\`), \`type\`, \`disabled\`, \`title\`, \`ariaLabel\`, \`ariaDescribedBy\`, \`pressed\`.
+Inputs: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`, default \`'primary-action-button'\`), \`size\` (\`'small' | 'medium' | 'large'\`), \`type\`, \`disabled\`, \`title\`, \`ariaLabel\`, \`ariaDescribedBy\`, \`pressed\`.
 
-### Plain HTML / CSS
+The \`-button\` suffix is required: utrecht's \`[utrecht-button]\` directive maps \`appearance === 'primary-action-button'\` to \`.utrecht-button--primary-action\`, so an unsuffixed value silently renders a button with no appearance modifier.`;
+
+const usageReact = `### React
+
+\`\`\`tsx
+import { Button } from '@gemeente-tilburg/components-react';
+
+export function AanvraagFormulier({ onSubmit }: { onSubmit: () => void }) {
+  return (
+    <Button appearance="primary-action-button" size="medium" onClick={onSubmit}>
+      Versturen
+    </Button>
+  );
+}
+\`\`\`
+
+Props: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`size\` (\`'small' | 'medium' | 'large'\`, default \`'medium'\`), \`pressed\`, \`busy\`, plus any standard button attribute (\`type\` — default \`'button'\`, \`disabled\`, \`title\`, \`onClick\`, \`aria-label\`, \`aria-describedby\`, \`className\`, …). \`ButtonAppearance\` and \`ButtonSize\` are exported as type aliases.
+
+The \`appearance\` values are the same \`-button\`-suffixed strings Angular uses, so they copy across unchanged. React adds a \`busy\` flag that renders \`utrecht-button--busy\`, which has no Angular counterpart. Like Angular, an omitted \`aria-label\` falls back to \`title\`, so icon-only buttons still get an accessible name.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">
@@ -26,9 +44,9 @@ Inputs: \`appearance\` (\`'primary-action' | 'secondary-action' | 'subtle'\`), \
 </button>
 \`\`\`
 
-Combine one size class (\`tilburg-small | tilburg-medium | tilburg-large\`) with one appearance modifier (\`utrecht-button--primary-action | utrecht-button--secondary-action | utrecht-button--subtle\`).
+Combine one size class (\`tilburg-small | tilburg-medium | tilburg-large\`) with one appearance modifier (\`utrecht-button--primary-action | utrecht-button--secondary-action | utrecht-button--subtle\`).`;
 
-## Vertical baseline shift (why button text is nudged down)
+const baselineShift = `## Vertical baseline shift (why button text is nudged down)
 
 Tilburg buttons use **TradeGothicCondensed18**, whose vertical font metrics put more empty descent space below the baseline than ascent space above. With \`line-height: 1\` the line-box still includes that descent zone, and flex-centring the line-box places the visible letters in the upper half of the box — so the text reads as sitting *above* the geometric centre of the button.
 
@@ -44,7 +62,28 @@ The shift amount lives in the design-token layer (\`proprietary/design-tokens/sr
 
 Small and medium buttons need a smaller shift because their padding-block budget is smaller — the same 4px that optically centres a large button visibly skews a small one.
 
-Adjust the values in \`button.tokens.json\` and rebuild the design-tokens package (\`pnpm pack:dist\`) if the optical centre still feels off after a font change.
+Adjust the values in \`button.tokens.json\` and rebuild the design-tokens package (\`pnpm pack:dist\`) if the optical centre still feels off after a font change.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+
+${baselineShift}
 `;
 
 export interface Example {

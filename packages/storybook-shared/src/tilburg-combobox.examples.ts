@@ -30,16 +30,14 @@ const chevronSvg =
 const closeSvg =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>';
 
-export const description = `Combobox primitive on top of \`utrecht-combobox\` + \`utrecht-listbox\`. Two visual modes share the same outer shell:
+const intro = `Combobox primitive on top of \`utrecht-combobox\` + \`utrecht-listbox\`. Two visual modes share the same outer shell:
 
 - **Normal** (\`multiple=false\`): single-line input + chevron; selecting an option replaces the value and closes the popover.
 - **Chiplist** (\`multiple=true\`): selected options render as removable chips inside the host before the input.
 
-Active option (keyboard hover) is signalled with \`[data-active="true"]\` on the listbox option; selected is signalled with \`[aria-selected="true"]\`. WCAG 1.4.1 is satisfied by also drawing a coloured left border (pink for active, blue for selected) so state is communicated by shape as well as colour. The visible field is the \`.utrecht-combobox\` host; the inner input is borderless.
+Active option (keyboard hover) is signalled with \`[data-active="true"]\` on the listbox option; selected is signalled with \`[aria-selected="true"]\`. WCAG 1.4.1 is satisfied by also drawing a coloured left border (pink for active, blue for selected) so state is communicated by shape as well as colour. The visible field is the \`.utrecht-combobox\` host; the inner input is borderless.`;
 
-## Usage
-
-### Plain HTML / CSS
+const usagePlainHtml = `### Plain HTML / CSS
 
 The CSS in \`@gemeente-tilburg/components-css/combobox/index.scss\` paints the field but doesn't make it work — it has no idea when the popover should open, what an option click means, or how to add/remove chips. To get the same UX as the Angular/React wrappers without writing your own controller, opt in to the bundled JS enhancement.
 
@@ -102,7 +100,84 @@ When loaded as a \`<script type="module">\`, the file auto-runs once on \`DOMCon
 </div>
 \`\`\`
 
-For chiplist mode, add the \`tilburg-combobox--multiple\` modifier to the host, set \`aria-multiselectable="true"\` on the listbox, and ship a pre-rendered \`<span class="tilburg-combobox__chip">\` for each already-selected option — the enhancer will keep the chip row and the option \`aria-selected\` attributes in sync from there.
+For chiplist mode, add the \`tilburg-combobox--multiple\` modifier to the host, set \`aria-multiselectable="true"\` on the listbox, and ship a pre-rendered \`<span class="tilburg-combobox__chip">\` for each already-selected option — the enhancer will keep the chip row and the option \`aria-selected\` attributes in sync from there.`;
+
+const usageReact = `### React
+
+\`<Combobox>\` is a fully controlled component: it renders the same DOM as the reference markup above (so the CSS applies as-is) and drives open/close, active option, keyboard nav, chips and outside-click itself. It never emits the \`data-tilburg-combobox-enhance\` attribute, so the HTML/CSS enhancer stays out of its way.
+
+Normal mode — a single value:
+
+\`\`\`tsx
+import { Combobox, type ComboboxItem } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+const contactOptions: ComboboxItem<string>[] = [
+  { value: 'email', label: 'E-mail' },
+  { value: 'post', label: 'Per post' },
+  { value: 'balie', label: 'Ophalen bij de balie' },
+];
+
+export function ContactPreference() {
+  const [value, setValue] = useState<string | null>('email');
+  return (
+    <>
+      <label className="utrecht-form-label" htmlFor="cb-contact">
+        Voorkeurscontact
+      </label>
+      <Combobox id="cb-contact" items={contactOptions} value={value} onChange={setValue} clearable />
+    </>
+  );
+}
+\`\`\`
+
+Chiplist mode — pass \`multiple\`, and \`value\` / \`onChange\` switch to arrays:
+
+\`\`\`tsx
+const documentOptions: ComboboxItem<string>[] = [
+  { value: 'paspoort', label: 'Paspoort' },
+  { value: 'geboorteakte', label: 'Geboorteakte' },
+  { value: 'rijbewijs', label: 'Rijbewijs' },
+  { value: 'verblijfsdocument', label: 'Verblijfsdocument' },
+];
+
+export function RequestDocuments() {
+  const [values, setValues] = useState<string[]>(['paspoort', 'geboorteakte']);
+  return (
+    <Combobox
+      id="cb-documents"
+      multiple
+      items={documentOptions}
+      value={values}
+      onChange={setValues}
+      clearable
+      placeholder="Voeg een document toe"
+      aria-label="Aanvraagdocumenten"
+    />
+  );
+}
+\`\`\`
+
+Shared props: \`items\` (\`ReadonlyArray<ComboboxItem<V>>\`, required — each item is \`{ value: V; label: string; disabled?: boolean }\`), \`id\` (falls back to a \`useId\`-generated \`tilburg-combobox-…\`; the listbox and option ids are derived from it), \`placeholder\`, \`disabled\`, \`invalid\` (sets \`aria-invalid\`), \`required\` (sets \`aria-required\`), \`clearable\` (shows the × clear button once something is selected), \`aria-label\`, \`aria-describedby\`, \`className\`. The forwarded \`ref\` points at the inner \`<input>\`, not at the host.
+
+Mode-specific props are a discriminated union, so TypeScript picks the right \`value\` / \`onChange\` pair for you: \`SingleComboboxProps<V>\` takes \`multiple?: false\`, \`value: V | null | undefined\` and \`onChange: (value: V | null | undefined) => void\` (the clear button passes \`null\`); \`MultiComboboxProps<V>\` takes \`multiple: true\`, \`value: readonly V[]\` and \`onChange: (value: V[]) => void\`. \`ComboboxItem\`, \`ComboboxProps\`, \`SingleComboboxProps\` and \`MultiComboboxProps\` are exported as types.
+
+There is no searchable/filtering mode yet — the inner input is \`readOnly\` and only handles keyboard navigation (ArrowDown/Up, Home/End, Enter, Escape, and Backspace to drop the last chip in chiplist mode).`;
+
+export const description = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+
+${usageReact}
 `;
 
 const rowStyle = 'display:flex;flex-direction:column;gap:0.5rem;max-width:24rem';

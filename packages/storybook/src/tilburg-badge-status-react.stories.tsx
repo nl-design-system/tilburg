@@ -2,7 +2,7 @@
 
 import { BadgeStatus } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-badge-status.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-badge-status.examples';
 
 const meta = {
   title: 'Tilburg React/Badge Status',
@@ -11,7 +11,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof BadgeStatus>;
 

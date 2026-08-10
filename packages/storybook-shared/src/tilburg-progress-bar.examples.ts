@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fprogress-bar';
 
-export const description = `Step-progress indicator with optional back link, title, and "Stap X van Y" label.
+const intro = `Step-progress indicator with optional back link, title, and "Stap X van Y" label.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-progress-bar
@@ -24,9 +22,37 @@ export const description = `Step-progress indicator with optional back link, tit
 />
 \`\`\`
 
-Inputs: \`value\`, \`total\`, \`label\`, \`title\`, \`backLabel\`, \`showBack\`, \`ariaLabel\`. Output: \`(backClick)\`. The percentage is computed from \`value / total\` and clamped to 0–100.
+Inputs: \`value\`, \`total\`, \`label\`, \`title\`, \`backLabel\`, \`showBack\`, \`ariaLabel\`. Output: \`(backClick)\`. The percentage is computed from \`value / total\` and clamped to 0–100.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { ProgressBar } from '@gemeente-tilburg/components-react';
+
+export function AddressStep({ goBack }: { goBack: () => void }) {
+  return (
+    <ProgressBar
+      value={2}
+      total={4}
+      title="Adresgegevens"
+      label="Stap 2 van 4"
+      showBack
+      backLabel="Vorige stap"
+      onBackClick={() => goBack()}
+    />
+  );
+}
+\`\`\`
+
+The back link is an \`<a href="#">\`, and \`onBackClick\` runs after \`preventDefault()\` — so route yourself, don't rely on the href. Angular projects a custom arrow through \`slot="back-icon"\`; in React it's the \`backIcon\` prop, which defaults to \`<span aria-hidden="true">←</span>\` and accepts \`null\` for no arrow:
+
+\`\`\`tsx
+<ProgressBar value={3} total={4} title="Bevestiging" label="Stap 3 van 4" showBack backLabel="Vorige stap" backIcon={<ChevronLeft />} />
+\`\`\`
+
+Props: \`value\` (default \`0\`), \`total\` (default \`0\`), \`label\`, \`title\`, \`backLabel\`, \`showBack\` (default \`false\`), \`backIcon\` (\`ReactNode\`), \`onBackClick\` (\`(event: MouseEvent<HTMLAnchorElement>) => void\`, Angular's \`(backClick)\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`ProgressBarProps\` is exported as a type. Angular's \`ariaLabel\` input is the plain \`aria-label\` attribute here; it lands on the \`role="progressbar"\` track and falls back to \`title\`, then to \`'Voortgang'\`. As in Angular the percentage is \`value / total\` clamped to 0–100, and \`label\` doubles as the track's \`aria-valuetext\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <a class="tilburg-progress-bar__back utrecht-link utrecht-link--html-a" href="#" >
@@ -48,7 +74,24 @@ Inputs: \`value\`, \`total\`, \`label\`, \`title\`, \`backLabel\`, \`showBack\`,
 >
   <div class="tilburg-progress-bar__indicator progress-bar-indicator" style="width: 50%"></div>
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

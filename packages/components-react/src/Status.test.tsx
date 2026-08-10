@@ -78,11 +78,15 @@ describe('Pagination', () => {
 });
 
 describe('ProgressBar', () => {
+  /* `value`/`total` are reported on a normalised 0-100 scale, matching the
+     `percentage` getter in the Angular `TilburgProgressBar` template. So
+     50 of 200 is announced as 25, not as "50 of 200". */
   it('exposes the progressbar role with computed values', () => {
     render(<ProgressBar value={50} total={200} title="Step 2" />);
     const bar = screen.getByRole('progressbar');
-    expect(bar).toHaveAttribute('aria-valuenow', '50');
-    expect(bar).toHaveAttribute('aria-valuemax', '200');
+    expect(bar).toHaveAttribute('aria-valuenow', '25');
+    expect(bar).toHaveAttribute('aria-valuemin', '0');
+    expect(bar).toHaveAttribute('aria-valuemax', '100');
   });
 
   it('renders a back link when showBack and fires onBackClick', () => {

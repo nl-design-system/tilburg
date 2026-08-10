@@ -4,23 +4,52 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fbadge-status';
 
-export const description = `Small inline badge that conveys a status (info / success / warning / error). Renders an \`aria-live\` region so screen readers announce the status when it changes.
+const intro = `Small inline badge that conveys a status (info / success / warning / error). Renders an \`aria-live\` region so screen readers announce the status when it changes.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-badge-status status="success">Goedgekeurd</tilburg-badge-status>
 \`\`\`
 
-Inputs: \`status\` (\`'info' | 'success' | 'warning' | 'error'\`), \`liveRegion\`, \`ariaLabel\`.
+Inputs: \`status\` (\`'info' | 'success' | 'warning' | 'error'\`), \`liveRegion\`, \`ariaLabel\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { BadgeStatus } from '@gemeente-tilburg/components-react';
+
+export function AanvraagStatus() {
+  return <BadgeStatus status="success">Goedgekeurd</BadgeStatus>;
+}
+\`\`\`
+
+Props: \`status\` (\`string\`, appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), plus any standard \`<span>\` attribute (\`aria-label\`, \`className\`, …). \`BadgeStatusProps\` is exported as a type alias.
+
+\`role="status"\` and \`aria-live\` are set for you. If you don't pass an \`aria-label\`, the \`status\` value is used as the accessible name — same cascade as the Angular component.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <span class="utrecht-badge-status utrecht-badge-status--success" role="status">Goedgekeurd</span>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

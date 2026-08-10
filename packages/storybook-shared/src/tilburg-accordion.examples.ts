@@ -14,11 +14,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Faccordion';
 
-export const description = `Tilburg accordion built on \`.utrecht-accordion\`. Sections have a thin gray border, no internal panel padding, and the projected expand/collapse icon stays at the right edge. Arrow Up/Down and Home/End move focus between section buttons.
+const intro = `Tilburg accordion built on \`.utrecht-accordion\`. Sections have a thin gray border, no internal panel padding, and the projected expand/collapse icon stays at the right edge. Arrow Up/Down and Home/End move focus between section buttons.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-accordion ariaLabel="Veelgestelde vragen">
@@ -38,9 +36,58 @@ export const description = `Tilburg accordion built on \`.utrecht-accordion\`. S
 \`\`\`
 
 \`<tilburg-accordion>\` inputs: \`ariaLabel\`, \`headingLevel\` (1–6, default 2), \`displayName\`.
-\`<tilburg-accordion-section>\` inputs: \`key\`, \`label\`, \`expanded\`, \`disabled\`, \`autoToggle\`; output: \`(toggled)\`.
+\`<tilburg-accordion-section>\` inputs: \`key\`, \`label\`, \`expanded\`, \`disabled\`, \`autoToggle\`; output: \`(toggled)\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { Accordion, AccordionSection } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function Faq() {
+  const [openId, setOpenId] = useState<string | null>('apply');
+  return (
+    <Accordion aria-label="Veelgestelde vragen">
+      <AccordionSection
+        sectionKey="apply"
+        label="Hoe vraag ik een vergunning aan?"
+        expanded={openId === 'apply'}
+        onToggle={() => setOpenId(openId === 'apply' ? null : 'apply')}
+      >
+        <p className="utrecht-paragraph">Je kunt een vergunning aanvragen via …</p>
+      </AccordionSection>
+
+      <AccordionSection sectionKey="time" label="Hoe lang duurt de behandeling?" autoToggle>
+        <p className="utrecht-paragraph">De behandeltijd hangt af van …</p>
+      </AccordionSection>
+    </Accordion>
+  );
+}
+\`\`\`
+
+Like the Angular wrapper, a section is controlled by default: \`expanded\` decides what's open and \`onToggle(nextExpanded)\` tells you the user asked to flip it. Set \`autoToggle\` to hand that bookkeeping to the section itself — it then keeps its own state and \`onToggle\` is a pure notification.
+
+Angular projects a custom glyph through \`slot="icon-collapsed"\` / \`slot="icon-expanded"\`. React has no named slots: pass the nodes as the \`iconCollapsed\` and \`iconExpanded\` props instead. Both default to the plain \`+\` / \`−\` characters that the Angular template also falls back to.
+
+\`\`\`tsx
+<AccordionSection
+  sectionKey="appeal"
+  label="Kan ik bezwaar maken?"
+  autoToggle
+  iconCollapsed={<ChevronDown />}
+  iconExpanded={<ChevronUp />}
+>
+  <p className="utrecht-paragraph">Ja, je kunt binnen 6 weken bezwaar maken.</p>
+</AccordionSection>
+\`\`\`
+
+\`<Accordion>\` props: \`headingLevel\` (1–6, default 2), \`displayName\`, plus any \`<div>\` attribute and a forwarded \`ref\`. Angular's \`ariaLabel\` input is just the standard \`aria-label\` attribute here; setting it also puts \`role="region"\` on the root, exactly as the Angular template does.
+
+\`<AccordionSection>\` props: \`sectionKey\` (Angular's \`key\`, renamed because \`key\` is reserved by React; it builds the \`utrecht-accordion-<sectionKey>-button\` / \`-panel\` ids), \`label\`, \`expanded\` (default \`false\`), \`disabled\` (default \`false\`), \`autoToggle\` (default \`false\`), \`iconCollapsed\` and \`iconExpanded\` (\`ReactNode\`), \`onToggle\` (\`(nextExpanded: boolean) => void\`, Angular's \`(toggled)\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`AccordionProps\` and \`AccordionSectionProps\` are exported as types.
+
+Note that the React sections do not (yet) implement the Arrow Up/Down and Home/End roving focus that the Angular wrapper and the HTML/CSS enhancer provide — Tab still moves between section buttons.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 The CSS in \`@gemeente-tilburg/components-css/accordion/index.scss\` paints the panels, borders, and the \`+\` / \`−\` glyph (driven off \`[aria-expanded]\` via \`:empty::before\` rules on \`utrecht-accordion__button-icon\`) — but it can't toggle \`aria-expanded\` or hide a panel on its own. To get the same UX as the Angular/React wrappers without writing your own controller, opt in to the bundled JS enhancement.
 
@@ -99,7 +146,24 @@ When loaded as a \`<script type="module">\`, it auto-runs once on \`DOMContentLo
 </div>
 \`\`\`
 
-The first section ships expanded (\`aria-expanded="true"\` + no \`[hidden]\` on its panel); for any section that should start collapsed, set \`aria-expanded="false"\` on the button and \`hidden\` on its panel. The two attributes must agree on first paint — after that the enhancer keeps them in sync.
+The first section ships expanded (\`aria-expanded="true"\` + no \`[hidden]\` on its panel); for any section that should start collapsed, set \`aria-expanded="false"\` on the button and \`hidden\` on its panel. The two attributes must agree on first paint — after that the enhancer keeps them in sync.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

@@ -30,7 +30,7 @@ export type { FormFieldProps } from './FormField';
 export { FormFieldDescription } from './FormFieldDescription';
 export type { FormFieldDescriptionProps } from './FormFieldDescription';
 export { FormLabel } from './FormLabel';
-export type { FormLabelProps } from './FormLabel';
+export type { FormLabelProps, FormLabelType } from './FormLabel';
 export { Heading1 } from './Heading1';
 export type { Heading1Props } from './Heading1';
 export { Heading2 } from './Heading2';

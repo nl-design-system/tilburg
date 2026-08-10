@@ -10,11 +10,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Falert';
 
-export const description = `Tilburg alert built on \`.utrecht-alert\` + \`.tilburg-alert\` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.
-
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-alert
@@ -29,9 +25,37 @@ export const description = `Tilburg alert built on \`.utrecht-alert\` + \`.tilbu
 </tilburg-alert>
 \`\`\`
 
-Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.
+Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { Alert } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function OpeningHoursAlert() {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return null;
+  return (
+    <Alert variant="info" title="Informatie" closable liveRegion="polite" onClose={() => setVisible(false)}>
+      De openingstijden zijn gewijzigd.
+    </Alert>
+  );
+}
+\`\`\`
+
+Angular projects a custom icon through \`slot="icon"\` / \`slot="close-icon"\`; React has no named slots, so both icons are plain \`ReactNode\` props. Leave them off to get the default per-variant glyph, pass your own node to replace it, or pass \`null\` to render no icon at all:
+
+\`\`\`tsx
+<Alert variant="danger" title="Er ging iets mis" icon={<ErrorIcon />} closable closeIcon={<CrossIcon />}>
+  <span className="utrecht-visually-hidden">Fout:</span>
+  Probeer het opnieuw of neem contact op met de gemeente.
+</Alert>
+\`\`\`
+
+Props: \`variant\` (\`AlertVariant\` = \`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\` (default \`false\`), \`liveRegion\` (\`AlertLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, defaults to \`'assertive'\` when \`variant="danger"\` and \`'polite'\` otherwise), \`closeButtonAriaLabel\` (default \`'sluit alert'\`), \`icon\` and \`closeIcon\` (\`ReactNode\`), \`onClose\` (\`() => void\`), plus any \`<div>\` attribute (\`className\`, \`aria-label\`, …) and a forwarded \`ref\`. \`AlertProps\`, \`AlertVariant\` and \`AlertLiveRegion\` are exported as types. There is no \`srPrefix\` prop — render the visually-hidden severity prefix yourself as the first child, as above. As in Angular, \`role\` (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <!-- info / success / warning: role="status" aria-live="polite" -->
@@ -64,7 +88,26 @@ Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'i
 </div>
 \`\`\`
 
-Variant modifiers map: \`success\` → \`.utrecht-alert--ok\`, \`danger\` → \`.utrecht-alert--error\`; \`info\` and \`warning\` keep their names.
+Variant modifiers map: \`success\` → \`.utrecht-alert--ok\`, \`danger\` → \`.utrecht-alert--error\`; \`info\` and \`warning\` keep their names.`;
+
+const intro = `Tilburg alert built on \`.utrecht-alert\` + \`.tilburg-alert\` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

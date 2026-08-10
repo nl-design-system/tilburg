@@ -6,26 +6,62 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-content';
 
-export const description = `Main content region of a page. Sits inside \`<tilburg-page>\` between the header and footer; provides a constrained max-inline-size and consistent inline padding.
+const intro = `Main content region of a page. Sits inside \`<tilburg-page>\` between the header and footer; provides a constrained max-inline-size and consistent inline padding.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page-content>
   <tilburg-heading-1>Aanvraag indienen</tilburg-heading-1>
   <tilburg-paragraph>Vul de gegevens in om de aanvraag te starten.</tilburg-paragraph>
 </tilburg-page-content>
+\`\`\``;
+
+const usageReact = `### React
+
+\`PageContent\` renders a \`<main class="utrecht-page-content">\` and projects its children into it. Because it is the page's main landmark, give it \`id="main"\` and \`tabIndex={-1}\` so the skip link can move focus into it.
+
+\`\`\`tsx
+import { Heading1, Page, PageContent, Paragraph } from '@gemeente-tilburg/components-react';
+
+export function AanvraagPage() {
+  return (
+    <Page>
+      <PageContent id="main" tabIndex={-1}>
+        <Heading1>Aanvraag indienen</Heading1>
+        <Paragraph>Vul de gegevens in om de aanvraag te starten.</Paragraph>
+      </PageContent>
+    </Page>
+  );
+}
 \`\`\`
 
-### Plain HTML / CSS
+Props: \`children\`, \`className\` (merged with \`utrecht-page-content\`), plus any standard \`<main>\` attribute (\`id\`, \`tabIndex\`, \`aria-*\`, …) — \`PageContentProps\` is exported as an alias for \`HTMLAttributes<HTMLElement>\`. The component forwards its ref to the underlying \`<main>\`. Render only one per page.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <main class="utrecht-page-content">
   <!-- main content -->
 </main>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

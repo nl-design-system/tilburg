@@ -6,11 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-field-description';
 
-export const description = `Inline helper text rendered between a label and its input. Three modifier flavours: default, \`--invalid\` (error), \`--warning\`. Connect to the input via \`aria-describedby\` referencing the description's \`id\`.
+const intro = `Inline helper text rendered between a label and its input. Three modifier flavours: default, \`--invalid\` (error), \`--warning\`. Connect to the input via \`aria-describedby\` referencing the description's \`id\`.`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-form-field-description id="email-desc">
@@ -18,15 +16,51 @@ export const description = `Inline helper text rendered between a label and its 
 </tilburg-form-field-description>
 \`\`\`
 
-Inputs: \`id\`, \`valid\`, \`invalid\`, \`warning\`, \`class\`.
+Inputs: \`id\`, \`valid\`, \`invalid\`, \`warning\`, \`class\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`\`\`tsx
+import { FormFieldDescription, Textbox } from '@gemeente-tilburg/components-react';
+
+export function EmailHint({ invalid }: { invalid: boolean }) {
+  return (
+    <>
+      <Textbox id="email" type="email" invalid={invalid} aria-describedby="email-desc" />
+      <FormFieldDescription id="email-desc" invalid={invalid}>
+        {invalid ? 'Vul een geldig e-mailadres in.' : 'We gebruiken dit alleen om je te bereiken.'}
+      </FormFieldDescription>
+    </>
+  );
+}
+\`\`\`
+
+Props: \`invalid\`, \`valid\`, \`warning\`, plus any standard \`<div>\` attribute — \`id\` is a plain DOM attribute here, so wire it to the control's \`aria-describedby\` yourself. Setting \`invalid\` also adds \`role="alert"\`, so the message is announced when it appears; don't add a second live region around it. \`FormFieldDescriptionProps\` is exported as a type alias.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <div id="email-desc" class="utrecht-form-field-description">
   We gebruiken dit alleen om je te bereiken.
 </div>
-\`\`\`
+\`\`\``;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

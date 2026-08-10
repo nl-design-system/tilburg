@@ -38,4 +38,14 @@ describe('LoadingSpinner', () => {
     rerender(<LoadingSpinner visible={false} delayMs={0} />);
     expect(container.firstChild).toBeNull();
   });
+
+  /* The <svg> is aria-hidden, so the live region has to cover the title and
+     message or the spinner announces nothing when it appears. */
+  it('announces the title and message from inside the live region', () => {
+    render(<LoadingSpinner visible delayMs={0} title="Bezig met laden" message="Even geduld" />);
+    const status = screen.getByRole('status');
+    expect(status).toHaveTextContent('Bezig met laden');
+    expect(status).toHaveTextContent('Even geduld');
+    expect(status.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  });
 });

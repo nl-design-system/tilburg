@@ -78,6 +78,13 @@
   margin-inline-start: auto;
 }
 
+/* The Angular template always emits this container while the React component
+   only emits it when actions are projected. Collapsing the empty case keeps
+   both layers laying out identically. */
+.tilburg-page-header__actions:empty {
+  display: none;
+}
+
 .tilburg-page-header__user {
   font-size: 1.1875rem;
   font-weight: 700;

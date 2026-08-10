@@ -4,11 +4,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-field';
 
-export const description = `Form field grouping a label, description, and control. The Tilburg layer adds a \`tilburg-warning\` modifier that colours the field with the warning palette (used for non-blocking advisory messages).
+const intro = `Form field grouping a label, description, and control. The Tilburg layer adds a \`tilburg-warning\` modifier that colours the field with the warning palette (used for non-blocking advisory messages).`;
 
-## Usage
-
-### Angular
+const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-form-field type="text" [invalid]="emailCtrl.invalid && emailCtrl.touched" [warning]="aboutToExpire">
@@ -20,9 +18,36 @@ export const description = `Form field grouping a label, description, and contro
 </tilburg-form-field>
 \`\`\`
 
-Inputs: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), \`class\`.
+Inputs: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), \`class\`.`;
 
-### Plain HTML / CSS
+const usageReact = `### React
+
+\`FormField\` is a plain wrapper: it renders the \`<div class="utrecht-form-field">\` and its modifier classes, and you compose the label, description, control, and validation message as children.
+
+\`\`\`tsx
+import {
+  FormField,
+  FormFieldDescription,
+  FormLabel,
+  Textbox,
+  ValidationMessage,
+} from '@gemeente-tilburg/components-react';
+
+export function EmailField({ invalid, aboutToExpire }: { invalid: boolean; aboutToExpire: boolean }) {
+  return (
+    <FormField type="text" invalid={invalid} warning={aboutToExpire}>
+      <FormLabel htmlFor="email">E-mailadres</FormLabel>
+      <FormFieldDescription id="email-desc">We gebruiken dit alleen om je te bereiken.</FormFieldDescription>
+      <Textbox id="email" type="email" invalid={invalid} aria-describedby="email-desc" />
+      {invalid && <ValidationMessage type="error">Vul een geldig e-mailadres in.</ValidationMessage>}
+    </FormField>
+  );
+}
+\`\`\`
+
+Props: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), plus any standard \`<div>\` attribute (\`className\`, \`id\`, …) — \`className\` is merged with the utrecht classes, it does not replace them. \`FormFieldProps\` and \`FormFieldType\` are exported as type aliases.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <!-- Standard invalid -->
@@ -36,7 +61,24 @@ Inputs: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), 
 </div>
 \`\`\`
 
-Adding \`tilburg-warning\` on top of \`utrecht-form-field--invalid\` swaps the invalid colour set for the warning palette.
+Adding \`tilburg-warning\` on top of \`utrecht-form-field--invalid\` swaps the invalid colour set for the warning palette.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
 `;
 
 export interface Example {

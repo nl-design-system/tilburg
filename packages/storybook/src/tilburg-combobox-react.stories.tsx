@@ -3,7 +3,7 @@
 import { Combobox, type ComboboxItem } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { bugs, description } from '../../storybook-shared/src/tilburg-combobox.examples';
+import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-combobox.examples';
 
 const meta = {
   title: 'Tilburg React/Combobox',
@@ -12,7 +12,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof Combobox>;
 
