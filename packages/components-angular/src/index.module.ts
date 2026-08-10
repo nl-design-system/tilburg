@@ -38,6 +38,7 @@ import { TilburgParagraph } from './paragraph/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSeparator } from './separator/component';
+import { TilburgSkipLink } from './skip-link/component';
 import { ExampleStoryComponent } from './story/component';
 import { TilburgTable } from './table/component';
 import { TilburgTableBodyAttr } from './table-body/component';
@@ -102,6 +103,7 @@ const components = [
   TilburgHtmlContent,
   TilburgFormLabel,
   TilburgSeparator,
+  TilburgSkipLink,
   TilburgTextareaAutoresizeDirective,
   TilburgTextarea,
   TilburgTextbox,

@@ -36,6 +36,7 @@ export * from './paragraph/component';
 export * from './progress-bar/component';
 export * from './radio-button/component';
 export * from './separator/component';
+export * from './skip-link/component';
 export * from './story/component';
 export * from './table-body/component';
 export * from './table-caption/component';

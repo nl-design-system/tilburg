@@ -50,7 +50,7 @@
         },
         "large": {
           "baseline-offset": {
-            "$value": "4px"
+            "$value": "3px"
           },
           "padding-block-end": {
             "$value": "{tilburg.space.block.snail}"

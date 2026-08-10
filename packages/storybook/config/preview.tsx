@@ -35,6 +35,7 @@ import '@gemeente-tilburg/components-css/pagination/index.scss';
 import '@gemeente-tilburg/components-css/progress-bar/index.scss';
 import '@gemeente-tilburg/components-css/radio-button/index.scss';
 import '@gemeente-tilburg/components-css/separator/index.scss';
+import '@gemeente-tilburg/components-css/skip-link/index.scss';
 import '@gemeente-tilburg/components-css/table/index.scss';
 import '@gemeente-tilburg/components-css/textarea/index.scss';
 import '@gemeente-tilburg/components-css/textbox/index.scss';
