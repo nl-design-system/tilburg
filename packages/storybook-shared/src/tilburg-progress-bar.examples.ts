@@ -44,13 +44,13 @@ export function AddressStep({ goBack }: { goBack: () => void }) {
 }
 \`\`\`
 
-The back link is an \`<a href="#">\`, and \`onBackClick\` runs after \`preventDefault()\` — so route yourself, don't rely on the href. Angular projects a custom arrow through \`slot="back-icon"\`; in React it's the \`backIcon\` prop, which defaults to \`<span aria-hidden="true">←</span>\` and accepts \`null\` for no arrow:
+The back link is an \`<a href="#">\`, and \`onBackClick\` runs after \`preventDefault()\` — so route yourself, don't rely on the href. The \`backIcon\` prop sets the arrow in front of the back label; it defaults to \`<span aria-hidden="true">←</span>\` and accepts \`null\` for no arrow:
 
 \`\`\`tsx
 <ProgressBar value={3} total={4} title="Bevestiging" label="Stap 3 van 4" showBack backLabel="Vorige stap" backIcon={<ChevronLeft />} />
 \`\`\`
 
-Props: \`value\` (default \`0\`), \`total\` (default \`0\`), \`label\`, \`title\`, \`backLabel\`, \`showBack\` (default \`false\`), \`backIcon\` (\`ReactNode\`), \`onBackClick\` (\`(event: MouseEvent<HTMLAnchorElement>) => void\`, Angular's \`(backClick)\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`ProgressBarProps\` is exported as a type. Angular's \`ariaLabel\` input is the plain \`aria-label\` attribute here; it lands on the \`role="progressbar"\` track and falls back to \`title\`, then to \`'Voortgang'\`. As in Angular the percentage is \`value / total\` clamped to 0–100, and \`label\` doubles as the track's \`aria-valuetext\`.`;
+Props: \`value\` (default \`0\`), \`total\` (default \`0\`), \`label\`, \`title\`, \`backLabel\`, \`showBack\` (default \`false\`), \`backIcon\` (\`ReactNode\`), \`onBackClick\` (\`(event: MouseEvent<HTMLAnchorElement>) => void\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`ProgressBarProps\` is exported as a type. Write the native \`aria-label\` attribute to name the bar; it lands on the \`role="progressbar"\` track and falls back to \`title\`, then to \`'Voortgang'\`. The percentage is \`value / total\` clamped to 0–100, and \`label\` doubles as the track's \`aria-valuetext\`.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -90,6 +90,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

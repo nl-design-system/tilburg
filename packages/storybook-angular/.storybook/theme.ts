@@ -18,9 +18,12 @@ export const theme = create({
   base: 'light',
   fontBase: '"Roboto", sans-serif',
   fontCode: 'monospace',
-  brandTitle: 'Gemeente Tilburg',
+  /* Framework-specific brand image so it is obvious at a glance which of the
+     two storybooks this is — the React one uses `logo-react.svg`. Both are
+     generated from `proprietary/assets/src/logo-on-dark.svg`. */
+  brandTitle: 'Gemeente Tilburg — Angular',
   brandUrl: 'https://www.tilburg.nl/',
-  brandImage: 'logo.svg',
+  brandImage: 'logo-angular.svg',
   colorPrimary: tilburgColorMediumBlue,
   colorSecondary: tilburgColorFuchsia,
   appBg: tilburgColorLightBlue,

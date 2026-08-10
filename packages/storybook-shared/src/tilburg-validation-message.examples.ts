@@ -37,7 +37,7 @@ export function EmailField({ invalid }: { invalid: boolean }) {
 }
 \`\`\`
 
-Where Angular projects the glyph through \`slot="icon"\`, React ships a default icon per type — a circled \`!\` for \`error\`, a triangle for \`warning\` — and lets you swap it with the \`icon\` prop. Pass \`null\` to render no glyph at all:
+React ships a default icon per type — a circled \`!\` for \`error\`, a triangle for \`warning\` — and lets you swap it with the \`icon\` prop. Pass \`null\` to render no glyph at all:
 
 \`\`\`tsx
 <ValidationMessage type="error" icon={<span aria-hidden="true">!</span>}>
@@ -76,6 +76,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

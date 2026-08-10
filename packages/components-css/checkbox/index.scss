@@ -7,7 +7,11 @@
 }
 
 .utrecht-checkbox--html-input.utrecht-checkbox--custom {
-  &:not(:checked) {
+  /* Strip the check mark while unchecked. `:indeterminate` has to stay
+     exempt: it is not `:checked`, but utrecht-css paints its own dash SVG
+     there and blanking the background-image would leave a plain filled box
+     with no mixed-state affordance. */
+  &:not(:checked, :indeterminate) {
     background-image: none;
   }
 
@@ -62,5 +66,25 @@
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
       border-color: var(--utrecht-form-control-focus-border-color, var(--utrecht-form-control-focus-border-color));
     }
+  }
+}
+
+/* A label that wraps its own checkbox — `<label class="utrecht-form-label
+   utrecht-form-label--checkbox"><input class="utrecht-checkbox"> text</label>`.
+   utrecht only styles the sibling structure (control and label side by side in
+   a flex row supplied by the consumer), so the wrapping form gets no gap at all
+   and the box sits flush against the text. Give it the same row layout and the
+   same `--utrecht-checkbox-margin-inline-end` spacing utrecht uses elsewhere, so
+   the gap comes from this layer instead of from per-consumer inline styles. */
+.utrecht-form-label--checkbox:has(> .utrecht-checkbox) {
+  align-items: center;
+  display: flex;
+  gap: var(--utrecht-checkbox-margin-inline-end, 12px);
+
+  /* Vertical rhythm between consecutive options, matching the spacing the
+     canonical reference rows carry. Without it, wrapping labels are inline
+     boxes with no block margins and the options collapse onto each other. */
+  &:not(:last-child) {
+    margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
   }
 }

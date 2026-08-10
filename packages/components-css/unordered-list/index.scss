@@ -11,6 +11,15 @@
   margin-block-start: 0;
 }
 
+/* `--html-ul` marks a `<ul>` whose list items are plain `<li>` elements that do
+   not carry the BEM item class — the same escape hatch utrecht offers with its
+   `--html-content` variant, and the mirror of `--html-ol` on the ordered list.
+   All three layers (`<tilburg-unordered-list>`, `<UnorderedList>` and the
+   canonical HTML) always emit this modifier, so bare `<li>` children pick up
+   exactly the same item styling as an explicit `.utrecht-unordered-list__item`.
+   Without this, lists rendered with plain `<li>` lost the line height, the item
+   spacing, the marker gap and the marker colour. */
+.utrecht-unordered-list--html-ul > li,
 .utrecht-unordered-list__item {
   line-height: var(--utrecht-unordered-list-line-height, var(--utrecht-document-line-height, inherit));
   margin-block-end: var(--utrecht-unordered-list-item-margin-block-end);

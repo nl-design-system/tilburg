@@ -47,7 +47,7 @@ export function AppFooter() {
 }
 \`\`\`
 
-Props: \`links\` (\`PageFooterLink[]\`, default \`[]\`), \`primaryLink\` (\`PageFooterLink | null\`, optional — rendered as the call-to-action row above the list), \`children\` (extra content, rendered inside the container before both lists), \`className\` (merged with \`tilburg-page-footer\`), plus any standard \`<footer>\` attribute — use \`aria-label\` rather than an \`ariaLabel\` prop. \`PageFooterLink\` and \`PageFooterProps\` are exported as types. The component forwards its ref to the underlying \`<footer>\`.`;
+Props: \`links\` (\`PageFooterLink[]\`, default \`[]\`), \`primaryLink\` (\`PageFooterLink | null\`, optional — rendered as the call-to-action row above the list), \`children\` (extra content, rendered inside the container before both lists), \`className\` (merged with \`tilburg-page-footer\`), plus any standard \`<footer>\` attribute — write the native \`aria-label\` attribute when you need to name the landmark. \`PageFooterLink\` and \`PageFooterProps\` are exported as types. The component forwards its ref to the underlying \`<footer>\`.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -85,6 +85,15 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 

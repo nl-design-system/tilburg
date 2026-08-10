@@ -36,7 +36,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 const usageReact = `### React
 
-\`Checkbox\` renders a bare \`<input type="checkbox">\` — there is no reactive-forms layer, so nothing corresponds to Angular's \`[control]\`. Drive it the ordinary React way: \`checked\` + \`onChange\` for a controlled checkbox, or \`defaultChecked\` for an uncontrolled one.
+\`Checkbox\` renders a bare \`<input type="checkbox">\` — there is no form-state abstraction layered on top of it. Drive it the ordinary React way: \`checked\` + \`onChange\` for a controlled checkbox, or \`defaultChecked\` for an uncontrolled one.
 
 \`\`\`tsx
 import { Checkbox, FormLabel } from '@gemeente-tilburg/components-react';
@@ -66,9 +66,9 @@ export function ConsentField() {
 }
 \`\`\`
 
-The component is wrapped in \`forwardRef\` and forwards the ref to the underlying \`<input>\`, and every prop it does not consume itself is spread onto that input. That ref is the integration point for react-hook-form's \`register()\`, Formik's \`getFieldProps()\`, or a manual \`.focus()\` — it is what takes the place of Angular's \`[control]\` / \`[(ngModel)]\` binding.
+The component is wrapped in \`forwardRef\` and forwards the ref to the underlying \`<input>\`, and every prop it does not consume itself is spread onto that input. That ref is the integration point for react-hook-form's \`register()\`, Formik's \`getFieldProps()\`, or a manual \`.focus()\`, so \`{...register('consent')}\` or \`{...getFieldProps('consent')}\` can be spread straight onto it.
 
-Instead of \`ariaLabel\` / \`ariaDescribedBy\` you write the DOM attributes directly: \`aria-label\`, \`aria-describedby\`. There is no \`(checkChanged)\` output; use \`onChange\` and read \`event.target.checked\`.
+Accessibility is wired with the plain DOM attributes — \`aria-label\`, \`aria-describedby\` — and change notifications come from \`onChange\`, where you read \`event.target.checked\`.
 
 Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-checkbox--invalid\`), \`indeterminate?: boolean\` (default \`false\`; sets the DOM \`indeterminate\` flag plus \`aria-checked="mixed"\` and \`utrecht-checkbox--indeterminate\`), plus every native input attribute except \`type\` (fixed to \`"checkbox"\`) — \`checked\`, \`defaultChecked\`, \`onChange\`, \`name\`, \`id\`, \`required\`, \`disabled\`, \`className\`, \`aria-*\`, … \`CheckboxProps\` is exported as a type alias.`;
 
@@ -86,6 +86,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

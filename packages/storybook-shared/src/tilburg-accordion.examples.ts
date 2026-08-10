@@ -65,9 +65,9 @@ export function Faq() {
 }
 \`\`\`
 
-Like the Angular wrapper, a section is controlled by default: \`expanded\` decides what's open and \`onToggle(nextExpanded)\` tells you the user asked to flip it. Set \`autoToggle\` to hand that bookkeeping to the section itself — it then keeps its own state and \`onToggle\` is a pure notification.
+A section is controlled by default: \`expanded\` decides what's open and \`onToggle(nextExpanded)\` tells you the user asked to flip it. Set \`autoToggle\` to hand that bookkeeping to the section itself — it then keeps its own state and \`onToggle\` is a pure notification.
 
-Angular projects a custom glyph through \`slot="icon-collapsed"\` / \`slot="icon-expanded"\`. React has no named slots: pass the nodes as the \`iconCollapsed\` and \`iconExpanded\` props instead. Both default to the plain \`+\` / \`−\` characters that the Angular template also falls back to.
+To swap the expand/collapse glyph, pass your own nodes as the \`iconCollapsed\` and \`iconExpanded\` props. Both default to the plain \`+\` / \`−\` characters.
 
 \`\`\`tsx
 <AccordionSection
@@ -81,15 +81,19 @@ Angular projects a custom glyph through \`slot="icon-collapsed"\` / \`slot="icon
 </AccordionSection>
 \`\`\`
 
-\`<Accordion>\` props: \`headingLevel\` (1–6, default 2), \`displayName\`, plus any \`<div>\` attribute and a forwarded \`ref\`. Angular's \`ariaLabel\` input is just the standard \`aria-label\` attribute here; setting it also puts \`role="region"\` on the root, exactly as the Angular template does.
+\`<Accordion>\` props: \`headingLevel\` (1–6, default 2), \`displayName\`, plus any \`<div>\` attribute and a forwarded \`ref\`. Name the accordion with the standard \`aria-label\` attribute; setting it also puts \`role="region"\` on the root.
 
-\`<AccordionSection>\` props: \`sectionKey\` (Angular's \`key\`, renamed because \`key\` is reserved by React; it builds the \`utrecht-accordion-<sectionKey>-button\` / \`-panel\` ids), \`label\`, \`expanded\` (default \`false\`), \`disabled\` (default \`false\`), \`autoToggle\` (default \`false\`), \`iconCollapsed\` and \`iconExpanded\` (\`ReactNode\`), \`onToggle\` (\`(nextExpanded: boolean) => void\`, Angular's \`(toggled)\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`AccordionProps\` and \`AccordionSectionProps\` are exported as types.
+\`<AccordionSection>\` props: \`sectionKey\` (spelled out because \`key\` is reserved by React; it builds the \`utrecht-accordion-<sectionKey>-button\` / \`-panel\` ids), \`label\`, \`expanded\` (default \`false\`), \`disabled\` (default \`false\`), \`autoToggle\` (default \`false\`), \`iconCollapsed\` and \`iconExpanded\` (\`ReactNode\`), \`onToggle\` (\`(nextExpanded: boolean) => void\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`AccordionProps\` and \`AccordionSectionProps\` are exported as types.
 
-Note that the React sections do not (yet) implement the Arrow Up/Down and Home/End roving focus that the Angular wrapper and the HTML/CSS enhancer provide — Tab still moves between section buttons.`;
+Note that the React sections do not (yet) implement the Arrow Up/Down and Home/End roving focus that the HTML/CSS enhancer provides — Tab still moves between section buttons.`;
 
-const usagePlainHtml = `### Plain HTML / CSS
+/* The plain HTML/CSS section is shared by all three descriptions below. The only
+   difference is the phrase naming the framework wrappers, so that phrase is a
+   parameter: the Angular storybook keeps its wording byte-for-byte, while the
+   React and HTML/CSS pages get a variant that never mentions Angular. */
+const usagePlainHtmlFor = (wrappers: string) => `### Plain HTML / CSS
 
-The CSS in \`@gemeente-tilburg/components-css/accordion/index.scss\` paints the panels, borders, and the \`+\` / \`−\` glyph (driven off \`[aria-expanded]\` via \`:empty::before\` rules on \`utrecht-accordion__button-icon\`) — but it can't toggle \`aria-expanded\` or hide a panel on its own. To get the same UX as the Angular/React wrappers without writing your own controller, opt in to the bundled JS enhancement.
+The CSS in \`@gemeente-tilburg/components-css/accordion/index.scss\` paints the panels, borders, and the \`+\` / \`−\` glyph (driven off \`[aria-expanded]\` via \`:empty::before\` rules on \`utrecht-accordion__button-icon\`) — but it can't toggle \`aria-expanded\` or hide a panel on its own. To get the same UX as ${wrappers} without writing your own controller, opt in to the bundled JS enhancement.
 
 **How to load it.** The enhancement ships as an ES module alongside the SCSS:
 
@@ -107,7 +111,7 @@ enhanceAccordion(myFragment); // or scope to a subtree
 
 When loaded as a \`<script type="module">\`, it auto-runs once on \`DOMContentLoaded\` (or immediately if the DOM is already parsed). SSR-safe — the browser-only branch is guarded on \`typeof document\`.
 
-**Opting in.** Add \`data-tilburg-accordion-enhance\` to the \`.utrecht-accordion\` root. Roots without that attribute are skipped — that's how the Angular/React wrappers stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced root with \`data-tilburg-accordion-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup.
+**Opting in.** Add \`data-tilburg-accordion-enhance\` to the \`.utrecht-accordion\` root. Roots without that attribute are skipped — that's how ${wrappers} stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced root with \`data-tilburg-accordion-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup.
 
 **What it wires up.**
 
@@ -148,6 +152,9 @@ When loaded as a \`<script type="module">\`, it auto-runs once on \`DOMContentLo
 
 The first section ships expanded (\`aria-expanded="true"\` + no \`[hidden]\` on its panel); for any section that should start collapsed, set \`aria-expanded="false"\` on the button and \`hidden\` on its panel. The two attributes must agree on first paint — after that the enhancer keeps them in sync.`;
 
+const usagePlainHtml = usagePlainHtmlFor('the Angular/React wrappers');
+const usagePlainHtmlStandalone = usagePlainHtmlFor('the component wrappers');
+
 export const description = `${intro}
 
 ## Usage
@@ -163,7 +170,14 @@ export const descriptionReact = `${intro}
 
 ${usageReact}
 
-${usagePlainHtml}
+${usagePlainHtmlStandalone}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtmlStandalone}
 `;
 
 export interface Example {

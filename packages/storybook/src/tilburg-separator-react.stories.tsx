@@ -1,6 +1,6 @@
 /* @license CC0-1.0 */
 
-import { Separator } from '@gemeente-tilburg/components-react';
+import { Paragraph, Separator } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-separator.examples';
 
@@ -20,15 +20,13 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <h4>Default (semantic)</h4>
-      <p>Sectie A</p>
+    <>
+      <Paragraph>Eerste sectie met wat tekst boven de scheidingslijn.</Paragraph>
       <Separator />
-      <p>Sectie B</p>
-      <h4>Decorative (aria-hidden)</h4>
-      <p>Decoratief gebruik</p>
+      <Paragraph>Tweede sectie onder de scheidingslijn.</Paragraph>
+      <Paragraph>Aanvraagdetails</Paragraph>
       <Separator decorative />
-      <p>Geen ARIA-rol</p>
-    </div>
+      <Paragraph>Contactgegevens</Paragraph>
+    </>
   ),
 };

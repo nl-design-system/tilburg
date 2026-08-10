@@ -11,6 +11,9 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
+    /* Matches the HTML/CSS reference stories: the footer is a full-bleed bar,
+       so the default 1rem canvas padding would misrepresent it. */
+    layout: 'fullscreen',
     docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof PageFooter>;

@@ -34,7 +34,7 @@ export function AanvraagActies() {
 
 Props: \`role\` (default \`'group'\` — pass \`'toolbar'\` for a toolbar cluster), plus any standard \`<div>\` attribute (\`aria-label\`, \`aria-labelledby\`, \`className\`, …). \`ButtonGroupProps\` is exported as a type alias.
 
-Where Angular takes camelCased \`ariaLabel\` / \`ariaLabelledby\` inputs, React passes the DOM attributes straight through as \`aria-label\` / \`aria-labelledby\`. The buttons are ordinary children instead of projected \`<ng-content>\`.`;
+Note the casing: the accessible name is set with the DOM attributes \`aria-label\` / \`aria-labelledby\`, which pass straight through to the \`<div>\`. The buttons are ordinary children.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -59,6 +59,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

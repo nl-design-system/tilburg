@@ -81,6 +81,13 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
 export interface Example {
   name: string;
   html: string;

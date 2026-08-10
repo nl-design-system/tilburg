@@ -11,6 +11,9 @@ const meta = {
   tags: ['autodocs'],
   parameters: {
     bugs,
+    /* Matches the HTML/CSS reference story: `Page` is the page-level layout
+       wrapper, so it is rendered edge-to-edge without canvas padding. */
+    layout: 'fullscreen',
     docs: { description: { component: descriptionReact } },
   },
 } satisfies Meta<typeof Page>;

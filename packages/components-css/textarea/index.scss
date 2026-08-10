@@ -3,6 +3,88 @@
   min-block-size: 5em;
   min-inline-size: 5em;
 
+  /* utrecht-css wires the native `:invalid` / `:read-only` / `:disabled`
+     states of a real `<textarea>` only behind the
+     `.utrecht-textarea--html-textarea` modifier. The Angular wrapper emits
+     that modifier, but the canonical HTML markup and the React wrapper render
+     a bare `.utrecht-textarea`, so there those states stayed unstyled — a
+     disabled textarea still looked editable. Re-declare them on the base
+     class, with the same token chains utrecht uses, so every layer agrees
+     whether or not the modifier is present. */
+  &:invalid,
+  &[aria-invalid="true"] {
+    --_tilburg-textarea-invalid-border-width: var(
+      --utrecht-textarea-invalid-border-width,
+      var(
+        --utrecht-form-control-invalid-border-width,
+        var(--utrecht-textarea-border-width, var(--utrecht-form-control-border-width))
+      )
+    );
+
+    background-color: var(
+      --utrecht-textarea-invalid-background-color,
+      var(
+        --utrecht-form-control-invalid-background-color,
+        var(--utrecht-textarea-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-block-end-width: var(--_tilburg-textarea-invalid-border-width);
+    border-color: var(
+      --utrecht-textarea-invalid-border-color,
+      var(
+        --utrecht-form-control-invalid-border-color,
+        var(--utrecht-textarea-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
+    border-width: var(--_tilburg-textarea-invalid-border-width);
+    color: var(
+      --utrecht-textarea-invalid-color,
+      var(--utrecht-form-control-invalid-color, var(--utrecht-textarea-color, var(--utrecht-form-control-color)))
+    );
+  }
+
+  &:read-only {
+    background-color: var(
+      --utrecht-textarea-read-only-background-color,
+      var(
+        --utrecht-form-control-read-only-background-color,
+        var(--utrecht-textarea-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-color: var(
+      --utrecht-textarea-read-only-border-color,
+      var(
+        --utrecht-form-control-read-only-border-color,
+        var(--utrecht-textarea-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
+    color: var(
+      --utrecht-textarea-read-only-color,
+      var(--utrecht-form-control-read-only-color, var(--utrecht-textarea-color, var(--utrecht-form-control-color)))
+    );
+  }
+
+  &:disabled {
+    background-color: var(
+      --utrecht-textarea-disabled-background-color,
+      var(
+        --utrecht-form-control-disabled-background-color,
+        var(--utrecht-textarea-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-color: var(
+      --utrecht-textarea-disabled-border-color,
+      var(
+        --utrecht-form-control-disabled-border-color,
+        var(--utrecht-textarea-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
+    color: var(
+      --utrecht-textarea-disabled-color,
+      var(--utrecht-form-control-disabled-color, var(--utrecht-textarea-color, var(--utrecht-form-control-color)))
+    );
+  }
+
   &:hover:not(:disabled, :focus, :focus-visible) {
     background-color: var(
       --tilburg-form-control-hover-background-color,

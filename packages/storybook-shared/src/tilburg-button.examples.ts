@@ -34,7 +34,7 @@ export function AanvraagFormulier({ onSubmit }: { onSubmit: () => void }) {
 
 Props: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`size\` (\`'small' | 'medium' | 'large'\`, default \`'medium'\`), \`pressed\`, \`busy\`, plus any standard button attribute (\`type\` — default \`'button'\`, \`disabled\`, \`title\`, \`onClick\`, \`aria-label\`, \`aria-describedby\`, \`className\`, …). \`ButtonAppearance\` and \`ButtonSize\` are exported as type aliases.
 
-The \`appearance\` values are the same \`-button\`-suffixed strings Angular uses, so they copy across unchanged. React adds a \`busy\` flag that renders \`utrecht-button--busy\`, which has no Angular counterpart. Like Angular, an omitted \`aria-label\` falls back to \`title\`, so icon-only buttons still get an accessible name.`;
+The \`-button\` suffix on the \`appearance\` values is required: utrecht maps \`'primary-action-button'\` to \`.utrecht-button--primary-action\`, so an unsuffixed value silently renders a button with no appearance modifier. The \`busy\` flag renders \`utrecht-button--busy\` for an in-flight action. An omitted \`aria-label\` falls back to \`title\`, so icon-only buttons still get an accessible name.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -80,6 +80,15 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 

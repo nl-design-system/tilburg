@@ -41,7 +41,7 @@ export function Persoonsgegevens({ invalid }: { invalid: boolean }) {
 }
 \`\`\`
 
-Props: \`invalid\` (adds \`utrecht-fieldset--invalid\` and \`aria-invalid="true"\`), plus any standard \`<fieldset>\` attribute — \`disabled\` is the native one (it also adds \`utrecht-fieldset--disabled\`), and the Angular \`ariaLabel\` / \`ariaLabelledby\` / \`ariaDescribedBy\` inputs have no React counterparts: pass \`aria-label\`, \`aria-labelledby\`, and \`aria-describedby\` directly. \`FieldsetProps\` is exported as a type alias.`;
+Props: \`invalid\` (adds \`utrecht-fieldset--invalid\` and \`aria-invalid="true"\`), plus any standard \`<fieldset>\` attribute — \`disabled\` is the native one (it also adds \`utrecht-fieldset--disabled\`), and labelling is done with the native attributes: pass \`aria-label\`, \`aria-labelledby\`, and \`aria-describedby\` directly. \`FieldsetProps\` is exported as a type alias.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -66,6 +66,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

@@ -32,7 +32,7 @@ export function StartAanvraag() {
 
 Props: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`external\` (sets \`rel="external noopener noreferrer"\`), \`placeholder\` (renders \`aria-disabled="true"\` plus the \`--placeholder\` modifier, for a link that is visible but not yet actionable), plus any standard anchor attribute (\`href\`, \`target\`, \`rel\`, \`aria-label\`, \`className\`, …). \`ButtonLinkAppearance\` and \`ButtonLinkProps\` are exported as type aliases.
 
-The \`--html-a\` class is applied for you, so unlike the plain HTML snippet you never write it by hand. \`placeholder\` has no Angular counterpart.`;
+The \`--html-a\` class is applied for you, so unlike the plain HTML snippet you never write it by hand.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -67,6 +67,15 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 

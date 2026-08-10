@@ -34,7 +34,7 @@ export function Introductie() {
 }
 \`\`\`
 
-\`lead\` and \`small\` are plain booleans, so the shorthand \`<Paragraph lead>\` is enough — no \`[lead]="true"\` binding syntax. They only add \`utrecht-paragraph--lead\` / \`utrecht-paragraph--small\`; setting both applies both modifiers, so pick one.
+\`lead\` and \`small\` are plain booleans, so the shorthand \`<Paragraph lead>\` is enough. They only add \`utrecht-paragraph--lead\` / \`utrecht-paragraph--small\`; setting both applies both modifiers, so pick one.
 
 Props: \`lead\` (\`boolean\`, default \`false\` — nothing set), \`small\` (\`boolean\`, default \`false\`), \`children\`, plus any standard paragraph attribute (\`className\`, which is merged after the utrecht classes, \`id\`, \`lang\`, \`aria-*\`, …) spread onto the rendered \`<p>\`. \`ParagraphProps\` is exported as a type. The \`ref\` is forwarded to the \`<p>\`.`;
 
@@ -60,6 +60,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;

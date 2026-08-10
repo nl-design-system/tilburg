@@ -1,3 +1,44 @@
+/* Checkbox/radio form fields where the label wraps its own control.
+
+   utrecht lays these out as a grid whose children are placed by the BEM classes
+   `utrecht-form-field__label` / `utrecht-form-field__input`. Neither the Tilburg
+   React nor the Angular wrapper emits those classes, so auto-placement drops the
+   label into the first column — which is only `--utrecht-{checkbox,radio-button}-size`
+   wide — and the label text wraps one word per line. A label that already
+   contains its own control needs no grid placement: let it span the full row and
+   lay itself out as a flex row instead.
+
+   Declared before the text-field rule below to keep selector specificity
+   ascending (stylelint `no-descending-specificity`). */
+.utrecht-form-field--checkbox > .utrecht-form-label:has(input) {
+  align-items: center;
+  display: flex;
+  gap: var(--utrecht-checkbox-margin-inline-end, 12px);
+  grid-column: 1 / -1;
+}
+
+.utrecht-form-field--radio > .utrecht-form-label:has(input) {
+  align-items: center;
+  display: flex;
+  gap: var(--utrecht-radio-button-margin-inline-end, 12px);
+  grid-column: 1 / -1;
+}
+
+/* Stack label / description / control in text form fields.
+
+   utrecht sets no `display` on `.utrecht-form-field`, and `.utrecht-form-label`
+   has no `display` either — it is an inline `<label>`. The control next to it is
+   `inline-block`. So in the class-only render (React and plain HTML) the label
+   and the control flow onto the SAME line whenever the container is wide enough
+   to fit both. Angular only escapes this because its `<tilburg-form-label>`
+   custom-element host is block-level, and the HTML reference story only escapes
+   it because it pins `max-width: 24rem`, which makes the control fill the line.
+
+   Scoped away from the checkbox/radio variants, which are grids (see above). */
+.utrecht-form-field:not(.utrecht-form-field--checkbox, .utrecht-form-field--radio) > .utrecht-form-label {
+  display: block;
+}
+
 /* Dual-target Angular's custom-element render (`<utrecht-form-field>`) and
    React's class-based render (`<div class="utrecht-form-field">`). */
 utrecht-form-field.tilburg-warning,

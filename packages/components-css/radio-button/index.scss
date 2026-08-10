@@ -94,3 +94,17 @@
 .utrecht-radio-button--html-input {
   --utrecht-radio-button-focus-color: var(--utrecht-radio-button-checked-color);
 }
+
+/* Mirror of the checkbox rule: a label that wraps its own radio input gets the
+   row layout and gap from this layer rather than from consumer inline styles. */
+.utrecht-form-label--radio:has(> .utrecht-radio-button) {
+  align-items: center;
+  display: flex;
+  gap: var(--utrecht-radio-button-margin-inline-end, 12px);
+
+  /* Vertical rhythm between consecutive options, matching the spacing the
+     canonical reference rows carry. */
+  &:not(:last-child) {
+    margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
+  }
+}

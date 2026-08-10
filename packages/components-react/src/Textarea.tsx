@@ -20,9 +20,10 @@ export const Textarea = forwardRef(
       aria-required={required ? 'true' : undefined}
       className={clsx(
         'utrecht-textarea',
+        'utrecht-textarea--html-textarea',
         disabled && 'utrecht-textarea--disabled',
         invalid && 'utrecht-textarea--invalid',
-        readOnly && 'utrecht-textarea--readonly',
+        readOnly && 'utrecht-textarea--read-only',
         required && 'utrecht-textarea--required',
         className,
       )}

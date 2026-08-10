@@ -24,7 +24,7 @@ export const Textbox = forwardRef(
         'utrecht-textbox--html-input',
         disabled && 'utrecht-textbox--disabled',
         invalid && 'utrecht-textbox--invalid',
-        readOnly && 'utrecht-textbox--readonly',
+        readOnly && 'utrecht-textbox--read-only',
         required && 'utrecht-textbox--required',
         className,
       )}

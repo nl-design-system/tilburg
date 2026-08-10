@@ -16,6 +16,8 @@ const intro = `${introShared} The Angular wrapper takes plain inputs so any cont
 
 const introReact = `${introShared} The React wrapper takes plain props and reports navigation intent through a callback, so any state container can drive it.`;
 
+const introHtml = `${introShared} The markup below is static, so wire the buttons up to your own paging logic.`;
+
 const usageAngular = `### Angular
 
 \`\`\`html
@@ -37,7 +39,7 @@ Output: \`(navigate)\` emits \`{ step: 'first' | 'previous' | 'next' | 'last' | 
 
 const usageReact = `### React
 
-\`Pagination\` is fully controlled: it never changes the page itself. It reports intent through the \`onNavigate\` callback (the React equivalent of the Angular \`(navigate)\` output) and you feed the new \`currentPage\` back in.
+\`Pagination\` is fully controlled: it never changes the page itself. It reports intent through the \`onNavigate\` callback and you feed the new \`currentPage\` back in.
 
 \`\`\`tsx
 import { Pagination } from '@gemeente-tilburg/components-react';
@@ -118,6 +120,13 @@ export const descriptionReact = `${introReact}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${introHtml}
+
+## Usage
 
 ${usagePlainHtml}
 `;

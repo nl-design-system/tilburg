@@ -3,11 +3,113 @@
    no rules for the class itself, so we map each descendant tag to the
    utrecht-document / utrecht-paragraph / utrecht-link token chain. */
 .utrecht-html-content {
+  /* `heading-N/index.scss` declares the Tilburg responsive heading sizes on
+     `utrecht-heading-N` / `.utrecht-heading-N` only — markup CMS content never
+     has. Declare them here so the bare `<hN>` rules below inherit them. */
+  --utrecht-heading-1-font-size: var(--tilburg-heading-1-large-vw-font-size);
+  --utrecht-heading-2-font-size: var(--tilburg-heading-2-large-vw-font-size);
+  --utrecht-heading-3-font-size: var(--tilburg-heading-3-large-vw-font-size);
+  --utrecht-heading-4-font-size: var(--tilburg-heading-4-large-vw-font-size);
+  --utrecht-heading-5-font-size: var(--tilburg-heading-5-large-vw-font-size);
+  --utrecht-heading-6-font-size: var(--tilburg-heading-6-large-vw-font-size);
+
   color: var(--utrecht-document-color, inherit);
   font-family: var(--utrecht-document-font-family, inherit);
   font-size: var(--utrecht-document-font-size, inherit);
   font-weight: var(--utrecht-document-font-weight, inherit);
   line-height: var(--utrecht-document-line-height, inherit);
+}
+
+@media (width <= 768px) {
+  .utrecht-html-content {
+    --utrecht-heading-1-font-size: var(--tilburg-heading-1-small-vw-font-size);
+    --utrecht-heading-2-font-size: var(--tilburg-heading-2-small-vw-font-size);
+    --utrecht-heading-3-font-size: var(--tilburg-heading-3-small-vw-font-size);
+    --utrecht-heading-4-font-size: var(--tilburg-heading-4-small-vw-font-size);
+    --utrecht-heading-5-font-size: var(--tilburg-heading-5-small-vw-font-size);
+    --utrecht-heading-6-font-size: var(--tilburg-heading-6-small-vw-font-size);
+  }
+}
+
+/* Bare `<hN>` inside CMS content gets the same token chain utrecht-css applies
+   to `.utrecht-heading-N`; without this the browser default (Roboto bold, UA
+   sizes and margins) leaks through instead of the Tilburg heading font. */
+.utrecht-html-content h1 {
+  color: var(--utrecht-heading-1-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-1-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-1-font-size);
+  font-weight: var(--utrecht-heading-1-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-1-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-1-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-1-margin-block-start, 0));
+}
+
+.utrecht-html-content h2 {
+  color: var(--utrecht-heading-2-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-2-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-2-font-size);
+  font-weight: var(--utrecht-heading-2-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-2-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-2-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-2-margin-block-start, 0));
+}
+
+.utrecht-html-content h3 {
+  color: var(--utrecht-heading-3-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-3-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-3-font-size);
+  font-weight: var(--utrecht-heading-3-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-3-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-3-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-3-margin-block-start, 0));
+}
+
+.utrecht-html-content h4 {
+  color: var(--utrecht-heading-4-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-4-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-4-font-size);
+  font-weight: var(--utrecht-heading-4-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-4-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-4-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-4-margin-block-start, 0));
+}
+
+.utrecht-html-content h5 {
+  color: var(--utrecht-heading-5-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-5-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-5-font-size);
+  font-weight: var(--utrecht-heading-5-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-5-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-5-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-5-margin-block-start, 0));
+}
+
+.utrecht-html-content h6 {
+  color: var(--utrecht-heading-6-color, var(--utrecht-heading-color, var(--utrecht-document-color, inherit)));
+  font-family: var(
+    --utrecht-heading-6-font-family,
+    var(--utrecht-heading-font-family, var(--utrecht-document-font-family, inherit))
+  );
+  font-size: var(--utrecht-heading-6-font-size);
+  font-weight: var(--utrecht-heading-6-font-weight, var(--utrecht-heading-font-weight, 700));
+  line-height: var(--utrecht-heading-6-line-height);
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-6-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-heading-6-margin-block-start, 0));
 }
 
 .utrecht-html-content p {

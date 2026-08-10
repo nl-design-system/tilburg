@@ -39,7 +39,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 const usageReact = `### React
 
-\`Textbox\` is a styled \`<input>\` and nothing more — there is no \`[control]\` input, so bind it like any React input: \`value\` + \`onChange\` when controlled, \`defaultValue\` when uncontrolled.
+\`Textbox\` is a styled \`<input>\` and nothing more — bind it like any React input: \`value\` + \`onChange\` when controlled, \`defaultValue\` when uncontrolled.
 
 \`\`\`tsx
 import { FormLabel, Textbox } from '@gemeente-tilburg/components-react';
@@ -69,9 +69,9 @@ export function EmailField() {
 }
 \`\`\`
 
-The component is wrapped in \`forwardRef\` and forwards the ref to the \`<input>\`, and everything it does not consume itself is spread onto that input. Spreading \`{...register('email')}\` from react-hook-form (or Formik's \`getFieldProps('email')\`) therefore just works, and that is the React replacement for Angular's \`[control]\` / \`[(ngModel)]\`.
+The component is wrapped in \`forwardRef\` and forwards the ref to the \`<input>\`, and everything it does not consume itself is spread onto that input. Spreading \`{...register('email')}\` from react-hook-form (or Formik's \`getFieldProps('email')\`) therefore just works, with no extra binding layer in between.
 
-Watch the naming: Angular's \`readonly\` is React's \`readOnly\`, and \`ariaLabel\` / \`ariaDescribedBy\` are written as the DOM attributes \`aria-label\` / \`aria-describedby\`.
+Watch the naming: the prop is \`readOnly\` (camel case), and the ARIA hooks are written as the DOM attributes \`aria-label\` / \`aria-describedby\`.
 
 Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-textbox--invalid\`), plus every native input attribute — \`type\` (default \`'text'\`), \`value\`, \`defaultValue\`, \`onChange\`, \`name\`, \`id\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`required\`, \`readOnly\`, \`disabled\`, \`className\`, \`aria-*\`, … \`TextboxProps\` is exported as a type alias.`;
 
@@ -89,6 +89,13 @@ export const descriptionReact = `${intro}
 ## Usage
 
 ${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
 
 ${usagePlainHtml}
 `;
