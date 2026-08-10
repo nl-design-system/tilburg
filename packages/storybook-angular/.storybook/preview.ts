@@ -60,8 +60,21 @@ const preview: Preview = {
         /* `Tilburg Angular` at the top so the cold-start landing story is
            `Tilburg Angular/Intro`, then the shared `Tilburg HTML/…` reference,
            then `Tokens` — still discoverable but no longer the default
-           landing. */
-        order: ['Tilburg Angular', ['Intro', '*'], 'Tilburg HTML', 'Tokens', ['Intro', '*']],
+           landing.
+
+           Unlike the React Storybook — where the `Tilburg/…` section holds only
+           documentation — this section mixes the MDX pages in with all 37
+           Angular components. Without naming them explicitly the `*` wildcard
+           sorts them alphabetically among the components, which buried
+           Implementatiestatus, the licence and the usage notice below Heading.
+           So every MDX page is listed ahead of the wildcard. */
+        order: [
+          'Tilburg Angular',
+          ['Intro', 'Implementatiestatus', 'Open Source License', 'Toestemming voor gebruik', '*'],
+          'Tilburg HTML',
+          'Tokens',
+          ['Intro', '*'],
+        ],
       },
     },
     docs: {

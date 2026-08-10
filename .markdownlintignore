@@ -8,3 +8,11 @@ CHANGELOG.md
 # Ignore tooling-consumed files
 .changeset/*.md
 !.changeset/README.md
+
+# Storybook intro fragments. These are `?raw`-imported and concatenated into a
+# single page by `introduction.mdx`, so they deliberately start at `##` with no
+# top-level heading of their own — which MD041 flags. Standalone pages in the
+# same folders (implementation-status.md, tokens-intro.md) are still linted.
+packages/storybook-shared/src/documentation/intro-*.md
+packages/storybook/src/documentation/intro-*.md
+packages/storybook-angular/src/documentation/intro-*.md

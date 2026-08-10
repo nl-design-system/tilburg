@@ -1,6 +1,32 @@
+{/* @license CC0-1.0 */}
+
+{/* Composed from shared fragments in `storybook-shared/src/documentation/` so the Angular Storybook renders the same prose. */}
+{/* Only `intro-this-storybook.md` is local — the one part that depends on which Storybook you are looking at. */}
+{/* Keep the comments on one line each: Prettier rewrites multi-line MDX comments into `{/_ … _/}`, which is not a comment. */}
+
 import { Markdown, Meta } from "@storybook/addon-docs";
-import markdown from "./introduction.md?raw";
+import thisStorybook from "./intro-this-storybook.md?raw";
+import contributing from "../../../storybook-shared/src/documentation/intro-contributing.md?raw";
+import defaultIcons from "../../../storybook-shared/src/documentation/intro-default-icons.md?raw";
+import designSystem from "../../../storybook-shared/src/documentation/intro-design-system.md?raw";
+import designTokens from "../../../storybook-shared/src/documentation/intro-design-tokens.md?raw";
+import devNotes from "../../../storybook-shared/src/documentation/intro-dev-notes.md?raw";
+import layerAngular from "../../../storybook-shared/src/documentation/intro-layer-angular.md?raw";
+import layerHtmlCss from "../../../storybook-shared/src/documentation/intro-layer-html-css.md?raw";
+import layerReact from "../../../storybook-shared/src/documentation/intro-layer-react.md?raw";
 
 <Meta title="Tilburg/Intro" />
 
-<Markdown>{markdown}</Markdown>
+<Markdown>
+  {[
+    thisStorybook,
+    designSystem,
+    layerHtmlCss,
+    layerReact,
+    layerAngular,
+    defaultIcons,
+    designTokens,
+    contributing,
+    devNotes,
+  ].join("\n\n")}
+</Markdown>

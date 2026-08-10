@@ -84,10 +84,15 @@ const preview: Preview = {
            to its default alphabetical position via the `*` wildcard.
            `Tilburg` (the project-wide intro section) sits at the top so the
            cold-start landing story is `Tilburg/Intro`. `Tokens` is demoted to
-           the end — still discoverable, but no longer the default landing. */
+           the end — still discoverable, but no longer the default landing.
+
+           The `Tilburg` section holds only MDX documentation, so the pages are
+           named explicitly to fix their reading order rather than leaving them
+           to sort alphabetically. The Angular Storybook needs the same list,
+           because there the MDX pages share a section with the components. */
         order: [
           'Tilburg',
-          ['Intro', '*'],
+          ['Intro', 'Implementatiestatus', 'Open Source License', 'Toestemming voor gebruik', '*'],
           'Tilburg HTML',
           ['Intro', '*'],
           'Tilburg React',
