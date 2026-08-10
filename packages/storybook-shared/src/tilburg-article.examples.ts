@@ -78,9 +78,15 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<article class="utrecht-article" style="max-width:32rem">
+    /* The `max-width` lives on an unclassed demo wrapper: it frames the
+       example, it is not part of the component. `.utrecht-article` reads its
+       own width from `--utrecht-article-max-inline-size`, which the Tilburg
+       theme leaves undefined on purpose. */
+    html: `<div style="max-width:32rem">
+<article class="utrecht-article">
   <h2 class="utrecht-heading-2">Vergunning aanvragen</h2>
   <p class="utrecht-paragraph">Je kunt een vergunning aanvragen via het online formulier op deze website. Vul alle verplichte velden in en upload de benodigde documenten.</p>
-</article>`,
+</article>
+</div>`,
   },
 } satisfies Record<string, Example>;

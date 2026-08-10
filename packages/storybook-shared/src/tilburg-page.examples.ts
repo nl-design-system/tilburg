@@ -91,7 +91,10 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Header + content + footer',
-    html: `<div class="utrecht-page" style="min-block-size:24rem">
+    /* The demo canvas height sits on an unclassed wrapper, not on
+       `.utrecht-page` — it only gives the example room to breathe. */
+    html: `<div style="min-block-size:24rem">
+<div class="utrecht-page">
   <header class="tilburg-page-header">
     <div class="tilburg-page-header__container">
       <span class="tilburg-page-header__title">Gemeente Tilburg</span>
@@ -108,6 +111,7 @@ export const examples = {
       </ul>
     </div>
   </footer>
+</div>
 </div>`,
   },
 } satisfies Record<string, Example>;

@@ -121,9 +121,14 @@ const items = `  <div class="tilburg-data-list__item">
 export const examples = {
   default: {
     name: 'Default',
-    html: `<dl class="tilburg-data-list" style="max-width:32rem">
+    /* The `max-width` lives on an unclassed demo wrapper: it frames the
+       example, it is not part of the component. `.tilburg-data-list` is a
+       block element, so it fills the wrapper. */
+    html: `<div style="max-width:32rem">
+<dl class="tilburg-data-list">
 ${items}
-</dl>`,
+</dl>
+</div>`,
   },
   large: {
     name: 'Large (3-column grid)',

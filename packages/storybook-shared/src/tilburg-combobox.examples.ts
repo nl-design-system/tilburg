@@ -195,7 +195,6 @@ ${usagePlainHtmlFrameworkNeutral}
 `;
 
 const rowStyle = 'display:flex;flex-direction:column;gap:0.5rem;max-width:24rem';
-const labelStyle = 'display:block;font-weight:700;margin-bottom:0.25rem';
 
 export interface Example {
   name: string;
@@ -206,7 +205,7 @@ export const examples = {
   normalClosed: {
     name: 'Normal — closed',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="cb-html-normal-closed">Voorkeurscontact</label>
+  <label class="utrecht-form-label" for="cb-html-normal-closed">Voorkeurscontact</label>
   <div class="utrecht-combobox" data-tilburg-combobox-enhance>
     <div class="tilburg-combobox__value-container">
       <input id="cb-html-normal-closed" class="tilburg-combobox__input" type="text" role="combobox" aria-expanded="false" aria-controls="cb-html-normal-closed-listbox" readonly value="E-mail" />
@@ -223,7 +222,7 @@ export const examples = {
   normalOpen: {
     name: 'Normal — open with active option',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="cb-html-normal-open">Voorkeurscontact</label>
+  <label class="utrecht-form-label" for="cb-html-normal-open">Voorkeurscontact</label>
   <div class="utrecht-combobox" data-tilburg-combobox-enhance>
     <div class="tilburg-combobox__value-container">
       <input id="cb-html-normal-open" class="tilburg-combobox__input" type="text" role="combobox" aria-expanded="true" aria-controls="cb-html-normal-open-listbox" aria-activedescendant="cb-html-normal-open-opt-1" readonly value="" />
@@ -240,7 +239,7 @@ export const examples = {
   chiplist: {
     name: 'Chiplist — multi-value with chips',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="cb-html-chiplist">Aanvraagdocumenten</label>
+  <label class="utrecht-form-label" for="cb-html-chiplist">Aanvraagdocumenten</label>
   <div class="utrecht-combobox tilburg-combobox--multiple" data-tilburg-combobox-enhance>
     <div class="tilburg-combobox__value-container">
       <span class="tilburg-combobox__chip" data-option-id="cb-html-chiplist-opt-0">Paspoort<button type="button" class="tilburg-combobox__chip-remove" aria-label="Verwijder Paspoort">×</button></span>
@@ -261,7 +260,7 @@ export const examples = {
   invalid: {
     name: 'Invalid',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="cb-html-invalid">Voorkeurscontact</label>
+  <label class="utrecht-form-label" for="cb-html-invalid">Voorkeurscontact</label>
   <div class="utrecht-combobox" data-tilburg-combobox-enhance>
     <div class="tilburg-combobox__value-container">
       <input id="cb-html-invalid" class="tilburg-combobox__input" type="text" role="combobox" aria-expanded="false" aria-controls="cb-html-invalid-listbox" aria-invalid="true" readonly value="" />
@@ -277,7 +276,7 @@ export const examples = {
   disabled: {
     name: 'Disabled',
     html: `<div style="${rowStyle}">
-  <label class="utrecht-form-label" style="${labelStyle}" for="cb-html-disabled">Voorkeurscontact</label>
+  <label class="utrecht-form-label" for="cb-html-disabled">Voorkeurscontact</label>
   <div class="utrecht-combobox" data-tilburg-combobox-enhance>
     <div class="tilburg-combobox__value-container">
       <input id="cb-html-disabled" class="tilburg-combobox__input" type="text" role="combobox" aria-expanded="false" aria-controls="cb-html-disabled-listbox" disabled value="E-mail" />

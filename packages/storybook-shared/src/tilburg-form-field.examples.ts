@@ -93,45 +93,58 @@ export interface Example {
   html: string;
 }
 
+/* Unclassed demo wrapper: pins the width of the example so the field does not
+   stretch to the full canvas. Presentation of the example, not of the
+   component — the form field itself carries no inline styling. */
+const wrapperStyle = 'max-width:24rem';
+
 const triangleIcon = `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1 1 19h18L10 1Zm0 5 1 7h-2l1-7Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>`;
 const circleIcon = `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm1 13H9v-2h2v2Zm0-4H9V5h2v5Z"/></svg>`;
 
 export const examples = {
   default: {
     name: 'Default',
-    html: `<div class="utrecht-form-field utrecht-form-field--text" style="max-width:24rem">
-  <label class="utrecht-form-label" for="ff-default">E-mailadres</label>
-  <div class="utrecht-form-field-description">We gebruiken dit alleen om je te bereiken.</div>
-  <input id="ff-default" type="email" class="utrecht-textbox utrecht-textbox--html-input" placeholder="naam@voorbeeld.nl" />
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text">
+    <label class="utrecht-form-label" for="ff-default">E-mailadres</label>
+    <div class="utrecht-form-field-description">We gebruiken dit alleen om je te bereiken.</div>
+    <input id="ff-default" type="email" class="utrecht-textbox utrecht-textbox--html-input" placeholder="naam@voorbeeld.nl" />
+  </div>
 </div>`,
   },
   invalid: {
     name: 'Invalid',
-    html: `<div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid" style="max-width:24rem">
-  <label class="utrecht-form-label utrecht-form-label--invalid" for="ff-invalid">E-mailadres</label>
-  <input id="ff-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="niet-geldig" aria-invalid="true" aria-describedby="ff-invalid-error" />
-  <div id="ff-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert" aria-live="polite">
-    <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
-    <span>Vul een geldig e-mailadres in.</span>
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid">
+    <label class="utrecht-form-label utrecht-form-label--invalid" for="ff-invalid">E-mailadres</label>
+    <input id="ff-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="niet-geldig" aria-invalid="true" aria-describedby="ff-invalid-error" />
+    <div id="ff-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert" aria-live="polite">
+      <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
+      <span>Vul een geldig e-mailadres in.</span>
+    </div>
   </div>
 </div>`,
   },
   warning: {
     name: 'Warning (Tilburg modifier)',
-    html: `<div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid tilburg-warning" style="max-width:24rem">
-  <label class="utrecht-form-label" for="ff-warning">Aanvraagdatum</label>
-  <input id="ff-warning" type="text" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="2026-05-31" aria-describedby="ff-warning-msg" />
-  <div id="ff-warning-msg" class="tilburg-validation-message tilburg-validation-message--warning utrecht-form-field-description utrecht-form-field-description--warning" role="alert" aria-live="polite">
-    <span class="tilburg-validation-message__icon" aria-hidden="true">${triangleIcon}</span>
-    <span>De aanvraagperiode sluit binnenkort.</span>
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid tilburg-warning">
+    <label class="utrecht-form-label" for="ff-warning">Aanvraagdatum</label>
+    <input id="ff-warning" type="text" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="2026-05-31" aria-describedby="ff-warning-msg" />
+    <div id="ff-warning-msg" class="tilburg-validation-message tilburg-validation-message--warning utrecht-form-field-description utrecht-form-field-description--warning" role="alert" aria-live="polite">
+      <span class="tilburg-validation-message__icon" aria-hidden="true">${triangleIcon}</span>
+      <span>De aanvraagperiode sluit binnenkort.</span>
+    </div>
   </div>
 </div>`,
   },
   disabled: {
     name: 'Disabled',
-    html: `<div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--disabled" style="max-width:24rem">
-  <label class="utrecht-form-label utrecht-form-label--disabled" for="ff-disabled">Burgerservicenummer</label>
-  <input id="ff-disabled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="123456789" disabled />
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--disabled">
+    <label class="utrecht-form-label utrecht-form-label--disabled" for="ff-disabled">Burgerservicenummer</label>
+    <input id="ff-disabled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="123456789" disabled />
+  </div>
 </div>`,
   },
 } satisfies Record<string, Example>;

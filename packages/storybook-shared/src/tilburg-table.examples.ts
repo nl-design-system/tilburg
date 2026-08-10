@@ -167,7 +167,7 @@ const bodyRows = rows
 export const examples = {
   default: {
     name: 'Default — striped body',
-    html: `<table class="utrecht-table" style="min-width:32rem">
+    html: `<table class="utrecht-table">
   <thead class="utrecht-table__header">
     <tr class="utrecht-table__row">
       <th class="utrecht-table__header-cell">Zaaknummer</th>
@@ -182,7 +182,7 @@ ${bodyRows}
   },
   withCaptionAndFooter: {
     name: 'With caption + footer (totals row)',
-    html: `<table class="utrecht-table" style="min-width:32rem">
+    html: `<table class="utrecht-table">
   <caption class="utrecht-table__caption">Aanvragen per maand</caption>
   <thead class="utrecht-table__header">
     <tr class="utrecht-table__row">

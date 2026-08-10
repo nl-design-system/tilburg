@@ -38,7 +38,7 @@ export const Normal: Story = {
     const [value, setValue] = useState<string | null | undefined>('email');
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '24rem' }}>
-        <label className="utrecht-form-label" style={{ display: 'block', fontWeight: 700 }} htmlFor="cb-react-normal">
+        <label className="utrecht-form-label" htmlFor="cb-react-normal">
           Voorkeurscontact
         </label>
         <Combobox id="cb-react-normal" items={contactOptions} value={value} onChange={setValue} />
@@ -53,7 +53,7 @@ export const Chiplist: Story = {
     const [values, setValues] = useState<string[]>(['paspoort', 'geboorteakte']);
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '24rem' }}>
-        <label className="utrecht-form-label" style={{ display: 'block', fontWeight: 700 }} htmlFor="cb-react-multi">
+        <label className="utrecht-form-label" htmlFor="cb-react-multi">
           Aanvraagdocumenten
         </label>
         <Combobox
@@ -76,7 +76,7 @@ export const Invalid: Story = {
     const [value, setValue] = useState<string | null | undefined>(null);
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '24rem' }}>
-        <label className="utrecht-form-label" style={{ display: 'block', fontWeight: 700 }} htmlFor="cb-react-invalid">
+        <label className="utrecht-form-label" htmlFor="cb-react-invalid">
           Voorkeurscontact
         </label>
         <Combobox id="cb-react-invalid" items={contactOptions} value={value} onChange={setValue} invalid required />
@@ -90,7 +90,7 @@ export const Disabled: Story = {
   render: () => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '24rem' }}>
-        <label className="utrecht-form-label" style={{ display: 'block', fontWeight: 700 }} htmlFor="cb-react-disabled">
+        <label className="utrecht-form-label" htmlFor="cb-react-disabled">
           Voorkeurscontact
         </label>
         <Combobox id="cb-react-disabled" items={contactOptions} value="email" onChange={() => undefined} disabled />
@@ -105,11 +105,7 @@ export const Clearable: Story = {
     const [value, setValue] = useState<string | null | undefined>('post');
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '24rem' }}>
-        <label
-          className="utrecht-form-label"
-          style={{ display: 'block', fontWeight: 700 }}
-          htmlFor="cb-react-clearable"
-        >
+        <label className="utrecht-form-label" htmlFor="cb-react-clearable">
           Voorkeurscontact
         </label>
         <Combobox id="cb-react-clearable" items={contactOptions} value={value} onChange={setValue} clearable />

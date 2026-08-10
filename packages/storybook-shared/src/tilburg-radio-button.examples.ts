@@ -104,41 +104,46 @@ export interface Example {
   html: string;
 }
 
-const rowStyle = 'align-items:center;display:flex;gap:0.5rem;margin-block-end:0.5rem';
-const fieldsetStyle = 'border:0;padding:0';
+/* No inline styles: `.utrecht-fieldset` (packages/components-css/form-fieldset)
+   already strips the user-agent border/padding/margin, and the row layout of each
+   option comes from `.utrecht-form-label--radio:has(> .utrecht-radio-button)` in
+   `packages/components-css/radio-button/index.scss`. A label that wraps its own
+   control is the canonical structure and mirrors what React's
+   `<FormLabel type="radio">` renders. */
 const baseClasses = 'utrecht-radio-button utrecht-radio-button--html-input';
+const labelClasses = 'utrecht-form-label utrecht-form-label--radio';
 
 export const examples = {
   group: {
     name: 'Group (one checked)',
-    html: `<fieldset style="${fieldsetStyle}">
-  <legend class="utrecht-form-label utrecht-form-label--radio">Hoe wil je je aanvraag ontvangen?</legend>
-  <div style="${rowStyle}">
+    html: `<fieldset class="utrecht-fieldset">
+  <legend class="${labelClasses}">Hoe wil je je aanvraag ontvangen?</legend>
+  <label class="${labelClasses}" for="rb-email">
     <input id="rb-email" type="radio" name="delivery" value="email" class="${baseClasses}" checked />
-    <label class="utrecht-form-label utrecht-form-label--radio" for="rb-email">E-mail</label>
-  </div>
-  <div style="${rowStyle}">
+    E-mail
+  </label>
+  <label class="${labelClasses}" for="rb-post">
     <input id="rb-post" type="radio" name="delivery" value="post" class="${baseClasses}" />
-    <label class="utrecht-form-label utrecht-form-label--radio" for="rb-post">Per post</label>
-  </div>
-  <div style="${rowStyle}">
+    Per post
+  </label>
+  <label class="${labelClasses}" for="rb-pickup">
     <input id="rb-pickup" type="radio" name="delivery" value="pickup" class="${baseClasses}" />
-    <label class="utrecht-form-label utrecht-form-label--radio" for="rb-pickup">Ophalen bij de balie</label>
-  </div>
+    Ophalen bij de balie
+  </label>
 </fieldset>`,
   },
   disabled: {
     name: 'Disabled options',
-    html: `<fieldset style="${fieldsetStyle}">
-  <legend class="utrecht-form-label utrecht-form-label--radio">Niet beschikbaar</legend>
-  <div style="${rowStyle}">
+    html: `<fieldset class="utrecht-fieldset">
+  <legend class="${labelClasses}">Niet beschikbaar</legend>
+  <label class="${labelClasses}" for="rb-d1">
     <input id="rb-d1" type="radio" name="disabled" value="a" class="${baseClasses}" disabled />
-    <label class="utrecht-form-label utrecht-form-label--radio" for="rb-d1">Disabled (unchecked)</label>
-  </div>
-  <div style="${rowStyle}">
+    Disabled (unchecked)
+  </label>
+  <label class="${labelClasses}" for="rb-d2">
     <input id="rb-d2" type="radio" name="disabled" value="b" class="${baseClasses}" checked disabled />
-    <label class="utrecht-form-label utrecht-form-label--radio" for="rb-d2">Disabled (checked)</label>
-  </div>
+    Disabled (checked)
+  </label>
 </fieldset>`,
   },
 } satisfies Record<string, Example>;

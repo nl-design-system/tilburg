@@ -85,16 +85,22 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<fieldset class="utrecht-fieldset" style="max-width:24rem">
-  <legend class="utrecht-form-label">Persoonsgegevens</legend>
-  <div class="utrecht-form-field utrecht-form-field--text">
-    <label class="utrecht-form-label" for="fs-naam">Naam</label>
-    <input id="fs-naam" type="text" class="utrecht-textbox utrecht-textbox--html-input" />
-  </div>
-  <div class="utrecht-form-field utrecht-form-field--text">
-    <label class="utrecht-form-label" for="fs-email">E-mailadres</label>
-    <input id="fs-email" type="email" class="utrecht-textbox utrecht-textbox--html-input" />
-  </div>
-</fieldset>`,
+    /* The `max-width` sits on an unclassed demo wrapper, not on the fieldset:
+       it frames the example, it is not part of the component. Everything that
+       is component styling — the user-agent border/padding/margin reset —
+       comes from `.utrecht-fieldset` in packages/components-css/form-fieldset. */
+    html: `<div style="max-width:24rem">
+  <fieldset class="utrecht-fieldset">
+    <legend class="utrecht-form-label">Persoonsgegevens</legend>
+    <div class="utrecht-form-field utrecht-form-field--text">
+      <label class="utrecht-form-label" for="fs-naam">Naam</label>
+      <input id="fs-naam" type="text" class="utrecht-textbox utrecht-textbox--html-input" />
+    </div>
+    <div class="utrecht-form-field utrecht-form-field--text">
+      <label class="utrecht-form-label" for="fs-email">E-mailadres</label>
+      <input id="fs-email" type="email" class="utrecht-textbox utrecht-textbox--html-input" />
+    </div>
+  </fieldset>
+</div>`,
   },
 } satisfies Record<string, Example>;

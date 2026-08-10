@@ -10,6 +10,34 @@
   line-height: var(--tilburg-form-field-label-line-height, var(--utrecht-form-label-line-height, 1.4));
 }
 
+/* A bare `<label>` is inline, so a label and the control it labels share the
+   same line whenever the container is wide enough — the reason the reference
+   examples used to hand-patch `display: block` with an inline `style`. Tilburg
+   text labels always sit *above* their control, so make that the default here
+   instead. The checkbox/radio variants are excluded: those labels wrap their
+   own control and lay themselves out as a flex row (see the checkbox and
+   radio-button layers). */
+.utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio) {
+  display: block;
+}
+
+/* Gap between a stacked label and the control directly below it, driven by
+   utrecht's own `--utrecht-form-field-label-margin-block-end` (with the
+   Tilburg 0.25rem as fallback for themes that don't ship the token).
+
+   `.utrecht-form-field` places its own label/description/control rhythm on a
+   grid, so labels *inside* a form field are left alone — this only covers the
+   label + control pairs written outside one, which is exactly where the
+   examples used to hand-patch `margin-bottom`. */
+:not(.utrecht-form-field)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(
+    + .utrecht-textbox,
+    + .utrecht-textarea,
+    + .utrecht-combobox
+  ) {
+  margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
+}
+
 /* "(optional)" addon next to a label — lighter weight + muted colour so it
    doesn't compete with the field name. */
 .tilburg-form-label__optional {
