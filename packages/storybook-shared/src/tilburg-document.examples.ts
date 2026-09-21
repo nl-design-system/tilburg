@@ -64,6 +64,25 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-document>
+  <tilburg-webc-page>…</tilburg-webc-page>
+</tilburg-webc-document>
+\`\`\`
+
+Renders a single \`<div class="utrecht-document">\` around the default slot. Mount it once, as high in the page as possible. No attributes, events or named slots.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

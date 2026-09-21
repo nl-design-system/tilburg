@@ -80,6 +80,30 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-validation-message type="error">Vul een geldig e-mailadres in.</tilburg-webc-validation-message>
+
+<tilburg-webc-validation-message type="warning" live-region="assertive">
+  <span slot="icon" aria-hidden="true">!</span>
+  De aanvraagperiode sluit binnenkort.
+</tilburg-webc-validation-message>
+\`\`\`
+
+Leave the \`icon\` slot empty to get the CSS default glyph per type (a circled \`!\` for \`error\`, a triangle for \`warning\`), or pass your own element.
+
+Attributes: \`type\` (\`'error' | 'warning'\`, default \`'error'\`; anything else renders as \`error\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\` — Angular's \`ariaLive\`, renamed because \`aria-live\` is a global ARIA attribute). \`role="alert"\` is always set. Slots: default (message), \`icon\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

@@ -90,6 +90,34 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-form-label type="checkbox">
+  <tilburg-webc-checkbox id="consent" name="consent" required aria-describedby="consent-error"></tilburg-webc-checkbox>
+  Ik ga akkoord met de voorwaarden
+</tilburg-webc-form-label>
+
+<script type="module">
+  document.querySelector('tilburg-webc-checkbox').addEventListener('change', (event) => {
+    console.log(event.target.checked); // the native change event of the inner <input>
+  });
+</script>
+\`\`\`
+
+The real \`<input type="checkbox">\` is rendered in light DOM, so it takes part in the surrounding \`<form>\` and \`<label>\` natively. Angular's \`(checkChanged)\` output re-emits the native \`change\` event; here that native \`change\` event simply bubbles through the host, so there is no custom event.
+
+Attributes: \`name\`, \`value\`, \`checked\` (kept in sync with user interaction and reflected to the host), \`indeterminate\` (adds \`aria-checked="mixed"\` and \`utrecht-checkbox--indeterminate\`, as in React), \`disabled\`, \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-checkbox--invalid\`), \`required\` (also \`aria-required="true"\`). \`id\`, \`title\`, \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<input>\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

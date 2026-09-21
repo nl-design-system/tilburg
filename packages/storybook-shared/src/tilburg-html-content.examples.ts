@@ -79,6 +79,35 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<!-- Inhoud via de default slot -->
+<tilburg-webc-html-content lang="nl">
+  <p>CMS-geleverde HTML krijgt automatisch de Tilburg-typografie.</p>
+  <ul><li>Punt één</li><li>Punt twee</li></ul>
+</tilburg-webc-html-content>
+
+<!-- CMS-geleverde HTML-string via de html-property -->
+<tilburg-webc-html-content lang="nl"></tilburg-webc-html-content>
+<script type="module">
+  document.querySelector('tilburg-webc-html-content').html = cmsHtml;
+</script>
+\`\`\`
+
+Attributes: \`html\` (CMS-authored HTML string, rendered inside the styled \`.utrecht-html-content\` div — set it as a property for long strings) and \`lang\` (moved from the host onto the \`.utrecht-html-content\` div, like Angular's \`[attr.lang]\`). Slot: default (content used when \`html\` is not set). No events. Pass either \`html\` or slotted content, not both.
+
+The \`html\` string is run through a built-in allowlist sanitizer (the counterpart of Angular's \`DomSanitizer\`): script-like elements (\`script\`, \`style\`, \`iframe\`, \`form\`, \`svg\`, …) are dropped, unknown elements are unwrapped, \`on*\` handlers and \`style\` attributes are removed, and \`href\` / \`src\` must be relative or use \`http(s)\`, \`mailto\`, \`tel\`, \`ftp\` or \`sms\`. Treat it as defence in depth: still sanitise CMS output server-side. Slotted content is not sanitised — it is your own DOM.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

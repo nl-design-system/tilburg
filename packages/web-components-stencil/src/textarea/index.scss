@@ -1,0 +1,26 @@
+@use "../../../components-css/textarea/index";
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-webc-textarea {
+  display: block;
+}
+
+/* A `<textarea>` is inline-block by default, so inside the block host it sits
+   on a line box and picks up the font's descender space below it (~7px extra
+   height per field). Make it the block the host already implies. */
+tilburg-webc-textarea > .utrecht-textarea {
+  display: block;
+}
+
+/* components-css spaces a stacked label from the control directly after it
+   (`.utrecht-form-label:has(+ .utrecht-textarea)`, see form-label). Here the next
+   sibling is this host, or the label itself sits in a
+   `<tilburg-webc-form-label>` host; same spacing, same exclusions. */
+:not(.utrecht-form-field)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(+ tilburg-webc-textarea),
+:not(.utrecht-form-field)
+  > tilburg-webc-form-label:has(+ tilburg-webc-textarea)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio) {
+  margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
+}

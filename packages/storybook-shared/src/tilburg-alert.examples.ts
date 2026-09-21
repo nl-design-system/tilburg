@@ -110,6 +110,40 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-alert variant="info" heading="Informatie" closable>
+  De openingstijden zijn gewijzigd.
+</tilburg-webc-alert>
+
+<script type="module">
+  document
+    .querySelector('tilburg-webc-alert')
+    .addEventListener('tilburgClose', (event) => event.target.remove());
+</script>
+\`\`\`
+
+Leave the \`icon\` / \`close-icon\` slots empty to get the CSS default glyphs, or pass your own element:
+
+\`\`\`html
+<tilburg-webc-alert variant="danger" heading="Er ging iets mis" sr-prefix="Fout:">
+  <svg slot="icon" aria-hidden="true"><!-- … --></svg>
+  Probeer het opnieuw of neem contact op met de gemeente.
+</tilburg-webc-alert>
+\`\`\`
+
+Attributes: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`heading-level\` (1–6, default 3), \`closable\`, \`live-region\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` for \`danger\` and \`polite\` otherwise), \`close-button-aria-label\` (default \`'sluit alert'\`), \`sr-prefix\`, and \`aria-label\` (moved onto the inner alert). Event: \`tilburgClose\` — the alert does not remove itself. Slots: default (message), \`icon\`, \`close-icon\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

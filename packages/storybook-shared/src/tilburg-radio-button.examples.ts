@@ -92,6 +92,35 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<fieldset class="utrecht-fieldset">
+  <legend class="utrecht-form-label utrecht-form-label--radio">Hoe wil je je aanvraag ontvangen?</legend>
+  <tilburg-webc-form-label type="radio">
+    <tilburg-webc-radio-button name="delivery" value="email" checked></tilburg-webc-radio-button>
+    E-mail
+  </tilburg-webc-form-label>
+  <tilburg-webc-form-label type="radio">
+    <tilburg-webc-radio-button name="delivery" value="post"></tilburg-webc-radio-button>
+    Per post
+  </tilburg-webc-form-label>
+</fieldset>
+\`\`\`
+
+The real \`<input type="radio">\` is rendered in light DOM, so buttons with the same \`name\` form a native group and take part in the surrounding \`<form>\`. Listen to the native \`change\` event, it bubbles through the host.
+
+Attributes: \`name\`, \`value\`, \`checked\` (kept in sync with user interaction — also when another button of the group is selected — and reflected to the host), \`disabled\` (also \`aria-disabled="true"\`), \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-radio-button--invalid\`), \`required\` (also \`aria-required="true"\`). \`id\`, \`title\`, \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<input>\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

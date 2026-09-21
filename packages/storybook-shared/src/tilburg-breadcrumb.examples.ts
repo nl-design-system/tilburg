@@ -88,6 +88,38 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`items\` is a JS **property** (an array cannot be an HTML attribute):
+
+\`\`\`html
+<tilburg-webc-breadcrumb aria-label="Kruimelpad"></tilburg-webc-breadcrumb>
+
+<script type="module">
+  const breadcrumb = document.querySelector('tilburg-webc-breadcrumb');
+  breadcrumb.items = [
+    { label: 'Home', href: '/' },
+    { label: 'Parkeren', href: '/parkeren' },
+    { label: 'Bewonersvergunning', current: true },
+  ];
+  breadcrumb.addEventListener('tilburgItemClick', ({ detail }) => {
+    detail.event.preventDefault();
+    router.navigate(detail.item.href);
+  });
+</script>
+\`\`\`
+
+Property: \`items\` (\`{ label, href?, current?, data? }[]\`, default \`[]\`; an item is the current page — \`<span aria-current="page">\` — when it has \`current: true\` or is the last one; nothing renders for an empty array; \`href\` falls back to \`#\`). \`aria-label\` (default \`'Kruimelpad'\`) is moved from the host onto the \`<nav>\`. Event: \`tilburgItemClick\` (Angular \`itemClick\`), \`detail\` is \`{ item, event }\` with the native \`MouseEvent\`. Type: \`TilburgWebcBreadcrumbItem\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

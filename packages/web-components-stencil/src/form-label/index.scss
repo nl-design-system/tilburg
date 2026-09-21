@@ -1,0 +1,7 @@
+@use "../../../components-css/form-label/index";
+
+/* Light-DOM host defaults to `display: inline`; without this the label sits
+   on the same line as the textbox (same rule as the Angular `:host`). */
+tilburg-webc-form-label {
+  display: block;
+}

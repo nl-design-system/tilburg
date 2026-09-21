@@ -7,7 +7,10 @@ packages:
 
 allowBuilds:
   "@bundled-es-modules/glob": true
+  '@parcel/watcher': true
   esbuild: true
+  lmdb: true
+  msgpackr-extract: true
   style-dictionary: true
 
 # Configure pnpm so peer dependencies must be explicitly added instead of being automatically installed.

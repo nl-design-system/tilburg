@@ -93,6 +93,39 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-form-label for="email">E-mailadres</tilburg-webc-form-label>
+<tilburg-webc-textbox
+  id="email"
+  name="email"
+  type="email"
+  placeholder="naam@voorbeeld.nl"
+  required
+  aria-describedby="email-hint"
+></tilburg-webc-textbox>
+
+<script type="module">
+  document.querySelector('tilburg-webc-textbox').addEventListener('input', (event) => {
+    console.log(event.target.value); // the native input event of the inner <input>
+  });
+</script>
+\`\`\`
+
+The real \`<input>\` is rendered in light DOM, so it takes part in the surrounding \`<form>\` and \`<label for>\` natively. Listen to the native \`input\` / \`change\` events, they bubble through the host; there are no custom events.
+
+Attributes: \`type\` (default \`'text'\`), \`name\`, \`value\` (kept in sync with user input), \`placeholder\`, \`autocomplete\`, \`disabled\`, \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-textbox--invalid\`), \`required\` (also \`aria-required="true"\`), \`readonly\`. \`id\`, \`title\`, \`dir\` (defaults to \`auto\`), \`inputmode\` (defaults to \`numeric\` for \`type="number"\`), \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<input>\` — they replace Angular's \`ariaLabel\` / \`ariaLabelledBy\` / \`ariaDescribedBy\` / \`inputMode\` inputs. Angular's \`control\` (\`FormControl\`) has no equivalent: read \`value\` or the surrounding form.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

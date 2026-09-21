@@ -72,7 +72,7 @@
     "update-patch": "npm-check-updates --configFileName .ncurc.patch.mjs",
     "update-minor": "npm-check-updates --configFileName .ncurc.minor.mjs",
     "update-major": "npm-check-updates --configFileName .ncurc.major.mjs",
-    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/storybook run storybook",
+    "watch:storybook": "pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/web-components-react run build && pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/storybook run storybook",
     "watch:storybook-angular": "pnpm --filter @gemeente-tilburg/components-angular run build:components && pnpm --filter @gemeente-tilburg/storybook-angular run storybook",
     "watch:style-dictionary": "pnpm --filter @gemeente-tilburg/design-tokens run watch:style-dictionary"
   },

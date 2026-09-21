@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-page-content` is styled by
+   `@utrecht/component-library-css`, there is no components-css folder. */
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-webc-page-content {
+  display: block;
+}

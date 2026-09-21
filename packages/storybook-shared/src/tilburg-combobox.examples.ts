@@ -187,6 +187,52 @@ ${usagePlainHtmlFrameworkNeutral}
 ${usageReact}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`<tilburg-webc-combobox>\` renders the same DOM as the reference markup (so the CSS applies as-is) and drives open/close, active option, keyboard navigation, chips and outside-click itself — it never emits \`data-tilburg-combobox-enhance\`, so the enhancer stays out of its way. Options are structured data, so \`items\` (and an array \`value\`) are set as JS **properties**, not attributes.
+
+\`\`\`html
+<label class="utrecht-form-label" for="cb-contact">Voorkeurscontact</label>
+<tilburg-webc-combobox id="cb-contact" name="contact" clearable></tilburg-webc-combobox>
+
+<tilburg-webc-combobox id="cb-documents" multiple clearable placeholder="Voeg een document toe" aria-label="Aanvraagdocumenten"></tilburg-webc-combobox>
+
+<script type="module">
+  // \`id\` lives on the inner input, so walk up to the host.
+  const contact = document.getElementById('cb-contact').closest('tilburg-webc-combobox');
+  contact.items = [
+    { value: 'email', label: 'E-mail' },
+    { value: 'post', label: 'Per post' },
+    { value: 'balie', label: 'Ophalen bij de balie' },
+  ];
+  contact.value = 'email';
+  contact.addEventListener('tilburgChange', (event) => console.log(event.detail)); // 'post' | null | …
+
+  const documents = document.getElementById('cb-documents').closest('tilburg-webc-combobox');
+  documents.items = [
+    { value: 'paspoort', label: 'Paspoort' },
+    { value: 'geboorteakte', label: 'Geboorteakte' },
+    { value: 'rijbewijs', label: 'Rijbewijs', disabled: true },
+  ];
+  documents.value = ['paspoort', 'geboorteakte'];
+</script>
+\`\`\`
+
+Note that \`id\` is moved from the host onto the inner \`<input role="combobox">\` (so \`<label for>\` works and the id stays unique) — select the host through its input, or give it a class / \`data-\` attribute of its own.
+
+Properties: \`items\` (\`TilburgWebcComboboxItem[]\` — \`{ value; label: string; disabled?: boolean }\`, the React \`ComboboxItem\` shape) and \`value\` (an item value or \`null\` in single mode, an array of item values with \`multiple\`; a single string value may also be written as the \`value\` attribute). The component updates \`value\` itself on every selection. Attributes: \`multiple\`, \`placeholder\` (hidden while chips are shown), \`disabled\`, \`clearable\` (× clear-all button while something is selected), \`invalid\` (\`aria-invalid\`), \`required\` (\`aria-required\`), \`name\` (renders one hidden \`<input name>\` per selected value so the selection is submitted with the surrounding \`<form>\`), plus \`id\`, \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\`, which are moved onto the inner input. Without an \`id\` a unique \`tilburg-webc-combobox-N\` is generated; the listbox (\`{id}-listbox\`) and option (\`{id}-opt-{i}\`) ids derive from it. Event: \`tilburgChange\` (Angular \`change\`, React \`onChange\`) with the new value in \`event.detail\` — the item value or \`null\` (clear) in single mode, the new array in multiple mode.
+
+Keyboard: ArrowDown/Up open the popover and move the active option (disabled options are skipped), Home/End jump to the first/last, Enter selects, Escape closes, Backspace in chiplist mode removes the last chip. There is no searchable/filtering mode yet (Angular's reserved \`searchable\` / \`loading\` inputs are not exposed), and Angular's \`bindLabel\` / \`bindValue\` are replaced by the fixed \`{ value, label }\` item shape used by React.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtmlFrameworkNeutral}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

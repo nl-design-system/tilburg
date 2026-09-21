@@ -14,9 +14,9 @@ export const bugs = 'https://github.com/nl-design-system/tilburg/labels/componen
 
 const intro = `Native \`<dialog>\`-based modal styled with the \`tilburg-modal\` BEM class set. The Tilburg layer adds drop-shadow, rounded corners, a soft drop-in animation, and a backdrop blur. Reduced-motion users skip the animation.`;
 
-const usageLead = `This component is pure CSS — there is no Angular wrapper. Use the platform \`<dialog>\` element together with the BEM classes; call \`.showModal()\` to open and \`.close()\` to dismiss.`;
+const usageLead = `The components below render exactly this markup, give the dialog its accessible name from the heading (\`aria-labelledby\`), and close it via the close button, Escape or a click on the backdrop. The page behind it is inert while it is open (native \`showModal()\`).`;
 
-const usageLeadHtml = `This component is pure CSS. Use the platform \`<dialog>\` element together with the BEM classes; call \`.showModal()\` to open and \`.close()\` to dismiss.`;
+const usageLeadHtml = `This component is plain HTML/CSS on the platform \`<dialog>\` element: use the BEM classes, call \`.showModal()\` to open and \`.close()\` to dismiss. The React, Angular and Web Components layers wrap exactly this markup.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -43,20 +43,70 @@ const usagePlainHtml = `### Plain HTML / CSS
 </dialog>
 \`\`\``;
 
-const usageAngular = `### Angular (using the platform element)
-
-\`\`\`ts
-@ViewChild('confirmDialog', { static: true }) confirm!: ElementRef<HTMLDialogElement>;
-open()  { this.confirm.nativeElement.showModal(); }
-close() { this.confirm.nativeElement.close(); }
-\`\`\`
+const usageAngular = `### Angular
 
 \`\`\`html
-<button (click)="open()">Open modal</button>
-<dialog #confirmDialog class="tilburg-modal" aria-labelledby="t">
-  …same structure as above…
-</dialog>
-\`\`\``;
+<tilburg-button (click)="open = true">Open modal</tilburg-button>
+
+<tilburg-modal title="Aanvraag bevestigen" [open]="open" (closed)="open = false">
+  <tilburg-paragraph>Weet je zeker dat je de aanvraag wilt versturen?</tilburg-paragraph>
+  <tilburg-button slot="footer" appearance="primary-action-button" (click)="confirm()">Bevestigen</tilburg-button>
+  <tilburg-button slot="footer" appearance="secondary-action-button" (click)="open = false">Annuleren</tilburg-button>
+</tilburg-modal>
+\`\`\`
+
+Inputs: \`title\` (heading + accessible name), \`open\` (\`true\` opens via \`showModal()\`, \`false\` closes), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`). Output: \`(closed)\` — fires for every way of closing (close button, Escape, backdrop, \`close()\`); set your \`open\` back to \`false\` there. Content: default projection for the body, \`slot="footer"\` on each action (they become the footer's flex items; the footer disappears when empty). Public methods \`showModal()\` / \`close()\` via \`@ViewChild(TilburgModal)\`.`;
+
+const usageReact = `### React
+
+\`\`\`tsx
+import { Button, Modal, Paragraph } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function ConfirmApplication() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open modal</Button>
+      <Modal
+        title="Aanvraag bevestigen"
+        open={open}
+        onClose={() => setOpen(false)}
+        footer={
+          <>
+            <Button appearance="primary-action-button" onClick={() => setOpen(false)}>Bevestigen</Button>
+            <Button appearance="secondary-action-button" onClick={() => setOpen(false)}>Annuleren</Button>
+          </>
+        }
+      >
+        <Paragraph>Weet je zeker dat je de aanvraag wilt versturen?</Paragraph>
+      </Modal>
+    </>
+  );
+}
+\`\`\`
+
+Props: \`title\` (heading + accessible name), \`open\` (controlled; \`true\` opens via \`showModal()\`), \`onClose\` (fires for every way of closing — keep your state in sync there), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`), \`footer\` (\`ReactNode\`; no footer when omitted), plus any \`<dialog>\` attribute. The forwarded \`ref\` is the \`<dialog>\`, so \`ref.current.showModal()\` works too. \`AlertDialog\` (with \`customFooter\`) is a deprecated alias that renders through \`Modal\`.`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-button id="open-confirm">Open modal</tilburg-webc-button>
+
+<tilburg-webc-modal id="confirm" heading="Aanvraag bevestigen">
+  <p class="utrecht-paragraph">Weet je zeker dat je de aanvraag wilt versturen?</p>
+  <tilburg-webc-button slot="footer" appearance="primary-action-button">Bevestigen</tilburg-webc-button>
+  <tilburg-webc-button slot="footer" appearance="secondary-action-button">Annuleren</tilburg-webc-button>
+</tilburg-webc-modal>
+
+<script type="module">
+  const modal = document.getElementById('confirm');
+  document.getElementById('open-confirm').addEventListener('click', () => modal.showModal());
+  modal.addEventListener('tilburgClose', () => console.log('gesloten'));
+</script>
+\`\`\`
+
+Attributes: \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`open\` (reflected; set it to open, it is removed when the dialog closes), \`close-label\` (default \`'Sluiten'\`), \`close-on-backdrop-click\` (default \`true\`). Methods: \`showModal()\`, \`close()\`. Event: \`tilburgClose\` for every way of closing. Slots: default (body), \`footer\` — put \`slot="footer"\` on each action so they become the footer's flex items; the footer is omitted when unused.`;
 
 export const description = `${intro}
 
@@ -64,9 +114,31 @@ export const description = `${intro}
 
 ${usageLead}
 
-${usagePlainHtml}
-
 ${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageLead}
+
+${usageReact}
+
+${usagePlainHtml}
+`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageLead}
+
+${usageWebComponents}
+
+${usagePlainHtml}
 `;
 
 export const descriptionHtml = `${intro}

@@ -28,6 +28,7 @@ import { TilburgHtmlContent } from './html-content/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
+import { TilburgModal } from './modal/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
@@ -80,6 +81,7 @@ const components = [
   TilburgLanguageToggle,
   TilburgLink,
   TilburgLoadingSpinner,
+  TilburgModal,
   TilburgFormField,
   TilburgFormFieldDescription,
   TilburgFieldset,

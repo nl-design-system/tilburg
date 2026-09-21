@@ -86,6 +86,25 @@ ${usagePlainHtml}
 ${baselineShift}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-button appearance="primary-action-button" size="medium">Aanvragen</tilburg-webc-button>
+<tilburg-webc-button appearance="secondary-action-button" type="submit">Verstuur</tilburg-webc-button>
+<tilburg-webc-button appearance="subtle-button" title="Sluiten">×</tilburg-webc-button>
+\`\`\`
+
+Attributes: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`, default \`'primary-action-button'\`), \`size\` (\`'small' | 'medium' | 'large'\`, default \`'medium'\`), \`type\` (default \`'button'\`), \`disabled\`, \`busy\`, \`pressed\` (\`true\`/\`false\` for a toggle button, unset otherwise). \`title\`, \`aria-label\` and \`aria-describedby\` are moved from the host onto the inner \`<button>\`; \`aria-label\` falls back to \`title\`. The inner \`<button>\` lives in light DOM, so \`type="submit"\` submits the surrounding \`<form>\` natively.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

@@ -1,0 +1,23 @@
+@use "../../../components-css/checkbox/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule
+   as the Angular `:host`). */
+tilburg-webc-checkbox {
+  display: block;
+}
+
+/* A label wrapping its own checkbox: components-css lays that out with
+   `.utrecht-form-label--checkbox:has(> .utrecht-checkbox)`, but here the host
+   element sits between the label and the input, so the direct-child match
+   misses. Same row layout and gap, keyed on the host. */
+.utrecht-form-label--checkbox:has(> tilburg-webc-checkbox) {
+  align-items: center;
+  display: flex;
+  gap: var(--utrecht-checkbox-margin-inline-end, 12px);
+}
+
+/* Vertical rhythm between consecutive wrapping labels. The label is the only
+   child of its `<tilburg-webc-form-label>` host, so count the hosts. */
+tilburg-webc-form-label:not(:last-child) > .utrecht-form-label--checkbox:has(> tilburg-webc-checkbox) {
+  margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
+}

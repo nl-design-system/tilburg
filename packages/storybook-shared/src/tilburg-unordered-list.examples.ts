@@ -71,6 +71,28 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-unordered-list>
+  <li>Eerste item</li>
+  <li>Tweede item</li>
+</tilburg-webc-unordered-list>
+\`\`\`
+
+No component-specific attributes; \`aria-label\` / \`aria-labelledby\` are moved onto the inner \`<ul>\`. Slot: default — plain \`<li>\` items; they end up as direct children of the \`<ul>\`, so the \`--html-ul > li\` item styling applies without a class. No events.
+
+Nesting: when you write the markup as static HTML, the browser's HTML parser closes an open \`<li>\` as soon as it meets another \`<li>\` inside a custom element, so a nested \`<tilburg-webc-unordered-list>\` inside an \`<li>\` gets its items hoisted into the outer list. Nested lists work when the DOM is built by a framework or DOM APIs (React, Angular, \`append()\`); in static HTML nest a plain \`<ul class="tilburg-unordered-list utrecht-unordered-list utrecht-unordered-list--html-ul">\` instead.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

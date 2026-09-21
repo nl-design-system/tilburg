@@ -1,0 +1,23 @@
+<dialog
+  #dialog
+  class="tilburg-modal"
+  [attr.aria-labelledby]="titleId"
+  (close)="onDialogClose($event)"
+  (click)="onDialogClick($event)"
+>
+  <header class="tilburg-modal__header">
+    <h2 [id]="titleId">{{ title }}</h2>
+    <button type="button" class="tilburg-modal__close-button" (click)="close()">
+      <span>{{ closeLabel }}</span>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </header>
+  <div class="tilburg-modal__content">
+    <ng-content></ng-content>
+  </div>
+  <footer class="tilburg-modal__footer">
+    <ng-content select="[slot=footer]"></ng-content>
+  </footer>
+</dialog>

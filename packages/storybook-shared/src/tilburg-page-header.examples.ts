@@ -88,6 +88,28 @@ ${usagePlainHtml}
 ${theming}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-page-header logo-src="/logo-on-dark.svg" logo-alt="" heading="Gemeente Tilburg" title-href="/">
+  <span class="tilburg-page-header__user">Jan Janssen</span>
+  <tilburg-webc-button appearance="subtle-button">Uitloggen</tilburg-webc-button>
+</tilburg-webc-page-header>
+\`\`\`
+
+Attributes: \`logo-src\`, \`logo-alt\` (default \`''\`), \`heading\` (the header text — Angular/React \`title\`, renamed because \`title\` is a global HTML attribute), \`title-href\` (link target of the brand area, default \`/\`), and \`aria-label\` (moved onto the \`<header>\` landmark; replaces Angular's \`ariaLabel\` input). Slot: default (actions on the inline-end); the actions container is only rendered when there is at least one child element at first render. No events.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

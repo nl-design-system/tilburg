@@ -63,6 +63,26 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-article aria-labelledby="vergunningen">
+  <h2 class="utrecht-heading-2" id="vergunningen">Vergunningen</h2>
+  <p class="utrecht-paragraph">…</p>
+</tilburg-webc-article>
+\`\`\`
+
+Renders \`<article class="utrecht-article">\` around the default slot. \`id\`, \`aria-label\` and \`aria-labelledby\` written on the host are moved onto the \`<article>\`. No events or named slots.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage
