@@ -1,0 +1,20 @@
+@use "../../../components-css/textbox/index";
+
+/* Block host so the textbox stacks above/below its siblings inside a form
+   field, instead of running inline with the label (same rule as the Angular
+   `:host`). */
+tilburg-webc-textbox {
+  display: block;
+}
+
+/* components-css spaces a stacked label from the control directly after it
+   (`.utrecht-form-label:has(+ .utrecht-textbox)`, see form-label). Here the next
+   sibling is this host, or the label itself sits in a
+   `<tilburg-webc-form-label>` host; same spacing, same exclusions. */
+:not(.utrecht-form-field)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(+ tilburg-webc-textbox),
+:not(.utrecht-form-field)
+  > tilburg-webc-form-label:has(+ tilburg-webc-textbox)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio) {
+  margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
+}

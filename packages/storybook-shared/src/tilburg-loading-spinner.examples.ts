@@ -85,6 +85,37 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-loading-spinner
+  heading="Bezig met laden"
+  message="Een momentje alstublieft..."
+  delay-ms="1000"
+  aria-label="Bezig met laden"
+></tilburg-webc-loading-spinner>
+
+<script type="module">
+  const spinner = document.querySelector('tilburg-webc-loading-spinner');
+  spinner.visible = true; // overlay appears after delay-ms
+  await fetch('/api/aanvraag', { method: 'POST' });
+  spinner.visible = false; // hides immediately, cancels a pending timer
+</script>
+\`\`\`
+
+The grace timer lives inside the component: setting \`visible\` starts a \`delay-ms\` timer and only then renders the overlay, so quick operations never flicker. While hidden the element stays in the DOM but renders nothing inside it. Use \`delay-ms="0"\` to show the overlay immediately.
+
+Attributes: \`visible\` (boolean, default \`false\`), \`heading\` (text above the spinner — the Angular/React \`title\` input, renamed because \`title\` is a global HTML attribute that would show a tooltip), \`message\`, \`delay-ms\` (default \`1000\`), and \`aria-label\` (moved onto the overlay \`<div>\`; give the overlay a name, it has none of its own). No events, no slots. The overlay carries \`aria-busy="true"\` and \`role="status"\` sits on \`.tilburg-loading-spinner__content\`, as in the HTML reference.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

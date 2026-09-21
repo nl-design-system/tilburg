@@ -173,6 +173,32 @@ ${usageReact}
 ${usagePlainHtmlStandalone}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-accordion display-name="Veelgestelde vragen" heading-level="2">
+  <tilburg-webc-accordion-section section-key="openingstijden" label="Wat zijn de openingstijden?" auto-toggle>
+    <p class="utrecht-paragraph">Maandag t/m vrijdag van 9.00 tot 17.00 uur.</p>
+  </tilburg-webc-accordion-section>
+  <tilburg-webc-accordion-section section-key="afspraak" label="Moet ik een afspraak maken?" auto-toggle>
+    <p class="utrecht-paragraph">Ja, voor de meeste producten.</p>
+  </tilburg-webc-accordion-section>
+</tilburg-webc-accordion>
+\`\`\`
+
+Accordion attributes: \`display-name\`, \`heading-level\` (1–6, default 2), \`aria-label\` (moved onto the inner accordion, which then gets \`role="region"\`). Arrow Up/Down, Home and End move focus between the section headers.
+
+Section attributes: \`section-key\` (builds the \`utrecht-accordion-{key}-button\` / \`-panel\` IDs; a unique key is generated when unset), \`label\`, \`expanded\` (reflected), \`disabled\`, \`auto-toggle\` (the section opens/closes itself; without it the section only emits \`tilburgToggle\` and you set \`expanded\`). Event: \`tilburgToggle\` with the requested state in \`event.detail\`. Slots: default (panel), \`icon-expanded\`, \`icon-collapsed\` (default \`−\` / \`+\`).`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtmlStandalone}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

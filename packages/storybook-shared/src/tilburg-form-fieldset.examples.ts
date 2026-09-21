@@ -70,6 +70,31 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+The tag is \`<tilburg-webc-fieldset>\` (after the Angular selector \`tilburg-fieldset\`). It renders a native \`<fieldset class="utrecht-fieldset">\` in light DOM; pass a real \`<legend class="utrecht-form-label">\` as the first child so the native fieldset/legend relationship stays intact.
+
+\`\`\`html
+<tilburg-webc-fieldset invalid aria-describedby="persoon-error">
+  <legend class="utrecht-form-label">Persoonsgegevens</legend>
+  <tilburg-webc-form-field type="text">
+    <label class="utrecht-form-label" for="naam">Naam</label>
+    <input id="naam" name="naam" class="utrecht-textbox utrecht-textbox--html-input" />
+  </tilburg-webc-form-field>
+</tilburg-webc-fieldset>
+\`\`\`
+
+Attributes: \`disabled\` (native \`disabled\` on the \`<fieldset>\`, disabling every control in it, plus \`utrecht-fieldset--disabled\`), \`invalid\` (adds \`utrecht-fieldset--invalid\` and \`aria-invalid="true"\`). The Angular \`ariaLabel\` / \`ariaLabelledby\` / \`ariaDescribedBy\` inputs are the plain HTML attributes \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\`; write them (and \`id\` / \`name\`) on the host and they are moved onto the inner \`<fieldset>\`. Slot: default (legend and form fields).`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

@@ -134,6 +134,65 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+There is one element, \`<tilburg-webc-table>\`, and no row/cell custom elements. The HTML parser only allows table elements between \`<table>\`, \`<thead>\`/\`<tbody>\`/\`<tfoot>\`, \`<tr>\` and \`<th>\`/\`<td>\`: a custom element there is hoisted out of the table, and a \`<tr>\`/\`<td>\` written outside a \`<table>\` is dropped — all before any JavaScript runs. Angular gets around this with attribute directives on native elements (\`tr[tilburg-table-row]\`), React with components that render native elements; the web component does the same thing by decorating a native table.
+
+**Enhance mode** — wrap a native \`<table>\`. The component adds the \`utrecht-table*\` classes to the table, caption, sections, rows and cells (only this table's own parts, not nested tables), sets \`role="columnheader"\` / \`"rowheader"\` on \`<th>\` from its \`scope\` (like the Angular directive), and re-applies all of it when rows are added later (framework lists, \`insertRow()\`):
+
+\`\`\`html
+<tilburg-webc-table caption="Open aanvragen">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Zaaknummer</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">2025-TLB-001</th>
+        <td>In behandeling</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="2">1 aanvraag</td></tr>
+    </tfoot>
+  </table>
+</tilburg-webc-table>
+\`\`\`
+
+The \`caption\` attribute inserts a \`<caption class="utrecht-table__caption">\` as the table's first child; when the table already has its own \`<caption>\` (for markup inside it), that one is kept and classed instead.
+
+**Data mode** — set \`columns\` (and \`rows\`, optionally \`footer-rows\`) and the component renders the whole table itself, header cells with \`scope="col"\`, columns marked \`rowHeader\` as \`<th scope="row">\`:
+
+\`\`\`html
+<tilburg-webc-table id="aanvragen" caption="Open aanvragen"></tilburg-webc-table>
+
+<script type="module">
+  const table = document.querySelector('#aanvragen');
+  table.columns = [
+    { key: 'id', label: 'Zaaknummer', rowHeader: true },
+    { key: 'status', label: 'Status' },
+  ];
+  table.rows = [{ id: '2025-TLB-001', status: 'In behandeling' }];
+  table.footerRows = [{ id: 'Totaal', status: '1' }];
+</script>
+\`\`\`
+
+Both arrays can also be written as JSON string attributes (\`columns='[{"key":"id","label":"Zaaknummer"}]'\`). A slotted \`<table>\` is ignored in data mode.
+
+Attributes / properties: \`caption\`, \`columns\` (\`{ key: string; label: string; rowHeader?: boolean }[]\`), \`rows\` and \`footer-rows\` (\`Record<string, string | number | null>[]\`), plus \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\`, which are moved onto the \`<table>\` (Angular's \`ariaLabel\` / \`ariaLabelledby\` / \`ariaDescribedBy\` inputs). No events. Slot: default (the native \`<table>\`, enhance mode). Always set \`scope\` on header cells in enhance mode.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

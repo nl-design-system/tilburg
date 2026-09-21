@@ -1,0 +1,8 @@
+@use "../../../components-css/form-fieldset/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow so the
+   fieldset stacks like the HTML/CSS reference (same rule as the Angular
+   `:host`). */
+tilburg-webc-fieldset {
+  display: block;
+}

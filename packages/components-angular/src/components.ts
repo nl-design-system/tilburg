@@ -51,3 +51,4 @@ export * from './textbox/component';
 export * from './unordered-list/component';
 export * from './textarea/textarea-resize-directive';
 export * from './validation-message/component';
+export * from './modal/component';

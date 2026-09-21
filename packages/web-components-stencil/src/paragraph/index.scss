@@ -1,0 +1,8 @@
+/* utrecht-only component: no `components-css/paragraph` folder, the styling
+   comes from the utrecht base CSS + Tilburg tokens. */
+
+/* Light-DOM host defaults to `display: inline`; match the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-webc-paragraph {
+  display: block;
+}

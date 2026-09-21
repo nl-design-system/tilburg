@@ -1,0 +1,7 @@
+@use "../../../components-css/progress-bar/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule as
+   the Angular `:host`). */
+tilburg-webc-progress-bar {
+  display: block;
+}

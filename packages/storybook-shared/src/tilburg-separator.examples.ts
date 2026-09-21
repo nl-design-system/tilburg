@@ -60,6 +60,25 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<p class="utrecht-paragraph">Aanvraagdetails</p>
+<tilburg-webc-separator decorative></tilburg-webc-separator>
+<p class="utrecht-paragraph">Contactgegevens</p>
+\`\`\`
+
+Renders a void \`<hr class="utrecht-separator">\`. Attribute: \`decorative\` (boolean, default \`false\`; sets \`aria-hidden="true"\` so screen readers skip the divider). No slots or events.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

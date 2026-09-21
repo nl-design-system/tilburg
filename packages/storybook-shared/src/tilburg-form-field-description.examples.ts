@@ -63,6 +63,26 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-textbox id="email" type="email" aria-describedby="email-desc"></tilburg-webc-textbox>
+<tilburg-webc-form-field-description id="email-desc">
+  We gebruiken dit alleen om je te bereiken.
+</tilburg-webc-form-field-description>
+\`\`\`
+
+Attributes: \`invalid\` (error styling plus \`role="alert"\`), \`valid\`, \`warning\`. \`id\` is moved from the host onto the description \`<div>\`. Angular's \`class\` input has no equivalent — put extra classes on the host. Slot: default (the description text).`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

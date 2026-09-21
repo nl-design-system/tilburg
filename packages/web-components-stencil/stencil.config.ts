@@ -24,5 +24,16 @@ export const config: Config = {
     }),
   ],
   plugins: [sass()],
-  extras: { enableImportInjection: true },
+  extras: {
+    enableImportInjection: true,
+    /* Every component renders into light DOM (`shadow: false`) so the global
+       utrecht + components-css styles apply to the same markup as the HTML
+       layer. Light-DOM `<slot>`s are emulated by Stencil; these fixes make
+       slot relocation, fallback content and `textContent`/`childNodes` behave
+       like real slots. */
+    experimentalSlotFixes: true,
+  },
+  testing: {
+    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/www/'],
+  },
 };

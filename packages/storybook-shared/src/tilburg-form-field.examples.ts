@@ -81,6 +81,30 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`<tilburg-webc-form-field>\` is a plain wrapper, like the Angular and React ones: it renders the \`<div class="utrecht-form-field">\` and its modifier classes, and you compose the label, description, control and validation message as children.
+
+\`\`\`html
+<tilburg-webc-form-field type="text" invalid warning>
+  <tilburg-webc-form-label for="email">E-mailadres</tilburg-webc-form-label>
+  <tilburg-webc-form-field-description id="email-desc">We gebruiken dit alleen om je te bereiken.</tilburg-webc-form-field-description>
+  <input id="email" type="email" class="utrecht-textbox utrecht-textbox--html-input" aria-describedby="email-desc" />
+  <tilburg-webc-validation-message type="warning">De aanvraagperiode sluit binnenkort.</tilburg-webc-validation-message>
+</tilburg-webc-form-field>
+\`\`\`
+
+Attributes: \`invalid\`, \`warning\` (Tilburg modifier, adds \`tilburg-warning\`), \`type\` (\`'checkbox' | 'radio' | 'text'\`). Slot: default (label, description, control, validation message). The Angular \`class\` input has no counterpart: a \`class\` written on \`<tilburg-webc-form-field>\` stays on the host element and is not copied onto the inner \`.utrecht-form-field\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

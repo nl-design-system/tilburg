@@ -63,6 +63,26 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-button-group aria-label="Aanvraag verzenden">
+  <tilburg-webc-button appearance="primary-action-button">Bevestigen</tilburg-webc-button>
+  <tilburg-webc-button appearance="secondary-action-button">Annuleren</tilburg-webc-button>
+</tilburg-webc-button-group>
+\`\`\`
+
+\`role\` (default \`group\` — pass \`role="toolbar"\` for a toolbar cluster), \`aria-label\` and \`aria-labelledby\` are plain HTML attributes on the host that are moved onto the inner \`.utrecht-button-group\` \`<div>\`; left on the host they would nest a second group around the real one. Slot: default — pass \`<tilburg-webc-button>\` / \`<tilburg-webc-button-link>\` children.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

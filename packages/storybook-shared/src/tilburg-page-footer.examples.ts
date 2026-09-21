@@ -91,6 +91,34 @@ ${usagePlainHtml}
 ${theming}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-page-footer
+  aria-label="Footer"
+  primary-link='{"label":"Contact","href":"/contact"}'
+  links='[{"label":"Privacystatement","href":"/privacystatement"},{"label":"Cookies","href":"/cookies"}]'
+></tilburg-webc-page-footer>
+
+<script type="module">
+  /* …or set the data as properties */
+  document.querySelector('tilburg-webc-page-footer').links = [{ label: 'Toegankelijkheid', href: '/toegankelijkheid' }];
+</script>
+\`\`\`
+
+Attributes: \`links\` (\`{ label, href }[]\`, default \`[]\`) and \`primary-link\` (\`{ label, href }\`, rendered as the call-to-action row above the list) — set them as JS properties or as JSON attributes; invalid JSON renders nothing. \`aria-label\` is moved onto the \`<footer>\` landmark (replaces Angular's \`ariaLabel\` input). Slot: default (extra content, rendered inside the container before both lists). No events.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

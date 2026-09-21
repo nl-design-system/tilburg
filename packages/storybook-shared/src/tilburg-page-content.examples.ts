@@ -64,6 +64,26 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-page-content id="main" tabindex="-1">
+  <h1 class="utrecht-heading-1">Aanvraag indienen</h1>
+  <p class="utrecht-paragraph">Vul de gegevens in om de aanvraag te starten.</p>
+</tilburg-webc-page-content>
+\`\`\`
+
+Renders \`<main class="utrecht-page-content">\` around the default slot. \`id\`, \`tabindex\`, \`aria-label\` and \`aria-labelledby\` written on the host are moved onto the \`<main>\`, so \`id="main" tabindex="-1"\` makes it the skip-link target. No events or named slots. Render only one per page.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

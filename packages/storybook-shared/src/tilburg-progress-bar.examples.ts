@@ -94,6 +94,44 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-webc-progress-bar
+  value="2"
+  total="4"
+  heading="Adresgegevens"
+  label="Stap 2 van 4"
+  show-back
+  back-label="Vorige stap"
+></tilburg-webc-progress-bar>
+
+<script type="module">
+  document
+    .querySelector('tilburg-webc-progress-bar')
+    .addEventListener('tilburgBackClick', () => history.back());
+</script>
+\`\`\`
+
+The back link is an \`<a href="#">\` whose default navigation is prevented; \`tilburgBackClick\` (detail: the \`MouseEvent\`) is fired instead, so route yourself. Replace the default \`←\` with the \`back-icon\` slot:
+
+\`\`\`html
+<tilburg-webc-progress-bar value="3" total="4" heading="Bevestiging" label="Stap 3 van 4" show-back back-label="Vorige stap">
+  <span slot="back-icon" aria-hidden="true">‹</span>
+</tilburg-webc-progress-bar>
+\`\`\`
+
+Attributes: \`value\` (default \`0\`), \`total\` (default \`0\`), \`label\` (also used as the track's \`aria-valuetext\`), \`heading\` (the \`<h2>\` step title — the Angular/React \`title\` input, renamed because \`title\` is a global HTML attribute that would show a tooltip), \`back-label\`, \`show-back\` (boolean), and \`aria-label\` (moved onto the \`role="progressbar"\` track). The track's accessible name falls back to \`heading\`, then \`'Voortgang'\` (React's cascade). The percentage is \`value / total\` clamped to 0–100; \`aria-valuenow\` is rounded to a whole number, the indicator width is exact. Event: \`tilburgBackClick\`. Slot: \`back-icon\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

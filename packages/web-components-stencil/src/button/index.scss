@@ -1,1 +1,7 @@
-@import "~@gemeente-tilburg/components-css/button/index";
+@use "../../../components-css/button/index";
+
+/* The wrapped `<button>` is inline-block; size the host by its content so it
+   takes part in inline flow (same rule as the Angular `:host`). */
+tilburg-webc-button {
+  display: inline-block;
+}

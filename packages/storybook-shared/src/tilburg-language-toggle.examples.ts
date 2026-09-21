@@ -87,6 +87,36 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+Controlled like the Angular/React versions: the toggle only reports the **next** option; set \`active\` yourself.
+
+\`\`\`html
+<tilburg-webc-language-toggle active="NL" aria-label="Schakel taal"></tilburg-webc-language-toggle>
+
+<script type="module">
+  const toggle = document.querySelector('tilburg-webc-language-toggle');
+  toggle.options = [
+    { code: 'NL', label: 'Nederlands' },
+    { code: 'EN', label: 'English' },
+  ];
+  toggle.addEventListener('tilburgToggle', (event) => {
+    toggle.active = event.detail;
+  });
+</script>
+\`\`\`
+
+Attribute: \`active\` (option code, default \`'NL'\`). Property only: \`options\` (\`{ code, label }[]\`, default \`[{ code: 'NL', label: 'NL' }, { code: 'EN', label: 'EN' }]\`). \`aria-label\` (default \`'Switch language'\`), \`aria-describedby\` and \`title\` are moved from the host onto the inner \`<button role="switch">\`. Event: \`tilburgToggle\` (Angular \`toggle\`), \`detail\` is the next option's code, fired on click, Enter or Space. Type: \`TilburgWebcLanguageOption\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage
