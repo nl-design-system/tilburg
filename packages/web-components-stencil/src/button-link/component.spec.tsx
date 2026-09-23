@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcButtonLink } from './component';
+import { TilburgWbcButtonLink } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcButtonLink], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcButtonLink], html });
 
-describe('tilburg-webc-button-link', () => {
+describe('tilburg-wbc-button-link', () => {
   it('renders an anchor in light DOM with the base classes', async () => {
-    const page = await render('<tilburg-webc-button-link href="/nieuw">Start</tilburg-webc-button-link>');
+    const page = await render('<tilburg-wbc-button-link href="/nieuw">Start</tilburg-wbc-button-link>');
     const a = page.root!.querySelector('a')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(a.getAttribute('href')).toBe('/nieuw');
@@ -21,24 +21,24 @@ describe('tilburg-webc-button-link', () => {
     ['subtle-button', 'utrecht-button-link--subtle'],
   ])('maps appearance %s to %s', async (appearance, cls) => {
     const page = await render(
-      `<tilburg-webc-button-link href="#" appearance="${appearance}">X</tilburg-webc-button-link>`,
+      `<tilburg-wbc-button-link href="#" appearance="${appearance}">X</tilburg-wbc-button-link>`,
     );
     expect(page.root!.querySelector('a')).toHaveClass(cls);
   });
 
   it('forwards target and rel, and replaces rel when external', async () => {
     const page = await render(
-      '<tilburg-webc-button-link href="#" target="_blank" rel="nofollow">X</tilburg-webc-button-link>',
+      '<tilburg-wbc-button-link href="#" target="_blank" rel="nofollow">X</tilburg-wbc-button-link>',
     );
     const a = page.root!.querySelector('a')!;
     expect(a.getAttribute('target')).toBe('_blank');
     expect(a.getAttribute('rel')).toBe('nofollow');
-    const ext = await render('<tilburg-webc-button-link href="#" rel="nofollow" external>X</tilburg-webc-button-link>');
+    const ext = await render('<tilburg-wbc-button-link href="#" rel="nofollow" external>X</tilburg-wbc-button-link>');
     expect(ext.root!.querySelector('a')!.getAttribute('rel')).toBe('external noopener noreferrer');
   });
 
   it('marks placeholders as aria-disabled', async () => {
-    const page = await render('<tilburg-webc-button-link href="#" placeholder>X</tilburg-webc-button-link>');
+    const page = await render('<tilburg-wbc-button-link href="#" placeholder>X</tilburg-wbc-button-link>');
     const a = page.root!.querySelector('a')!;
     expect(a.getAttribute('aria-disabled')).toBe('true');
     expect(a).toHaveClass('utrecht-button-link--placeholder');
@@ -46,7 +46,7 @@ describe('tilburg-webc-button-link', () => {
 
   it('moves aria-label and title from the host to the anchor', async () => {
     const page = await render(
-      '<tilburg-webc-button-link href="#" aria-label="Start aanvraag" title="Tip">X</tilburg-webc-button-link>',
+      '<tilburg-wbc-button-link href="#" aria-label="Start aanvraag" title="Tip">X</tilburg-wbc-button-link>',
     );
     const a = page.root!.querySelector('a')!;
     expect(page.root!.hasAttribute('aria-label')).toBe(false);

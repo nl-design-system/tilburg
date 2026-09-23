@@ -11,14 +11,14 @@ const ACCORDION_NAV_KEYS = ['ArrowDown', 'ArrowUp', 'Home', 'End'] as const;
 type AccordionNavKey = (typeof ACCORDION_NAV_KEYS)[number];
 
 /**
- * @slot - `<tilburg-webc-accordion-section>` elements.
+ * @slot - `<tilburg-wbc-accordion-section>` elements.
  */
 @Component({
-  tag: 'tilburg-webc-accordion',
+  tag: 'tilburg-wbc-accordion',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcAccordion {
+export class TilburgWbcAccordion {
   @Element() host!: HTMLElement;
 
   @Prop() headingLevel: HeadingLevel = 2;
@@ -48,11 +48,11 @@ export class TilburgWebcAccordion {
     if (!(target instanceof HTMLButtonElement)) return;
     if (!target.classList.contains('utrecht-accordion__button')) return;
     // Skip nested accordions: only handle buttons that belong to this one.
-    if (target.closest('tilburg-webc-accordion') !== this.host) return;
+    if (target.closest('tilburg-wbc-accordion') !== this.host) return;
 
     const buttons = Array.from(
-      this.host.querySelectorAll<HTMLButtonElement>('tilburg-webc-accordion-section button.utrecht-accordion__button'),
-    ).filter((button) => !button.disabled && button.closest('tilburg-webc-accordion') === this.host);
+      this.host.querySelectorAll<HTMLButtonElement>('tilburg-wbc-accordion-section button.utrecht-accordion__button'),
+    ).filter((button) => !button.disabled && button.closest('tilburg-wbc-accordion') === this.host);
 
     const idx = buttons.indexOf(target);
     if (idx === -1 || buttons.length === 0) return;

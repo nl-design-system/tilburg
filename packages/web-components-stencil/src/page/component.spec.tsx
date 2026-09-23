@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcPage } from './component';
+import { TilburgWbcPage } from './component';
 
-describe('tilburg-webc-page', () => {
+describe('tilburg-wbc-page', () => {
   it('renders a utrecht-page div in light DOM around its content', async () => {
     const page = await newSpecPage({
-      components: [TilburgWebcPage],
-      html: '<tilburg-webc-page><p id="p">Tekst</p></tilburg-webc-page>',
+      components: [TilburgWbcPage],
+      html: '<tilburg-wbc-page><p id="p">Tekst</p></tilburg-wbc-page>',
     });
     expect(page.root!.shadowRoot).toBeNull();
     const div = page.root!.querySelector('div.utrecht-page')!;

@@ -10,11 +10,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - The main content of the page.
  */
 @Component({
-  tag: 'tilburg-webc-page-content',
+  tag: 'tilburg-wbc-page-content',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcPageContent {
+export class TilburgWbcPageContent {
   @Element() host!: HTMLElement;
 
   /* `id` + `tabindex` make `<main>` the skip-link target (`href="#main"`); they,

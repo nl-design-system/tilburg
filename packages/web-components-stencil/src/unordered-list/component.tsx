@@ -11,11 +11,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  *   plain `<li>` elements are styled via `.utrecht-unordered-list--html-ul > li`.
  */
 @Component({
-  tag: 'tilburg-webc-unordered-list',
+  tag: 'tilburg-wbc-unordered-list',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcUnorderedList {
+export class TilburgWbcUnorderedList {
   @Element() host!: HTMLElement;
 
   /* `aria-label` / `aria-labelledby` belong on the `<ul>`, not on the generic host. */

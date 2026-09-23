@@ -12,11 +12,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * While hidden the host is empty.
  */
 @Component({
-  tag: 'tilburg-webc-loading-spinner',
+  tag: 'tilburg-wbc-loading-spinner',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcLoadingSpinner {
+export class TilburgWbcLoadingSpinner {
   @Element() host!: HTMLElement;
 
   @Prop() visible = false;

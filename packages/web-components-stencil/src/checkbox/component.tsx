@@ -14,11 +14,11 @@ const INHERITED = ['id', 'title', 'aria-label', 'aria-labelledby', 'aria-describ
  * the host as-is, so listen for those instead.
  */
 @Component({
-  tag: 'tilburg-webc-checkbox',
+  tag: 'tilburg-wbc-checkbox',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcCheckbox {
+export class TilburgWbcCheckbox {
   @Element() host!: HTMLElement;
 
   @Prop() name = '';

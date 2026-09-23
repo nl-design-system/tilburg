@@ -14,7 +14,7 @@ export interface AttributeInheritor {
  * `title`, `id`, …) from the custom-element host to component state.
  *
  * The components render into light DOM, so an attribute left on the host is a
- * real attribute on a real element: `aria-label` on a generic `<tilburg-webc-…>`
+ * real attribute on a real element: `aria-label` on a generic `<tilburg-wbc-…>`
  * is prohibited by ARIA, a duplicated `id` breaks `<label for>`, and a `title`
  * shows a tooltip over the whole component. Removing them from the host and
  * spreading them on the inner element keeps the DOM identical to the HTML/CSS

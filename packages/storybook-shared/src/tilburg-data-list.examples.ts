@@ -92,24 +92,24 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-data-list large>
-  <tilburg-webc-data-list-item>
-    <tilburg-webc-data-list-key id="key-voornaam">Voornaam</tilburg-webc-data-list-key>
-    <tilburg-webc-data-list-value>John</tilburg-webc-data-list-value>
-  </tilburg-webc-data-list-item>
-  <tilburg-webc-data-list-item>
-    <tilburg-webc-data-list-key>Adres</tilburg-webc-data-list-key>
-    <tilburg-webc-data-list-value>Stadhuisplein 130, 5038 TC Tilburg</tilburg-webc-data-list-value>
-  </tilburg-webc-data-list-item>
-</tilburg-webc-data-list>
+<tilburg-wbc-data-list large>
+  <tilburg-wbc-data-list-item>
+    <tilburg-wbc-data-list-key id="key-voornaam">Voornaam</tilburg-wbc-data-list-key>
+    <tilburg-wbc-data-list-value>John</tilburg-wbc-data-list-value>
+  </tilburg-wbc-data-list-item>
+  <tilburg-wbc-data-list-item>
+    <tilburg-wbc-data-list-key>Adres</tilburg-wbc-data-list-key>
+    <tilburg-wbc-data-list-value>Stadhuisplein 130, 5038 TC Tilburg</tilburg-wbc-data-list-value>
+  </tilburg-wbc-data-list-item>
+</tilburg-wbc-data-list>
 \`\`\`
 
-Four elements: \`<tilburg-webc-data-list>\` renders the \`<dl>\`, \`<tilburg-webc-data-list-item>\` the row \`<div>\`, \`<tilburg-webc-data-list-key>\` the \`<dt>\` and \`<tilburg-webc-data-list-value>\` the \`<dd>\`. Each renders into light DOM and projects its children through a default slot. No events.
+Four elements: \`<tilburg-wbc-data-list>\` renders the \`<dl>\`, \`<tilburg-wbc-data-list-item>\` the row \`<div>\`, \`<tilburg-wbc-data-list-key>\` the \`<dt>\` and \`<tilburg-wbc-data-list-value>\` the \`<dd>\`. Each renders into light DOM and projects its children through a default slot. No events.
 
 Attributes:
-- \`<tilburg-webc-data-list>\`: \`large\` (boolean — 3-column grid per item; the \`tilburg-data-list--large\` class goes on the \`<dl>\` like the HTML reference), plus \`aria-label\` / \`aria-labelledby\`, moved onto the \`<dl>\`.
-- \`<tilburg-webc-data-list-key>\`: \`id\` — moved from the host onto the \`<dt>\`, so an external \`aria-labelledby\` targets the key (Angular's \`id\` input).
-- \`<tilburg-webc-data-list-item>\`, \`<tilburg-webc-data-list-value>\`: none.
+- \`<tilburg-wbc-data-list>\`: \`large\` (boolean — 3-column grid per item; the \`tilburg-data-list--large\` class goes on the \`<dl>\` like the HTML reference), plus \`aria-label\` / \`aria-labelledby\`, moved onto the \`<dl>\`.
+- \`<tilburg-wbc-data-list-key>\`: \`id\` — moved from the host onto the \`<dt>\`, so an external \`aria-labelledby\` targets the key (Angular's \`id\` input).
+- \`<tilburg-wbc-data-list-item>\`, \`<tilburg-wbc-data-list-value>\`: none.
 
 Like the Angular component, the custom-element wrappers sit between \`<dl>\`, \`<div>\`, \`<dt>\` and \`<dd>\`, so the \`<dl>\` has no direct \`<div>\`/\`<dt>\`/\`<dd>\` children. Browsers still expose the \`<dt>\`/\`<dd>\` as term/definition, but HTML validators flag the content model and some screen readers no longer announce the list with its item count. Use the plain HTML markup when strict \`<dl>\` semantics matter.`;
 

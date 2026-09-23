@@ -1,7 +1,7 @@
 {
   "name": "@gemeente-tilburg/web-components-stencil",
   "version": "0.0.0",
-  "description": "Framework-agnostic Stencil web components (tilburg-webc-*) for the Municipality of Tilburg, based on the NL Design System architecture",
+  "description": "Framework-agnostic Stencil web components (tilburg-wbc-*) for the Municipality of Tilburg, based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [

@@ -9,11 +9,11 @@ import { Component, h, Prop } from '@stencil/core';
  * @slot - The paragraph text.
  */
 @Component({
-  tag: 'tilburg-webc-paragraph',
+  tag: 'tilburg-wbc-paragraph',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcParagraph {
+export class TilburgWbcParagraph {
   /** Slightly larger intro text (`utrecht-paragraph--lead`). */
   @Prop() lead = false;
   /** Small print (`utrecht-paragraph--small`). */

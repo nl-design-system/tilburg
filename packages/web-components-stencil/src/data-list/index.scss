@@ -5,9 +5,9 @@
    the rows stack and the per-row border + padding paint (same rules as the
    Angular `:host(...)` selectors; the list host itself is added for the same
    reason). */
-tilburg-webc-data-list,
-tilburg-webc-data-list-item,
-tilburg-webc-data-list-key,
-tilburg-webc-data-list-value {
+tilburg-wbc-data-list,
+tilburg-wbc-data-list-item,
+tilburg-wbc-data-list-key,
+tilburg-wbc-data-list-value {
   display: block;
 }

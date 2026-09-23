@@ -7,14 +7,14 @@ import { Component, Element, h, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 /**
- * @slot - The buttons (`<tilburg-webc-button>`, `<tilburg-webc-button-link>`, …).
+ * @slot - The buttons (`<tilburg-wbc-button>`, `<tilburg-wbc-button-link>`, …).
  */
 @Component({
-  tag: 'tilburg-webc-button-group',
+  tag: 'tilburg-wbc-button-group',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcButtonGroup {
+export class TilburgWbcButtonGroup {
   @Element() host!: HTMLElement;
 
   /* `role`, `aria-label` and `aria-labelledby` are written on the host as

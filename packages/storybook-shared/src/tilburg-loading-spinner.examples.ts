@@ -88,15 +88,15 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-loading-spinner
+<tilburg-wbc-loading-spinner
   heading="Bezig met laden"
   message="Een momentje alstublieft..."
   delay-ms="1000"
   aria-label="Bezig met laden"
-></tilburg-webc-loading-spinner>
+></tilburg-wbc-loading-spinner>
 
 <script type="module">
-  const spinner = document.querySelector('tilburg-webc-loading-spinner');
+  const spinner = document.querySelector('tilburg-wbc-loading-spinner');
   spinner.visible = true; // overlay appears after delay-ms
   await fetch('/api/aanvraag', { method: 'POST' });
   spinner.visible = false; // hides immediately, cancels a pending timer

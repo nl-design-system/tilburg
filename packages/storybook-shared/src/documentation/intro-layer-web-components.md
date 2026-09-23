@@ -3,22 +3,24 @@
 ## Web Components (Stencil)
 
 Voor elke stack zonder React of Angular — of voor een CMS, micro-frontend of een mix van frameworks. De componenten zijn
-native custom elements (`<tilburg-webc-alert>`, `<tilburg-webc-textbox>`, …) gebouwd met [Stencil](https://stenciljs.com/).
+native custom elements (`<tilburg-wbc-alert>`, `<tilburg-wbc-textbox>`, …) gebouwd met [Stencil](https://stenciljs.com/).
 Ze renderen in de **light DOM** exact dezelfde DOM en klassen als de HTML/CSS-laag, dus dezelfde tokens en utrecht-basis
-stylen ze. Het `webc`-tussenvoegsel voorkomt een botsing met de Angular-selectors (`<tilburg-alert>`) als beide op één
+stylen ze. Het `wbc`-tussenvoegsel voorkomt een botsing met de Angular-selectors (`<tilburg-alert>`) als beide op één
 pagina geladen worden.
 
 ### Installatie (Web Components)
 
+`@gemeente-tilburg/web-components-stencil` is **experimenteel en nog niet op npm gepubliceerd**. Vraag het Design
+System-team om een build als je hem wilt proberen. Tokens en Utrecht-basis installeer je via npm:
+
 ```bash
-npm install @gemeente-tilburg/web-components-stencil \
-            @gemeente-tilburg/design-tokens \
-            @utrecht/component-library-css
+npm install @gemeente-tilburg/design-tokens @utrecht/component-library-css
 ```
 
 ### Gebruik (Web Components)
 
-Laad de tokens en de utrecht-basis globaal; elke component laadt zijn eigen `components-css`-regels zelf.
+Laad de tokens en de Utrecht-basis globaal en zet `tilburg-theme` en `utrecht-document` op `<body>`; elke component
+laadt zijn eigen `components-css`-regels zelf.
 
 ```html
 <link rel="stylesheet" href="…/@gemeente-tilburg/design-tokens/dist/tilburg/theme.css" />
@@ -29,7 +31,9 @@ Laad de tokens en de utrecht-basis globaal; elke component laadt zijn eigen `com
   defineCustomElements();
 </script>
 
-<tilburg-webc-alert variant="info" heading="Informatie">De openingstijden zijn gewijzigd.</tilburg-webc-alert>
+<body class="tilburg-theme utrecht-document">
+  <tilburg-wbc-alert variant="info" heading="Informatie">De openingstijden zijn gewijzigd.</tilburg-wbc-alert>
+</body>
 ```
 
 - **Attributen** volgen de Angular-inputs in kebab-case (`heading-level`, `close-button-aria-label`). Lijsten en objecten
@@ -41,4 +45,5 @@ Laad de tokens en de utrecht-basis globaal; elke component laadt zijn eigen `com
 - **Slots** vervangen Angular's `ng-content` (`<svg slot="icon">`).
 
 In React kun je `@gemeente-tilburg/web-components-react` gebruiken: door Stencil gegenereerde wrappers
-(`<TilburgWebcAlert heading="…" onTilburgClose={…}>`). De stories onder `Tilburg Web Components/…` gebruiken die wrappers.
+(`<TilburgWbcAlert heading="…" onTilburgClose={…}>`), ook nog niet gepubliceerd. De stories onder
+`Tilburg Web Components/…` gebruiken die wrappers.

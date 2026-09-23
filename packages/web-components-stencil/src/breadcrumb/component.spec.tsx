@@ -1,23 +1,23 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcBreadcrumb, TilburgWebcBreadcrumbItem } from './component';
+import { TilburgWbcBreadcrumb, TilburgWbcBreadcrumbItem } from './component';
 
-const ITEMS: TilburgWebcBreadcrumbItem[] = [
+const ITEMS: TilburgWbcBreadcrumbItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Parkeren', href: '/parkeren', data: 42 },
   { label: 'Bewonersvergunning' },
 ];
 
-const render = async (items: TilburgWebcBreadcrumbItem[] | null, attrs = '') => {
+const render = async (items: TilburgWbcBreadcrumbItem[] | null, attrs = '') => {
   const page = await newSpecPage({
-    components: [TilburgWebcBreadcrumb],
-    html: `<tilburg-webc-breadcrumb ${attrs}></tilburg-webc-breadcrumb>`,
+    components: [TilburgWbcBreadcrumb],
+    html: `<tilburg-wbc-breadcrumb ${attrs}></tilburg-wbc-breadcrumb>`,
   });
   (page.root as HTMLElement & { items: unknown }).items = items;
   await page.waitForChanges();
   return page;
 };
 
-describe('tilburg-webc-breadcrumb', () => {
+describe('tilburg-wbc-breadcrumb', () => {
   it('renders the utrecht breadcrumb nav with the default aria-label', async () => {
     const page = await render(ITEMS);
     const nav = page.root!.querySelector('nav')!;

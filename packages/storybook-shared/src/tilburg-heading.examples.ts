@@ -66,6 +66,25 @@ ${usageReact}
 ${usagePlainHtml}
 `;
 
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-wbc-heading-1>Vergunning aanvragen</tilburg-wbc-heading-1>
+<tilburg-wbc-heading-2>Wat heb je nodig?</tilburg-wbc-heading-2>
+<tilburg-wbc-heading-3>Documenten uploaden</tilburg-wbc-heading-3>
+\`\`\`
+
+Six elements, \`<tilburg-wbc-heading-1>\` … \`<tilburg-wbc-heading-6>\`, one per level. Each renders \`<utrecht-heading-N><hN class="utrecht-heading-N">…</hN></utrecht-heading-N>\` in light DOM — the same DOM as the plain HTML reference. No attributes; the text goes in the default slot. Components with a heading (Alert, Accordion) render these elements internally for their \`heading-level\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
 export const descriptionHtml = `${intro}
 
 ## Usage

@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcRadioButton } from './component';
+import { TilburgWbcRadioButton } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcRadioButton], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcRadioButton], html });
 
-describe('tilburg-webc-radio-button', () => {
+describe('tilburg-wbc-radio-button', () => {
   it('renders a utrecht radio button in light DOM', async () => {
-    const page = await render('<tilburg-webc-radio-button name="g" value="a"></tilburg-webc-radio-button>');
+    const page = await render('<tilburg-wbc-radio-button name="g" value="a"></tilburg-wbc-radio-button>');
     const input = page.root!.querySelector('input')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(input.getAttribute('type')).toBe('radio');
@@ -17,7 +17,7 @@ describe('tilburg-webc-radio-button', () => {
 
   it('maps state props to attributes, ARIA and classes', async () => {
     const page = await render(
-      '<tilburg-webc-radio-button checked invalid required disabled></tilburg-webc-radio-button>',
+      '<tilburg-wbc-radio-button checked invalid required disabled></tilburg-wbc-radio-button>',
     );
     const input = page.root!.querySelector('input')!;
     expect(input.checked).toBe(true);
@@ -31,7 +31,7 @@ describe('tilburg-webc-radio-button', () => {
 
   it('moves id and aria attributes from the host to the input', async () => {
     const page = await render(
-      '<tilburg-webc-radio-button id="rb-email" aria-describedby="hint"></tilburg-webc-radio-button>',
+      '<tilburg-wbc-radio-button id="rb-email" aria-describedby="hint"></tilburg-wbc-radio-button>',
     );
     const input = page.root!.querySelector('input')!;
     expect(page.root!.hasAttribute('id')).toBe(false);
@@ -41,10 +41,10 @@ describe('tilburg-webc-radio-button', () => {
 
   it('resyncs checked across the group on change', async () => {
     const page = await render(`
-      <tilburg-webc-radio-button name="g" value="a" checked></tilburg-webc-radio-button>
-      <tilburg-webc-radio-button name="g" value="b"></tilburg-webc-radio-button>`);
-    const [a, b] = Array.from(page.body.querySelectorAll('tilburg-webc-radio-button')) as unknown as Array<
-      HTMLElement & TilburgWebcRadioButton
+      <tilburg-wbc-radio-button name="g" value="a" checked></tilburg-wbc-radio-button>
+      <tilburg-wbc-radio-button name="g" value="b"></tilburg-wbc-radio-button>`);
+    const [a, b] = Array.from(page.body.querySelectorAll('tilburg-wbc-radio-button')) as unknown as Array<
+      HTMLElement & TilburgWbcRadioButton
     >;
     const inputA = a.querySelector('input')!;
     const inputB = b.querySelector('input')!;

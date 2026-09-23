@@ -6,11 +6,11 @@
 import { Component, h, Prop } from '@stencil/core';
 
 @Component({
-  tag: 'tilburg-webc-separator',
+  tag: 'tilburg-wbc-separator',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcSeparator {
+export class TilburgWbcSeparator {
   /** Purely visual divider: sets `aria-hidden="true"` so screen readers skip it. */
   @Prop() decorative = false;
 

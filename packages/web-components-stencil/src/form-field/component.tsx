@@ -5,27 +5,27 @@
 
 import { Component, h, Prop } from '@stencil/core';
 
-export type TilburgWebcFormFieldType = 'checkbox' | 'radio' | 'text';
+export type TilburgWbcFormFieldType = 'checkbox' | 'radio' | 'text';
 
 /**
  * Plain wrapper, like Angular `<tilburg-form-field>` and React `FormField`:
  * it renders the `utrecht-form-field` container and its modifiers, the
  * consumer composes label, description, control and validation message
- * (`tilburg-webc-form-label`, `tilburg-webc-form-field-description`,
- * `tilburg-webc-validation-message`, a native `<input>`, …) as children.
+ * (`tilburg-wbc-form-label`, `tilburg-wbc-form-field-description`,
+ * `tilburg-wbc-validation-message`, a native `<input>`, …) as children.
  *
  * @slot - Label, description, control and validation message.
  */
 @Component({
-  tag: 'tilburg-webc-form-field',
+  tag: 'tilburg-wbc-form-field',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcFormField {
+export class TilburgWbcFormField {
   @Prop() invalid = false;
   /** Tilburg modifier: paints the invalid state with the warning palette. */
   @Prop() warning = false;
-  @Prop() type?: TilburgWebcFormFieldType;
+  @Prop() type?: TilburgWbcFormFieldType;
 
   render() {
     return (

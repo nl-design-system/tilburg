@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcTextarea } from './component';
+import { TilburgWbcTextarea } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcTextarea], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcTextarea], html });
 
-describe('tilburg-webc-textarea', () => {
+describe('tilburg-wbc-textarea', () => {
   it('renders a native textarea in light DOM with the utrecht classes', async () => {
-    const page = await render('<tilburg-webc-textarea></tilburg-webc-textarea>');
+    const page = await render('<tilburg-wbc-textarea></tilburg-wbc-textarea>');
     const textarea = page.root!.querySelector('textarea')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(textarea).toHaveClasses(['utrecht-textarea', 'utrecht-textarea--html-textarea']);
@@ -15,7 +15,7 @@ describe('tilburg-webc-textarea', () => {
 
   it('maps state props to attributes, ARIA and modifier classes', async () => {
     const page = await render(
-      '<tilburg-webc-textarea invalid required readonly disabled rows="4" cols="20" placeholder="Toelichting" name="msg"></tilburg-webc-textarea>',
+      '<tilburg-wbc-textarea invalid required readonly disabled rows="4" cols="20" placeholder="Toelichting" name="msg"></tilburg-wbc-textarea>',
     );
     const textarea = page.root!.querySelector('textarea')!;
     expect(textarea).toHaveClasses([
@@ -36,9 +36,7 @@ describe('tilburg-webc-textarea', () => {
   });
 
   it('moves id and aria attributes from the host to the textarea', async () => {
-    const page = await render(
-      '<tilburg-webc-textarea id="explanation" aria-describedby="hint"></tilburg-webc-textarea>',
-    );
+    const page = await render('<tilburg-wbc-textarea id="explanation" aria-describedby="hint"></tilburg-wbc-textarea>');
     const textarea = page.root!.querySelector('textarea')!;
     expect(page.root!.hasAttribute('id')).toBe(false);
     expect(page.root!.hasAttribute('aria-describedby')).toBe(false);
@@ -47,7 +45,7 @@ describe('tilburg-webc-textarea', () => {
   });
 
   it('sets the initial value and keeps the value prop in sync with input', async () => {
-    const page = await render('<tilburg-webc-textarea value="Hallo"></tilburg-webc-textarea>');
+    const page = await render('<tilburg-wbc-textarea value="Hallo"></tilburg-wbc-textarea>');
     const textarea = page.root!.querySelector('textarea')!;
     /* mock-doc's <textarea> has no `value` property, so Stencil falls back to
        the attribute there; browsers get the property. */
@@ -55,6 +53,6 @@ describe('tilburg-webc-textarea', () => {
     Object.defineProperty(textarea, 'value', { value: 'Hallo wereld', configurable: true });
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
     await page.waitForChanges();
-    expect((page.root as unknown as TilburgWebcTextarea).value).toBe('Hallo wereld');
+    expect((page.root as unknown as TilburgWbcTextarea).value).toBe('Hallo wereld');
   });
 });

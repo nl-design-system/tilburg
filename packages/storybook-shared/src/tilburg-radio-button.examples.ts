@@ -97,14 +97,14 @@ const usageWebComponents = `### Web Components (Stencil)
 \`\`\`html
 <fieldset class="utrecht-fieldset">
   <legend class="utrecht-form-label utrecht-form-label--radio">Hoe wil je je aanvraag ontvangen?</legend>
-  <tilburg-webc-form-label type="radio">
-    <tilburg-webc-radio-button name="delivery" value="email" checked></tilburg-webc-radio-button>
+  <tilburg-wbc-form-label type="radio">
+    <tilburg-wbc-radio-button name="delivery" value="email" checked></tilburg-wbc-radio-button>
     E-mail
-  </tilburg-webc-form-label>
-  <tilburg-webc-form-label type="radio">
-    <tilburg-webc-radio-button name="delivery" value="post"></tilburg-webc-radio-button>
+  </tilburg-wbc-form-label>
+  <tilburg-wbc-form-label type="radio">
+    <tilburg-wbc-radio-button name="delivery" value="post"></tilburg-wbc-radio-button>
     Per post
-  </tilburg-webc-form-label>
+  </tilburg-wbc-form-label>
 </fieldset>
 \`\`\`
 

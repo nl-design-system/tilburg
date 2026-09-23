@@ -10,11 +10,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - Actions on the inline-end (user name, log-out button, menu toggle, …).
  */
 @Component({
-  tag: 'tilburg-webc-page-header',
+  tag: 'tilburg-wbc-page-header',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcPageHeader {
+export class TilburgWbcPageHeader {
   @Element() host!: HTMLElement;
 
   @Prop() logoSrc?: string | null;

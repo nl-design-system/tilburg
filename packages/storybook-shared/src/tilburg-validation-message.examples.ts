@@ -83,12 +83,12 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-validation-message type="error">Vul een geldig e-mailadres in.</tilburg-webc-validation-message>
+<tilburg-wbc-validation-message type="error">Vul een geldig e-mailadres in.</tilburg-wbc-validation-message>
 
-<tilburg-webc-validation-message type="warning" live-region="assertive">
+<tilburg-wbc-validation-message type="warning" live-region="assertive">
   <span slot="icon" aria-hidden="true">!</span>
   De aanvraagperiode sluit binnenkort.
-</tilburg-webc-validation-message>
+</tilburg-wbc-validation-message>
 \`\`\`
 
 Leave the \`icon\` slot empty to get the CSS default glyph per type (a circled \`!\` for \`error\`, a triangle for \`warning\`), or pass your own element.

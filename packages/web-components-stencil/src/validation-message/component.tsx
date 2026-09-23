@@ -6,28 +6,28 @@
 import { Component, Element, h, Prop } from '@stencil/core';
 import { hasSlot } from '../utils/slots';
 
-export type TilburgWebcValidationMessageType = 'error' | 'warning';
-export type TilburgWebcValidationLiveRegion = 'polite' | 'assertive' | 'off';
+export type TilburgWbcValidationMessageType = 'error' | 'warning';
+export type TilburgWbcValidationLiveRegion = 'polite' | 'assertive' | 'off';
 
 /**
  * @slot - The message.
  * @slot icon - Replaces the default per-type icon (painted by CSS when empty).
  */
 @Component({
-  tag: 'tilburg-webc-validation-message',
+  tag: 'tilburg-wbc-validation-message',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcValidationMessage {
+export class TilburgWbcValidationMessage {
   @Element() host!: HTMLElement;
 
   /** Anything other than `warning` renders as `error` (same as Angular). */
-  @Prop() type: TilburgWebcValidationMessageType = 'error';
+  @Prop() type: TilburgWbcValidationMessageType = 'error';
   /**
    * `aria-live` of the message. Angular calls this `ariaLive`; renamed because
    * `aria-live` is a global ARIA attribute (and `ariaLive` an HTMLElement property).
    */
-  @Prop() liveRegion: TilburgWebcValidationLiveRegion = 'polite';
+  @Prop() liveRegion: TilburgWbcValidationLiveRegion = 'polite';
 
   private hasIcon = false;
 

@@ -1,12 +1,12 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcUnorderedList } from './component';
+import { TilburgWbcUnorderedList } from './component';
 
-const components = [TilburgWebcUnorderedList];
+const components = [TilburgWbcUnorderedList];
 const render = (html: string) => newSpecPage({ components, html });
 
-describe('tilburg-webc-unordered-list', () => {
+describe('tilburg-wbc-unordered-list', () => {
   it('renders the unordered list classes from the HTML reference', async () => {
-    const page = await render('<tilburg-webc-unordered-list><li>Een</li></tilburg-webc-unordered-list>');
+    const page = await render('<tilburg-wbc-unordered-list><li>Een</li></tilburg-wbc-unordered-list>');
     expect(page.root!.shadowRoot).toBeNull();
     expect(page.root!.querySelector('ul')).toHaveClasses([
       'tilburg-unordered-list',
@@ -17,7 +17,7 @@ describe('tilburg-webc-unordered-list', () => {
 
   it('places slotted <li> items as direct children of the <ul>', async () => {
     const page = await render(
-      '<tilburg-webc-unordered-list><li>Een</li><li class="utrecht-unordered-list__item">Twee</li></tilburg-webc-unordered-list>',
+      '<tilburg-wbc-unordered-list><li>Een</li><li class="utrecht-unordered-list__item">Twee</li></tilburg-wbc-unordered-list>',
     );
     const items = page.root!.querySelectorAll('ul > li');
     expect(items.length).toBe(2);
@@ -35,21 +35,21 @@ describe('tilburg-webc-unordered-list', () => {
       item.append(text, ...children);
       return item;
     };
-    const inner = doc.createElement('tilburg-webc-unordered-list');
+    const inner = doc.createElement('tilburg-wbc-unordered-list');
     inner.append(li('Genest 1'), li('Genest 2'));
-    const outer = doc.createElement('tilburg-webc-unordered-list');
+    const outer = doc.createElement('tilburg-wbc-unordered-list');
     outer.append(li('Boven', inner), li('Volgende'));
     page.body.appendChild(outer);
     await page.waitForChanges();
     const outerList = outer.querySelector('ul')!;
     expect(Array.from(outerList.children).filter((child) => child.tagName === 'LI').length).toBe(2);
-    const nested = outerList.querySelector('li > tilburg-webc-unordered-list > ul')!;
+    const nested = outerList.querySelector('li > tilburg-wbc-unordered-list > ul')!;
     expect(Array.from(nested.children).map((child) => child.textContent)).toEqual(['Genest 1', 'Genest 2']);
   });
 
   it('moves aria-label from the host to the <ul>', async () => {
     const page = await render(
-      '<tilburg-webc-unordered-list aria-label="Opties"><li>Een</li></tilburg-webc-unordered-list>',
+      '<tilburg-wbc-unordered-list aria-label="Opties"><li>Een</li></tilburg-wbc-unordered-list>',
     );
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('ul')!.getAttribute('aria-label')).toBe('Opties');

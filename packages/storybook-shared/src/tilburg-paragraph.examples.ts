@@ -67,9 +67,9 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-paragraph>Standaard alinea.</tilburg-webc-paragraph>
-<tilburg-webc-paragraph lead>Inleidende alinea, iets groter.</tilburg-webc-paragraph>
-<tilburg-webc-paragraph small>Kleine print onderaan een sectie.</tilburg-webc-paragraph>
+<tilburg-wbc-paragraph>Standaard alinea.</tilburg-wbc-paragraph>
+<tilburg-wbc-paragraph lead>Inleidende alinea, iets groter.</tilburg-wbc-paragraph>
+<tilburg-wbc-paragraph small>Kleine print onderaan een sectie.</tilburg-wbc-paragraph>
 \`\`\`
 
 Renders \`<p class="utrecht-paragraph">\` in light DOM. Attributes: \`lead\` (boolean, adds \`utrecht-paragraph--lead\`), \`small\` (boolean, adds \`utrecht-paragraph--small\`). Slot: default (the paragraph text, inline markup allowed). No events.`;

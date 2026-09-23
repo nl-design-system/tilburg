@@ -10,12 +10,12 @@ De Tilburg-componenten zijn een gemeentelijke uitbreiding op het [NL Design Syst
 
 De componenten zijn in vier lagen beschikbaar — kies de laag die past bij je stack:
 
-| Laag                 | Package                                    | Voor wie                                                                                   |
-| -------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| **Plain HTML / CSS** | `@gemeente-tilburg/components-css`         | elk framework — schrijf BEM-classes (`utrecht-…` / `tilburg-…`) direct in je markup        |
-| **React**            | `@gemeente-tilburg/components-react`       | React-projecten — `<Alert>`, `<Textbox>`, etc.                                             |
-| **Angular**          | `@gemeente-tilburg/components-angular`     | Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, etc.                           |
-| **Web Components**   | `@gemeente-tilburg/web-components-stencil` | elke stack — native custom elements `<tilburg-webc-alert>`, `<tilburg-webc-textbox>`, etc. |
+| Laag                 | Package                                    | Voor wie                                                                                 |
+| -------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| **Plain HTML / CSS** | `@gemeente-tilburg/components-css`         | elk framework — schrijf BEM-classes (`utrecht-…` / `tilburg-…`) direct in je markup      |
+| **React**            | `@gemeente-tilburg/components-react`       | React-projecten — `<Alert>`, `<Textbox>`, etc.                                           |
+| **Angular**          | `@gemeente-tilburg/components-angular`     | Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, etc.                         |
+| **Web Components**   | `@gemeente-tilburg/web-components-stencil` | elke stack — native custom elements `<tilburg-wbc-alert>`, `<tilburg-wbc-textbox>`, etc. |
 
 De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web Component is een dunne laag die exact dezelfde DOM en klassen emit als de gedeelde HTML/CSS-referentie. De Web Components renderen in de light DOM, dus dezelfde CSS stylet ze; hun React-wrappers (`@gemeente-tilburg/web-components-react`) worden door Stencil gegenereerd. Wat je onder `Tilburg HTML/…` ziet is de gedeelde render — `Tilburg React/…`, `Tilburg Angular/…` en `Tilburg Web Components/…` zijn parity-checks bovenop.
 

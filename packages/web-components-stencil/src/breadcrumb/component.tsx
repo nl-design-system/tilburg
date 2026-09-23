@@ -6,24 +6,24 @@
 import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export interface TilburgWebcBreadcrumbItem {
+export interface TilburgWbcBreadcrumbItem {
   label: string | null | undefined;
   href?: string | null;
   current?: boolean;
   data?: unknown;
 }
 
-export interface TilburgWebcBreadcrumbItemClickDetail {
-  item: TilburgWebcBreadcrumbItem;
+export interface TilburgWbcBreadcrumbItemClickDetail {
+  item: TilburgWbcBreadcrumbItem;
   event: MouseEvent;
 }
 
 @Component({
-  tag: 'tilburg-webc-breadcrumb',
+  tag: 'tilburg-wbc-breadcrumb',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcBreadcrumb {
+export class TilburgWbcBreadcrumb {
   @Element() host!: HTMLElement;
 
   /**
@@ -31,13 +31,13 @@ export class TilburgWebcBreadcrumb {
    * page (`<span aria-current="page">`) when it has `current: true` or is the
    * last one. Nothing is rendered for an empty array.
    */
-  @Prop() items: TilburgWebcBreadcrumbItem[] | null | undefined = [];
+  @Prop() items: TilburgWbcBreadcrumbItem[] | null | undefined = [];
 
   /**
    * Fired when a trail link is clicked, with the item and the native click
    * event (call `detail.event.preventDefault()` for client-side routing).
    */
-  @Event() tilburgItemClick!: EventEmitter<TilburgWebcBreadcrumbItemClickDetail>;
+  @Event() tilburgItemClick!: EventEmitter<TilburgWbcBreadcrumbItemClickDetail>;
 
   /* `aria-label` (default `Kruimelpad`) is written on the host and moved onto
      the `<nav>`. */

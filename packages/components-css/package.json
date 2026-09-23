@@ -1,7 +1,7 @@
 {
   "name": "@gemeente-tilburg/components-css",
   "version": "0.0.0",
-  "description": "CSS Components for a design system based on the NL Design System architecture",
+  "description": "HTML/CSS components (BEM classes on top of the Utrecht base CSS) for the Municipality of Tilburg, based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [
@@ -12,5 +12,15 @@
     "type": "git+ssh",
     "url": "git@github.com:nl-design-system/tilburg.git",
     "directory": "packages/components-css"
+  },
+  "files": [
+    "*/index.scss",
+    "*/index.js",
+    "*/index.d.ts",
+    "tokens/",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@utrecht/component-library-css": "^5.2.0"
   }
 }

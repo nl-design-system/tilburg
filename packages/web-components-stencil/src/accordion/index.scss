@@ -2,7 +2,7 @@
 
 /* Light-DOM hosts default to `display: inline`; force the block flow of the
    HTML/CSS reference (same rule as the Angular `:host`). */
-tilburg-webc-accordion,
-tilburg-webc-accordion-section {
+tilburg-wbc-accordion,
+tilburg-wbc-accordion-section {
   display: block;
 }

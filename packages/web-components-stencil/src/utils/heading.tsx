@@ -13,7 +13,7 @@ interface HeadingProps {
 }
 
 /**
- * Renders `<tilburg-webc-heading-N>` for a numeric level — the Stencil
+ * Renders `<tilburg-wbc-heading-N>` for a numeric level — the Stencil
  * counterpart of the Angular `ngSwitch` over `<tilburg-heading-N>` and the
  * React `HEADINGS[level]` lookup.
  *
@@ -24,16 +24,16 @@ interface HeadingProps {
 export const Heading: FunctionalComponent<HeadingProps> = ({ level, class: className }, children) => {
   switch (Number(level)) {
     case 1:
-      return <tilburg-webc-heading-1 class={className}>{children}</tilburg-webc-heading-1>;
+      return <tilburg-wbc-heading-1 class={className}>{children}</tilburg-wbc-heading-1>;
     case 2:
-      return <tilburg-webc-heading-2 class={className}>{children}</tilburg-webc-heading-2>;
+      return <tilburg-wbc-heading-2 class={className}>{children}</tilburg-wbc-heading-2>;
     case 4:
-      return <tilburg-webc-heading-4 class={className}>{children}</tilburg-webc-heading-4>;
+      return <tilburg-wbc-heading-4 class={className}>{children}</tilburg-wbc-heading-4>;
     case 5:
-      return <tilburg-webc-heading-5 class={className}>{children}</tilburg-webc-heading-5>;
+      return <tilburg-wbc-heading-5 class={className}>{children}</tilburg-wbc-heading-5>;
     case 6:
-      return <tilburg-webc-heading-6 class={className}>{children}</tilburg-webc-heading-6>;
+      return <tilburg-wbc-heading-6 class={className}>{children}</tilburg-wbc-heading-6>;
     default:
-      return <tilburg-webc-heading-3 class={className}>{children}</tilburg-webc-heading-3>;
+      return <tilburg-wbc-heading-3 class={className}>{children}</tilburg-wbc-heading-3>;
   }
 };

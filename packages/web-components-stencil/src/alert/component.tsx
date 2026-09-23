@@ -8,12 +8,12 @@ import { Heading, HeadingLevel } from '../utils/heading';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { hasSlot } from '../utils/slots';
 
-export type TilburgWebcAlertVariant = 'info' | 'success' | 'warning' | 'danger';
-export type TilburgWebcAlertLiveRegion = 'polite' | 'assertive' | 'off';
+export type TilburgWbcAlertVariant = 'info' | 'success' | 'warning' | 'danger';
+export type TilburgWbcAlertLiveRegion = 'polite' | 'assertive' | 'off';
 
 /* API uses success/danger; DOM emits utrecht's ok/error so the global
    `.utrecht-alert--ok` / `--error` rules apply (same mapping as Angular/React). */
-const VARIANT_TO_UTRECHT: Record<TilburgWebcAlertVariant, string> = {
+const VARIANT_TO_UTRECHT: Record<TilburgWbcAlertVariant, string> = {
   info: 'info',
   success: 'ok',
   warning: 'warning',
@@ -26,20 +26,20 @@ const VARIANT_TO_UTRECHT: Record<TilburgWebcAlertVariant, string> = {
  * @slot close-icon - Replaces the default × in the close button (painted by CSS when empty).
  */
 @Component({
-  tag: 'tilburg-webc-alert',
+  tag: 'tilburg-wbc-alert',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcAlert {
+export class TilburgWbcAlert {
   @Element() host!: HTMLElement;
 
-  @Prop() variant: TilburgWebcAlertVariant = 'info';
+  @Prop() variant: TilburgWbcAlertVariant = 'info';
   /** Heading text. Named `heading` because `title` is a global HTML attribute (tooltip on the host). */
   @Prop() heading?: string;
   @Prop() headingLevel: HeadingLevel = 3;
   @Prop() closable = false;
   /** Defaults to `assertive` for `danger`, `polite` otherwise. */
-  @Prop() liveRegion?: TilburgWebcAlertLiveRegion;
+  @Prop() liveRegion?: TilburgWbcAlertLiveRegion;
   @Prop() closeButtonAriaLabel = 'sluit alert';
   /** Visually hidden text prepended to the message for screen readers (e.g. "Fout:"). */
   @Prop() srPrefix?: string;

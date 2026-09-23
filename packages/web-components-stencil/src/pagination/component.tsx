@@ -6,10 +6,10 @@
 import { Component, Element, Event, EventEmitter, FunctionalComponent, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcPaginationStep = 'first' | 'previous' | 'next' | 'last' | 'page';
+export type TilburgWbcPaginationStep = 'first' | 'previous' | 'next' | 'last' | 'page';
 
-export interface TilburgWebcPaginationEvent {
-  step: TilburgWebcPaginationStep;
+export interface TilburgWbcPaginationEvent {
+  step: TilburgWbcPaginationStep;
   page?: number;
 }
 
@@ -48,11 +48,11 @@ const Icon: FunctionalComponent<{ points: string[] }> = ({ points }) => (
 );
 
 @Component({
-  tag: 'tilburg-webc-pagination',
+  tag: 'tilburg-wbc-pagination',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcPagination {
+export class TilburgWbcPagination {
   @Element() host!: HTMLElement;
 
   @Prop() feedback?: string | null;
@@ -77,7 +77,7 @@ export class TilburgWebcPagination {
    * `currentPage` itself. `page` is only set for numeric clicks; clicking the
    * current page fires nothing.
    */
-  @Event() tilburgNavigate!: EventEmitter<TilburgWebcPaginationEvent>;
+  @Event() tilburgNavigate!: EventEmitter<TilburgWbcPaginationEvent>;
 
   /* `aria-label` (default `Paginering`) is written on the host and moved onto
      the `<nav>`. */
@@ -94,7 +94,7 @@ export class TilburgWebcPagination {
     this.inheritor?.disconnect();
   }
 
-  private onStep(step: TilburgWebcPaginationStep) {
+  private onStep(step: TilburgWbcPaginationStep) {
     this.tilburgNavigate.emit({ step });
   }
 
@@ -103,7 +103,7 @@ export class TilburgWebcPagination {
     this.tilburgNavigate.emit({ step: 'page', page });
   }
 
-  private renderStepButton(step: TilburgWebcPaginationStep, disabled: boolean, label: string, points: string[]) {
+  private renderStepButton(step: TilburgWbcPaginationStep, disabled: boolean, label: string, points: string[]) {
     return (
       <button
         type="button"

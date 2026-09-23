@@ -14,11 +14,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - The `<legend>` followed by the grouped form fields.
  */
 @Component({
-  tag: 'tilburg-webc-fieldset',
+  tag: 'tilburg-wbc-fieldset',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcFieldset {
+export class TilburgWbcFieldset {
   @Element() host!: HTMLElement;
 
   /** Native `disabled`: disables every control in the group. */

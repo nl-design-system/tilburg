@@ -6,25 +6,25 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcButtonAppearance = 'primary-action-button' | 'secondary-action-button' | 'subtle-button';
-export type TilburgWebcButtonSize = 'small' | 'medium' | 'large';
+export type TilburgWbcButtonAppearance = 'primary-action-button' | 'secondary-action-button' | 'subtle-button';
+export type TilburgWbcButtonSize = 'small' | 'medium' | 'large';
 
-const APPEARANCE_CLASS: Record<TilburgWebcButtonAppearance, string> = {
+const APPEARANCE_CLASS: Record<TilburgWbcButtonAppearance, string> = {
   'primary-action-button': 'utrecht-button--primary-action',
   'secondary-action-button': 'utrecht-button--secondary-action',
   'subtle-button': 'utrecht-button--subtle',
 };
 
 @Component({
-  tag: 'tilburg-webc-button',
+  tag: 'tilburg-wbc-button',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcButton {
+export class TilburgWbcButton {
   @Element() host!: HTMLElement;
 
-  @Prop() appearance: TilburgWebcButtonAppearance = 'primary-action-button';
-  @Prop() size: TilburgWebcButtonSize = 'medium';
+  @Prop() appearance: TilburgWbcButtonAppearance = 'primary-action-button';
+  @Prop() size: TilburgWbcButtonSize = 'medium';
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
   @Prop() disabled = false;
   @Prop() busy = false;

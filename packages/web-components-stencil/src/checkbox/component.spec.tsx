@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcCheckbox } from './component';
+import { TilburgWbcCheckbox } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcCheckbox], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcCheckbox], html });
 
-describe('tilburg-webc-checkbox', () => {
+describe('tilburg-wbc-checkbox', () => {
   it('renders a custom utrecht checkbox in light DOM', async () => {
-    const page = await render('<tilburg-webc-checkbox></tilburg-webc-checkbox>');
+    const page = await render('<tilburg-wbc-checkbox></tilburg-wbc-checkbox>');
     const input = page.root!.querySelector('input')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(input.getAttribute('type')).toBe('checkbox');
@@ -16,7 +16,7 @@ describe('tilburg-webc-checkbox', () => {
 
   it('maps state props to attributes, ARIA and classes', async () => {
     const page = await render(
-      '<tilburg-webc-checkbox name="consent" value="ja" checked invalid required disabled></tilburg-webc-checkbox>',
+      '<tilburg-wbc-checkbox name="consent" value="ja" checked invalid required disabled></tilburg-wbc-checkbox>',
     );
     const input = page.root!.querySelector('input')!;
     expect(input.checked).toBe(true);
@@ -30,7 +30,7 @@ describe('tilburg-webc-checkbox', () => {
   });
 
   it('renders the indeterminate state', async () => {
-    const page = await render('<tilburg-webc-checkbox indeterminate></tilburg-webc-checkbox>');
+    const page = await render('<tilburg-wbc-checkbox indeterminate></tilburg-wbc-checkbox>');
     const input = page.root!.querySelector('input')!;
     expect(input).toHaveClass('utrecht-checkbox--indeterminate');
     expect(input.getAttribute('aria-checked')).toBe('mixed');
@@ -38,7 +38,7 @@ describe('tilburg-webc-checkbox', () => {
 
   it('moves id and aria attributes from the host to the input', async () => {
     const page = await render(
-      '<tilburg-webc-checkbox id="consent" aria-label="Akkoord" aria-describedby="hint"></tilburg-webc-checkbox>',
+      '<tilburg-wbc-checkbox id="consent" aria-label="Akkoord" aria-describedby="hint"></tilburg-wbc-checkbox>',
     );
     const input = page.root!.querySelector('input')!;
     expect(page.root!.hasAttribute('id')).toBe(false);
@@ -48,14 +48,14 @@ describe('tilburg-webc-checkbox', () => {
   });
 
   it('keeps checked in sync and lets the native change event bubble', async () => {
-    const page = await render('<tilburg-webc-checkbox></tilburg-webc-checkbox>');
+    const page = await render('<tilburg-wbc-checkbox></tilburg-wbc-checkbox>');
     const input = page.root!.querySelector('input')!;
     const spy = jest.fn();
     page.root!.addEventListener('change', spy);
     input.checked = true;
     input.dispatchEvent(new Event('change', { bubbles: true }));
     await page.waitForChanges();
-    expect((page.root as unknown as TilburgWebcCheckbox).checked).toBe(true);
+    expect((page.root as unknown as TilburgWbcCheckbox).checked).toBe(true);
     expect(page.root!.hasAttribute('checked')).toBe(true);
     expect(spy).toHaveBeenCalledTimes(1);
   });

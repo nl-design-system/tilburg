@@ -6,7 +6,7 @@
 import { Component, Element, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export interface TilburgWebcComboboxItem<V = unknown> {
+export interface TilburgWbcComboboxItem<V = unknown> {
   value: V;
   label: string;
   disabled?: boolean;
@@ -56,15 +56,15 @@ const ChevronIcon = () => (
  * the new value (single: the item value or `null`; multiple: an array).
  */
 @Component({
-  tag: 'tilburg-webc-combobox',
+  tag: 'tilburg-wbc-combobox',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcCombobox {
+export class TilburgWbcCombobox {
   @Element() host!: HTMLElement;
 
   /** Options, set as a JS property: `{ value, label, disabled? }[]`. */
-  @Prop() items: TilburgWebcComboboxItem[] = [];
+  @Prop() items: TilburgWbcComboboxItem[] = [];
   /**
    * Selected value: an item `value` (or `null`) in single mode, an array of
    * item values in multiple mode. Updated by the component on selection.
@@ -96,7 +96,7 @@ export class TilburgWebcCombobox {
      `<label for>` resolves and the id is not duplicated. */
   @State() inherited: InheritedAttributes = {};
   private inheritor?: AttributeInheritor;
-  private readonly fallbackId = `tilburg-webc-combobox-${++comboboxCount}`;
+  private readonly fallbackId = `tilburg-wbc-combobox-${++comboboxCount}`;
   private inputEl?: HTMLInputElement;
   private scrolledIndex = -1;
 
@@ -147,7 +147,7 @@ export class TilburgWebcCombobox {
     return `${this.internalId}-opt-${index}`;
   }
 
-  private get options(): TilburgWebcComboboxItem[] {
+  private get options(): TilburgWbcComboboxItem[] {
     return Array.isArray(this.items) ? this.items : [];
   }
 
@@ -158,7 +158,7 @@ export class TilburgWebcCombobox {
     return Array.isArray(value) ? value : [value];
   }
 
-  private isSelected(item: TilburgWebcComboboxItem): boolean {
+  private isSelected(item: TilburgWbcComboboxItem): boolean {
     return this.selectedValues().includes(item.value);
   }
 
@@ -277,7 +277,7 @@ export class TilburgWebcCombobox {
     const values = this.selectedValues();
     const selectedItems = values
       .map((v) => options.find((item) => item.value === v))
-      .filter((item): item is TilburgWebcComboboxItem => item !== undefined);
+      .filter((item): item is TilburgWbcComboboxItem => item !== undefined);
     const displayValue = this.multiple ? '' : (options.find((item) => item.value === this.value)?.label ?? '');
     const hasValue = values.length > 0;
 

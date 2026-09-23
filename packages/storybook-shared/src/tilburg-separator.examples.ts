@@ -64,7 +64,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
 <p class="utrecht-paragraph">Aanvraagdetails</p>
-<tilburg-webc-separator decorative></tilburg-webc-separator>
+<tilburg-wbc-separator decorative></tilburg-wbc-separator>
 <p class="utrecht-paragraph">Contactgegevens</p>
 \`\`\`
 

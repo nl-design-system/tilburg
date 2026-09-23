@@ -53,10 +53,10 @@ const build = async () => {
 
     const source = [`figma/${theme}/figma.tokens.json`, 'src/**/tokens.json', 'src/**/*.tokens.json'];
 
-    /* The bat theme layers extra patches on top of the shared ones. */
-    if (theme === 'bat') {
-      source.push('src/patches/bat/**/*.tokens.json');
-    }
+    /* A theme can layer its own patches on top of the shared ones in
+       `src/patches/<theme>/` (today only `bat` has any). They come last, so
+       they win on conflicts. */
+    source.push(`src/patches/${theme}/**/*.tokens.json`);
 
     const sd = new StyleDictionary({
       ...createStyleDictionaryConfig({

@@ -6,14 +6,14 @@
 import { Component, h } from '@stencil/core';
 
 /**
- * @slot - The page layout: `<tilburg-webc-page-header>`, `<tilburg-webc-page-content>`, `<tilburg-webc-page-footer>`.
+ * @slot - The page layout: `<tilburg-wbc-page-header>`, `<tilburg-wbc-page-content>`, `<tilburg-wbc-page-footer>`.
  */
 @Component({
-  tag: 'tilburg-webc-page',
+  tag: 'tilburg-wbc-page',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcPage {
+export class TilburgWbcPage {
   render() {
     /* Angular wraps this div in utrecht's `<utrecht-page>` component host; that
        unstyled inline element is an Angular artefact, so the Stencil layer

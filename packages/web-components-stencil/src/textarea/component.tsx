@@ -11,11 +11,11 @@ const INHERITED = ['id', 'title', 'dir', 'aria-label', 'aria-labelledby', 'aria-
 const px = (value: string) => parseInt(value.replace('px', ''), 10);
 
 @Component({
-  tag: 'tilburg-webc-textarea',
+  tag: 'tilburg-wbc-textarea',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcTextarea {
+export class TilburgWbcTextarea {
   @Element() host!: HTMLElement;
 
   @Prop() name?: string;

@@ -10,11 +10,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - The description text.
  */
 @Component({
-  tag: 'tilburg-webc-form-field-description',
+  tag: 'tilburg-wbc-form-field-description',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcFormFieldDescription {
+export class TilburgWbcFormFieldDescription {
   @Element() host!: HTMLElement;
 
   /** Error styling; also adds `role="alert"` so the message is announced. */

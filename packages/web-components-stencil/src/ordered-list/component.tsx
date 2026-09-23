@@ -11,11 +11,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  *   plain `<li>` elements are styled via `.utrecht-ordered-list--html-ol > li`.
  */
 @Component({
-  tag: 'tilburg-webc-ordered-list',
+  tag: 'tilburg-wbc-ordered-list',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcOrderedList {
+export class TilburgWbcOrderedList {
   @Element() host!: HTMLElement;
 
   /** Switches the markers from decimal to lower-alpha (`a, b, c, …`). */

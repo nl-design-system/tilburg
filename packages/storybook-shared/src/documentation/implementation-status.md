@@ -1,11 +1,11 @@
 # Implementatiestatus
 
 Welke van de vier lagen bestaat er per component. De tabel is afgeleid uit de repository zelf — uit
-`packages/components-css/*/index.scss`, `packages/components-angular/src/*/component.ts` en de story-bestanden
-van beide Storybooks — en is een momentopname van 10 augustus 2026.
+`packages/components-css/*/index.scss`, `packages/components-angular/src/*/component.ts`,
+`packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is een momentopname van 21 september 2026.
 
 **39 componenten** zijn gedocumenteerd. **38** hebben een React-wrapper, **38** een Angular-wrapper en **38** een
-Web Component (`@gemeente-tilburg/web-components-stencil`, stand van 21 september 2026).
+Web Component (`@gemeente-tilburg/web-components-stencil`).
 Er is op dit moment geen enkel component dat wél in React maar niet in Angular bestaat, of andersom.
 
 ## Wat de kolommen betekenen
@@ -15,7 +15,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
   niets overschrijft (7 componenten) — dat is een bewuste keuze, geen ontbrekend werk.
 - **React** — er is een component in `@gemeente-tilburg/components-react`.
 - **Angular** — er is een component in `@gemeente-tilburg/components-angular`.
-- **Web Components** — er is een `<tilburg-webc-…>`-element in `@gemeente-tilburg/web-components-stencil`. Table is
+- **Web Components** — er is een `<tilburg-wbc-…>`-element in `@gemeente-tilburg/web-components-stencil`. Table is
   één element dat een native `<table>` verrijkt (of hem uit data rendert), in plaats van losse rij-/cel-elementen: de
   HTML-parser haalt custom elements uit een tabel voordat JavaScript draait.
 
@@ -68,7 +68,7 @@ Eén component heeft bewust geen wrapper (ook geen Web Component):
 - **Badge Counter** — puur presentatie, één `<span>` met een class.
 
 **Modal** was eerder alleen HTML/CSS. Het heeft nu in alle lagen een component (`Modal`, `<tilburg-modal>`,
-`<tilburg-webc-modal>`), omdat die wél iets toevoegen bovenop `showModal()`/`close()`: de toegankelijke naam via de
+`<tilburg-wbc-modal>`), omdat die wél iets toevoegen bovenop `showModal()`/`close()`: de toegankelijke naam via de
 titel, sluiten via backdrop en Escape met één close-event, en de footer die verdwijnt als hij leeg is. De oude React
 `AlertDialog` is een deprecated alias van `Modal`.
 

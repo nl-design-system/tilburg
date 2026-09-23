@@ -6,26 +6,26 @@
 import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export interface TilburgWebcLanguageOption {
+export interface TilburgWbcLanguageOption {
   code: string;
   label: string;
 }
 
-const DEFAULT_OPTIONS: TilburgWebcLanguageOption[] = [
+const DEFAULT_OPTIONS: TilburgWbcLanguageOption[] = [
   { code: 'NL', label: 'NL' },
   { code: 'EN', label: 'EN' },
 ];
 
 @Component({
-  tag: 'tilburg-webc-language-toggle',
+  tag: 'tilburg-wbc-language-toggle',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcLanguageToggle {
+export class TilburgWbcLanguageToggle {
   @Element() host!: HTMLElement;
 
   /** The choices, in toggle order. JS property only (no attribute). */
-  @Prop() options: TilburgWebcLanguageOption[] = DEFAULT_OPTIONS;
+  @Prop() options: TilburgWbcLanguageOption[] = DEFAULT_OPTIONS;
   /** Code of the active option. Controlled: update it from `tilburgToggle`. */
   @Prop() active: string | null | undefined = 'NL';
 

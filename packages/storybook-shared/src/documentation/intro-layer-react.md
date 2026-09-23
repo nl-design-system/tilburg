@@ -2,36 +2,45 @@
 
 ## React
 
-Voor React-projecten — `<Alert>`, `<Textbox>`, etc. Onder de motorkap rendert de React-laag dezelfde DOM als de HTML/CSS-laag.
+Voor React-projecten — `<Alert>`, `<Textbox>`, `<Modal>`, etc. De React-laag rendert dezelfde DOM als de
+HTML/CSS-laag. React 18 is vereist.
 
 ### Installatie (React)
 
 ```bash
 npm install @gemeente-tilburg/components-react \
-            @gemeente-tilburg/design-tokens
+            @gemeente-tilburg/design-tokens \
+            @utrecht/component-library-css
 ```
+
+### Setup (React)
+
+Importeer drie stylesheets één keer, bv. in `main.tsx`. **De component-CSS laadt niet vanzelf**: die staat in een apart
+bestand, `dist/style.css`.
+
+```tsx
+import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
+import "@utrecht/component-library-css/dist/index.css";
+import "@gemeente-tilburg/components-react/dist/style.css";
+```
+
+Zet daarna `tilburg-theme` en `utrecht-document` op een wrapper (zie de basis hierboven).
 
 ### Gebruik (React)
 
-`@gemeente-tilburg/components-react` importeert zijn eigen SCSS automatisch — je hoeft alleen de tokens en utrecht-basis globaal te laden.
-
-```scss
-/* in je entry stylesheet, bv. src/index.scss */
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
-```
-
 ```tsx
-import { Alert, Textbox } from "@gemeente-tilburg/components-react";
+import { Alert, Button } from "@gemeente-tilburg/components-react";
 
-export function ContactForm() {
+export function App() {
   return (
-    <>
+    <div className="tilburg-theme utrecht-document">
       <Alert variant="info" title="Informatie">
         De openingstijden zijn gewijzigd.
       </Alert>
-      <Textbox id="email" type="email" placeholder="naam@voorbeeld.nl" />
-    </>
+      <Button appearance="primary-action-button">Aanvragen</Button>
+    </div>
   );
 }
 ```
+
+De props per component staan op de pagina's onder `Tilburg React/…`.

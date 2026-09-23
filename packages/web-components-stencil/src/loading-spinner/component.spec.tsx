@@ -1,18 +1,18 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcLoadingSpinner } from './component';
+import { TilburgWbcLoadingSpinner } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcLoadingSpinner], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcLoadingSpinner], html });
 
-describe('tilburg-webc-loading-spinner', () => {
+describe('tilburg-wbc-loading-spinner', () => {
   it('renders nothing while hidden', async () => {
-    const page = await render('<tilburg-webc-loading-spinner heading="Bezig"></tilburg-webc-loading-spinner>');
+    const page = await render('<tilburg-wbc-loading-spinner heading="Bezig"></tilburg-wbc-loading-spinner>');
     expect(page.root!.shadowRoot).toBeNull();
     expect(page.root!.querySelector('.tilburg-loading-spinner__overlay')).toBeNull();
   });
 
   it('renders the overlay markup immediately with delay-ms="0"', async () => {
     const page = await render(
-      '<tilburg-webc-loading-spinner visible delay-ms="0" heading="Bezig met laden" message="Even geduld"></tilburg-webc-loading-spinner>',
+      '<tilburg-wbc-loading-spinner visible delay-ms="0" heading="Bezig met laden" message="Even geduld"></tilburg-wbc-loading-spinner>',
     );
     const overlay = page.root!.querySelector('.tilburg-loading-spinner__overlay')!;
     expect(overlay.getAttribute('aria-busy')).toBe('true');
@@ -26,14 +26,14 @@ describe('tilburg-webc-loading-spinner', () => {
   });
 
   it('omits title and message when not given', async () => {
-    const page = await render('<tilburg-webc-loading-spinner visible delay-ms="0"></tilburg-webc-loading-spinner>');
+    const page = await render('<tilburg-wbc-loading-spinner visible delay-ms="0"></tilburg-wbc-loading-spinner>');
     expect(page.root!.querySelector('.tilburg-loading-spinner__title')).toBeNull();
     expect(page.root!.querySelector('.tilburg-loading-spinner__message')).toBeNull();
   });
 
   it('moves aria-label from the host to the overlay', async () => {
     const page = await render(
-      '<tilburg-webc-loading-spinner visible delay-ms="0" aria-label="Bezig met laden"></tilburg-webc-loading-spinner>',
+      '<tilburg-wbc-loading-spinner visible delay-ms="0" aria-label="Bezig met laden"></tilburg-wbc-loading-spinner>',
     );
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('.tilburg-loading-spinner__overlay')!.getAttribute('aria-label')).toBe(
@@ -43,7 +43,7 @@ describe('tilburg-webc-loading-spinner', () => {
 
   it('does not render the host title attribute as heading', async () => {
     const page = await render(
-      '<tilburg-webc-loading-spinner visible delay-ms="0" title="tooltip"></tilburg-webc-loading-spinner>',
+      '<tilburg-wbc-loading-spinner visible delay-ms="0" title="tooltip"></tilburg-wbc-loading-spinner>',
     );
     expect(page.root!.querySelector('.tilburg-loading-spinner__title')).toBeNull();
   });
@@ -53,7 +53,7 @@ describe('tilburg-webc-loading-spinner', () => {
   const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   it('only reveals the overlay after the grace timer', async () => {
-    const page = await render('<tilburg-webc-loading-spinner delay-ms="50"></tilburg-webc-loading-spinner>');
+    const page = await render('<tilburg-wbc-loading-spinner delay-ms="50"></tilburg-wbc-loading-spinner>');
     page.root!.visible = true;
     await page.waitForChanges();
     expect(page.root!.querySelector('.tilburg-loading-spinner__overlay')).toBeNull();
@@ -63,7 +63,7 @@ describe('tilburg-webc-loading-spinner', () => {
   });
 
   it('hides immediately and cancels a pending timer', async () => {
-    const page = await render('<tilburg-webc-loading-spinner delay-ms="50"></tilburg-webc-loading-spinner>');
+    const page = await render('<tilburg-wbc-loading-spinner delay-ms="50"></tilburg-wbc-loading-spinner>');
     page.root!.visible = true;
     await page.waitForChanges();
     page.root!.visible = false;
@@ -74,7 +74,7 @@ describe('tilburg-webc-loading-spinner', () => {
   });
 
   it('hides a shown overlay when visible turns false', async () => {
-    const page = await render('<tilburg-webc-loading-spinner visible delay-ms="0"></tilburg-webc-loading-spinner>');
+    const page = await render('<tilburg-wbc-loading-spinner visible delay-ms="0"></tilburg-wbc-loading-spinner>');
     page.root!.visible = false;
     await page.waitForChanges();
     expect(page.root!.querySelector('.tilburg-loading-spinner__overlay')).toBeNull();

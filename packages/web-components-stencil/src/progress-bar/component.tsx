@@ -11,11 +11,11 @@ import { hasSlot } from '../utils/slots';
  * @slot back-icon - Replaces the default `←` in front of the back label.
  */
 @Component({
-  tag: 'tilburg-webc-progress-bar',
+  tag: 'tilburg-wbc-progress-bar',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcProgressBar {
+export class TilburgWbcProgressBar {
   @Element() host!: HTMLElement;
 
   @Prop() value = 0;

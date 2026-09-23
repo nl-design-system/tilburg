@@ -347,9 +347,16 @@ function ComboboxImpl<V>(props: ComboboxProps<V>, ref: ForwardedRef<HTMLInputEle
   );
 }
 
-export const Combobox = forwardRef(ComboboxImpl) as <V = unknown>(
+/* Two call signatures instead of one over the `ComboboxProps<V>` union: with a
+   single generic signature TypeScript infers `V` from `value` before it
+   narrows on `multiple`, so `multiple value={['a']}` resolves to
+   `SingleComboboxProps<string[]>` and rejects `ComboboxItem<string>[]` items.
+   The multi overload is tried first; it only matches when `multiple` is `true`. */
+export const Combobox = forwardRef(ComboboxImpl) as {
   /* eslint-disable-next-line no-unused-vars -- callable signature for the forwardRef cast */
-  props: ComboboxProps<V> & { ref?: Ref<HTMLInputElement> },
-) => JSX.Element;
+  <V = unknown>(props: MultiComboboxProps<V> & { ref?: Ref<HTMLInputElement> }): JSX.Element;
+  /* eslint-disable-next-line no-unused-vars -- callable signature for the forwardRef cast */
+  <V = unknown>(props: SingleComboboxProps<V> & { ref?: Ref<HTMLInputElement> }): JSX.Element;
+};
 
 (Combobox as unknown as { displayName: string }).displayName = 'Combobox';

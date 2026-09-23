@@ -79,11 +79,11 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-page>
-  <tilburg-webc-page-header logo-src="/logo-on-dark.svg" heading="Gemeente Tilburg"></tilburg-webc-page-header>
-  <tilburg-webc-page-content id="main" tabindex="-1">…</tilburg-webc-page-content>
-  <tilburg-webc-page-footer links='[{"label":"Privacystatement","href":"/privacystatement"}]'></tilburg-webc-page-footer>
-</tilburg-webc-page>
+<tilburg-wbc-page>
+  <tilburg-wbc-page-header logo-src="/logo-on-dark.svg" heading="Gemeente Tilburg"></tilburg-wbc-page-header>
+  <tilburg-wbc-page-content id="main" tabindex="-1">…</tilburg-wbc-page-content>
+  <tilburg-wbc-page-footer links='[{"label":"Privacystatement","href":"/privacystatement"}]'></tilburg-wbc-page-footer>
+</tilburg-wbc-page>
 \`\`\`
 
 Renders a single \`<div class="utrecht-page">\` around the default slot (Angular additionally wraps it in utrecht's \`<utrecht-page>\` host element; the web component follows the HTML reference). No attributes, events or named slots.`;

@@ -14,11 +14,11 @@ let sectionCount = 0;
  * @slot icon-collapsed - Replaces the `+` shown while collapsed.
  */
 @Component({
-  tag: 'tilburg-webc-accordion-section',
+  tag: 'tilburg-wbc-accordion-section',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcAccordionSection {
+export class TilburgWbcAccordionSection {
   @Element() host!: HTMLElement;
 
   /**
@@ -36,7 +36,7 @@ export class TilburgWebcAccordionSection {
   /** Fired with the requested next `expanded` state when the header is activated. */
   @Event() tilburgToggle!: EventEmitter<boolean>;
 
-  private readonly fallbackKey = `webc-${++sectionCount}`;
+  private readonly fallbackKey = `wbc-${++sectionCount}`;
   private hasIconExpanded = false;
   private hasIconCollapsed = false;
 

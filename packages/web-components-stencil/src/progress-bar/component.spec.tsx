@@ -1,12 +1,12 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcProgressBar } from './component';
+import { TilburgWbcProgressBar } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcProgressBar], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcProgressBar], html });
 
-describe('tilburg-webc-progress-bar', () => {
+describe('tilburg-wbc-progress-bar', () => {
   it('renders header and progressbar track like the HTML reference', async () => {
     const page = await render(
-      '<tilburg-webc-progress-bar value="2" total="4" heading="Adresgegevens" label="Stap 2 van 4"></tilburg-webc-progress-bar>',
+      '<tilburg-wbc-progress-bar value="2" total="4" heading="Adresgegevens" label="Stap 2 van 4"></tilburg-wbc-progress-bar>',
     );
     expect(page.root!.shadowRoot).toBeNull();
     const header = page.root!.querySelector('.tilburg-progress-bar__header')!;
@@ -27,21 +27,21 @@ describe('tilburg-webc-progress-bar', () => {
   });
 
   it('clamps the percentage and handles a zero total', async () => {
-    const over = await render('<tilburg-webc-progress-bar value="9" total="4"></tilburg-webc-progress-bar>');
+    const over = await render('<tilburg-wbc-progress-bar value="9" total="4"></tilburg-wbc-progress-bar>');
     expect(over.root!.querySelector('[role=progressbar]')!.getAttribute('aria-valuenow')).toBe('100');
-    const zero = await render('<tilburg-webc-progress-bar value="3"></tilburg-webc-progress-bar>');
+    const zero = await render('<tilburg-wbc-progress-bar value="3"></tilburg-wbc-progress-bar>');
     expect(zero.root!.querySelector('[role=progressbar]')!.getAttribute('aria-valuenow')).toBe('0');
   });
 
   it('rounds aria-valuenow but keeps the exact width', async () => {
-    const page = await render('<tilburg-webc-progress-bar value="1" total="3"></tilburg-webc-progress-bar>');
+    const page = await render('<tilburg-wbc-progress-bar value="1" total="3"></tilburg-wbc-progress-bar>');
     const track = page.root!.querySelector('[role=progressbar]')!;
     expect(track.getAttribute('aria-valuenow')).toBe('33');
     expect(track.querySelector<HTMLElement>('.tilburg-progress-bar__indicator')!.style.width).toMatch(/^33\.3+\d*%$/);
   });
 
   it('omits title, label and valuetext when not given and falls back to "Voortgang"', async () => {
-    const page = await render('<tilburg-webc-progress-bar value="1" total="2"></tilburg-webc-progress-bar>');
+    const page = await render('<tilburg-wbc-progress-bar value="1" total="2"></tilburg-wbc-progress-bar>');
     expect(page.root!.querySelector('.tilburg-progress-bar__title')).toBeNull();
     expect(page.root!.querySelector('.tilburg-progress-bar__label')).toBeNull();
     const track = page.root!.querySelector('[role=progressbar]')!;
@@ -51,7 +51,7 @@ describe('tilburg-webc-progress-bar', () => {
 
   it('moves aria-label from the host to the track', async () => {
     const page = await render(
-      '<tilburg-webc-progress-bar aria-label="Aanvraag" heading="Stap"></tilburg-webc-progress-bar>',
+      '<tilburg-wbc-progress-bar aria-label="Aanvraag" heading="Stap"></tilburg-wbc-progress-bar>',
     );
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('[role=progressbar]')!.getAttribute('aria-label')).toBe('Aanvraag');
@@ -59,7 +59,7 @@ describe('tilburg-webc-progress-bar', () => {
 
   it('renders the back link with the default arrow and emits tilburgBackClick', async () => {
     const page = await render(
-      '<tilburg-webc-progress-bar show-back back-label="Vorige stap"></tilburg-webc-progress-bar>',
+      '<tilburg-wbc-progress-bar show-back back-label="Vorige stap"></tilburg-wbc-progress-bar>',
     );
     const back = page.root!.querySelector<HTMLAnchorElement>(
       'a.tilburg-progress-bar__back.utrecht-link.utrecht-link--html-a',
@@ -76,7 +76,7 @@ describe('tilburg-webc-progress-bar', () => {
 
   it('projects a custom back icon', async () => {
     const page = await render(
-      '<tilburg-webc-progress-bar show-back back-label="Terug"><span slot="back-icon" id="i">‹</span></tilburg-webc-progress-bar>',
+      '<tilburg-wbc-progress-bar show-back back-label="Terug"><span slot="back-icon" id="i">‹</span></tilburg-wbc-progress-bar>',
     );
     const back = page.root!.querySelector('.tilburg-progress-bar__back')!;
     expect(back.querySelector('#i')).not.toBeNull();

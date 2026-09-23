@@ -1,16 +1,16 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcLanguageToggle } from './component';
+import { TilburgWbcLanguageToggle } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcLanguageToggle], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcLanguageToggle], html });
 
 const optionState = (root: HTMLElement) =>
   Array.from(root.querySelectorAll('.tilburg-language-toggle__option')).map(
     (el) => `${el.textContent}${el.classList.contains('tilburg-language-toggle__option--active') ? '*' : ''}`,
   );
 
-describe('tilburg-webc-language-toggle', () => {
+describe('tilburg-wbc-language-toggle', () => {
   it('renders the switch button with the default options, NL active', async () => {
-    const page = await render('<tilburg-webc-language-toggle></tilburg-webc-language-toggle>');
+    const page = await render('<tilburg-wbc-language-toggle></tilburg-wbc-language-toggle>');
     const button = page.root!.querySelector('button')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(button).toHaveClasses([
@@ -27,13 +27,13 @@ describe('tilburg-webc-language-toggle', () => {
   });
 
   it('is checked when the last option is active', async () => {
-    const page = await render('<tilburg-webc-language-toggle active="EN"></tilburg-webc-language-toggle>');
+    const page = await render('<tilburg-wbc-language-toggle active="EN"></tilburg-wbc-language-toggle>');
     expect(page.root!.querySelector('button')!.getAttribute('aria-checked')).toBe('true');
     expect(optionState(page.root!)).toEqual(['NL', 'EN*']);
   });
 
   it('accepts custom options as a property', async () => {
-    const page = await render('<tilburg-webc-language-toggle active="DE"></tilburg-webc-language-toggle>');
+    const page = await render('<tilburg-wbc-language-toggle active="DE"></tilburg-wbc-language-toggle>');
     (page.root as HTMLElement & { options: unknown }).options = [
       { code: 'NL', label: 'Nederlands' },
       { code: 'DE', label: 'Deutsch' },
@@ -43,15 +43,13 @@ describe('tilburg-webc-language-toggle', () => {
   });
 
   it('moves aria-label from the host to the button', async () => {
-    const page = await render(
-      '<tilburg-webc-language-toggle aria-label="Schakel taal"></tilburg-webc-language-toggle>',
-    );
+    const page = await render('<tilburg-wbc-language-toggle aria-label="Schakel taal"></tilburg-wbc-language-toggle>');
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('button')!.getAttribute('aria-label')).toBe('Schakel taal');
   });
 
   it('emits the next code on click and wraps around', async () => {
-    const page = await render('<tilburg-webc-language-toggle></tilburg-webc-language-toggle>');
+    const page = await render('<tilburg-wbc-language-toggle></tilburg-wbc-language-toggle>');
     const spy = jest.fn();
     page.root!.addEventListener('tilburgToggle', spy);
     page.root!.querySelector('button')!.click();
@@ -62,7 +60,7 @@ describe('tilburg-webc-language-toggle', () => {
   });
 
   it('emits on Enter and Space and prevents the native activation', async () => {
-    const page = await render('<tilburg-webc-language-toggle></tilburg-webc-language-toggle>');
+    const page = await render('<tilburg-wbc-language-toggle></tilburg-wbc-language-toggle>');
     const spy = jest.fn();
     page.root!.addEventListener('tilburgToggle', spy);
     const button = page.root!.querySelector('button')!;

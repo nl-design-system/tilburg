@@ -92,10 +92,20 @@ const preview: Preview = {
            because there the MDX pages share a section with the components. */
         order: [
           'Tilburg',
-          ['Intro', 'Implementatiestatus', 'Open Source License', 'Toestemming voor gebruik', '*'],
+          [
+            'Intro',
+            'Aan de slag',
+            'Tips & valkuilen',
+            'Implementatiestatus',
+            'Open Source License',
+            'Toestemming voor gebruik',
+            '*',
+          ],
           'Tilburg HTML',
           ['Intro', '*'],
           'Tilburg React',
+          ['Intro', '*'],
+          'Tilburg Web Components',
           ['Intro', '*'],
           'Tokens',
           ['Intro', '*'],

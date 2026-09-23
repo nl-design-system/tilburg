@@ -1,10 +1,10 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcTable } from './component';
+import { TilburgWbcTable } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcTable], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcTable], html });
 
 const nativeTable = `
-  <tilburg-webc-table caption="Open aanvragen" aria-describedby="uitleg">
+  <tilburg-wbc-table caption="Open aanvragen" aria-describedby="uitleg">
     <table>
       <thead>
         <tr><th scope="col">Zaaknummer</th><th scope="col">Status</th></tr>
@@ -17,7 +17,7 @@ const nativeTable = `
         <tr><td colspan="2">2 aanvragen</td></tr>
       </tfoot>
     </table>
-  </tilburg-webc-table>`;
+  </tilburg-wbc-table>`;
 
 const columns = [
   { key: 'id', label: 'Zaaknummer', rowHeader: true },
@@ -40,7 +40,7 @@ const expectTableStructure = (table: Element) => {
   }
 };
 
-describe('tilburg-webc-table (enhance mode: slotted native <table>)', () => {
+describe('tilburg-wbc-table (enhance mode: slotted native <table>)', () => {
   it('keeps a real table structure in light DOM', async () => {
     const page = await render(nativeTable);
     expect(page.root!.shadowRoot).toBeNull();
@@ -89,7 +89,7 @@ describe('tilburg-webc-table (enhance mode: slotted native <table>)', () => {
 
   it('classes an authored caption and does not add a second one', async () => {
     const page = await render(
-      '<tilburg-webc-table caption="Prop"><table><caption>Eigen</caption><tbody><tr><td>x</td></tr></tbody></table></tilburg-webc-table>',
+      '<tilburg-wbc-table caption="Prop"><table><caption>Eigen</caption><tbody><tr><td>x</td></tr></tbody></table></tilburg-wbc-table>',
     );
     const captions = page.root!.querySelectorAll('caption');
     expect(captions.length).toBe(1);
@@ -104,7 +104,7 @@ describe('tilburg-webc-table (enhance mode: slotted native <table>)', () => {
   });
 
   it('decorates rows the parser wrapped in an implicit tbody', async () => {
-    const page = await render('<tilburg-webc-table><table><tr><td>a</td></tr></table></tilburg-webc-table>');
+    const page = await render('<tilburg-wbc-table><table><tr><td>a</td></tr></table></tilburg-wbc-table>');
     const table = page.root!.querySelector('table')!;
     expectTableStructure(table);
     expect(table.querySelector('tbody')).toHaveClass('utrecht-table__body');
@@ -113,18 +113,18 @@ describe('tilburg-webc-table (enhance mode: slotted native <table>)', () => {
 
   it('does not touch nested tables inside cells', async () => {
     const page = await render(
-      '<tilburg-webc-table><table><tbody><tr><td><table><tbody><tr><td id="inner">x</td></tr></tbody></table></td></tr></tbody></table></tilburg-webc-table>',
+      '<tilburg-wbc-table><table><tbody><tr><td><table><tbody><tr><td id="inner">x</td></tr></tbody></table></td></tr></tbody></table></tilburg-wbc-table>',
     );
     expect(page.root!.querySelector('#inner')).not.toHaveClass('utrecht-table__cell');
   });
 });
 
-describe('tilburg-webc-table (data mode: columns/rows properties)', () => {
+describe('tilburg-wbc-table (data mode: columns/rows properties)', () => {
   const renderData = async (footer = false) => {
     const page = await render(
-      '<tilburg-webc-table caption="Open aanvragen" aria-label="Aanvragen"></tilburg-webc-table>',
+      '<tilburg-wbc-table caption="Open aanvragen" aria-label="Aanvragen"></tilburg-wbc-table>',
     );
-    const el = page.root as HTMLElement & Pick<TilburgWebcTable, 'columns' | 'rows'>;
+    const el = page.root as HTMLElement & Pick<TilburgWbcTable, 'columns' | 'rows'>;
     el.columns = columns;
     el.rows = rows;
     if (footer) el.footerRows = [{ id: 'Totaal', status: '2' }];
@@ -167,7 +167,7 @@ describe('tilburg-webc-table (data mode: columns/rows properties)', () => {
 
   it('accepts JSON string attributes for plain HTML', async () => {
     const page = await render(
-      `<tilburg-webc-table columns='${JSON.stringify(columns)}' rows='${JSON.stringify(rows)}'></tilburg-webc-table>`,
+      `<tilburg-wbc-table columns='${JSON.stringify(columns)}' rows='${JSON.stringify(rows)}'></tilburg-wbc-table>`,
     );
     const table = page.root!.querySelector('table')!;
     expectTableStructure(table);

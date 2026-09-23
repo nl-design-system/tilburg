@@ -6,11 +6,11 @@
 import { Component, h } from '@stencil/core';
 
 @Component({
-  tag: 'tilburg-webc-heading-3',
+  tag: 'tilburg-wbc-heading-3',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcHeading3 {
+export class TilburgWbcHeading3 {
   render() {
     return (
       <utrecht-heading-3>

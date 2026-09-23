@@ -2,7 +2,8 @@
 
 ## Design tokens
 
-Alle componenten zijn via CSS-custom-properties te tunen. De Tilburg-tokens (`--tilburg-*`) en bovenliggende utrecht-tokens (`--utrecht-*`) zijn in DevTools onder de root te inspecteren; overschrijven kan per scope:
+Alle componenten zijn via CSS-custom-properties te tunen. De Tilburg-tokens (`--tilburg-*`) en bovenliggende utrecht-tokens (`--utrecht-*`) staan op het element met `.tilburg-theme` (of op `:root` als je `variables.css` gebruikt) en zijn daar in DevTools te
+inspecteren. Overschrijven kan per scope:
 
 ```scss
 .brand-zone {

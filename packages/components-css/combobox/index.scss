@@ -107,7 +107,9 @@
   }
 
   &:has(.tilburg-combobox__input:focus-visible) {
-    outline: dashed black thin;
+    /* Focus ring from the theme's focus tokens (Tilburg: 1px dashed black). */
+    outline: var(--utrecht-focus-outline-width, thin) var(--utrecht-focus-outline-style, dashed)
+      var(--utrecht-focus-outline-color, black);
   }
 
   /* Invalid state mirrors `utrecht-textbox--invalid` / `utrecht-textarea--invalid`:

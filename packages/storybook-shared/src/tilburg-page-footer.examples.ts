@@ -94,15 +94,15 @@ ${theming}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-page-footer
+<tilburg-wbc-page-footer
   aria-label="Footer"
   primary-link='{"label":"Contact","href":"/contact"}'
   links='[{"label":"Privacystatement","href":"/privacystatement"},{"label":"Cookies","href":"/cookies"}]'
-></tilburg-webc-page-footer>
+></tilburg-wbc-page-footer>
 
 <script type="module">
   /* …or set the data as properties */
-  document.querySelector('tilburg-webc-page-footer').links = [{ label: 'Toegankelijkheid', href: '/toegankelijkheid' }];
+  document.querySelector('tilburg-wbc-page-footer').links = [{ label: 'Toegankelijkheid', href: '/toegankelijkheid' }];
 </script>
 \`\`\`
 

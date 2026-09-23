@@ -1,14 +1,14 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcFieldset } from './component';
+import { TilburgWbcFieldset } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcFieldset], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcFieldset], html });
 
-describe('tilburg-webc-fieldset', () => {
+describe('tilburg-wbc-fieldset', () => {
   it('renders a native utrecht fieldset with the legend and fields inside', async () => {
-    const page = await render(`<tilburg-webc-fieldset>
+    const page = await render(`<tilburg-wbc-fieldset>
       <legend class="utrecht-form-label">Persoonsgegevens</legend>
       <input name="naam" />
-    </tilburg-webc-fieldset>`);
+    </tilburg-wbc-fieldset>`);
     const fieldset = page.root!.querySelector('fieldset')!;
     expect(fieldset.className).toBe('utrecht-fieldset');
     expect(fieldset.hasAttribute('disabled')).toBe(false);
@@ -18,14 +18,14 @@ describe('tilburg-webc-fieldset', () => {
   });
 
   it('disables the native fieldset', async () => {
-    const page = await render('<tilburg-webc-fieldset disabled></tilburg-webc-fieldset>');
+    const page = await render('<tilburg-wbc-fieldset disabled></tilburg-wbc-fieldset>');
     const fieldset = page.root!.querySelector('fieldset')!;
     expect(fieldset).toHaveClass('utrecht-fieldset--disabled');
     expect(fieldset.hasAttribute('disabled')).toBe(true);
   });
 
   it('marks the group invalid', async () => {
-    const page = await render('<tilburg-webc-fieldset invalid></tilburg-webc-fieldset>');
+    const page = await render('<tilburg-wbc-fieldset invalid></tilburg-wbc-fieldset>');
     const fieldset = page.root!.querySelector('fieldset')!;
     expect(fieldset).toHaveClass('utrecht-fieldset--invalid');
     expect(fieldset.getAttribute('aria-invalid')).toBe('true');
@@ -33,7 +33,7 @@ describe('tilburg-webc-fieldset', () => {
 
   it('moves id and ARIA labelling attributes from the host to the fieldset', async () => {
     const page = await render(
-      '<tilburg-webc-fieldset id="fs" aria-label="Groep" aria-labelledby="l" aria-describedby="d"></tilburg-webc-fieldset>',
+      '<tilburg-wbc-fieldset id="fs" aria-label="Groep" aria-labelledby="l" aria-describedby="d"></tilburg-wbc-fieldset>',
     );
     const fieldset = page.root!.querySelector('fieldset')!;
     for (const name of ['id', 'aria-label', 'aria-labelledby', 'aria-describedby']) {
