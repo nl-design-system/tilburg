@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fprogress-bar';
 
-const intro = `Step-progress indicator with optional back link, title, and "Stap X van Y" label.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Step-progress indicator with optional back link, title, and "Stap X van Y" label.`;
 
 const usageAngular = `### Angular
 

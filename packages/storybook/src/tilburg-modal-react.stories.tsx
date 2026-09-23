@@ -9,7 +9,7 @@ const meta = {
   title: 'Tilburg React/Modal',
   id: 'tilburg-modal-react',
   component: Modal,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionReact } },

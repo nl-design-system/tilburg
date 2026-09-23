@@ -9,7 +9,7 @@ const meta = {
   title: 'Tilburg Web Components/Language Toggle',
   id: 'tilburg-language-toggle-wbc',
   component: TilburgWbcLanguageToggle,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },

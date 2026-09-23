@@ -9,7 +9,7 @@ const meta = {
   title: 'Tilburg React/Pagination',
   id: 'tilburg-pagination-react',
   component: Pagination,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionReact } },

@@ -8,7 +8,7 @@ const meta: Meta<TilburgLanguageToggle> = {
   title: 'Tilburg Angular/Language Toggle',
   id: 'tilburg-language-toggle-angular',
   component: TilburgLanguageToggle,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

@@ -16,7 +16,7 @@ const meta = {
   title: 'Tilburg Web Components/Data List',
   id: 'tilburg-data-list-wbc',
   component: TilburgWbcDataList,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },

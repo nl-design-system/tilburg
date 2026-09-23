@@ -12,7 +12,7 @@ const meta = {
   title: 'Tilburg Web Components/Progress Bar',
   id: 'tilburg-progress-bar-wbc',
   component: TilburgWbcProgressBar,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },

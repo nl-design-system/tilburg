@@ -8,7 +8,7 @@ const meta: Meta<TilburgValidationMessage> = {
   title: 'Tilburg Angular/Validation Message',
   id: 'tilburg-validation-message-angular',
   component: TilburgValidationMessage,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

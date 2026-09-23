@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fvalidation-message';
 
-const intro = `Inline validation message shown alongside a form field. Variant modifiers \`--error\` and \`--warning\` colour the icon.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Inline validation message shown alongside a form field. Variant modifiers \`--error\` and \`--warning\` colour the icon.`;
 
 const usageAngular = `### Angular
 

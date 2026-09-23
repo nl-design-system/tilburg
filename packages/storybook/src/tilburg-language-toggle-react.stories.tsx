@@ -9,7 +9,7 @@ const meta = {
   title: 'Tilburg React/Language Toggle',
   id: 'tilburg-language-toggle-react',
   component: LanguageToggle,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionReact } },

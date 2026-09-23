@@ -8,7 +8,7 @@ const meta: Meta<TilburgPageFooter> = {
   title: 'Tilburg Angular/Page Footer',
   id: 'tilburg-page-footer-angular',
   component: TilburgPageFooter,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     layout: 'fullscreen',
     bugs,

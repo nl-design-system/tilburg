@@ -12,7 +12,9 @@ export const bugs = 'https://github.com/nl-design-system/tilburg/labels/componen
 
 const introShared = `Compact pagination bar with first / previous / next / last chevron controls. Optionally renders either a numeric page button list (with leading/trailing ellipsis when total pages > 7) **or** a plain range text like "Pagina 3 van 12" when no \`pageCount\`/\`currentPage\` is provided.`;
 
-const intro = `${introShared} The Angular wrapper takes plain inputs so any controller can drive it.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+${introShared} The Angular wrapper takes plain inputs so any controller can drive it.`;
 
 const introReact = `${introShared} The React wrapper takes plain props and reports navigation intent through a callback, so any state container can drive it.`;
 

@@ -11,7 +11,7 @@ import { bugs, description, examples } from '../../storybook-shared/src/tilburg-
 const meta: Meta = {
   title: 'Tilburg HTML/Loading Spinner',
   id: 'tilburg-loading-spinner',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

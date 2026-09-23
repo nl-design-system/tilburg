@@ -10,7 +10,7 @@ import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilb
 const meta = {
   title: 'Tilburg HTML/Data List',
   id: 'tilburg-data-list',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionHtml } },

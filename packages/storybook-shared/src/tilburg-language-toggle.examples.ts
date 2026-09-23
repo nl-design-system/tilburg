@@ -9,7 +9,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Flanguage-toggle';
 
-const intro = `Two-option toggle for switching between Dutch and English. Active option uses the Tilburg interaction-active colour with white text.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Two-option toggle for switching between Dutch and English. Active option uses the Tilburg interaction-active colour with white text.`;
 
 const usageAngular = `### Angular
 

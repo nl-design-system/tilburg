@@ -8,7 +8,7 @@ const meta: Meta<TilburgModal> = {
   title: 'Tilburg Angular/Modal',
   id: 'tilburg-modal-angular',
   component: TilburgModal,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

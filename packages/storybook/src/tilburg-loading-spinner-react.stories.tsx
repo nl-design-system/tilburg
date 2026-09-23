@@ -8,7 +8,7 @@ const meta = {
   title: 'Tilburg React/Loading Spinner',
   id: 'tilburg-loading-spinner-react',
   component: LoadingSpinner,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     layout: 'fullscreen',
     bugs,

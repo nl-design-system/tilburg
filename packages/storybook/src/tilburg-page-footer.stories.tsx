@@ -10,7 +10,7 @@ import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilb
 const meta = {
   title: 'Tilburg HTML/Page Footer',
   id: 'tilburg-page-footer',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     layout: 'fullscreen',
     bugs,
