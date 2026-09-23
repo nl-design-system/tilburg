@@ -8,7 +8,7 @@ const meta: Meta<TilburgPagination> = {
   title: 'Tilburg Angular/Pagination',
   id: 'tilburg-pagination-angular',
   component: TilburgPagination,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

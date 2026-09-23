@@ -1,7 +1,5 @@
 <!-- @license CC0-1.0 -->
 
-De Tilburg-componenten zijn een gemeentelijke uitbreiding op het [NL Design System](https://nldesignsystem.nl). Ze leunen op `@utrecht/component-library-css` als basis en op `@gemeente-tilburg/design-tokens` voor kleuren, ruimtes en typografie. De huisstijl van Tilburg wordt daarbovenop gelegd.
-
 > ⚠️ **LET OP**
 >
 > Deze componentenbibliotheek is nog in ontwikkeling. Componenten en hun API's kunnen nog wijzigen. Loop je ergens tegenaan, mis je een component, of twijfel je of je iets al kunt gebruiken? Neem contact op met het Design System-team van Gemeente Tilburg — dan kijken we mee. Meld bugs en verzoeken bij voorkeur als issue op [github.com/nl-design-system/tilburg](https://github.com/nl-design-system/tilburg/issues).

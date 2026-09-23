@@ -12,7 +12,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fmodal';
 
-const intro = `Native \`<dialog>\`-based modal styled with the \`tilburg-modal\` BEM class set. The Tilburg layer adds drop-shadow, rounded corners, a soft drop-in animation, and a backdrop blur. Reduced-motion users skip the animation.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Native \`<dialog>\`-based modal styled with the \`tilburg-modal\` BEM class set. The Tilburg layer adds drop-shadow, rounded corners, a soft drop-in animation, and a backdrop blur. Reduced-motion users skip the animation.`;
 
 const usageLead = `The components below render exactly this markup, give the dialog its accessible name from the heading (\`aria-labelledby\`), and close it via the close button, Escape or a click on the backdrop. The page behind it is inert while it is open (native \`showModal()\`).`;
 

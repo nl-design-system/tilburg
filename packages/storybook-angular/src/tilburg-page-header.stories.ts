@@ -8,7 +8,7 @@ const meta: Meta<TilburgPageHeader> = {
   title: 'Tilburg Angular/Page Header',
   id: 'tilburg-page-header-angular',
   component: TilburgPageHeader,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     layout: 'fullscreen',
     bugs,

@@ -9,7 +9,7 @@ const meta = {
   title: 'Tilburg Web Components/Pagination',
   id: 'tilburg-pagination-wbc',
   component: TilburgWbcPagination,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },

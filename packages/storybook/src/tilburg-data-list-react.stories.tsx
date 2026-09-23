@@ -8,7 +8,7 @@ const meta = {
   title: 'Tilburg React/Data List',
   id: 'tilburg-data-list-react',
   component: DataList,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionReact } },

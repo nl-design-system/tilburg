@@ -12,7 +12,7 @@ const meta = {
   title: 'Tilburg Web Components/Loading Spinner',
   id: 'tilburg-loading-spinner-wbc',
   component: TilburgWbcLoadingSpinner,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     layout: 'fullscreen',
     bugs,

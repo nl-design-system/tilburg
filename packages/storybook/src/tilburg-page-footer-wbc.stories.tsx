@@ -12,7 +12,7 @@ const meta = {
   title: 'Tilburg Web Components/Page Footer',
   id: 'tilburg-page-footer-wbc',
   component: TilburgWbcPageFooter,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     /* Matches the HTML/CSS reference story: rendered edge-to-edge without canvas padding. */

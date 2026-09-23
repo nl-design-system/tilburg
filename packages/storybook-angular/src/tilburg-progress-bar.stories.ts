@@ -8,7 +8,7 @@ const meta: Meta<TilburgProgressBar> = {
   title: 'Tilburg Angular/Progress Bar',
   id: 'tilburg-progress-bar-angular',
   component: TilburgProgressBar,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

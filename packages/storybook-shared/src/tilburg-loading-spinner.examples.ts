@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Floading-spinner';
 
-const intro = `Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Full-screen loading overlay with an animated SVG spinner. In production the overlay only appears after a grace timer (consumer JS); the stories render it directly so the visual can be inspected.`;
 
 const usageAngular = `### Angular
 

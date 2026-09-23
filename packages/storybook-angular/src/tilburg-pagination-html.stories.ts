@@ -10,7 +10,7 @@ import { bugs, description, examples } from '../../storybook-shared/src/tilburg-
 const meta: Meta = {
   title: 'Tilburg HTML/Pagination',
   id: 'tilburg-pagination',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: description } },

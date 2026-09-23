@@ -8,7 +8,7 @@ const meta = {
   title: 'Tilburg React/Page Header',
   id: 'tilburg-page-header-react',
   component: PageHeader,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     /* Matches the HTML/CSS reference stories: the header is a full-bleed brand

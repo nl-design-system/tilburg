@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-footer';
 
-const intro = `Bottom-of-page link bar. Centered horizontal list of legal / accessibility links on a darker blue background, white text, with an optional primary call-to-action row above.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Bottom-of-page link bar. Centered horizontal list of legal / accessibility links on a darker blue background, white text, with an optional primary call-to-action row above.`;
 
 const usageAngular = `### Angular
 

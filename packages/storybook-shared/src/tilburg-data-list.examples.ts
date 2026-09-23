@@ -4,7 +4,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fdata-list';
 
-const intro = `Key-value pairs rendered as a definition list. Each row has a bold label, a value, and a hairline divider between rows. The \`--large\` modifier lays the key/value out in a three-column grid for wider read-only screens.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Key-value pairs rendered as a definition list. Each row has a bold label, a value, and a hairline divider between rows. The \`--large\` modifier lays the key/value out in a three-column grid for wider read-only screens.`;
 
 const usageAngular = `### Angular
 

@@ -8,7 +8,7 @@ const meta = {
   title: 'Tilburg React/Page Footer',
   id: 'tilburg-page-footer-react',
   component: PageFooter,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     /* Matches the HTML/CSS reference stories: the footer is a full-bleed bar,

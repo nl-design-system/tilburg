@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-header';
 
-const intro = `Top-of-page brand bar. Dark navy background with a responsive logo and/or wordmark title on the inline-start, and an actions slot pushed to the inline-end (username, logout, menu toggle, etc.). The brand area is rendered as a single \`<a>\` so the whole logo + title block is clickable.`;
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Top-of-page brand bar. Dark navy background with a responsive logo and/or wordmark title on the inline-start, and an actions slot pushed to the inline-end (username, logout, menu toggle, etc.). The brand area is rendered as a single \`<a>\` so the whole logo + title block is clickable.`;
 
 const usageAngular = `### Angular
 

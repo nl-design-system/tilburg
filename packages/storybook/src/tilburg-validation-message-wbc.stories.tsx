@@ -12,7 +12,7 @@ const meta = {
   title: 'Tilburg Web Components/Validation Message',
   id: 'tilburg-validation-message-wbc',
   component: TilburgWbcValidationMessage,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },

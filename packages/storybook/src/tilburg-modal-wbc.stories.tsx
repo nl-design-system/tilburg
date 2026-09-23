@@ -11,7 +11,7 @@ const meta = {
   title: 'Tilburg Web Components/Modal',
   id: 'tilburg-modal-wbc',
   component: TilburgWbcModal,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionWebComponents } },
