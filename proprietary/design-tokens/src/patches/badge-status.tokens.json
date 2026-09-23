@@ -1,0 +1,58 @@
+{
+  "components/badge-status": {
+    "tilburg": {
+      "badge-status": {
+        "neutral": {
+          "background-color": {
+            "$value": "{tilburg.color.blue.300}"
+          },
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "safe": {
+          "background-color": {
+            "$value": "{tilburg.color.green.300}"
+          },
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "warning": {
+          "background-color": {
+            "$value": "{tilburg.color.orange.300}"
+          },
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "danger": {
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "invalid": {
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "inactive": {
+          "background-color": {
+            "$value": "{tilburg.color.gray.300}"
+          },
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        },
+        "info": {
+          "background-color": {
+            "$value": "{tilburg.color.blue.300}"
+          },
+          "color": {
+            "$value": "{tilburg.color.white}"
+          }
+        }
+      }
+    }
+  }
+}

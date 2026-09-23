@@ -102,8 +102,11 @@
 
   &:focus-within:not(:has(:disabled)),
   &:has(.tilburg-combobox__input[aria-expanded="true"]):not(:has(:disabled)) {
-    background-color: var(--tilburg-color-blue-100);
-    border-color: var(--tilburg-color-red-400);
+    background-color: var(--tilburg-combobox-focus-background-color, var(--tilburg-color-blue-100));
+
+    /* `--tilburg-combobox-focus-border-color` has no default token: the BAT theme has no red-400, so the fallback
+       keeps each theme as it was. A theme can set the token. */
+    border-color: var(--tilburg-combobox-focus-border-color, var(--tilburg-color-red-400));
   }
 
   &:has(.tilburg-combobox__input:focus-visible) {
@@ -159,7 +162,7 @@
   }
 
   &:has(.tilburg-combobox__input:disabled) {
-    background-color: var(--tilburg-color-gray-50);
+    background-color: var(--tilburg-combobox-disabled-background-color, var(--tilburg-color-gray-50));
     cursor: not-allowed;
   }
   /* stylelint-enable no-descending-specificity */
@@ -303,7 +306,7 @@
 
 .tilburg-combobox__chevron:hover:not(:disabled),
 .tilburg-combobox__clear:hover:not(:disabled) {
-  color: var(--tilburg-color-pink-300);
+  color: var(--tilburg-combobox-icon-hover-color, var(--tilburg-color-pink-300));
 }
 
 /* Rotate the chevron in the open state — single source of truth so the icon
@@ -364,8 +367,8 @@
 
   &:focus,
   &:focus-within {
-    background-color: var(--tilburg-color-blue-100);
-    border-color: var(--tilburg-color-pink-300);
+    background-color: var(--tilburg-combobox-chip-focus-background-color, var(--tilburg-color-blue-100));
+    border-color: var(--tilburg-combobox-chip-focus-border-color, var(--tilburg-color-pink-300));
   }
 }
 
@@ -383,7 +386,7 @@
   transition: color 120ms ease;
 
   &:hover {
-    color: var(--tilburg-color-pink-300);
+    color: var(--tilburg-combobox-icon-hover-color, var(--tilburg-color-pink-300));
   }
 
   &:disabled {
@@ -477,8 +480,8 @@
    no border; ours reserves the slot, so overriding would shift the label.) */
 .utrecht-combobox .utrecht-listbox__option:hover:not([aria-disabled="true"]),
 .utrecht-listbox__option[data-active="true"]:not([aria-disabled="true"]) {
-  background-color: var(--tilburg-color-blue-50);
-  border-inline-start-color: var(--tilburg-color-pink-300);
+  background-color: var(--tilburg-combobox-option-active-background-color, var(--tilburg-color-blue-50));
+  border-inline-start-color: var(--tilburg-combobox-option-active-border-color, var(--tilburg-color-pink-300));
 }
 
 /* Selected (without marked): soft blue-50 tint AND a persistent blue-400
@@ -487,8 +490,8 @@
    reserves the 4px stripe slot with a transparent border, so we only
    colour it in here — no padding override needed, no layout shift. */
 .utrecht-listbox__option[aria-selected="true"] {
-  background-color: var(--tilburg-color-blue-50);
-  border-inline-start-color: var(--tilburg-color-blue-400);
+  background-color: var(--tilburg-combobox-option-selected-background-color, var(--tilburg-color-blue-50));
+  border-inline-start-color: var(--tilburg-combobox-option-selected-border-color, var(--tilburg-color-blue-400));
 }
 
 /* Marked + Selected: deeper bg (blue-100) AND the pink-300 hover stripe wins
@@ -497,8 +500,8 @@
    indicated by the deeper bg) but the user is currently focused on it. */
 .utrecht-listbox__option[data-active="true"][aria-selected="true"]:not([aria-disabled="true"]),
 .utrecht-combobox .utrecht-listbox__option:hover[aria-selected="true"]:not([aria-disabled="true"]) {
-  background-color: var(--tilburg-color-blue-100);
-  border-inline-start-color: var(--tilburg-color-pink-300);
+  background-color: var(--tilburg-combobox-option-active-selected-background-color, var(--tilburg-color-blue-100));
+  border-inline-start-color: var(--tilburg-combobox-option-active-border-color, var(--tilburg-color-pink-300));
 }
 
 /* BAT brand: clear-button alignment quirk mirrored from bq-tlb-frontend.

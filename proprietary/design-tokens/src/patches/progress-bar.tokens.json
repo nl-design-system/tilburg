@@ -3,7 +3,7 @@
     "tilburg": {
       "progress-bar": {
         "transition-duration": {
-          "$value": "200ms"
+          "$value": "{tilburg.motion.duration.short}"
         },
         "back": {
           "gap": {
