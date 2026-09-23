@@ -6,10 +6,10 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcTableCellValue = string | number | null | undefined;
-export type TilburgWebcTableRow = Record<string, TilburgWebcTableCellValue>;
+export type TilburgWbcTableCellValue = string | number | null | undefined;
+export type TilburgWbcTableRow = Record<string, TilburgWbcTableCellValue>;
 
-export interface TilburgWebcTableColumn {
+export interface TilburgWbcTableColumn {
   /** Property of each row object shown in this column. */
   key: string;
   /** Column header text. */
@@ -30,7 +30,7 @@ const PART_CLASS: Record<string, string> = {
 };
 
 /** Marks the `<caption>` the component inserts for the `caption` prop (enhance mode). */
-const OWN_CAPTION = 'data-tilburg-webc-caption';
+const OWN_CAPTION = 'data-tilburg-wbc-caption';
 
 const SCOPE_ROLE: Record<string, string> = { col: 'columnheader', row: 'rowheader' };
 
@@ -66,21 +66,21 @@ const childrenByTag = (parent: Element, tags: string[]): HTMLElement[] =>
  * @slot - A native `<table>` (enhance mode). Ignored in data mode.
  */
 @Component({
-  tag: 'tilburg-webc-table',
+  tag: 'tilburg-wbc-table',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcTable {
+export class TilburgWbcTable {
   @Element() host!: HTMLElement;
 
   /** Caption text; rendered as `<caption class="utrecht-table__caption">` as the table's first child. */
   @Prop() caption?: string;
   /** Data mode: column definitions. Property, or a JSON string attribute. */
-  @Prop() columns?: TilburgWebcTableColumn[] | string;
+  @Prop() columns?: TilburgWbcTableColumn[] | string;
   /** Data mode: body rows, one object per row keyed by column `key`. Property, or a JSON string attribute. */
-  @Prop() rows?: TilburgWebcTableRow[] | string;
+  @Prop() rows?: TilburgWbcTableRow[] | string;
   /** Data mode: footer rows (`<tfoot>`, e.g. totals), same shape as `rows`. */
-  @Prop() footerRows?: TilburgWebcTableRow[] | string;
+  @Prop() footerRows?: TilburgWbcTableRow[] | string;
 
   /* `aria-label`, `aria-labelledby` and `aria-describedby` are written on the
      host and moved onto the `<table>`. */
@@ -166,7 +166,7 @@ export class TilburgWebcTable {
     table.insertBefore(caption, table.firstChild);
   }
 
-  private renderRow(row: TilburgWebcTableRow, columns: TilburgWebcTableColumn[], rowHeaders: boolean) {
+  private renderRow(row: TilburgWbcTableRow, columns: TilburgWbcTableColumn[], rowHeaders: boolean) {
     return (
       <tr class="utrecht-table__row">
         {columns.map((column) => {

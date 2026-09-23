@@ -26,7 +26,7 @@
   <rect x="510" y="20" width="210" height="74" rx="6" fill="#E6F6FF" stroke="#5B6E8A" stroke-width="1.5" />
   <text x="615" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Web Components</text>
   <text x="615" y="68" text-anchor="middle" font-size="11" fill="#5B6E8A" font-family="monospace">web-components-stencil</text>
-  <text x="615" y="86" text-anchor="middle" font-size="10" fill="#5B6E8A">&lt;tilburg-webc-alert&gt; — elke stack</text>
+  <text x="615" y="86" text-anchor="middle" font-size="10" fill="#5B6E8A">&lt;tilburg-wbc-alert&gt; — elke stack</text>
   <line x1="145" y1="94" x2="230" y2="139" stroke="#5B6E8A" stroke-width="1.5" marker-end="url(#layers-arrow)" />
   <line x1="380" y1="94" x2="380" y2="139" stroke="#5B6E8A" stroke-width="1.5" marker-end="url(#layers-arrow)" />
   <line x1="615" y1="94" x2="530" y2="139" stroke="#5B6E8A" stroke-width="1.5" marker-end="url(#layers-arrow)" />

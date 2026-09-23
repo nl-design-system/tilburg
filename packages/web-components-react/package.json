@@ -1,7 +1,7 @@
 {
   "name": "@gemeente-tilburg/web-components-react",
   "version": "0.0.0",
-  "description": "React proxies for the Tilburg Stencil web components (tilburg-webc-*), based on the NL Design System architecture",
+  "description": "React proxies for the Tilburg Stencil web components (tilburg-wbc-*), based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [
@@ -25,6 +25,7 @@
     "dist/"
   ],
   "peerDependencies": {
+    "@gemeente-tilburg/web-components-stencil": "workspace:*",
     "react": "^17.0.2 || ^18.0.0",
     "react-dom": "^17.0.2 || ^18.0.0"
   },

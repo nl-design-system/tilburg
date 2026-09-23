@@ -2,6 +2,6 @@
 
 /* The dialog lives in the top layer while open and is `display: none` while
    closed, so the host never needs a box of its own. */
-tilburg-webc-modal {
+tilburg-wbc-modal {
   display: contents;
 }

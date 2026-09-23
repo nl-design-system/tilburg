@@ -68,10 +68,10 @@ Component-level slots (`--tilburg-<component>-*`, e.g. `--tilburg-page-header-ba
 ## Build pipeline
 
 - Source files: `src/` (DTCG-format JSON) and `legacy/` (Style-Dictionary-format JSON).
-- Build script: `style-dictionary-build.mjs` — outputs to `dist/tilburg/` (`theme.css`, `variables.css`, `list.json`, `tokens.cjs`, `_mixin.scss`).
-- The `tgz` in this folder is a packed dist used by downstream apps that consume from a tarball; rebuild with `node ./style-dictionary-build.mjs && cd dist && npm pack`.
+- Build script: `style-dictionary-build.mjs` — outputs to `dist/tilburg/`: `theme.css` (tokens on `.tilburg-theme`), `variables.css` (the same tokens on `:root`), `list.json`, `tokens.cjs`, `_mixin.scss`.
+- `pnpm run pack:dist` builds and packs `dist/` into a `.tgz` for downstream apps that consume a tarball. In that tarball `dist/` is the package root, so the import path is `@gemeente-tilburg/design-tokens/tilburg/theme.css` (without `dist/`); the npm release via changesets keeps `dist/` in the path.
 
-See the matching publish-from-dist memory in the repo CLAUDE/agent notes for the full release flow.
+See [`CONTRIBUTING.md`](../../CONTRIBUTING.md#releasen) in the repository root for the full release flow.
 
 ## License
 

@@ -2,21 +2,27 @@
 
 ## Angular
 
-Voor Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, etc. De Angular-laag wrapt de gedeelde HTML/CSS in `<tilburg-…>` custom-elementen + attribuut-directives.
+Voor Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, `<tilburg-modal>`, etc. De Angular-laag rendert de
+gedeelde HTML/CSS in `<tilburg-…>`-componenten en een paar attribuut-directives (bv. tabellen). Gebouwd met en getest op
+Angular 20.
 
 ### Installatie (Angular)
 
 ```bash
 npm install @gemeente-tilburg/components-angular \
             @gemeente-tilburg/design-tokens \
-            @utrecht/component-library-angular
+            @utrecht/component-library-angular@1.1.0 \
+            @utrecht/design-tokens@1.0.0 \
+            @utrecht/component-library-css
 ```
 
-Peer-dependencies: `@angular/core`, `@angular/common`, `@angular/forms` ≥ 20.
+`@utrecht/component-library-angular` en `@utrecht/design-tokens` zijn peer-dependencies: installeer precies deze
+versies.
 
 ### Setup (Angular)
 
-Registreer de module één keer in je root- of feature-module:
+De componenten zitten in één NgModule (er zijn geen standalone exports). Importeer die in je root- of feature-module, of
+in de `imports` van een standalone component:
 
 ```ts
 import { NgModule } from "@angular/core";
@@ -28,14 +34,16 @@ import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
 export class AppModule {}
 ```
 
-Laad de design tokens en utrecht-basis-CSS globaal — bv. via `angular.json`'s `styles`-array of bovenin je `styles.scss`:
+Laad de tokens en de Utrecht-basis globaal, via de `styles`-array in `angular.json` of bovenin `styles.scss`:
 
 ```scss
 @import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
 @import "@utrecht/component-library-css/dist/index.css";
 ```
 
-De Angular-laag bundelt zijn eigen Tilburg-component-CSS automatisch mee, dus aparte `@import`s per component zijn niet nodig.
+De CSS per component zit al in de Angular-componenten zelf; aparte imports per component zijn niet nodig. Zet
+`tilburg-theme` en `utrecht-document` op `<body>` in `index.html`, of wrap je app in `<tilburg-document>` binnen een
+element met `class="tilburg-theme"`.
 
 ### Gebruik (Angular)
 
@@ -52,3 +60,5 @@ De Angular-laag bundelt zijn eigen Tilburg-component-CSS automatisch mee, dus ap
   </tilburg-validation-message>
 </tilburg-form-field>
 ```
+
+De inputs en outputs per component staan op de pagina's onder `Tilburg Angular/…` in de Angular-Storybook.

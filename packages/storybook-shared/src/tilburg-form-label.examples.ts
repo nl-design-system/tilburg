@@ -82,19 +82,19 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-form-label for="email">
+<tilburg-wbc-form-label for="email">
   E-mailadres
   <span class="tilburg-form-label__optional">(optioneel)</span>
-</tilburg-webc-form-label>
-<tilburg-webc-textbox id="email" type="email"></tilburg-webc-textbox>
+</tilburg-wbc-form-label>
+<tilburg-wbc-textbox id="email" type="email"></tilburg-wbc-textbox>
 
-<tilburg-webc-form-label type="checkbox">
-  <tilburg-webc-checkbox name="consent"></tilburg-webc-checkbox>
+<tilburg-wbc-form-label type="checkbox">
+  <tilburg-wbc-checkbox name="consent"></tilburg-wbc-checkbox>
   Ik ga akkoord met de voorwaarden
-</tilburg-webc-form-label>
+</tilburg-wbc-form-label>
 \`\`\`
 
-Attributes: \`for\` (id of the associated control; the \`tilburg-webc-*\` form controls move their \`id\` onto the inner input, so this just works), \`type\` (\`'checkbox' | 'radio' | 'text'\`; \`checkbox\` / \`radio\` add the matching modifier), \`checked\`, \`disabled\` (presentational mirrors of the control's state). Slot: default (label text, optional addon, or the wrapped control).`;
+Attributes: \`for\` (id of the associated control; the \`tilburg-wbc-*\` form controls move their \`id\` onto the inner input, so this just works), \`type\` (\`'checkbox' | 'radio' | 'text'\`; \`checkbox\` / \`radio\` add the matching modifier), \`checked\`, \`disabled\` (presentational mirrors of the control's state). Slot: default (label text, optional addon, or the wrapped control).`;
 
 export const descriptionWebComponents = `${intro}
 

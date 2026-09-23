@@ -1,9 +1,25 @@
-# Tilburg Component Library for Angular Apps
+<!-- @license CC0-1.0 -->
 
-The `@tilburg/component-library-angular` package offers a collection of pre-built Angular components designed specifically for the municipality of Tilburg. These components align with the Tilburg design system, ensuring a consistent and visually appealing user experience across all digital platforms.
+# @gemeente-tilburg/components-angular
 
-By leveraging this package, developers can streamline the development process and guarantee adherence to the municipality's branding guidelines. Whether building a client-side or server-side rendered Angular application, this library provides the necessary tools to efficiently create user interfaces that reflect Tilburg's identity.
+Angular-componenten voor Gemeente Tilburg, gebaseerd op het NL Design System. Ze renderen dezelfde DOM en classes als de
+HTML/CSS-referentie. Gebouwd met Angular 20; de componenten zitten in één NgModule, `TilburgComponentsModule`.
 
-**Please note that this component library is currently under active development and is not production ready.**
+```bash
+npm install @gemeente-tilburg/components-angular @gemeente-tilburg/design-tokens \
+            @utrecht/component-library-angular@1.1.0 @utrecht/design-tokens@1.0.0 \
+            @utrecht/component-library-css
+```
 
-As a result, the components and their functionalities may evolve over time. The accompanying storybook serves as a snapshot of the library's current state rather than a definitive representation of its final form.
+```ts
+import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
+
+@NgModule({ imports: [TilburgComponentsModule] })
+export class AppModule {}
+```
+
+Laad `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css` en `@utrecht/component-library-css/dist/index.css` globaal,
+en zet `class="tilburg-theme utrecht-document"` op `<body>`. De volledige setup staat in de Storybook onder
+**Aan de slag**; de inputs en outputs per component onder `Tilburg Angular/…`. Nog in ontwikkeling (0.x).
+
+Bijdragen: zie [`CONTRIBUTING.md`](CONTRIBUTING.md).

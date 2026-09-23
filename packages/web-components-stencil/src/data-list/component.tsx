@@ -7,18 +7,18 @@ import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 /**
- * Key/value list: `<tilburg-webc-data-list>` renders the `<dl>`,
- * `<tilburg-webc-data-list-item>` a row `<div>`, `<tilburg-webc-data-list-key>`
- * the `<dt>` and `<tilburg-webc-data-list-value>` the `<dd>`.
+ * Key/value list: `<tilburg-wbc-data-list>` renders the `<dl>`,
+ * `<tilburg-wbc-data-list-item>` a row `<div>`, `<tilburg-wbc-data-list-key>`
+ * the `<dt>` and `<tilburg-wbc-data-list-value>` the `<dd>`.
  *
- * @slot - `<tilburg-webc-data-list-item>` rows.
+ * @slot - `<tilburg-wbc-data-list-item>` rows.
  */
 @Component({
-  tag: 'tilburg-webc-data-list',
+  tag: 'tilburg-wbc-data-list',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcDataList {
+export class TilburgWbcDataList {
   @Element() host!: HTMLElement;
 
   /**

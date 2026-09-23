@@ -13,22 +13,22 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  *  - `hidden` — never rendered (kept off-screen).
  *  - `focus` — forces the focused appearance (storybook screenshots).
  */
-export type TilburgWebcSkipLinkVisibility = 'visible-on-focus' | 'visible' | 'hidden' | 'focus';
+export type TilburgWbcSkipLinkVisibility = 'visible-on-focus' | 'visible' | 'hidden' | 'focus';
 
 /**
  * @slot - The link text, e.g. "Sla over en ga naar de hoofdinhoud".
  */
 @Component({
-  tag: 'tilburg-webc-skip-link',
+  tag: 'tilburg-wbc-skip-link',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcSkipLink {
+export class TilburgWbcSkipLink {
   @Element() host!: HTMLElement;
 
   /** Fragment of the main-content landmark, e.g. `#main`. */
   @Prop() href?: string;
-  @Prop() visibility: TilburgWebcSkipLinkVisibility = 'visible-on-focus';
+  @Prop() visibility: TilburgWbcSkipLinkVisibility = 'visible-on-focus';
 
   @State() inherited: InheritedAttributes = {};
   private inheritor?: AttributeInheritor;

@@ -87,14 +87,14 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-form-label for="explanation">Toelichting</tilburg-webc-form-label>
-<tilburg-webc-textarea
+<tilburg-wbc-form-label for="explanation">Toelichting</tilburg-wbc-form-label>
+<tilburg-wbc-textarea
   id="explanation"
   name="explanation"
   placeholder="Schrijf hier je toelichting…"
   rows="4"
   required
-></tilburg-webc-textarea>
+></tilburg-wbc-textarea>
 \`\`\`
 
 The real \`<textarea>\` is rendered in light DOM, so it takes part in the surrounding \`<form>\` and \`<label for>\` natively. Set the initial text with the \`value\` attribute, not as child content. Listen to the native \`input\` / \`change\` events, they bubble through the host.

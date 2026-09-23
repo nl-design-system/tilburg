@@ -6,14 +6,14 @@
 import { Component, h } from '@stencil/core';
 
 /**
- * @slot - One `<tilburg-webc-data-list-key>` and its `<tilburg-webc-data-list-value>`.
+ * @slot - One `<tilburg-wbc-data-list-key>` and its `<tilburg-wbc-data-list-value>`.
  */
 @Component({
-  tag: 'tilburg-webc-data-list-item',
+  tag: 'tilburg-wbc-data-list-item',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcDataListItem {
+export class TilburgWbcDataListItem {
   render() {
     return (
       <div class="tilburg-data-list__item">

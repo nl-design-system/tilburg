@@ -6,7 +6,7 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export interface TilburgWebcPageFooterLink {
+export interface TilburgWbcPageFooterLink {
   label: string;
   href: string;
 }
@@ -26,17 +26,17 @@ function parseJson<T>(value: T | string | null | undefined): T | undefined {
  * @slot - Extra content, rendered inside the container before both link lists.
  */
 @Component({
-  tag: 'tilburg-webc-page-footer',
+  tag: 'tilburg-wbc-page-footer',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcPageFooter {
+export class TilburgWbcPageFooter {
   @Element() host!: HTMLElement;
 
   /** Legal / service links. Property, or a JSON array attribute: `links='[{"label":"Cookies","href":"/cookies"}]'`. */
-  @Prop() links: TilburgWebcPageFooterLink[] | string = [];
+  @Prop() links: TilburgWbcPageFooterLink[] | string = [];
   /** Call-to-action row above the list. Property, or a JSON object attribute. */
-  @Prop() primaryLink?: TilburgWebcPageFooterLink | string | null;
+  @Prop() primaryLink?: TilburgWbcPageFooterLink | string | null;
 
   /* `aria-label` names the `<footer>` landmark, not the host. */
   @State() inherited: InheritedAttributes = {};
@@ -53,8 +53,8 @@ export class TilburgWebcPageFooter {
   }
 
   render() {
-    const primaryLink = parseJson<TilburgWebcPageFooterLink | null>(this.primaryLink);
-    const parsedLinks = parseJson<TilburgWebcPageFooterLink[]>(this.links);
+    const primaryLink = parseJson<TilburgWbcPageFooterLink | null>(this.primaryLink);
+    const parsedLinks = parseJson<TilburgWbcPageFooterLink[]>(this.links);
     const links = Array.isArray(parsedLinks) ? parsedLinks : [];
     return (
       <footer {...this.inherited} class="tilburg-page-footer">

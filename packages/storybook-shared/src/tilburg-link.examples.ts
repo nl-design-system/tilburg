@@ -69,9 +69,9 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-link href="/parkeren" target="_blank">Parkeren in Tilburg</tilburg-webc-link>
-<tilburg-webc-link href="https://nldesignsystem.nl" external>NL Design System</tilburg-webc-link>
-<tilburg-webc-link href="/parkeren" current="page">Huidige pagina</tilburg-webc-link>
+<tilburg-wbc-link href="/parkeren" target="_blank">Parkeren in Tilburg</tilburg-wbc-link>
+<tilburg-wbc-link href="https://nldesignsystem.nl" external>NL Design System</tilburg-wbc-link>
+<tilburg-wbc-link href="/parkeren" current="page">Huidige pagina</tilburg-wbc-link>
 \`\`\`
 
 Attributes: \`href\`, \`target\`, \`rel\` (forwarded to the inner \`<a>\`), \`external\` (appends \`external noopener noreferrer\` to \`rel\`), \`current\` (\`'page' | 'step' | 'location' | 'date' | 'time' | boolean\`, rendered as \`aria-current\`; a bare \`current\` attribute means \`true\`). \`aria-label\`, \`aria-describedby\`, \`title\` and \`lang\` are moved from the host onto the inner \`<a>\` — the Angular \`ariaLabel\` / \`ariaDescribedBy\` inputs are therefore plain HTML attributes here. Slot: default (link text). The host stays \`display: inline\`, so the link flows inside running text.`;

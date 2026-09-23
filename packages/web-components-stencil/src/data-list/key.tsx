@@ -10,11 +10,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - The key (label) text.
  */
 @Component({
-  tag: 'tilburg-webc-data-list-key',
+  tag: 'tilburg-wbc-data-list-key',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcDataListKey {
+export class TilburgWbcDataListKey {
   @Element() host!: HTMLElement;
 
   /* Angular's `id` input: the plain `id` attribute is moved from the host onto

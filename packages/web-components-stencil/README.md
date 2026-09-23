@@ -2,7 +2,7 @@
 
 # @gemeente-tilburg/web-components-stencil
 
-Framework-agnostic web components (`<tilburg-webc-*>`) for the Municipality of Tilburg, built with
+Framework-agnostic web components (`<tilburg-wbc-*>`) for the Municipality of Tilburg, built with
 [Stencil](https://stenciljs.com/). This is the fourth layer next to HTML/CSS, React and Angular — it adds behaviour and
 an attribute/event API on top of the HTML/CSS layer, it does not replace it.
 
@@ -22,7 +22,7 @@ The components render the HTML/CSS layer's markup into **light DOM**, so the sam
   defineCustomElements();
 </script>
 
-<tilburg-webc-alert variant="info" heading="Informatie">De openingstijden zijn gewijzigd.</tilburg-webc-alert>
+<tilburg-wbc-alert variant="info" heading="Informatie">De openingstijden zijn gewijzigd.</tilburg-wbc-alert>
 ```
 
 Each component injects its own `components-css` rules; the tokens and the utrecht base CSS are the consumer's
@@ -39,18 +39,18 @@ HTML/CSS layer (`packages/storybook-shared/src/*.examples.ts` + `packages/compon
 - One folder per component, named like the Angular folder: `src/<name>/component.tsx`, `src/<name>/index.scss`,
   `src/<name>/component.spec.tsx`. Stencil allows one `@Component` per file, so sub-components get their own file in
   the same folder (`src/accordion/section.tsx`).
-- Tag `tilburg-webc-<angular-suffix>` (Angular `tilburg-accordion-section` → `tilburg-webc-accordion-section`); class
-  `TilburgWebc<Name>`. The `webc` infix avoids clashing with the Angular selectors when both are loaded on one page.
+- Tag `tilburg-wbc-<angular-suffix>` (Angular `tilburg-accordion-section` → `tilburg-wbc-accordion-section`); class
+  `TilburgWbc<Name>`. The `wbc` infix avoids clashing with the Angular selectors when both are loaded on one page.
 
 ### DOM and styling
 
 - Always `shadow: false` (light DOM). `render()` returns exactly the markup of the Angular template / HTML reference:
-  same elements, classes, ARIA and IDs. Nested Tilburg components render their `tilburg-webc-*` counterpart where
+  same elements, classes, ARIA and IDs. Nested Tilburg components render their `tilburg-wbc-*` counterpart where
   Angular renders a `tilburg-*` component (headings via the `Heading` helper in `src/utils/heading.tsx`).
 - `index.scss` does `@use "../../../components-css/<name>/index";` (when that folder exists) and ports the Angular
-  `:host { display: … }` rule to a tag selector: `tilburg-webc-<name> { display: block; }`. `:host` does not work in
+  `:host { display: … }` rule to a tag selector: `tilburg-wbc-<name> { display: block; }`. `:host` does not work in
   light DOM.
-- Write tag names literally in JSX (never `` `tilburg-webc-heading-${n}` ``) so Stencil detects the dependency and the
+- Write tag names literally in JSX (never `` `tilburg-wbc-heading-${n}` ``) so Stencil detects the dependency and the
   `dist-custom-elements` build defines it too.
 
 ### API
@@ -92,6 +92,6 @@ read inherited values with brackets: `this.inherited['aria-label']`, `this.inher
 
 ### Storybook
 
-Stories live in the React Storybook as `packages/storybook/src/tilburg-<name>-webc.stories.tsx`, title
-`Tilburg Web Components/<Name>`, id `tilburg-<name>-webc`, rendering through the React proxies. The docs text comes from
+Stories live in the React Storybook as `packages/storybook/src/tilburg-<name>-wbc.stories.tsx`, title
+`Tilburg Web Components/<Name>`, id `tilburg-<name>-wbc`, rendering through the React proxies. The docs text comes from
 `descriptionWebComponents` in the component's `storybook-shared/src/*.examples.ts`.

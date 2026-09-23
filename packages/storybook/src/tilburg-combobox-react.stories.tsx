@@ -17,7 +17,8 @@ const meta = {
 } satisfies Meta<typeof Combobox>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+/* Stories render their own controlled state, so they don't take args. */
+type Story = StoryObj;
 
 const contactOptions: ComboboxItem<string>[] = [
   { value: 'email', label: 'E-mail' },

@@ -1,28 +1,28 @@
 import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { TilburgWebcCombobox, TilburgWebcComboboxItem } from './component';
+import { TilburgWbcCombobox, TilburgWbcComboboxItem } from './component';
 
-const contact: TilburgWebcComboboxItem<string>[] = [
+const contact: TilburgWbcComboboxItem<string>[] = [
   { value: 'email', label: 'E-mail' },
   { value: 'post', label: 'Per post' },
   { value: 'balie', label: 'Ophalen bij de balie' },
 ];
 
-const documents: TilburgWebcComboboxItem<string>[] = [
+const documents: TilburgWbcComboboxItem<string>[] = [
   { value: 'paspoort', label: 'Paspoort' },
   { value: 'geboorteakte', label: 'Geboorteakte' },
   { value: 'rijbewijs', label: 'Rijbewijs', disabled: true },
   { value: 'verblijfsdocument', label: 'Verblijfsdocument' },
 ];
 
-type ComboboxElement = HTMLElement & { items: TilburgWebcComboboxItem[]; value?: unknown };
+type ComboboxElement = HTMLElement & { items: TilburgWbcComboboxItem[]; value?: unknown };
 
 const render = async (
   html: string,
-  items: TilburgWebcComboboxItem[] = contact,
+  items: TilburgWbcComboboxItem[] = contact,
   value?: unknown,
 ): Promise<{ page: SpecPage; root: ComboboxElement; input: HTMLInputElement; changes: jest.Mock }> => {
-  const page = await newSpecPage({ components: [TilburgWebcCombobox], html });
-  const root = page.body.querySelector('tilburg-webc-combobox') as ComboboxElement;
+  const page = await newSpecPage({ components: [TilburgWbcCombobox], html });
+  const root = page.body.querySelector('tilburg-wbc-combobox') as ComboboxElement;
   root.items = items;
   if (value !== undefined) root.value = value;
   await page.waitForChanges();
@@ -39,9 +39,9 @@ const key = async (page: SpecPage, input: HTMLInputElement, name: string) => {
 const options = (root: HTMLElement) => Array.from(root.querySelectorAll('li[role="option"]'));
 const listbox = (root: HTMLElement) => root.querySelector('ul[role="listbox"]')!;
 
-describe('tilburg-webc-combobox', () => {
+describe('tilburg-wbc-combobox', () => {
   it('renders the reference combobox markup (closed)', async () => {
-    const { root, input } = await render('<tilburg-webc-combobox id="cb" placeholder="Kies"></tilburg-webc-combobox>');
+    const { root, input } = await render('<tilburg-wbc-combobox id="cb" placeholder="Kies"></tilburg-wbc-combobox>');
     const shell = root.querySelector('.utrecht-combobox')!;
     expect(shell).not.toHaveClass('tilburg-combobox--multiple');
     expect(shell.querySelector('.tilburg-combobox__value-container > input.tilburg-combobox__input')).toBe(input);
@@ -78,18 +78,18 @@ describe('tilburg-webc-combobox', () => {
 
   it('generates unique ids when no id is given', async () => {
     const page = await newSpecPage({
-      components: [TilburgWebcCombobox],
-      html: '<tilburg-webc-combobox></tilburg-webc-combobox><tilburg-webc-combobox></tilburg-webc-combobox>',
+      components: [TilburgWbcCombobox],
+      html: '<tilburg-wbc-combobox></tilburg-wbc-combobox><tilburg-wbc-combobox></tilburg-wbc-combobox>',
     });
     const [a, b] = Array.from(page.body.querySelectorAll('input.tilburg-combobox__input'));
-    expect(a.id).toMatch(/^tilburg-webc-combobox-\d+$/);
+    expect(a.id).toMatch(/^tilburg-wbc-combobox-\d+$/);
     expect(a.id).not.toBe(b.id);
     expect(a.getAttribute('aria-controls')).toBe(`${a.id}-listbox`);
   });
 
   it('moves aria-label / aria-describedby onto the input and maps invalid / required', async () => {
     const { root, input } = await render(
-      '<tilburg-webc-combobox aria-label="Contact" aria-describedby="hint" invalid required></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox aria-label="Contact" aria-describedby="hint" invalid required></tilburg-wbc-combobox>',
     );
     expect(root.hasAttribute('aria-label')).toBe(false);
     expect(input.getAttribute('aria-label')).toBe('Contact');
@@ -99,13 +99,13 @@ describe('tilburg-webc-combobox', () => {
   });
 
   it('shows the label of the selected value and marks the option selected', async () => {
-    const { root, input } = await render('<tilburg-webc-combobox></tilburg-webc-combobox>', contact, 'post');
+    const { root, input } = await render('<tilburg-wbc-combobox></tilburg-wbc-combobox>', contact, 'post');
     expect(input.value).toBe('Per post');
     expect(options(root)[1].getAttribute('aria-selected')).toBe('true');
   });
 
   it('toggles the popover from the value container without auto-activating an option', async () => {
-    const { page, root, input } = await render('<tilburg-webc-combobox></tilburg-webc-combobox>');
+    const { page, root, input } = await render('<tilburg-wbc-combobox></tilburg-wbc-combobox>');
     (root.querySelector('.tilburg-combobox__value-container') as HTMLElement).click();
     await page.waitForChanges();
     expect(input.getAttribute('aria-expanded')).toBe('true');
@@ -118,7 +118,7 @@ describe('tilburg-webc-combobox', () => {
   });
 
   it('navigates with the keyboard and selects with Enter (single)', async () => {
-    const { page, root, input, changes } = await render('<tilburg-webc-combobox id="cb"></tilburg-webc-combobox>');
+    const { page, root, input, changes } = await render('<tilburg-wbc-combobox id="cb"></tilburg-wbc-combobox>');
     await key(page, input, 'ArrowDown');
     expect(input.getAttribute('aria-expanded')).toBe('true');
     expect(input.hasAttribute('aria-activedescendant')).toBe(false);
@@ -142,14 +142,14 @@ describe('tilburg-webc-combobox', () => {
   });
 
   it('closes with Escape', async () => {
-    const { page, input } = await render('<tilburg-webc-combobox></tilburg-webc-combobox>');
+    const { page, input } = await render('<tilburg-wbc-combobox></tilburg-wbc-combobox>');
     await key(page, input, 'ArrowDown');
     await key(page, input, 'Escape');
     expect(input.getAttribute('aria-expanded')).toBe('false');
   });
 
   it('selects an option on mousedown and tracks hover as active', async () => {
-    const { page, root, changes } = await render('<tilburg-webc-combobox></tilburg-webc-combobox>');
+    const { page, root, changes } = await render('<tilburg-wbc-combobox></tilburg-wbc-combobox>');
     (root.querySelector('.tilburg-combobox__value-container') as HTMLElement).click();
     await page.waitForChanges();
     const option = options(root)[2];
@@ -163,7 +163,7 @@ describe('tilburg-webc-combobox', () => {
   });
 
   it('closes on a mousedown outside the component', async () => {
-    const { page, root, input } = await render('<tilburg-webc-combobox></tilburg-webc-combobox>');
+    const { page, root, input } = await render('<tilburg-wbc-combobox></tilburg-wbc-combobox>');
     (root.querySelector('.tilburg-combobox__value-container') as HTMLElement).click();
     await page.waitForChanges();
     root.querySelector('li')!.dispatchEvent(new MouseEvent('mouseenter'));
@@ -174,7 +174,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('clears the single value with the clear button', async () => {
     const { page, root, input, changes } = await render(
-      '<tilburg-webc-combobox clearable></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox clearable></tilburg-wbc-combobox>',
       contact,
       'email',
     );
@@ -190,7 +190,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('renders chips and a multiselectable listbox in multiple mode', async () => {
     const { root, input } = await render(
-      '<tilburg-webc-combobox multiple placeholder="Voeg toe"></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox multiple placeholder="Voeg toe"></tilburg-wbc-combobox>',
       documents,
       ['paspoort', 'geboorteakte'],
     );
@@ -207,7 +207,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('toggles options without closing in multiple mode', async () => {
     const { page, root, input, changes } = await render(
-      '<tilburg-webc-combobox multiple></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox multiple></tilburg-wbc-combobox>',
       documents,
       ['paspoort'],
     );
@@ -225,7 +225,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('skips and ignores disabled options', async () => {
     const { page, root, input, changes } = await render(
-      '<tilburg-webc-combobox id="d" multiple></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox id="d" multiple></tilburg-wbc-combobox>',
       documents,
       [],
     );
@@ -242,7 +242,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('removes chips via the × button, Backspace and clear-all', async () => {
     const { page, root, input, changes } = await render(
-      '<tilburg-webc-combobox multiple clearable placeholder="Voeg toe"></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox multiple clearable placeholder="Voeg toe"></tilburg-wbc-combobox>',
       documents,
       ['paspoort', 'geboorteakte', 'verblijfsdocument'],
     );
@@ -261,7 +261,7 @@ describe('tilburg-webc-combobox', () => {
 
   it('does not open or change when disabled', async () => {
     const { page, root, input, changes } = await render(
-      '<tilburg-webc-combobox disabled multiple></tilburg-webc-combobox>',
+      '<tilburg-wbc-combobox disabled multiple></tilburg-wbc-combobox>',
       documents,
       ['paspoort'],
     );
@@ -277,7 +277,7 @@ describe('tilburg-webc-combobox', () => {
   });
 
   it('renders hidden inputs for form submission when a name is set', async () => {
-    const { root } = await render('<tilburg-webc-combobox name="docs" multiple></tilburg-webc-combobox>', documents, [
+    const { root } = await render('<tilburg-wbc-combobox name="docs" multiple></tilburg-wbc-combobox>', documents, [
       'paspoort',
       'geboorteakte',
     ]);

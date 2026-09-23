@@ -1,18 +1,18 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcPageContent } from './component';
+import { TilburgWbcPageContent } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcPageContent], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcPageContent], html });
 
-describe('tilburg-webc-page-content', () => {
+describe('tilburg-wbc-page-content', () => {
   it('renders the main landmark around its content', async () => {
-    const page = await render('<tilburg-webc-page-content><p id="p">Tekst</p></tilburg-webc-page-content>');
+    const page = await render('<tilburg-wbc-page-content><p id="p">Tekst</p></tilburg-wbc-page-content>');
     const main = page.root!.querySelector('main.utrecht-page-content')!;
     expect(main).not.toBeNull();
     expect(main.querySelector('#p')).not.toBeNull();
   });
 
   it('moves id and tabindex to <main> so it can be the skip-link target', async () => {
-    const page = await render('<tilburg-webc-page-content id="main" tabindex="-1">Tekst</tilburg-webc-page-content>');
+    const page = await render('<tilburg-wbc-page-content id="main" tabindex="-1">Tekst</tilburg-wbc-page-content>');
     expect(page.root!.hasAttribute('id')).toBe(false);
     expect(page.root!.hasAttribute('tabindex')).toBe(false);
     const main = page.root!.querySelector('main')!;
@@ -21,7 +21,7 @@ describe('tilburg-webc-page-content', () => {
   });
 
   it('moves aria-label from the host to <main>', async () => {
-    const page = await render('<tilburg-webc-page-content aria-label="Inhoud">Tekst</tilburg-webc-page-content>');
+    const page = await render('<tilburg-wbc-page-content aria-label="Inhoud">Tekst</tilburg-wbc-page-content>');
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('main')!.getAttribute('aria-label')).toBe('Inhoud');
   });

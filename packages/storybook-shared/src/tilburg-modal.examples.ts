@@ -91,13 +91,13 @@ Props: \`title\` (heading + accessible name), \`open\` (controlled; \`true\` ope
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-button id="open-confirm">Open modal</tilburg-webc-button>
+<tilburg-wbc-button id="open-confirm">Open modal</tilburg-wbc-button>
 
-<tilburg-webc-modal id="confirm" heading="Aanvraag bevestigen">
+<tilburg-wbc-modal id="confirm" heading="Aanvraag bevestigen">
   <p class="utrecht-paragraph">Weet je zeker dat je de aanvraag wilt versturen?</p>
-  <tilburg-webc-button slot="footer" appearance="primary-action-button">Bevestigen</tilburg-webc-button>
-  <tilburg-webc-button slot="footer" appearance="secondary-action-button">Annuleren</tilburg-webc-button>
-</tilburg-webc-modal>
+  <tilburg-wbc-button slot="footer" appearance="primary-action-button">Bevestigen</tilburg-wbc-button>
+  <tilburg-wbc-button slot="footer" appearance="secondary-action-button">Annuleren</tilburg-wbc-button>
+</tilburg-wbc-modal>
 
 <script type="module">
   const modal = document.getElementById('confirm');

@@ -1,4 +1,7 @@
-# @tilburg/component-library-angular
+# @gemeente-tilburg/components-angular
+
+<!-- De entries hieronder (1.0.0 / 1.1.0) dateren van vóór de huidige packagenaam; het package staat nu op 0.0.0.
+     Nieuwe entries worden door changesets aangemaakt. -->
 
 ## 1.1.0
 

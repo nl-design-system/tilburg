@@ -6,9 +6,9 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcButtonLinkAppearance = 'primary-action-button' | 'secondary-action-button' | 'subtle-button';
+export type TilburgWbcButtonLinkAppearance = 'primary-action-button' | 'secondary-action-button' | 'subtle-button';
 
-const APPEARANCE_CLASS: Record<TilburgWebcButtonLinkAppearance, string> = {
+const APPEARANCE_CLASS: Record<TilburgWbcButtonLinkAppearance, string> = {
   'primary-action-button': 'utrecht-button-link--primary-action',
   'secondary-action-button': 'utrecht-button-link--secondary-action',
   'subtle-button': 'utrecht-button-link--subtle',
@@ -18,15 +18,15 @@ const APPEARANCE_CLASS: Record<TilburgWebcButtonLinkAppearance, string> = {
  * @slot - The link text.
  */
 @Component({
-  tag: 'tilburg-webc-button-link',
+  tag: 'tilburg-wbc-button-link',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcButtonLink {
+export class TilburgWbcButtonLink {
   @Element() host!: HTMLElement;
 
   /** No appearance modifier when unset (same as Angular/React). */
-  @Prop() appearance?: TilburgWebcButtonLinkAppearance;
+  @Prop() appearance?: TilburgWbcButtonLinkAppearance;
   @Prop() href?: string;
   @Prop() target?: string;
   @Prop() rel?: string;

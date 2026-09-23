@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcDocument } from './component';
+import { TilburgWbcDocument } from './component';
 
-describe('tilburg-webc-document', () => {
+describe('tilburg-wbc-document', () => {
   it('renders a utrecht-document div in light DOM around its content', async () => {
     const page = await newSpecPage({
-      components: [TilburgWebcDocument],
-      html: '<tilburg-webc-document><p id="p">Tekst</p></tilburg-webc-document>',
+      components: [TilburgWbcDocument],
+      html: '<tilburg-wbc-document><p id="p">Tekst</p></tilburg-wbc-document>',
     });
     expect(page.root!.shadowRoot).toBeNull();
     const div = page.root!.querySelector('div.utrecht-document')!;

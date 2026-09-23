@@ -9,11 +9,11 @@ import { Component, h } from '@stencil/core';
  * @slot - The whole page; everything inside inherits the Tilburg body font and colour.
  */
 @Component({
-  tag: 'tilburg-webc-document',
+  tag: 'tilburg-wbc-document',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcDocument {
+export class TilburgWbcDocument {
   render() {
     /* Angular renders `<div utrecht-document>`, whose directive only adds the
        `utrecht-document` class — the HTML/React reference is the plain div. */

@@ -3,16 +3,16 @@
 /* Light-DOM host defaults to `display: inline`; force block flow so the inner
    `.utrecht-form-field` stacks like the HTML/CSS reference (same rule as the
    Angular `:host`). */
-tilburg-webc-form-field {
+tilburg-wbc-form-field {
   display: block;
 }
 
 /* Checkbox/radio form fields are a two-column grid (control | label).
    components-css spans a label that wraps its own control across both columns
    with `.utrecht-form-field--checkbox > .utrecht-form-label:has(input)`; here
-   the grid item is the `<tilburg-webc-form-label>` host, so span that instead.
+   the grid item is the `<tilburg-wbc-form-label>` host, so span that instead.
    Without it each label host is squeezed into the 24px control column. */
-.utrecht-form-field--checkbox > tilburg-webc-form-label:has(input),
-.utrecht-form-field--radio > tilburg-webc-form-label:has(input) {
+.utrecht-form-field--checkbox > tilburg-wbc-form-label:has(input),
+.utrecht-form-field--radio > tilburg-wbc-form-label:has(input) {
   grid-column: 1 / -1;
 }

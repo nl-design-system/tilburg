@@ -93,10 +93,10 @@ const usageWebComponents = `### Web Components (Stencil)
 \`items\` is a JS **property** (an array cannot be an HTML attribute):
 
 \`\`\`html
-<tilburg-webc-breadcrumb aria-label="Kruimelpad"></tilburg-webc-breadcrumb>
+<tilburg-wbc-breadcrumb aria-label="Kruimelpad"></tilburg-wbc-breadcrumb>
 
 <script type="module">
-  const breadcrumb = document.querySelector('tilburg-webc-breadcrumb');
+  const breadcrumb = document.querySelector('tilburg-wbc-breadcrumb');
   breadcrumb.items = [
     { label: 'Home', href: '/' },
     { label: 'Parkeren', href: '/parkeren' },
@@ -109,7 +109,7 @@ const usageWebComponents = `### Web Components (Stencil)
 </script>
 \`\`\`
 
-Property: \`items\` (\`{ label, href?, current?, data? }[]\`, default \`[]\`; an item is the current page — \`<span aria-current="page">\` — when it has \`current: true\` or is the last one; nothing renders for an empty array; \`href\` falls back to \`#\`). \`aria-label\` (default \`'Kruimelpad'\`) is moved from the host onto the \`<nav>\`. Event: \`tilburgItemClick\` (Angular \`itemClick\`), \`detail\` is \`{ item, event }\` with the native \`MouseEvent\`. Type: \`TilburgWebcBreadcrumbItem\`.`;
+Property: \`items\` (\`{ label, href?, current?, data? }[]\`, default \`[]\`; an item is the current page — \`<span aria-current="page">\` — when it has \`current: true\` or is the last one; nothing renders for an empty array; \`href\` falls back to \`#\`). \`aria-label\` (default \`'Kruimelpad'\`) is moved from the host onto the \`<nav>\`. Event: \`tilburgItemClick\` (Angular \`itemClick\`), \`detail\` is \`{ item, event }\` with the native \`MouseEvent\`. Type: \`TilburgWbcBreadcrumbItem\`.`;
 
 export const descriptionWebComponents = `${intro}
 

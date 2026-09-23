@@ -1,15 +1,15 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcModal } from './component';
+import { TilburgWbcModal } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcModal], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcModal], html });
 
 const markup = `
-  <tilburg-webc-modal heading="Aanvraag bevestigen">
+  <tilburg-wbc-modal heading="Aanvraag bevestigen">
     <p class="utrecht-paragraph">Inhoud</p>
     <button slot="footer" type="button">Bevestigen</button>
-  </tilburg-webc-modal>`;
+  </tilburg-wbc-modal>`;
 
-describe('tilburg-webc-modal', () => {
+describe('tilburg-wbc-modal', () => {
   it('renders the HTML/CSS reference structure in light DOM', async () => {
     const page = await render(markup);
     const dialog = page.root!.querySelector('dialog')!;
@@ -28,7 +28,7 @@ describe('tilburg-webc-modal', () => {
   });
 
   it('omits the footer when the footer slot is unused', async () => {
-    const page = await render('<tilburg-webc-modal heading="T">x</tilburg-webc-modal>');
+    const page = await render('<tilburg-wbc-modal heading="T">x</tilburg-wbc-modal>');
     expect(page.root!.querySelector('.tilburg-modal__footer')).toBeNull();
   });
 
@@ -46,7 +46,7 @@ describe('tilburg-webc-modal', () => {
   });
 
   it('closes via the close button and reflects open=false', async () => {
-    const page = await render('<tilburg-webc-modal heading="T" open>x</tilburg-webc-modal>');
+    const page = await render('<tilburg-wbc-modal heading="T" open>x</tilburg-wbc-modal>');
     expect(page.root!.querySelector('dialog')!.hasAttribute('open')).toBe(true);
     page.root!.querySelector<HTMLButtonElement>('.tilburg-modal__close-button')!.click();
     await page.waitForChanges();
@@ -55,7 +55,7 @@ describe('tilburg-webc-modal', () => {
   });
 
   it('closes on a backdrop click unless disabled', async () => {
-    const page = await render('<tilburg-webc-modal heading="T" open>x</tilburg-webc-modal>');
+    const page = await render('<tilburg-wbc-modal heading="T" open>x</tilburg-wbc-modal>');
     const dialog = page.root!.querySelector('dialog')!;
     page.root!.querySelector<HTMLElement>('.tilburg-modal__content')!.click();
     await page.waitForChanges();
@@ -65,7 +65,7 @@ describe('tilburg-webc-modal', () => {
     expect(dialog.hasAttribute('open')).toBe(false);
 
     const locked = await render(
-      '<tilburg-webc-modal heading="T" open close-on-backdrop-click="false">x</tilburg-webc-modal>',
+      '<tilburg-wbc-modal heading="T" open close-on-backdrop-click="false">x</tilburg-wbc-modal>',
     );
     const lockedDialog = locked.root!.querySelector('dialog')!;
     lockedDialog.click();

@@ -328,3 +328,5 @@ if (typeof document !== 'undefined') {
     enhanceCombobox();
   }
 }
+
+export default enhanceCombobox;

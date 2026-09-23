@@ -76,12 +76,12 @@ ${baselineShift}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-button-link appearance="primary-action-button" href="/aanvraag/nieuw">
+<tilburg-wbc-button-link appearance="primary-action-button" href="/aanvraag/nieuw">
   Nieuwe aanvraag starten
-</tilburg-webc-button-link>
-<tilburg-webc-button-link appearance="secondary-action-button" href="https://example.com" external>
+</tilburg-wbc-button-link>
+<tilburg-wbc-button-link appearance="secondary-action-button" href="https://example.com" external>
   Open extern
-</tilburg-webc-button-link>
+</tilburg-wbc-button-link>
 \`\`\`
 
 Attributes: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`, no modifier when unset), \`href\`, \`target\`, \`rel\` (forwarded to the inner \`<a>\`), \`external\` (sets \`rel="external noopener noreferrer"\`, replacing \`rel\`), \`placeholder\` (\`aria-disabled="true"\` plus the \`--placeholder\` modifier, as in React). \`aria-label\`, \`aria-describedby\`, \`title\` and \`lang\` are moved from the host onto the inner \`<a>\`. Slot: default (link text).

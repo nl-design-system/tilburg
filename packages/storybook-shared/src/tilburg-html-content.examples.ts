@@ -83,15 +83,15 @@ const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
 <!-- Inhoud via de default slot -->
-<tilburg-webc-html-content lang="nl">
+<tilburg-wbc-html-content lang="nl">
   <p>CMS-geleverde HTML krijgt automatisch de Tilburg-typografie.</p>
   <ul><li>Punt één</li><li>Punt twee</li></ul>
-</tilburg-webc-html-content>
+</tilburg-wbc-html-content>
 
 <!-- CMS-geleverde HTML-string via de html-property -->
-<tilburg-webc-html-content lang="nl"></tilburg-webc-html-content>
+<tilburg-wbc-html-content lang="nl"></tilburg-wbc-html-content>
 <script type="module">
-  document.querySelector('tilburg-webc-html-content').html = cmsHtml;
+  document.querySelector('tilburg-wbc-html-content').html = cmsHtml;
 </script>
 \`\`\`
 

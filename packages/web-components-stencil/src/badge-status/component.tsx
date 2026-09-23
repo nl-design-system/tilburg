@@ -6,17 +6,17 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcBadgeStatusLiveRegion = 'polite' | 'assertive' | 'off';
+export type TilburgWbcBadgeStatusLiveRegion = 'polite' | 'assertive' | 'off';
 
 /**
  * @slot - The badge text.
  */
 @Component({
-  tag: 'tilburg-webc-badge-status',
+  tag: 'tilburg-wbc-badge-status',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcBadgeStatus {
+export class TilburgWbcBadgeStatus {
   @Element() host!: HTMLElement;
 
   /**
@@ -25,7 +25,7 @@ export class TilburgWebcBadgeStatus {
    * `inactive`, `neutral`). Also the accessible name when no `aria-label` is set.
    */
   @Prop() status?: string;
-  @Prop() liveRegion: TilburgWebcBadgeStatusLiveRegion = 'polite';
+  @Prop() liveRegion: TilburgWbcBadgeStatusLiveRegion = 'polite';
 
   /* Angular's `ariaLabel` input is the plain `aria-label` attribute here: it is
      moved from the host onto the inner `role="status"` span. */

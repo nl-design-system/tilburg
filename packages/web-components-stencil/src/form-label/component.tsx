@@ -5,22 +5,22 @@
 
 import { Component, h, Prop } from '@stencil/core';
 
-export type TilburgWebcFormLabelType = 'checkbox' | 'radio' | 'text';
+export type TilburgWbcFormLabelType = 'checkbox' | 'radio' | 'text';
 
 /**
  * @slot - Label text, optionally a `<span class="tilburg-form-label__optional">`
  *   addon, or the checkbox / radio control the label wraps.
  */
 @Component({
-  tag: 'tilburg-webc-form-label',
+  tag: 'tilburg-wbc-form-label',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcFormLabel {
+export class TilburgWbcFormLabel {
   /** `id` of the labelled control (rendered as `<label for>`). */
   @Prop() for?: string;
   /** `checkbox` / `radio` add the matching modifier; `text` (or unset) renders the plain label. */
-  @Prop() type?: TilburgWebcFormLabelType;
+  @Prop() type?: TilburgWbcFormLabelType;
   /** Presentational mirror of the control's state. */
   @Prop() checked = false;
   /** Presentational mirror of the control's state. */

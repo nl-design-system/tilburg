@@ -1,14 +1,14 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcPagination } from './component';
+import { TilburgWbcPagination } from './component';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcPagination], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcPagination], html });
 
 const pageNumbers = (root: HTMLElement) =>
   Array.from(root.querySelectorAll('.tilburg-pagination__pages li')).map((li) => li.textContent!.trim());
 
-describe('tilburg-webc-pagination', () => {
+describe('tilburg-wbc-pagination', () => {
   it('renders the nav with four labelled step buttons and icons', async () => {
-    const page = await render('<tilburg-webc-pagination></tilburg-webc-pagination>');
+    const page = await render('<tilburg-wbc-pagination></tilburg-wbc-pagination>');
     const nav = page.root!.querySelector('nav.tilburg-pagination')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(nav.getAttribute('aria-label')).toBe('Paginering');
@@ -30,7 +30,7 @@ describe('tilburg-webc-pagination', () => {
   });
 
   it('renders every page up to 7 and marks the current page', async () => {
-    const page = await render('<tilburg-webc-pagination page-count="5" current-page="3"></tilburg-webc-pagination>');
+    const page = await render('<tilburg-wbc-pagination page-count="5" current-page="3"></tilburg-wbc-pagination>');
     expect(pageNumbers(page.root!)).toEqual(['1', '2', '3', '4', '5']);
     const current = page.root!.querySelector('.tilburg-pagination__page--current')!;
     expect(current).toHaveClass('tilburg-pagination__page');
@@ -42,29 +42,29 @@ describe('tilburg-webc-pagination', () => {
   });
 
   it('windows long page lists with ellipses', async () => {
-    const page = await render('<tilburg-webc-pagination page-count="12" current-page="5"></tilburg-webc-pagination>');
+    const page = await render('<tilburg-wbc-pagination page-count="12" current-page="5"></tilburg-wbc-pagination>');
     expect(pageNumbers(page.root!)).toEqual(['1', '…', '4', '5', '6', '…', '12']);
     const ellipsis = page.root!.querySelector('.tilburg-pagination__ellipsis')!;
     expect(ellipsis.getAttribute('aria-hidden')).toBe('true');
-    const start = await render('<tilburg-webc-pagination page-count="12" current-page="1"></tilburg-webc-pagination>');
+    const start = await render('<tilburg-wbc-pagination page-count="12" current-page="1"></tilburg-wbc-pagination>');
     expect(pageNumbers(start.root!)).toEqual(['1', '2', '…', '12']);
   });
 
   it('shows feedback, and the range text only without a page list', async () => {
     const page = await render(
-      '<tilburg-webc-pagination feedback="Toont 1–10 van 47" range="Pagina 1 van 5"></tilburg-webc-pagination>',
+      '<tilburg-wbc-pagination feedback="Toont 1–10 van 47" range="Pagina 1 van 5"></tilburg-wbc-pagination>',
     );
     expect(page.root!.querySelector('.tilburg-pagination__feedback')!.textContent).toBe('Toont 1–10 van 47');
     expect(page.root!.querySelector('.tilburg-pagination__range')!.textContent).toBe('Pagina 1 van 5');
     const withPages = await render(
-      '<tilburg-webc-pagination range="Pagina 1 van 5" page-count="5" current-page="1"></tilburg-webc-pagination>',
+      '<tilburg-wbc-pagination range="Pagina 1 van 5" page-count="5" current-page="1"></tilburg-wbc-pagination>',
     );
     expect(withPages.root!.querySelector('.tilburg-pagination__range')).toBeNull();
   });
 
   it('disables step buttons and applies custom labels', async () => {
     const page = await render(
-      '<tilburg-webc-pagination first-disabled previous-disabled next-label="Next" aria-label="Pages"></tilburg-webc-pagination>',
+      '<tilburg-wbc-pagination first-disabled previous-disabled next-label="Next" aria-label="Pages"></tilburg-wbc-pagination>',
     );
     const steps = page.root!.querySelectorAll('button.tilburg-pagination__button');
     expect(steps[0].hasAttribute('disabled')).toBe(true);
@@ -76,7 +76,7 @@ describe('tilburg-webc-pagination', () => {
   });
 
   it('uses a custom pageLabel function', async () => {
-    const page = await render('<tilburg-webc-pagination page-count="2" current-page="1"></tilburg-webc-pagination>');
+    const page = await render('<tilburg-wbc-pagination page-count="2" current-page="1"></tilburg-wbc-pagination>');
     // eslint-disable-next-line no-unused-vars
     (page.root as HTMLElement & { pageLabel: (n: number) => string }).pageLabel = (n) => `Page ${n}`;
     await page.waitForChanges();
@@ -84,7 +84,7 @@ describe('tilburg-webc-pagination', () => {
   });
 
   it('emits tilburgNavigate for steps and other pages, not for the current page', async () => {
-    const page = await render('<tilburg-webc-pagination page-count="5" current-page="3"></tilburg-webc-pagination>');
+    const page = await render('<tilburg-wbc-pagination page-count="5" current-page="3"></tilburg-wbc-pagination>');
     const spy = jest.fn();
     page.root!.addEventListener('tilburgNavigate', spy);
     const steps = page.root!.querySelectorAll<HTMLButtonElement>('button.tilburg-pagination__button');

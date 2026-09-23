@@ -2,6 +2,6 @@
 
 /* Light-DOM host defaults to `display: inline`; force block flow (same rule as
    the Angular `:host`). The `<table>` itself stays a native table element. */
-tilburg-webc-table {
+tilburg-wbc-table {
   display: block;
 }

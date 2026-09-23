@@ -1,12 +1,12 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcOrderedList } from './component';
+import { TilburgWbcOrderedList } from './component';
 
-const components = [TilburgWebcOrderedList];
+const components = [TilburgWbcOrderedList];
 const render = (html: string) => newSpecPage({ components, html });
 
-describe('tilburg-webc-ordered-list', () => {
+describe('tilburg-wbc-ordered-list', () => {
   it('renders the ordered list classes from the HTML reference', async () => {
-    const page = await render('<tilburg-webc-ordered-list><li>Een</li></tilburg-webc-ordered-list>');
+    const page = await render('<tilburg-wbc-ordered-list><li>Een</li></tilburg-wbc-ordered-list>');
     const ol = page.root!.querySelector('ol')!;
     expect(page.root!.shadowRoot).toBeNull();
     expect(ol).toHaveClasses(['tilburg-ordered-list', 'utrecht-ordered-list', 'utrecht-ordered-list--html-ol']);
@@ -14,13 +14,13 @@ describe('tilburg-webc-ordered-list', () => {
   });
 
   it('adds the by-letter modifier', async () => {
-    const page = await render('<tilburg-webc-ordered-list by-letter><li>Een</li></tilburg-webc-ordered-list>');
+    const page = await render('<tilburg-wbc-ordered-list by-letter><li>Een</li></tilburg-wbc-ordered-list>');
     expect(page.root!.querySelector('ol')).toHaveClass('tilburg-ordered-list--by-letter');
   });
 
   it('places slotted <li> items as direct children of the <ol>', async () => {
     const page = await render(
-      '<tilburg-webc-ordered-list><li>Een</li><li>Twee</li><li>Drie</li></tilburg-webc-ordered-list>',
+      '<tilburg-wbc-ordered-list><li>Een</li><li>Twee</li><li>Drie</li></tilburg-wbc-ordered-list>',
     );
     const items = page.root!.querySelectorAll('ol > li');
     expect(items.length).toBe(3);
@@ -38,22 +38,20 @@ describe('tilburg-webc-ordered-list', () => {
       item.append(text, ...children);
       return item;
     };
-    const inner = doc.createElement('tilburg-webc-ordered-list');
+    const inner = doc.createElement('tilburg-wbc-ordered-list');
     inner.append(li('Genest 1'), li('Genest 2'));
-    const outer = doc.createElement('tilburg-webc-ordered-list');
+    const outer = doc.createElement('tilburg-wbc-ordered-list');
     outer.append(li('Boven', inner), li('Volgende'));
     page.body.appendChild(outer);
     await page.waitForChanges();
     const outerList = outer.querySelector('ol')!;
     expect(Array.from(outerList.children).filter((child) => child.tagName === 'LI').length).toBe(2);
-    const nested = outerList.querySelector('li > tilburg-webc-ordered-list > ol')!;
+    const nested = outerList.querySelector('li > tilburg-wbc-ordered-list > ol')!;
     expect(Array.from(nested.children).map((child) => child.textContent)).toEqual(['Genest 1', 'Genest 2']);
   });
 
   it('moves aria-label from the host to the <ol>', async () => {
-    const page = await render(
-      '<tilburg-webc-ordered-list aria-label="Stappen"><li>Een</li></tilburg-webc-ordered-list>',
-    );
+    const page = await render('<tilburg-wbc-ordered-list aria-label="Stappen"><li>Een</li></tilburg-wbc-ordered-list>');
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('ol')!.getAttribute('aria-label')).toBe('Stappen');
   });

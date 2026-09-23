@@ -64,3 +64,6 @@ components.d.ts
 
 *storybook.log
 *.angular
+
+# Local package tarballs (pnpm run pack:local)
+.tarballs/

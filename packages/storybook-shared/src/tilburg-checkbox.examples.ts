@@ -93,13 +93,13 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-form-label type="checkbox">
-  <tilburg-webc-checkbox id="consent" name="consent" required aria-describedby="consent-error"></tilburg-webc-checkbox>
+<tilburg-wbc-form-label type="checkbox">
+  <tilburg-wbc-checkbox id="consent" name="consent" required aria-describedby="consent-error"></tilburg-wbc-checkbox>
   Ik ga akkoord met de voorwaarden
-</tilburg-webc-form-label>
+</tilburg-wbc-form-label>
 
 <script type="module">
-  document.querySelector('tilburg-webc-checkbox').addEventListener('change', (event) => {
+  document.querySelector('tilburg-wbc-checkbox').addEventListener('change', (event) => {
     console.log(event.target.checked); // the native change event of the inner <input>
   });
 </script>

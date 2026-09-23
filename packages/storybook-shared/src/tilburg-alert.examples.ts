@@ -20,12 +20,12 @@ const usageAngular = `### Angular
   liveRegion="polite"
   (closed)="onAlertClosed()"
 >
-  <app-icon alertIcon name="info" />
+  <svg slot="icon" aria-hidden="true"><!-- eigen icoon; laat weg voor het standaardicoon --></svg>
   De openingstijden zijn gewijzigd.
 </tilburg-alert>
 \`\`\`
 
-Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. Content: default projection for the message, \`slot="icon"\` / \`slot="close-icon"\` to replace the default icons. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
 const usageReact = `### React
 
@@ -113,13 +113,13 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-alert variant="info" heading="Informatie" closable>
+<tilburg-wbc-alert variant="info" heading="Informatie" closable>
   De openingstijden zijn gewijzigd.
-</tilburg-webc-alert>
+</tilburg-wbc-alert>
 
 <script type="module">
   document
-    .querySelector('tilburg-webc-alert')
+    .querySelector('tilburg-wbc-alert')
     .addEventListener('tilburgClose', (event) => event.target.remove());
 </script>
 \`\`\`
@@ -127,10 +127,10 @@ const usageWebComponents = `### Web Components (Stencil)
 Leave the \`icon\` / \`close-icon\` slots empty to get the CSS default glyphs, or pass your own element:
 
 \`\`\`html
-<tilburg-webc-alert variant="danger" heading="Er ging iets mis" sr-prefix="Fout:">
+<tilburg-wbc-alert variant="danger" heading="Er ging iets mis" sr-prefix="Fout:">
   <svg slot="icon" aria-hidden="true"><!-- … --></svg>
   Probeer het opnieuw of neem contact op met de gemeente.
-</tilburg-webc-alert>
+</tilburg-wbc-alert>
 \`\`\`
 
 Attributes: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`heading-level\` (1–6, default 3), \`closable\`, \`live-region\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` for \`danger\` and \`polite\` otherwise), \`close-button-aria-label\` (default \`'sluit alert'\`), \`sr-prefix\`, and \`aria-label\` (moved onto the inner alert). Event: \`tilburgClose\` — the alert does not remove itself. Slots: default (message), \`icon\`, \`close-icon\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;

@@ -13,11 +13,11 @@ const INHERITED = ['id', 'title', 'aria-label', 'aria-labelledby', 'aria-describ
  * the host as-is.
  */
 @Component({
-  tag: 'tilburg-webc-radio-button',
+  tag: 'tilburg-wbc-radio-button',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcRadioButton {
+export class TilburgWbcRadioButton {
   @Element() host!: HTMLElement;
 
   @Prop() name = '';

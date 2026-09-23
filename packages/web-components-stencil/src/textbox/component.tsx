@@ -12,11 +12,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
 const INHERITED = ['id', 'title', 'dir', 'inputmode', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const;
 
 @Component({
-  tag: 'tilburg-webc-textbox',
+  tag: 'tilburg-wbc-textbox',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcTextbox {
+export class TilburgWbcTextbox {
   @Element() host!: HTMLElement;
 
   @Prop() type = 'text';

@@ -129,10 +129,10 @@ const usageWebComponents = `### Web Components (Stencil)
 Controlled like the Angular/React versions: listen to \`tilburgNavigate\` and set \`current-page\` yourself.
 
 \`\`\`html
-<tilburg-webc-pagination feedback="Toont 21–30 van 117" page-count="12" current-page="3"></tilburg-webc-pagination>
+<tilburg-wbc-pagination feedback="Toont 21–30 van 117" page-count="12" current-page="3"></tilburg-wbc-pagination>
 
 <script type="module">
-  const pagination = document.querySelector('tilburg-webc-pagination');
+  const pagination = document.querySelector('tilburg-wbc-pagination');
   pagination.addEventListener('tilburgNavigate', ({ detail: { step, page } }) => {
     const total = pagination.pageCount;
     const current = pagination.currentPage;
@@ -146,10 +146,10 @@ Controlled like the Angular/React versions: listen to \`tilburgNavigate\` and se
 </script>
 
 <!-- Range-text variant (no page list) -->
-<tilburg-webc-pagination feedback="Toont 1–10 van 47" range="Pagina 1 van 5"></tilburg-webc-pagination>
+<tilburg-wbc-pagination feedback="Toont 1–10 van 47" range="Pagina 1 van 5"></tilburg-wbc-pagination>
 \`\`\`
 
-Attributes: \`feedback\`, \`range\`, \`page-count\`, \`current-page\`, \`first-disabled\` / \`previous-disabled\` / \`next-disabled\` / \`last-disabled\`, \`first-label\` (\`'Eerste pagina'\`), \`previous-label\` (\`'Vorige pagina'\`), \`next-label\` (\`'Volgende pagina'\`), \`last-label\` (\`'Laatste pagina'\`). Property only: \`pageLabel\` (\`(n) => 'Pagina ' + n\` by default). \`aria-label\` (default \`'Paginering'\`) is moved from the host onto the \`<nav>\`. Event: \`tilburgNavigate\` (Angular \`navigate\`), \`detail\` is \`{ step: 'first' | 'previous' | 'next' | 'last' | 'page', page?: number }\` — \`page\` is only set for numeric clicks, clicking the current page fires nothing. Types: \`TilburgWebcPaginationEvent\`, \`TilburgWebcPaginationStep\`.`;
+Attributes: \`feedback\`, \`range\`, \`page-count\`, \`current-page\`, \`first-disabled\` / \`previous-disabled\` / \`next-disabled\` / \`last-disabled\`, \`first-label\` (\`'Eerste pagina'\`), \`previous-label\` (\`'Vorige pagina'\`), \`next-label\` (\`'Volgende pagina'\`), \`last-label\` (\`'Laatste pagina'\`). Property only: \`pageLabel\` (\`(n) => 'Pagina ' + n\` by default). \`aria-label\` (default \`'Paginering'\`) is moved from the host onto the \`<nav>\`. Event: \`tilburgNavigate\` (Angular \`navigate\`), \`detail\` is \`{ step: 'first' | 'previous' | 'next' | 'last' | 'page', page?: number }\` — \`page\` is only set for numeric clicks, clicking the current page fires nothing. Types: \`TilburgWbcPaginationEvent\`, \`TilburgWbcPaginationStep\`.`;
 
 export const descriptionWebComponents = `${introShared}
 

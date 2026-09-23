@@ -10,11 +10,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - The self-contained content (heading, paragraphs, …).
  */
 @Component({
-  tag: 'tilburg-webc-article',
+  tag: 'tilburg-wbc-article',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcArticle {
+export class TilburgWbcArticle {
   @Element() host!: HTMLElement;
 
   /* `id` and the landmark name (`aria-labelledby` pointing at the heading)

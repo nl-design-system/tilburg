@@ -1,7 +1,7 @@
 {
   "name": "@gemeente-tilburg/components-react",
   "version": "0.0.0",
-  "description": "React component library for the Example repository, based on the NL Design System architecture",
+  "description": "React components for the Municipality of Tilburg, based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [
@@ -20,7 +20,7 @@
   "scripts": {
     "build": "npm-run-all clean build:**",
     "build:components": "vite build",
-    "build:types": "tsc --project ./tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc --project ./tsconfig.build.json",
     "clean": "rimraf dist/ pages/",
     "pack:dist": "npm-run-all clean build:** && rm -f gemeente-tilburg-components-react-0.0.0.tgz && npm pack",
     "lint": "tsc --project ./tsconfig.json --noEmit && tsc --noEmit --project ./tsconfig.test.json",

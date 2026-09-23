@@ -55,10 +55,10 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-badge-status status="success">Goedgekeurd</tilburg-webc-badge-status>
-<tilburg-webc-badge-status status="error" aria-label="Aanvraag afgewezen" live-region="assertive">
+<tilburg-wbc-badge-status status="success">Goedgekeurd</tilburg-wbc-badge-status>
+<tilburg-wbc-badge-status status="error" aria-label="Aanvraag afgewezen" live-region="assertive">
   Afgewezen
-</tilburg-webc-badge-status>
+</tilburg-wbc-badge-status>
 \`\`\`
 
 Attributes: \`status\` (appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), and \`aria-label\` / \`aria-describedby\` / \`title\`, moved onto the inner badge. Angular's \`ariaLabel\` input is the plain \`aria-label\` attribute here; without it the \`status\` value is the accessible name. \`role="status"\` and \`aria-live\` are set for you. Slot: default (the badge text). No events.`;

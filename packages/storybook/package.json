@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/storybook",
-  "description": "Storybook based on the NL Design System architecture",
+  "description": "Storybook for the Tilburg HTML/CSS reference, React components and web components",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [

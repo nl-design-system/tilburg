@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/storybook-angular",
-  "description": "Storybook for the Tilburg Angular component library, composed into the main Tilburg storybook via refs",
+  "description": "Storybook for the Tilburg Angular components and the shared HTML/CSS reference (runs separately from the React Storybook)",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [

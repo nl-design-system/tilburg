@@ -13,11 +13,11 @@ let modalCount = 0;
  * @slot footer - Actions, rendered in `<footer class="tilburg-modal__footer">`; the footer is omitted when unused.
  */
 @Component({
-  tag: 'tilburg-webc-modal',
+  tag: 'tilburg-wbc-modal',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcModal {
+export class TilburgWbcModal {
   @Element() host!: HTMLElement;
 
   /** Heading text; also the dialog's accessible name. Named `heading` because `title` is a global HTML attribute. */
@@ -33,7 +33,7 @@ export class TilburgWebcModal {
   @Event() tilburgClose!: EventEmitter<void>;
 
   private dialog?: HTMLDialogElement;
-  private readonly titleId = `tilburg-webc-modal-${++modalCount}-title`;
+  private readonly titleId = `tilburg-wbc-modal-${++modalCount}-title`;
   private hasFooter = false;
 
   componentWillLoad() {

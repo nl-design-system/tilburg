@@ -1,14 +1,12 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { TilburgWebcHtmlContent } from './component';
+import { TilburgWbcHtmlContent } from './component';
 import { sanitizeHtml } from './sanitize';
 
-const render = (html: string) => newSpecPage({ components: [TilburgWebcHtmlContent], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcHtmlContent], html });
 
-describe('tilburg-webc-html-content', () => {
+describe('tilburg-wbc-html-content', () => {
   it('wraps slotted content in the styled utrecht-html-content div', async () => {
-    const page = await render(
-      '<tilburg-webc-html-content><p>Tekst</p><ul><li>Een</li></ul></tilburg-webc-html-content>',
-    );
+    const page = await render('<tilburg-wbc-html-content><p>Tekst</p><ul><li>Een</li></ul></tilburg-wbc-html-content>');
     expect(page.root!.shadowRoot).toBeNull();
     const div = page.root!.querySelector('div.utrecht-html-content')!;
     expect(Array.from(div.children).map((child) => child.tagName)).toEqual(['P', 'UL']);
@@ -17,14 +15,14 @@ describe('tilburg-webc-html-content', () => {
   });
 
   it('moves lang from the host onto the content div', async () => {
-    const page = await render('<tilburg-webc-html-content lang="nl"><p>Tekst</p></tilburg-webc-html-content>');
+    const page = await render('<tilburg-wbc-html-content lang="nl"><p>Tekst</p></tilburg-wbc-html-content>');
     expect(page.root!.hasAttribute('lang')).toBe(false);
     expect(page.root!.querySelector('.utrecht-html-content')!.getAttribute('lang')).toBe('nl');
   });
 
   it('renders the html prop inside the styled div', async () => {
-    const page = await newSpecPage({ components: [TilburgWebcHtmlContent], html: '<div></div>' });
-    const el = page.doc.createElement('tilburg-webc-html-content') as HTMLElement & { html?: string };
+    const page = await newSpecPage({ components: [TilburgWbcHtmlContent], html: '<div></div>' });
+    const el = page.doc.createElement('tilburg-wbc-html-content') as HTMLElement & { html?: string };
     el.html = '<p>Van het <strong>CMS</strong></p>';
     page.body.appendChild(el);
     await page.waitForChanges();
@@ -35,7 +33,7 @@ describe('tilburg-webc-html-content', () => {
 
   it('sanitizes the html prop', async () => {
     const page = await render(
-      `<tilburg-webc-html-content html='<p onclick="x()">Hoi</p><script>alert(1)</script>'></tilburg-webc-html-content>`,
+      `<tilburg-wbc-html-content html='<p onclick="x()">Hoi</p><script>alert(1)</script>'></tilburg-wbc-html-content>`,
     );
     const div = page.root!.querySelector('.utrecht-html-content')!;
     expect(div.innerHTML).toBe('<p>Hoi</p>');

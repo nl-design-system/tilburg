@@ -96,18 +96,18 @@ ${usagePlainHtml}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-form-label for="email">E-mailadres</tilburg-webc-form-label>
-<tilburg-webc-textbox
+<tilburg-wbc-form-label for="email">E-mailadres</tilburg-wbc-form-label>
+<tilburg-wbc-textbox
   id="email"
   name="email"
   type="email"
   placeholder="naam@voorbeeld.nl"
   required
   aria-describedby="email-hint"
-></tilburg-webc-textbox>
+></tilburg-wbc-textbox>
 
 <script type="module">
-  document.querySelector('tilburg-webc-textbox').addEventListener('input', (event) => {
+  document.querySelector('tilburg-wbc-textbox').addEventListener('input', (event) => {
     console.log(event.target.value); // the native input event of the inner <input>
   });
 </script>

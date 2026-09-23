@@ -6,17 +6,17 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-export type TilburgWebcAriaCurrent = 'page' | 'step' | 'location' | 'date' | 'time' | boolean;
+export type TilburgWbcAriaCurrent = 'page' | 'step' | 'location' | 'date' | 'time' | boolean;
 
 /**
  * @slot - The link text.
  */
 @Component({
-  tag: 'tilburg-webc-link',
+  tag: 'tilburg-wbc-link',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcLink {
+export class TilburgWbcLink {
   @Element() host!: HTMLElement;
 
   @Prop() href?: string;
@@ -25,7 +25,7 @@ export class TilburgWebcLink {
   /** Appends `external noopener noreferrer` to `rel`. */
   @Prop() external = false;
   /** Rendered as `aria-current` on the inner `<a>`. */
-  @Prop() current?: TilburgWebcAriaCurrent;
+  @Prop() current?: TilburgWbcAriaCurrent;
 
   /* `aria-label`, `aria-describedby`, `title` and `lang` are written on the
      host as plain HTML attributes and moved onto the inner `<a>`. */

@@ -130,10 +130,10 @@ ${usageReact}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-webc-skip-link href="#main">Sla over en ga naar de hoofdinhoud</tilburg-webc-skip-link>
+<tilburg-wbc-skip-link href="#main">Sla over en ga naar de hoofdinhoud</tilburg-wbc-skip-link>
 
 <header>…</header>
-<tilburg-webc-page-content id="main" tabindex="-1">…</tilburg-webc-page-content>
+<tilburg-wbc-page-content id="main" tabindex="-1">…</tilburg-wbc-page-content>
 \`\`\`
 
 Attributes: \`href\`, \`visibility\` (\`'visible-on-focus' | 'visible' | 'hidden' | 'focus'\`, default \`'visible-on-focus'\`), and \`aria-label\` (moved onto the inner \`<a>\`). Slot: default (the link text). No events.`;

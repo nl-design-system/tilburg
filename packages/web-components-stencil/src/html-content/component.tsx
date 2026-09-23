@@ -11,11 +11,11 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  * @slot - Rich content, used when `html` is not set.
  */
 @Component({
-  tag: 'tilburg-webc-html-content',
+  tag: 'tilburg-wbc-html-content',
   styleUrl: 'index.scss',
   shadow: false,
 })
-export class TilburgWebcHtmlContent {
+export class TilburgWbcHtmlContent {
   @Element() host!: HTMLElement;
 
   /**

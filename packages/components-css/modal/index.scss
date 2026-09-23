@@ -6,7 +6,12 @@
   background-color: var(--tilburg-color-white);
   border: 0;
   border-radius: 0;
-  box-shadow: var(--tilburg-box-shadow-lg);
+
+  /* The design tokens emit the large shadow as unitless parts
+     (`--tilburg-box-shadow-lg-{x,y,blur,spread,color}`), not as one value. */
+  box-shadow: calc(var(--tilburg-box-shadow-lg-x, 0) * 1px) calc(var(--tilburg-box-shadow-lg-y, 16) * 1px)
+    calc(var(--tilburg-box-shadow-lg-blur, 48) * 1px) calc(var(--tilburg-box-shadow-lg-spread, 0) * 1px)
+    var(--tilburg-box-shadow-lg-color, rgb(0 0 0 / 10%));
   color: currentColor;
   inline-size: min(90%, 32rem);
   opacity: 0%;
