@@ -22,7 +22,7 @@
 
 .tilburg-accordion__display-name {
   font-family: var(--utrecht-document-font-family, inherit);
-  font-weight: 700;
+  font-weight: var(--tilburg-accordion-button-font-weight, 700);
 }
 
 .utrecht-accordion__button {
@@ -65,7 +65,7 @@
 
 .utrecht-accordion__button-label {
   flex: 0 0 auto;
-  font-weight: 700;
+  font-weight: var(--tilburg-accordion-button-font-weight, 700);
 }
 
 // Earlier consumers used a bare panel `<div>` without the
@@ -78,7 +78,7 @@
   margin-inline: var(--tilburg-accordion-panel-margin);
   padding-block: 0;
   padding-inline: 0;
-  transition: all var(--tilburg-accordion-panel-transition-duration) ease-in-out;
+  transition: all var(--tilburg-accordion-panel-transition-duration) var(--tilburg-motion-easing-standard, ease-in-out);
 }
 
 .utrecht-accordion__panel[hidden] {

@@ -7,7 +7,7 @@
             "$value": "{tilburg.space.row.ant}"
           },
           "transition-duration": {
-            "$value": "500ms"
+            "$value": "{tilburg.motion.duration.long}"
           },
           "focus-border-width": {
             "$value": "2px"
@@ -16,6 +16,9 @@
         "button": {
           "padding-block": {
             "$value": "11px"
+          },
+          "font-weight": {
+            "$value": "700"
           }
         },
         "panel": {
@@ -23,7 +26,7 @@
             "$value": "{tilburg.space.inline.mouse}"
           },
           "transition-duration": {
-            "$value": "200ms"
+            "$value": "{tilburg.motion.duration.short}"
           }
         }
       }

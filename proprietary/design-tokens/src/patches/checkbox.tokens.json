@@ -1,0 +1,20 @@
+{
+  "components/checkbox": {
+    "tilburg": {
+      "checkbox": {
+        "invalid": {
+          "background-color": {
+            "$value": "{tilburg.color.red.100}"
+          }
+        },
+        "checked": {
+          "focus": {
+            "background-color": {
+              "$value": "{tilburg.color.blue.100}"
+            }
+          }
+        }
+      }
+    }
+  }
+}

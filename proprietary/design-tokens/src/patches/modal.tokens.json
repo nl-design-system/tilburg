@@ -1,0 +1,22 @@
+{
+  "components/modal": {
+    "tilburg": {
+      "modal": {
+        "background-color": {
+          "$value": "{tilburg.color.white}"
+        },
+        "border-radius": {
+          "$value": "0"
+        },
+        "animation": {
+          "duration": {
+            "$value": "{tilburg.motion.duration.medium}"
+          },
+          "easing": {
+            "$value": "{tilburg.motion.easing.emphasized}"
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,6 +4,65 @@
       "combobox": {
         "icon-size": {
           "$value": "20px"
+        },
+        "focus": {
+          "background-color": {
+            "$value": "{tilburg.color.blue.100}"
+          }
+        },
+        "disabled": {
+          "background-color": {
+            "$value": "{tilburg.color.gray.50}"
+          }
+        },
+        "icon": {
+          "hover": {
+            "color": {
+              "$value": "{tilburg.color.pink.300}"
+            }
+          }
+        },
+        "chip": {
+          "focus": {
+            "background-color": {
+              "$value": "{tilburg.color.blue.100}"
+            },
+            "border-color": {
+              "$value": "{tilburg.color.pink.300}"
+            }
+          }
+        },
+        "option": {
+          "active": {
+            "background-color": {
+              "$value": "{tilburg.color.blue.50}"
+            },
+            "border-color": {
+              "$value": "{tilburg.color.pink.300}"
+            }
+          },
+          "selected": {
+            "background-color": {
+              "$value": "{tilburg.color.blue.50}"
+            },
+            "border-color": {
+              "$value": "{tilburg.color.blue.400}"
+            }
+          },
+          "active-selected": {
+            "background-color": {
+              "$value": "{tilburg.color.blue.100}"
+            }
+          }
+        }
+      }
+    },
+    "utrecht": {
+      "combobox": {
+        "popover": {
+          "z-index": {
+            "$value": "10"
+          }
         }
       }
     }

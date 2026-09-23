@@ -36,6 +36,7 @@
     "!dist/*.tgz",
     "figma/tilburg/",
     "src/",
+    "high-contrast/",
     "LICENSE.md",
     "README.md"
   ]

@@ -1,7 +1,7 @@
 import { register } from '@tokens-studio/sd-transforms';
 import StyleDictionary from 'style-dictionary';
 import { typeDtcgDelegate } from 'style-dictionary/utils';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { createStyleDictionaryConfig } from './style-dictionary-config.mjs';
 
 StyleDictionary.registerAction({
@@ -101,6 +101,39 @@ const build = async () => {
     await sd.buildAllPlatforms();
     console.log(`Build complete for theme: ${theme}!`); // Debugging statement
   }
+
+  /* High-contrast mode (opt-in): black background, white text and outlines, for every theme. It is one extra class
+     on the same element as the theme class (`<body class="tilburg-theme tilburg-high-contrast">`); custom properties
+     with var() references resolve where they are declared, so the overrides must sit next to the theme, not deeper.
+     The tokens live in `high-contrast/`, outside `src/`, so the themes above don't pick them up; only they are
+     emitted, into `dist/high-contrast.css`, followed by the few component rules tokens cannot reach. */
+  const highContrast = new StyleDictionary({
+    include: [`figma/${themeConfig.prefix}/figma.tokens.json`, 'src/**/*.tokens.json'],
+    source: ['high-contrast/**/*.tokens.json'],
+    log: { verbosity: 'default', warnings: 'disabled' },
+    preprocessors: ['tokens-studio', 'dtcg-delegate'],
+    platforms: {
+      css: {
+        transformGroup: 'tokens-studio',
+        transforms: ['name/kebab', 'color/hsl-4'],
+        buildPath: 'dist/',
+        files: [
+          {
+            destination: 'high-contrast.css',
+            format: 'css/variables',
+            filter: (token) => token.filePath.includes('high-contrast/'),
+            options: { selector: '.tilburg-high-contrast[class*="-theme"]', outputReferences: false },
+          },
+        ],
+      },
+    },
+  });
+  await highContrast.buildAllPlatforms();
+  await writeFile(
+    'dist/high-contrast.css',
+    (await readFile('dist/high-contrast.css', 'utf-8')) + (await readFile('high-contrast/components.css', 'utf-8')),
+  );
+  console.log('Build complete for high contrast (dist/high-contrast.css)!');
 
   console.log('Build process finished!');
 };
