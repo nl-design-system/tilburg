@@ -222,19 +222,17 @@ export const ReportForm = () => {
                 <Fieldset id={fieldId('category')} invalid={Boolean(errors.category)}>
                   <legend>Wat wilt u melden?</legend>
                   {categories.map((category) => (
-                    <FormField key={category} type="radio">
-                      <FormLabel type="radio" checked={answers.category === category}>
-                        <RadioButton
-                          name="category"
-                          value={category}
-                          checked={answers.category === category}
-                          invalid={Boolean(errors.category)}
-                          aria-describedby={errors.category ? errorId('category') : undefined}
-                          onChange={() => set('category', category)}
-                        />{' '}
-                        {category}
-                      </FormLabel>
-                    </FormField>
+                    <FormLabel key={category} type="radio" checked={answers.category === category}>
+                      <RadioButton
+                        name="category"
+                        value={category}
+                        checked={answers.category === category}
+                        invalid={Boolean(errors.category)}
+                        aria-describedby={errors.category ? errorId('category') : undefined}
+                        onChange={() => set('category', category)}
+                      />{' '}
+                      {category}
+                    </FormLabel>
                   ))}
                   {errors.category && (
                     <ValidationMessage id={errorId('category')} type="error">
