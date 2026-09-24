@@ -77,12 +77,9 @@ const RadioGroup = ({
   <Fieldset>
     <legend>{legend}</legend>
     {options.map((option) => (
-      <FormField key={option} type="radio">
-        <FormLabel type="radio" checked={value === option}>
-          <RadioButton name={name} value={option} checked={value === option} onChange={() => onChange(option)} />{' '}
-          {option}
-        </FormLabel>
-      </FormField>
+      <FormLabel key={option} type="radio" checked={value === option}>
+        <RadioButton name={name} value={option} checked={value === option} onChange={() => onChange(option)} /> {option}
+      </FormLabel>
     ))}
   </Fieldset>
 );
