@@ -16,3 +16,6 @@ packages/web-components-angular/src/directives/proxies.ts
 packages/web-components-stencil/loader
 packages/web-components-react/src/react-component-lib/
 packages/web-components-react/src/components.ts
+
+# ESLint skips dot-folders by default; lint the Angular Storybook config too
+!packages/storybook-angular/.storybook/

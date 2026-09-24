@@ -3,11 +3,8 @@
    SCSS directly here would route through Storybook's Webpack which doesn't
    ship a css-loader for raw SCSS by default. */
 
-import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Preview } from '@storybook/angular';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { TilburgComponentsModule } from '@gemeente-tilburg/components-angular';
-import { theme } from './theme';
-
 /* Opt-in accordion enhancement (toggle + keyboard nav) for the HTML/CSS
    reference stories. The Angular wrapper stories aren't affected — the
    script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`,
@@ -20,6 +17,8 @@ import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
+import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Preview } from '@storybook/angular';
+import { theme } from './theme';
 
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const reenhance = () => {

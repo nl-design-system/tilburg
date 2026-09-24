@@ -7,8 +7,7 @@ HTML/CSS-referentie. Gebouwd met Angular 20; de componenten zitten in één NgMo
 
 ```bash
 npm install @gemeente-tilburg/components-angular @gemeente-tilburg/design-tokens \
-            @utrecht/component-library-angular@1.1.0 @utrecht/design-tokens@1.0.0 \
-            @utrecht/component-library-css
+            @utrecht/component-library-angular@1.1.0 @utrecht/component-library-css
 ```
 
 ```ts

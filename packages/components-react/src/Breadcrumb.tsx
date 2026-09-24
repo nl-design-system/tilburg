@@ -11,7 +11,6 @@ export interface BreadcrumbItem {
 export interface BreadcrumbProps extends Omit<HTMLAttributes<HTMLElement>, 'aria-label' | 'onClick'> {
   items?: BreadcrumbItem[];
   ariaLabel?: string;
-  // eslint-disable-next-line no-unused-vars
   onItemClick?: (payload: { item: BreadcrumbItem; event: MouseEvent<HTMLAnchorElement> }) => void;
 }
 

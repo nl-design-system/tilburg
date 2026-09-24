@@ -12,10 +12,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      http-server:
-        specifier: 14.1.1
-        version: 14.1.1(debug@4.4.3(supports-color@9.4.0))(supports-color@9.4.0)
     devDependencies:
       '@changesets/cli':
         specifier: 3.0.1
@@ -47,6 +43,9 @@ importers:
       eslint-plugin-react:
         specifier: 7.37.2
         version: 7.37.2(eslint@8.57.1(supports-color@9.4.0))
+      http-server:
+        specifier: 14.1.1
+        version: 14.1.1(debug@4.4.3(supports-color@9.4.0))(supports-color@9.4.0)
       husky:
         specifier: 9.1.6
         version: 9.1.6
@@ -189,9 +188,6 @@ importers:
       npm-run-all:
         specifier: 4.1.5
         version: 4.1.5
-      pnpm:
-        specifier: 9.15.0
-        version: 9.15.0
       prettier:
         specifier: 3.4.2
         version: 3.4.2
@@ -468,6 +464,9 @@ importers:
       '@storybook/angular':
         specifier: 9.1.20
         version: 9.1.20(db8a9f8386280f43c6ae03b00ad3d6e8)
+      '@types/react':
+        specifier: 18.3.12
+        version: 18.3.12
       '@utrecht/component-library-angular':
         specifier: 1.1.0
         version: 1.1.0
@@ -9239,11 +9238,6 @@ packages:
   plur@4.0.0:
     resolution: {integrity: sha512-4UGewrYgqDFw9vV6zNV+ADmPAUAfJPKtGvb/VdpQAx25X5f3xXdGdyOEVFwkl8Hl/tl7+xbeHqSEM+D5/TirUg==}
     engines: {node: '>=10'}
-
-  pnpm@9.15.0:
-    resolution: {integrity: sha512-duI3l2CkMo7EQVgVvNZije5yevN3mqpMkU45RBVsQpmSGon5djge4QfUHxLPpLZmgcqccY8GaPoIMe1MbYulbA==}
-    engines: {node: '>=18.12'}
-    hasBin: true
 
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
@@ -22482,8 +22476,6 @@ snapshots:
   plur@4.0.0:
     dependencies:
       irregular-plurals: 3.5.0
-
-  pnpm@9.15.0: {}
 
   polished@4.3.1:
     dependencies:

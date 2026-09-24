@@ -9,7 +9,6 @@ export interface ProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   backLabel?: string;
   showBack?: boolean;
   backIcon?: ReactNode;
-  // eslint-disable-next-line no-unused-vars
   onBackClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
 }
 

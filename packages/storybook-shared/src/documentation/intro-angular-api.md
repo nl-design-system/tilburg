@@ -21,4 +21,4 @@ Een handvol componenten worden als directive op een bestaand HTML-element toegep
 
 ### Reactive forms
 
-Form-controls (`<tilburg-textbox>`, `<tilburg-textarea>`, `<tilburg-checkbox>`, `<tilburg-radio-button>`) accepteren een `[control]`-`FormControl` voor reactive-forms-binding. `ngModel` werkt ook via `[(ngModel)]` op het onderliggende native input — zie de stories voor concrete voorbeelden.
+`<tilburg-textbox>`, `<tilburg-textarea>` en `<tilburg-radio-button>` accepteren een `[control]`-`FormControl` voor reactive-forms-binding. De componenten implementeren geen `ControlValueAccessor`, dus `formControlName` en `[(ngModel)]` op het component werken niet. Zie de stories voor concrete voorbeelden.

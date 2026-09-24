@@ -119,7 +119,6 @@ export interface AccordionSectionProps extends Omit<HTMLAttributes<HTMLDivElemen
   autoToggle?: boolean;
   iconCollapsed?: ReactNode;
   iconExpanded?: ReactNode;
-  // eslint-disable-next-line no-unused-vars
   onToggle?: (nextExpanded: boolean) => void;
 }
 

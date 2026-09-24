@@ -28,11 +28,11 @@ export const AllPermutations: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <TilburgWbcPageHeader heading="Alleen titel" titleHref="/" />
-      <TilburgWbcPageHeader heading="Met logo" logoSrc="/logo-on-dark.svg" logoAlt="" titleHref="/" />
+      <TilburgWbcPageHeader heading="Met logo" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/" />
       <TilburgWbcPageHeader heading="Met acties" titleHref="/">
         <TilburgWbcButton appearance="subtle-button">Inloggen</TilburgWbcButton>
       </TilburgWbcPageHeader>
-      <TilburgWbcPageHeader heading="Met logo en acties" logoSrc="/logo-on-dark.svg" logoAlt="" titleHref="/">
+      <TilburgWbcPageHeader heading="Met logo en acties" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/">
         <TilburgWbcButton appearance="subtle-button">Inloggen</TilburgWbcButton>
         <TilburgWbcButton appearance="primary-action-button">Account</TilburgWbcButton>
       </TilburgWbcPageHeader>

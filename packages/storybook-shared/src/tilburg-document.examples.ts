@@ -25,7 +25,7 @@ export function App({ children }: { children: React.ReactNode }) {
   return (
     <Document>
       <Page>
-        <PageHeader logoSrc="/logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
+        <PageHeader logoSrc="logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
         <PageContent id="main" tabIndex={-1}>
           {children}
         </PageContent>

@@ -13,10 +13,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-/* eslint-disable-next-line no-unused-vars -- `item` is the callback param in a
-   function-type alias; it has no body, so ESLint's no-unused-vars false-positives. */
 type LabelFn<T> = string | ((item: T) => string);
-/* eslint-disable-next-line no-unused-vars */
 type ValueFn<T> = string | ((item: T) => unknown);
 
 let nextUniqueId = 0;

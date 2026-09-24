@@ -33,6 +33,7 @@
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-mdx": "3.1.5",
     "eslint-plugin-react": "7.37.2",
+    "http-server": "14.1.1",
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
     "markdownlint-cli": "0.42.0",
@@ -64,7 +65,7 @@
     "prepare": "husky",
     "prettier": "prettier --write .",
     "publish": "changeset publish",
-    "start": "node_modules/http-server/bin packages/storybook/dist/",
+    "start": "http-server packages/storybook/dist/",
     "storybook": "npm-run-all --parallel watch:**",
     "storybook:angular": "pnpm run watch:storybook-angular",
     "storybook:react": "pnpm run watch:storybook",
@@ -76,8 +77,5 @@
     "watch:storybook": "pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/components-react run build && pnpm --filter @gemeente-tilburg/web-components-stencil run build:stencil && pnpm --filter @gemeente-tilburg/web-components-react run build && pnpm --filter @gemeente-tilburg/storybook run storybook",
     "watch:storybook-angular": "pnpm --filter @gemeente-tilburg/design-tokens run build && pnpm --filter @gemeente-tilburg/components-angular run build:components && pnpm --filter @gemeente-tilburg/storybook-angular run storybook",
     "watch:style-dictionary": "pnpm --filter @gemeente-tilburg/design-tokens run watch:style-dictionary"
-  },
-  "dependencies": {
-    "http-server": "14.1.1"
   }
 }

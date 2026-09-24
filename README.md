@@ -13,8 +13,8 @@ Componenten en design tokens voor de websites en applicaties van Gemeente Tilbur
 | ---------------- | ------------------------------------------ | ------------------------------------------ | ------------------------ |
 | Design tokens    | `@gemeente-tilburg/design-tokens`          | iedereen, nodig voor elke laag             | ja                       |
 | Plain HTML / CSS | `@gemeente-tilburg/components-css`         | elke stack: BEM-classes in je eigen markup | nog niet                 |
-| React            | `@gemeente-tilburg/components-react`       | React 18-projecten                         | ja                       |
-| Angular          | `@gemeente-tilburg/components-angular`     | Angular 20-projecten                       | ja                       |
+| React            | `@gemeente-tilburg/components-react`       | React 18-projecten                         | bij de eerste release    |
+| Angular          | `@gemeente-tilburg/components-angular`     | Angular 20-projecten                       | bij de eerste release    |
 | Web Components   | `@gemeente-tilburg/web-components-stencil` | elke stack: `<tilburg-wbc-*>`-elementen    | nog niet (experimenteel) |
 
 De HTML/CSS-laag is leidend: React, Angular en Web Components renderen precies dezelfde DOM en classes.

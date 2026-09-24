@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,11 @@ import { FormControl } from '@angular/forms';
 })
 export class TilburgTextarea {
   @Input() id?: string = undefined;
+
+  /** The id belongs on the inner native control, so `<label for>` resolves to it; strip it from the host so it is not
+   *  on the page twice (same approach as `TilburgCombobox`). */
+  @HostBinding('attr.id') readonly hostId: null = null;
+
   @Input() dir = '';
   @Input() disabled = false;
   @Input() invalid = false;

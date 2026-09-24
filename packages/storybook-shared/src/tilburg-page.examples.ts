@@ -12,7 +12,7 @@ const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page>
-  <tilburg-page-header logoSrc="/logo-on-dark.svg" title="Gemeente Tilburg" />
+  <tilburg-page-header logoSrc="logo-on-dark.svg" title="Gemeente Tilburg" />
   <tilburg-page-content>
     <!-- main content -->
   </tilburg-page-content>
@@ -30,7 +30,7 @@ import { Page, PageContent, PageFooter, PageHeader, Paragraph } from '@gemeente-
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <Page>
-      <PageHeader logoSrc="/logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
+      <PageHeader logoSrc="logo-on-dark.svg" title="Gemeente Tilburg" titleHref="/" />
       <PageContent id="main" tabIndex={-1}>
         {children}
         <Paragraph>Pagina-inhoud staat hier.</Paragraph>
@@ -80,7 +80,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
 <tilburg-wbc-page>
-  <tilburg-wbc-page-header logo-src="/logo-on-dark.svg" heading="Gemeente Tilburg"></tilburg-wbc-page-header>
+  <tilburg-wbc-page-header logo-src="logo-on-dark.svg" heading="Gemeente Tilburg"></tilburg-wbc-page-header>
   <tilburg-wbc-page-content id="main" tabindex="-1">…</tilburg-wbc-page-content>
   <tilburg-wbc-page-footer links='[{"label":"Privacystatement","href":"/privacystatement"}]'></tilburg-wbc-page-footer>
 </tilburg-wbc-page>
