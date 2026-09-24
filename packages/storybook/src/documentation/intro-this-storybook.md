@@ -5,7 +5,7 @@
 
 <img
   src="logo.svg"
-  alt="Gemeente Tilburg"
+  alt="Open Tilburg"
   style="width: 100%; max-width: 260px; height: auto; margin-block-end: 1rem;"
 />
 

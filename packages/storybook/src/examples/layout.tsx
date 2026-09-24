@@ -32,7 +32,7 @@ export const ExamplePage = ({ children }: { children: ReactNode }) => {
   return (
     <Page className="tilburg-example">
       <SkipLink href={`#${MAIN_ID}`}>Direct naar de inhoud</SkipLink>
-      <PageHeader logoSrc="logo-on-dark.svg" logoAlt="Gemeente Tilburg, naar de homepage" titleHref="#">
+      <PageHeader logoSrc="logo-on-dark.svg" logoAlt="Open Tilburg, naar de homepage" titleHref="#">
         <LanguageToggle options={languages} active={language} onToggle={setLanguage} />
       </PageHeader>
       <PageContent id={MAIN_ID} tabIndex={-1} className="tilburg-example__content">
