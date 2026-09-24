@@ -31,8 +31,10 @@ const readMode = (): Mode => {
 
 const isTilburg = (entry: { tags?: string[] }) => Boolean(entry.tags?.includes(TILBURG_TAG));
 
-/* Documentation pages (Intro, Aan de slag, …) are MDX files of their own; they stay visible whatever the filter. */
-const isDocumentation = (entry: { tags?: string[] }) => Boolean(entry.tags?.includes('unattached-mdx'));
+/* Documentation pages (Intro, Aan de slag, …, MDX files of their own) and the example pages (tag `example`) are not
+   components; they stay visible whatever the filter. */
+const isDocumentation = (entry: { tags?: string[] }) =>
+  Boolean(entry.tags?.some((tag) => tag === 'unattached-mdx' || tag === 'example'));
 
 export const applyTlbFilter = (api: API, mode: Mode = readMode()) => {
   try {
