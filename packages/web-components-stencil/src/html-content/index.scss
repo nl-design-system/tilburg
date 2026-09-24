@@ -1,0 +1,7 @@
+@use "../../../components-css/html-content/index";
+
+/* Light-DOM host defaults to `display: inline`; match the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-html-content {
+  display: block;
+}

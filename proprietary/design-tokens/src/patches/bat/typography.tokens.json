@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "tilburg": {
+      "typography": {
+        "font-family": {
+          "primary": {
+            "$value": "DIN2014Regular, \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
+            "$type": "fontFamilies"
+          },
+          "secondary": {
+            "$value": "DIN2014Light",
+            "$type": "fontFamilies"
+          },
+          "code": {
+            "$value": "\"Fira Code\", Tahoma, Verdana, sans-serif",
+            "$type": "fontFamilies"
+          }
+        }
+      }
+    }
+  }
+}

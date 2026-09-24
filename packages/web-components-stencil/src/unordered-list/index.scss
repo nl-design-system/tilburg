@@ -1,0 +1,7 @@
+@use "../../../components-css/unordered-list/index";
+
+/* Light-DOM host defaults to `display: inline`; match the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-unordered-list {
+  display: block;
+}

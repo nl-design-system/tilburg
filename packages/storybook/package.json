@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/storybook",
-  "description": "Storybook based on the NL Design System architecture",
+  "description": "Storybook for the Tilburg HTML/CSS reference, React components and web components",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
   "keywords": [
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "storybook build --output-dir dist/ --config-dir config/",
     "clean": "rimraf dist/",
-    "lint-build": "tsc --noEmit --project tsconfig.json",
+    "lint": "tsc --noEmit --project tsconfig.json",
     "storybook": "storybook dev --config-dir config/ --port 6006"
   },
   "devDependencies": {
@@ -38,6 +38,7 @@
     "@gemeente-tilburg/web-components-stencil": "workspace:*",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
+    "@utrecht/component-library-css": "5.2.0",
     "@utrecht/component-library-react": "4.2.0",
     "@utrecht/components": "6.2.0",
     "react": "18.3.1",
@@ -47,11 +48,5 @@
     "typescript": "5.5.4",
     "vite": "5.4.10"
   },
-  "dependencies": {
-    "@amsterdam/design-system-css": "0.11.1",
-    "@amsterdam/design-system-react": "0.11.1",
-    "@amsterdam/design-system-assets": "0.2.1",
-    "@amsterdam/design-system-tokens": "0.11.0",
-    "clsx": "2.1.1"
-  }
+  "dependencies": {}
 }

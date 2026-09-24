@@ -1,5 +1,5 @@
 import type { Decorator } from '@storybook/react';
-import { Document } from '@utrecht/component-library-react/dist/css-module';
+import { Document } from '@utrecht/component-library-react';
 
 export const ParametersArgsDecorator: Decorator = (Story, context) => {
   context.parameters['args'] = context.args;

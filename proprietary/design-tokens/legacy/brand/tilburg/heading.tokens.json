@@ -2,8 +2,14 @@
   "tilburg": {
     "heading": {
       "color": {
-        "value": "{tilburg.color.blue.500}",
-        "type": "color"
+        "h1": {
+          "value": "{tilburg.color.blue.400}",
+          "type": "color"
+        },
+        "h2-h6": {
+          "value": "{tilburg.color.black-txt}",
+          "type": "color"
+        }
       },
       "font-family": {
         "value": "{tilburg.typography.font-family.primary}",

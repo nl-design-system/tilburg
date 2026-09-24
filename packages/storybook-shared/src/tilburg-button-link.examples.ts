@@ -1,0 +1,129 @@
+/* @license CC0-1.0 */
+
+/* Canonical HTML/CSS reference markup for the Tilburg button link. */
+
+export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fbutton-link';
+
+const intro = `Anchor styled like a button — same visual treatment as \`<tilburg-button>\` but rendered as an \`<a>\` for navigation that needs URL semantics (right-click, copy link, middle-click new tab, etc.). Three appearance modifiers: \`--primary-action\`, \`--secondary-action\`, \`--subtle\`.`;
+
+const usageAngular = `### Angular
+
+\`\`\`html
+<a tilburg-button-link appearance="primary-action-button" href="/aanvraag/nieuw">
+  Nieuwe aanvraag starten
+</a>
+\`\`\`
+
+Inputs: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`external\` (sets \`rel="external noopener noreferrer"\`).`;
+
+const usageReact = `### React
+
+\`\`\`tsx
+import { ButtonLink } from '@gemeente-tilburg/components-react';
+
+export function StartAanvraag() {
+  return (
+    <ButtonLink appearance="primary-action-button" href="/aanvraag/nieuw">
+      Nieuwe aanvraag starten
+    </ButtonLink>
+  );
+}
+\`\`\`
+
+Props: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`), \`external\` (sets \`rel="external noopener noreferrer"\`), \`placeholder\` (renders \`aria-disabled="true"\` plus the \`--placeholder\` modifier, for a link that is visible but not yet actionable), plus any standard anchor attribute (\`href\`, \`target\`, \`rel\`, \`aria-label\`, \`className\`, …). \`ButtonLinkAppearance\` and \`ButtonLinkProps\` are exported as type aliases.
+
+The \`--html-a\` class is applied for you, so unlike the plain HTML snippet you never write it by hand.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
+
+\`\`\`html
+<a href="/aanvraag/nieuw"
+   class="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--primary-action">
+  Nieuwe aanvraag starten
+</a>
+\`\`\``;
+
+const baselineShift = `## Vertical baseline shift
+
+Button-link uses the same TradeGothicCondensed18 font as \`<tilburg-button>\`, which has more empty descent space below the baseline than ascent space above. With \`line-height: 1\` this makes the visible letters read as sitting *above* the geometric centre of the control.
+
+We compensate the same way as the button: more \`padding-block-start\`, less \`padding-block-end\`, with total height unchanged. Button-link has no size variants, so a single offset is applied via the design token \`--tilburg-fix-button-link-baseline-offset\` (\`2px\`, defined in \`proprietary/design-tokens/src/patches/button-link.tokens.json\`).
+
+See the "Vertical baseline shift" section in the **Button** story for the full rationale (font metrics, why the shift is needed, why the value differs per size).`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-wbc-button-link appearance="primary-action-button" href="/aanvraag/nieuw">
+  Nieuwe aanvraag starten
+</tilburg-wbc-button-link>
+<tilburg-wbc-button-link appearance="secondary-action-button" href="https://example.com" external>
+  Open extern
+</tilburg-wbc-button-link>
+\`\`\`
+
+Attributes: \`appearance\` (\`'primary-action-button' | 'secondary-action-button' | 'subtle-button'\`, no modifier when unset), \`href\`, \`target\`, \`rel\` (forwarded to the inner \`<a>\`), \`external\` (sets \`rel="external noopener noreferrer"\`, replacing \`rel\`), \`placeholder\` (\`aria-disabled="true"\` plus the \`--placeholder\` modifier, as in React). \`aria-label\`, \`aria-describedby\`, \`title\` and \`lang\` are moved from the host onto the inner \`<a>\`. Slot: default (link text).
+
+Unlike Angular's \`<a tilburg-button-link>\` attribute selector, this is a wrapper element that renders the \`<a>\` itself — custom elements cannot extend a native \`<a>\` in a cross-browser way.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+
+${baselineShift}
+`;
+
+export interface Example {
+  name: string;
+  html: string;
+}
+
+export const examples = {
+  primaryAction: {
+    name: 'Primary action',
+    html: `<a href="#" class="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--primary-action">Nieuwe aanvraag starten</a>`,
+  },
+  secondaryAction: {
+    name: 'Secondary action',
+    html: `<a href="#" class="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--secondary-action">Meer informatie</a>`,
+  },
+  subtle: {
+    name: 'Subtle',
+    html: `<a href="#" class="utrecht-button-link utrecht-button-link--html-a utrecht-button-link--subtle">Ga terug</a>`,
+  },
+} satisfies Record<string, Example>;

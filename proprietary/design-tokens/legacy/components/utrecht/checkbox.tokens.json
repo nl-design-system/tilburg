@@ -1,10 +1,6 @@
 {
   "utrecht": {
     "checkbox": {
-      "border-radius": {
-        "type": "borderRadius",
-        "value": "{tilburg.border-radius.sm}"
-      },
       "size": {
         "type": "sizing",
         "value": "{tilburg.size.xs}"
@@ -43,7 +39,7 @@
           "type": "color"
         },
         "border-color": {
-          "value": "{tilburg.form-control.focus.border-color}",
+          "value": "{tilburg.form-control.focus.border-color-1}",
           "type": "color"
         },
         "border-width": {
@@ -102,7 +98,7 @@
             "type": "color"
           },
           "border-color": {
-            "value": "{tilburg.form-control.focus.border-color}",
+            "value": "{tilburg.form-control.focus.border-color-1}",
             "type": "color"
           },
           "color": {
@@ -220,7 +216,7 @@
             "type": "color"
           },
           "border-color": {
-            "value": "{tilburg.form-control.focus.border-color}",
+            "value": "{tilburg.form-control.focus.border-color-1}",
             "type": "color"
           },
           "color": {

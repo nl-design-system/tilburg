@@ -2,7 +2,7 @@
   "tilburg": {
     "focus": {
       "background-color": {
-        "value": "{tilburg.color.pink.200}",
+        "value": "{tilburg.color.pink.500}",
         "type": "color"
       },
       "color": {
@@ -10,7 +10,7 @@
         "type": "color"
       },
       "outline-color": {
-        "value": "{tilburg.color.extra.purple}",
+        "value": "{tilburg.color.black}",
         "type": "color"
       },
       "inverse": {

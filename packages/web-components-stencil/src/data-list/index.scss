@@ -1,0 +1,13 @@
+@use "../../../components-css/data-list/index";
+
+/* Light-DOM hosts default to `display: inline`. The HTML/CSS reference uses
+   `<dl>`/`<div>`/`<dt>`/`<dd>`, which are block by default — block the hosts so
+   the rows stack and the per-row border + padding paint (same rules as the
+   Angular `:host(...)` selectors; the list host itself is added for the same
+   reason). */
+tilburg-wbc-data-list,
+tilburg-wbc-data-list-item,
+tilburg-wbc-data-list-key,
+tilburg-wbc-data-list-value {
+  display: block;
+}

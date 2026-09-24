@@ -1,0 +1,30 @@
+{
+  "components/breadcrumb": {
+    "tilburg": {
+      "breadcrumb": {
+        "font-size": {
+          "$value": "0.875rem"
+        },
+        "margin-block-end": {
+          "$value": "{tilburg.space.inline.mouse}"
+        },
+        "separator-color": {
+          "$value": "{tilburg.color.gray.400}"
+        },
+        "link": {
+          "color": {
+            "$value": "{tilburg.color.blue.300}"
+          },
+          "current": {
+            "color": {
+              "$value": "{tilburg.color.gray.500}"
+            },
+            "font-weight": {
+              "$value": "700"
+            }
+          }
+        }
+      }
+    }
+  }
+}

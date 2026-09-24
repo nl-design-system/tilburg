@@ -1,0 +1,176 @@
+/* @license CC0-1.0 */
+
+/* Canonical HTML/CSS reference markup for the Tilburg textbox. Imported by
+   both the React storybook (`packages/storybook`) and the Angular storybook
+   (`packages/storybook-angular`) so the HTML lives in one place. Each
+   storybook's `tilburg-textbox.stories.*` file is a thin renderer wrapper
+   around the strings below. */
+
+export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Ftextbox';
+
+const intro = `Single-line text input. Tilburg layer adds hover and focus-visible rules on top of utrecht-textbox.`;
+
+const usageAngular = `### Angular
+
+\`\`\`html
+<label class="utrecht-form-label" for="email">E-mailadres</label>
+<tilburg-textbox
+  id="email"
+  type="email"
+  [control]="form.controls.email"
+  placeholder="naam@voorbeeld.nl"
+  [required]="true"
+/>
+\`\`\`
+
+Inputs: \`id\`, \`control\` (\`FormControl\`), \`type\`, \`name\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`disabled\`, \`invalid\`, \`required\`, \`readonly\`, \`ariaLabel\`, \`ariaDescribedBy\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
+
+\`\`\`html
+<label class="utrecht-form-label" for="email">E-mailadres</label>
+<input
+  id="email"
+  type="email"
+  class="utrecht-textbox utrecht-textbox--html-input"
+  placeholder="naam@voorbeeld.nl"
+/>
+\`\`\``;
+
+const usageReact = `### React
+
+\`Textbox\` is a styled \`<input>\` and nothing more — bind it like any React input: \`value\` + \`onChange\` when controlled, \`defaultValue\` when uncontrolled.
+
+\`\`\`tsx
+import { FormLabel, Textbox } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function EmailField() {
+  const [email, setEmail] = useState('');
+  const invalid = email.length > 0 && !email.includes('@');
+
+  return (
+    <>
+      <FormLabel htmlFor="email">E-mailadres</FormLabel>
+      <Textbox
+        id="email"
+        name="email"
+        type="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        placeholder="naam@voorbeeld.nl"
+        required
+        invalid={invalid}
+        aria-describedby="email-hint"
+      />
+      <span id="email-hint">We gebruiken je e-mailadres alleen voor deze aanvraag.</span>
+    </>
+  );
+}
+\`\`\`
+
+The component is wrapped in \`forwardRef\` and forwards the ref to the \`<input>\`, and everything it does not consume itself is spread onto that input. Spreading \`{...register('email')}\` from react-hook-form (or Formik's \`getFieldProps('email')\`) therefore just works, with no extra binding layer in between.
+
+Watch the naming: the prop is \`readOnly\` (camel case), and the ARIA hooks are written as the DOM attributes \`aria-label\` / \`aria-describedby\`.
+
+Props: \`invalid?: boolean\` (adds \`aria-invalid="true"\` and \`utrecht-textbox--invalid\`), plus every native input attribute — \`type\` (default \`'text'\`), \`value\`, \`defaultValue\`, \`onChange\`, \`name\`, \`id\`, \`placeholder\`, \`dir\`, \`inputMode\`, \`required\`, \`readOnly\`, \`disabled\`, \`className\`, \`aria-*\`, … \`TextboxProps\` is exported as a type alias.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-wbc-form-label for="email">E-mailadres</tilburg-wbc-form-label>
+<tilburg-wbc-textbox
+  id="email"
+  name="email"
+  type="email"
+  placeholder="naam@voorbeeld.nl"
+  required
+  aria-describedby="email-hint"
+></tilburg-wbc-textbox>
+
+<script type="module">
+  document.querySelector('tilburg-wbc-textbox').addEventListener('input', (event) => {
+    console.log(event.target.value); // the native input event of the inner <input>
+  });
+</script>
+\`\`\`
+
+The real \`<input>\` is rendered in light DOM, so it takes part in the surrounding \`<form>\` and \`<label for>\` natively. Listen to the native \`input\` / \`change\` events, they bubble through the host; there are no custom events.
+
+Attributes: \`type\` (default \`'text'\`), \`name\`, \`value\` (kept in sync with user input), \`placeholder\`, \`autocomplete\`, \`disabled\`, \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-textbox--invalid\`), \`required\` (also \`aria-required="true"\`), \`readonly\`. \`id\`, \`title\`, \`dir\` (defaults to \`auto\`), \`inputmode\` (defaults to \`numeric\` for \`type="number"\`), \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<input>\` — they replace Angular's \`ariaLabel\` / \`ariaLabelledBy\` / \`ariaDescribedBy\` / \`inputMode\` inputs. Angular's \`control\` (\`FormControl\`) has no equivalent: read \`value\` or the surrounding form.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
+const rowStyle = 'display:flex;flex-direction:column;gap:1rem;max-width:24rem';
+
+export interface Example {
+  name: string;
+  html: string;
+}
+
+/* Each named export is one story. Using a typed object literal (not a
+   `Record<string, Example>`) so consumers' strict TS settings —
+   `noPropertyAccessFromIndexSignature` in particular — still allow dot
+   access (`examples.default.html` instead of `examples['default'].html`). */
+export const examples = {
+  default: {
+    name: 'Default',
+    html: `<div style="${rowStyle}">
+  <label class="utrecht-form-label" for="tb-default">E-mailadres</label>
+  <input id="tb-default" type="text" class="utrecht-textbox utrecht-textbox--html-input" placeholder="naam@voorbeeld.nl" />
+</div>`,
+  },
+  filled: {
+    name: 'With value',
+    html: `<div style="${rowStyle}">
+  <label class="utrecht-form-label" for="tb-filled">Voornaam</label>
+  <input id="tb-filled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="Jan" />
+</div>`,
+  },
+  invalid: {
+    name: 'Invalid',
+    html: `<div style="${rowStyle}">
+  <label class="utrecht-form-label" for="tb-invalid">E-mailadres</label>
+  <input id="tb-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input" value="niet-geldig" aria-invalid="true" />
+</div>`,
+  },
+  disabled: {
+    name: 'Disabled',
+    html: `<div style="${rowStyle}">
+  <label class="utrecht-form-label" for="tb-disabled">Burgerservicenummer</label>
+  <input id="tb-disabled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="123456789" disabled />
+</div>`,
+  },
+} satisfies Record<string, Example>;

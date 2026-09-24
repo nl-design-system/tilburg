@@ -1,0 +1,7 @@
+@import "../../../components-css/modal/index";
+
+/* The footer always renders so `[slot=footer]` content can be projected into
+   it; with nothing projected it must not add its flex row + spacing. */
+tilburg-modal .tilburg-modal__footer:empty {
+  display: none;
+}

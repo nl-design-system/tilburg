@@ -12,6 +12,18 @@
           "value": "{tilburg.size.icon.4xl}",
           "type": "sizing"
         }
+      },
+      "upload": {
+        "size": {
+          "value": "{tilburg.size.icon.2xl}",
+          "type": "sizing"
+        }
+      },
+      "small": {
+        "size": {
+          "value": "{tilburg.size.icon.sm}",
+          "type": "sizing"
+        }
       }
     }
   }

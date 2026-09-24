@@ -1,68 +1,38 @@
-import '@gemeente-tilburg/components-css/modal/index.scss';
-import { Button } from '@utrecht/button-react/dist/css';
-import { Heading } from '@utrecht/component-library-react/dist/css-module';
-import clsx from 'clsx';
-import React, { useState } from 'react';
-
-const CloseIcon = () => (
-  <svg aria-hidden="true" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M.293.293a1 1 0 0 1 1.414 0L7 5.586 12.293.293a1 1 0 1 1 1.414 1.414L8.414 7l5.293 5.293a1 1 0 0 1-1.414 1.414L7 8.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L5.586 7 .293 1.707a1 1 0 0 1 0-1.414Z"
-      fill="currentColor"
-    />
-  </svg>
-);
+import { forwardRef, MouseEvent, ReactNode } from 'react';
+import { Button } from './Button';
+import { Modal } from './Modal';
 
 export interface AlertDialogProps {
   id?: string;
   title: string;
-  children: React.ReactNode;
-  customFooter?: React.ReactNode;
+  children: ReactNode;
+  customFooter?: ReactNode;
 }
 
-export const AlertDialog = React.forwardRef<HTMLDialogElement, AlertDialogProps>(
-  ({ id, title, children, customFooter }, ref) => {
-    const [isOpen, setIsOpen] = useState(false);
+const closeClosestDialog = (event: MouseEvent<HTMLElement>) => event.currentTarget.closest('dialog')?.close();
 
-    const onCloseHandler = () => {
-      setIsOpen(false);
-      (ref as React.RefObject<HTMLDialogElement>)?.current?.close();
-    };
-
-    const onBackdropClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-      if (event.target !== (ref as React.RefObject<HTMLDialogElement>).current) {
-        return;
+/**
+ * @deprecated Use `Modal`. Kept for backwards compatibility: same props as
+ * before, rendered through `Modal`. Without `customFooter` it keeps the old
+ * default footer with a single close button.
+ */
+export const AlertDialog = forwardRef<HTMLDialogElement, AlertDialogProps>(
+  ({ id, title, children, customFooter }, ref) => (
+    <Modal
+      ref={ref}
+      id={id}
+      title={title}
+      footer={
+        customFooter ?? (
+          <Button appearance="primary-action-button" onClick={closeClosestDialog}>
+            Sluiten
+          </Button>
+        )
       }
-      setIsOpen(false);
-      (ref as React.RefObject<HTMLDialogElement>)?.current?.close();
-    };
-
-    const _CLASSES = clsx('tilburg-modal', isOpen && 'open');
-
-    return (
-      <dialog id={id} className={_CLASSES} ref={ref} onClick={onBackdropClick}>
-        <div className="tilburg-modal__header">
-          <Heading level={2}>{title}</Heading>
-          <button className="tilburg-modal__close-button" onClick={onCloseHandler}>
-            <CloseIcon />
-            Close
-          </button>
-        </div>
-        <div className="tilburg-modal__content">{children}</div>
-        {customFooter ? (
-          customFooter
-        ) : (
-          <div className="tilburg-modal__footer">
-            <Button appearance="primary-action-button" onClick={onCloseHandler}>
-              Close
-            </Button>
-          </div>
-        )}
-      </dialog>
-    );
-  },
+    >
+      {children}
+    </Modal>
+  ),
 );
 
 AlertDialog.displayName = 'AlertDialog';

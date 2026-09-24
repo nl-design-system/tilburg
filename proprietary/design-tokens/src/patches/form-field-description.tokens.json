@@ -1,0 +1,20 @@
+{
+  "components/form-field-description": {
+    "utrecht": {
+      "form-field-description": {
+        "color": {
+          "$value": "#626262"
+        },
+        "font-family": {
+          "$value": "Roboto"
+        },
+        "font-weight": {
+          "$value": "400"
+        },
+        "margin-block-end": {
+          "$value": "4px"
+        }
+      }
+    }
+  }
+}

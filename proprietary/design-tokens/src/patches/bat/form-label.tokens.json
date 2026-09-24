@@ -1,0 +1,17 @@
+{
+  "components/form-label": {
+    "utrecht": {
+      "form-label": {
+        "font-weight": {
+          "$value": "400"
+        },
+        "checkbox-font-weight": {
+          "$value": "400"
+        },
+        "radio-font-weight": {
+          "$value": "400"
+        }
+      }
+    }
+  }
+}

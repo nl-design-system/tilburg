@@ -1,0 +1,36 @@
+.tilburg-ordered-list {
+  list-style-type: decimal;
+  margin-block-end: var(--tilburg-space-block-rabbit);
+  margin-block-start: var(--tilburg-space-block-rabbit);
+}
+
+.tilburg-ordered-list--by-letter {
+  list-style-type: lower-alpha;
+}
+
+/* Nested lists collapse their outer margins. */
+.tilburg-ordered-list .tilburg-ordered-list,
+.tilburg-ordered-list .tilburg-unordered-list,
+.tilburg-unordered-list .tilburg-ordered-list {
+  margin-block-end: 0;
+  margin-block-start: 0;
+}
+
+/* `--html-ol` marks an `<ol>` whose list items are plain `<li>` elements that
+   do not carry the BEM item class — the same escape hatch utrecht offers with
+   its `--html-content` variant. Both wrappers (`<tilburg-ordered-list>` and
+   `<OrderedList>`) always emit this modifier, so bare `<li>` children pick up
+   exactly the same item styling as an explicit `.utrecht-ordered-list__item`.
+   Without this, React lists rendered with plain `<li>` lost the line height,
+   the item spacing, the marker gap and the marker colour. */
+.utrecht-ordered-list--html-ol > li,
+.utrecht-ordered-list__item {
+  line-height: var(--utrecht-unordered-list-line-height, var(--utrecht-document-line-height, inherit));
+  margin-block-end: var(--utrecht-unordered-list-item-margin-block-end);
+  margin-block-start: var(--utrecht-unordered-list-item-margin-block-start);
+  padding-inline-start: var(--utrecht-unordered-list-item-padding-inline-start, 1ch);
+
+  &::marker {
+    color: var(--utrecht-unordered-list-marker-color);
+  }
+}
