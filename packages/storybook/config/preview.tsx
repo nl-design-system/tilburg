@@ -97,6 +97,7 @@ const preview: Preview = {
             'Aan de slag',
             'Tips & valkuilen',
             'Implementatiestatus',
+            'Voorbeelden',
             'Open Source License',
             'Toestemming voor gebruik',
             '*',
