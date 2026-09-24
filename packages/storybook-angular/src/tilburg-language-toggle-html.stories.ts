@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/angular';
-import { bugs, description, examples } from '../../storybook-shared/src/tilburg-language-toggle.examples';
+import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilburg-language-toggle.examples';
 
 /* Thin Angular wrapper around the shared HTML/CSS reference markup
    (`packages/storybook-shared/src/tilburg-language-toggle.examples.ts`). The
@@ -14,7 +14,7 @@ const meta: Meta = {
   tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionHtml } },
   },
 };
 

@@ -2,9 +2,9 @@
    own `tilburg-*` markup instead of an Utrecht base) get a "TLB" badge, so they stand out between the components that
    style an Utrecht component. The same file as `packages/storybook/config/sidebarLabel.tsx`. */
 
-import type { API } from 'storybook/manager-api';
-import { TooltipNote, WithTooltip } from 'storybook/internal/components';
 import React from 'react';
+import { TooltipNote, WithTooltip } from 'storybook/internal/components';
+import type { API } from 'storybook/manager-api';
 
 interface SidebarEntry {
   name: string;

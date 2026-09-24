@@ -27,7 +27,6 @@ export interface AttributeInheritor {
 export function inheritAttributes(
   host: HTMLElement,
   names: readonly string[],
-  // eslint-disable-next-line no-unused-vars
   onChange: (attributes: InheritedAttributes) => void,
 ): AttributeInheritor {
   let current: InheritedAttributes = {};

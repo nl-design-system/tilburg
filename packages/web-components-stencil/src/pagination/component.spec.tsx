@@ -77,7 +77,6 @@ describe('tilburg-wbc-pagination', () => {
 
   it('uses a custom pageLabel function', async () => {
     const page = await render('<tilburg-wbc-pagination page-count="2" current-page="1"></tilburg-wbc-pagination>');
-    // eslint-disable-next-line no-unused-vars
     (page.root as HTMLElement & { pageLabel: (n: number) => string }).pageLabel = (n) => `Page ${n}`;
     await page.waitForChanges();
     expect(page.root!.querySelector('.tilburg-pagination__page')!.getAttribute('aria-label')).toBe('Page 1');

@@ -19,13 +19,14 @@ const meta: Meta<TilburgPageHeader> = {
 export default meta;
 type Story = StoryObj<TilburgPageHeader>;
 
-const LOGO_SRC = '/logo-on-dark.svg';
+const LOGO_SRC = 'logo-on-dark.svg';
 
 export const LogoOnly: Story = {
   name: 'Logo only',
   render: () => ({
     props: { logoSrc: LOGO_SRC },
-    template: `<tilburg-page-header [logoSrc]="logoSrc" titleHref="#"></tilburg-page-header>`,
+    /* Without a title the logo is the only content of the link, so its alt text is the link name. */
+    template: `<tilburg-page-header [logoSrc]="logoSrc" logoAlt="Open Tilburg, naar de homepage" titleHref="#"></tilburg-page-header>`,
   }),
 };
 

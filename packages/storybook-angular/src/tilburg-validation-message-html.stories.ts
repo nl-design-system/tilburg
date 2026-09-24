@@ -1,7 +1,7 @@
 /* @license CC0-1.0 */
 
 import type { Meta, StoryObj } from '@storybook/angular';
-import { bugs, description, examples } from '../../storybook-shared/src/tilburg-validation-message.examples';
+import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilburg-validation-message.examples';
 
 /* Thin Angular wrapper around the shared HTML/CSS reference markup
    (`packages/storybook-shared/src/tilburg-validation-message.examples.ts`). The React
@@ -13,7 +13,7 @@ const meta: Meta = {
   tags: ['autodocs', 'tilburg'],
   parameters: {
     bugs,
-    docs: { description: { component: description } },
+    docs: { description: { component: descriptionHtml } },
   },
 };
 

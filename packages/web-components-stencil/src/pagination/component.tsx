@@ -69,7 +69,6 @@ export class TilburgWbcPagination {
   @Prop() nextLabel = 'Volgende pagina';
   @Prop() lastLabel = 'Laatste pagina';
   /** Accessible name per page button. JS property only (a function). */
-  // eslint-disable-next-line no-unused-vars
   @Prop() pageLabel: (n: number) => string = (n: number) => `Pagina ${n}`;
 
   /**

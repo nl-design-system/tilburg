@@ -1,6 +1,7 @@
 ---
 "@gemeente-tilburg/design-tokens": minor
-"@gemeente-tilburg/components-css": minor
+"@gemeente-tilburg/components-react": minor
+"@gemeente-tilburg/components-angular": minor
 ---
 
 Make more of the components themeable through tokens, without any visual change for the Tilburg and BAT themes: every

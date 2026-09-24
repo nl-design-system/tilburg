@@ -10,7 +10,6 @@ export interface LanguageOption {
 export interface LanguageToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'onToggle'> {
   options?: LanguageOption[];
   active?: string | null;
-  // eslint-disable-next-line no-unused-vars
   onToggle?: (code: string) => void;
 }
 

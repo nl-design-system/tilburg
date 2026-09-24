@@ -15,6 +15,7 @@
   "scripts": {
     "build": "ng run storybook-angular:build-storybook",
     "clean": "rimraf dist/",
+    "lint": "tsc --noEmit --project tsconfig.json && tsc --noEmit --project tsconfig.manager.json",
     "storybook": "ng run storybook-angular:storybook"
   },
   "devDependencies": {
@@ -35,6 +36,7 @@
     "@storybook/addon-a11y": "9.1.20",
     "@storybook/addon-docs": "9.1.20",
     "@storybook/angular": "9.1.20",
+    "@types/react": "18.3.12",
     "@utrecht/component-library-angular": "1.1.0",
     "@utrecht/component-library-css": "5.2.0",
     "rimraf": "6.0.1",

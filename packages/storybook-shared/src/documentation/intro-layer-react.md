@@ -13,6 +13,10 @@ npm install @gemeente-tilburg/components-react \
             @utrecht/component-library-css
 ```
 
+> `@gemeente-tilburg/components-react` staat nog niet op npm; het komt bij de eerste release. Tot dan gebruik je een
+> tarball uit deze repository (`pnpm run pack:local`, zie _Lokaal gebruiken in een andere repository_ in
+> `CONTRIBUTING.md`).
+
 ### Setup (React)
 
 Importeer drie stylesheets één keer, bv. in `main.tsx`. **De component-CSS laadt niet vanzelf**: die staat in een apart

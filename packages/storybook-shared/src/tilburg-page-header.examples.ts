@@ -14,7 +14,7 @@ const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-page-header
-  logoSrc="/logo-on-dark.svg"
+  logoSrc="logo-on-dark.svg"
   logoAlt=""
   title="Gemeente Tilburg"
   titleHref="/"
@@ -36,7 +36,7 @@ import { Button, Page, PageHeader } from '@gemeente-tilburg/components-react';
 export function AppHeader() {
   return (
     <Page>
-      <PageHeader logoSrc="/logo-on-dark.svg" logoAlt="" title="Gemeente Tilburg" titleHref="/">
+      <PageHeader logoSrc="logo-on-dark.svg" logoAlt="" title="Gemeente Tilburg" titleHref="/">
         <span className="tilburg-page-header__user">Jan Janssen</span>
         <Button appearance="subtle-button" onClick={() => logout()}>
           Uitloggen
@@ -55,7 +55,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 <header class="tilburg-page-header">
   <div class="tilburg-page-header__container">
     <a class="tilburg-page-header__brand" href="/">
-      <img class="tilburg-page-header__logo" src="/logo-on-dark.svg" alt="" />
+      <img class="tilburg-page-header__logo" src="logo-on-dark.svg" alt="" />
       <span class="tilburg-page-header__title">Gemeente Tilburg</span>
     </a>
     <div class="tilburg-page-header__actions">
@@ -93,7 +93,7 @@ ${theming}
 const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
-<tilburg-wbc-page-header logo-src="/logo-on-dark.svg" logo-alt="" heading="Gemeente Tilburg" title-href="/">
+<tilburg-wbc-page-header logo-src="logo-on-dark.svg" logo-alt="" heading="Gemeente Tilburg" title-href="/">
   <span class="tilburg-page-header__user">Jan Janssen</span>
   <tilburg-wbc-button appearance="subtle-button">Uitloggen</tilburg-wbc-button>
 </tilburg-wbc-page-header>
@@ -126,7 +126,7 @@ export interface Example {
   html: string;
 }
 
-const LOGO_SRC = '/logo-on-dark.svg';
+const LOGO_SRC = 'logo-on-dark.svg';
 
 export const examples = {
   logoOnly: {
@@ -134,7 +134,7 @@ export const examples = {
     html: `<header class="tilburg-page-header">
   <div class="tilburg-page-header__container">
     <a class="tilburg-page-header__brand" href="#">
-      <img class="tilburg-page-header__logo" src="${LOGO_SRC}" alt="" />
+      <img class="tilburg-page-header__logo" src="${LOGO_SRC}" alt="Open Tilburg, naar de homepage" />
     </a>
   </div>
 </header>`,

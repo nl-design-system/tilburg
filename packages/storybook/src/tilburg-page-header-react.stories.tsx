@@ -25,11 +25,11 @@ export const AllPermutations: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <PageHeader title="Alleen titel" titleHref="/" />
-      <PageHeader title="Met logo" logoSrc="/logo-on-dark.svg" logoAlt="" titleHref="/" />
+      <PageHeader title="Met logo" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/" />
       <PageHeader title="Met acties" titleHref="/">
         <Button appearance="subtle-button">Inloggen</Button>
       </PageHeader>
-      <PageHeader title="Met logo en acties" logoSrc="/logo-on-dark.svg" logoAlt="" titleHref="/">
+      <PageHeader title="Met logo en acties" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/">
         <Button appearance="subtle-button">Inloggen</Button>
         <Button appearance="primary-action-button">Account</Button>
       </PageHeader>

@@ -6,11 +6,9 @@ import '@testing-library/jest-dom';
 
 /* jsdom has <dialog> but not showModal()/close(); polyfill just enough. */
 beforeAll(() => {
-  // eslint-disable-next-line no-unused-vars
   HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement) {
     this.setAttribute('open', '');
   };
-  // eslint-disable-next-line no-unused-vars
   HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement) {
     if (!this.hasAttribute('open')) return;
     this.removeAttribute('open');

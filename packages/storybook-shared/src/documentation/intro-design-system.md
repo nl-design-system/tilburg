@@ -20,12 +20,12 @@ De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web 
 <!-- markdownlint-disable MD033 -->
 <figure style="margin: 1.5rem 0;">
   <img
-    src="/diagrams/layers.svg"
-    alt="Tilburg-lagen-architectuur: React-wrappers, Angular-wrappers en Web Components bouwen op de Tilburg HTML/CSS-laag, die op de design-tokens leunt."
+    src="diagrams/layers.svg"
+    alt="Lagen van het Tilburg Design System. Je website of applicatie kiest één laag: React, Angular, Web Components, of zelf de HTML schrijven. Alle vier maken dezelfde Tilburg HTML/CSS, die bouwt op de Utrecht-basis van NL Design System en op de design tokens (thema's Tilburg en BAT, hoog contrast)."
     style="width: 100%; max-width: 760px; height: auto;"
   />
   <figcaption style="margin-top: 0.5rem; font-size: 0.875rem; color: #5B6E8A; text-align: center;">
-    Pijlen wijzen naar onderliggende lagen. De React-, Angular- en Web Components-lagen zijn optioneel — de HTML/CSS-laag is rechtstreeks te gebruiken in elke stack.
+    Van boven naar beneden: wie gebruikt wat. Kies één laag; ze maken allemaal dezelfde HTML/CSS. Zonder framework schrijf je de HTML zelf met de classes uit <code>components-css</code>.
   </figcaption>
 </figure>
 <!-- markdownlint-enable MD033 -->

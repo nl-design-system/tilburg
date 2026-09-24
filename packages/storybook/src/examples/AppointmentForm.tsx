@@ -71,7 +71,6 @@ const RadioGroup = ({
   name: string;
   options: string[];
   value: string | null;
-  // eslint-disable-next-line no-unused-vars
   onChange: (value: string) => void;
 }) => (
   <Fieldset>
@@ -96,7 +95,6 @@ const ComboboxField = ({
   label: string;
   items: ComboboxItem<string>[];
   value: string | null;
-  // eslint-disable-next-line no-unused-vars
   onChange: (value: string | null) => void;
 }) => (
   <FormField>

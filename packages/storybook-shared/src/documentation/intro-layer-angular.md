@@ -12,12 +12,14 @@ Angular 20.
 npm install @gemeente-tilburg/components-angular \
             @gemeente-tilburg/design-tokens \
             @utrecht/component-library-angular@1.1.0 \
-            @utrecht/design-tokens@1.0.0 \
             @utrecht/component-library-css
 ```
 
-`@utrecht/component-library-angular` en `@utrecht/design-tokens` zijn peer-dependencies: installeer precies deze
-versies.
+`@utrecht/component-library-angular` is een peer-dependency: installeer precies deze versie.
+
+> `@gemeente-tilburg/components-angular` staat nog niet op npm; het komt bij de eerste release. Tot dan gebruik je een
+> tarball uit deze repository (`pnpm run pack:local`, zie _Lokaal gebruiken in een andere repository_ in
+> `CONTRIBUTING.md`).
 
 ### Setup (Angular)
 

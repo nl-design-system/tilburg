@@ -3,9 +3,9 @@
    filter API (`experimental_setFilter`), which both Storybook versions in this repo have; the built-in tag filter of
    Storybook 9 can only include a tag, not exclude it. The choice is remembered per browser. The same file as
    `packages/storybook/config/TlbFilter.tsx`, with the Storybook 9 imports. */
-import { type API, useStorybookApi } from 'storybook/manager-api';
 import React, { useState } from 'react';
 import { IconButton, TooltipLinkList, WithTooltip } from 'storybook/internal/components';
+import { type API, useStorybookApi } from 'storybook/manager-api';
 import { TILBURG_TAG } from './sidebarLabel';
 
 export const TLB_FILTER_ID = 'tilburg/tlb-filter';

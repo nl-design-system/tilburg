@@ -7,13 +7,13 @@ Deze pagina brengt je van een leeg project naar een eerste Tilburg-component die
 
 ## Welke packages kun je installeren?
 
-| Package                                    | Laag                    | Status                                                                  |
-| ------------------------------------------ | ----------------------- | ----------------------------------------------------------------------- |
-| `@gemeente-tilburg/design-tokens`          | basis, nodig voor alles | gepubliceerd op npm                                                     |
-| `@gemeente-tilburg/components-react`       | React                   | gepubliceerd op npm                                                     |
-| `@gemeente-tilburg/components-angular`     | Angular                 | gepubliceerd op npm                                                     |
-| `@gemeente-tilburg/components-css`         | Plain HTML / CSS        | **nog niet gepubliceerd** — vraag het Design System-team om een build   |
-| `@gemeente-tilburg/web-components-stencil` | Web Components          | **nog niet gepubliceerd** — experimenteel, vraag het Design System-team |
+| Package                                    | Laag                    | Status                                                                                            |
+| ------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
+| `@gemeente-tilburg/design-tokens`          | basis, nodig voor alles | gepubliceerd op npm                                                                               |
+| `@gemeente-tilburg/components-react`       | React                   | **nog niet op npm** — komt bij de eerste release; tot dan via een tarball (zie `CONTRIBUTING.md`) |
+| `@gemeente-tilburg/components-angular`     | Angular                 | **nog niet op npm** — komt bij de eerste release; tot dan via een tarball (zie `CONTRIBUTING.md`) |
+| `@gemeente-tilburg/components-css`         | Plain HTML / CSS        | **nog niet gepubliceerd** — vraag het Design System-team om een build                             |
+| `@gemeente-tilburg/web-components-stencil` | Web Components          | **nog niet gepubliceerd** — experimenteel, vraag het Design System-team                           |
 
 De componenten zijn nog in ontwikkeling (versie 0.x): API's kunnen per release veranderen. Lees de changelog bij een
 update.

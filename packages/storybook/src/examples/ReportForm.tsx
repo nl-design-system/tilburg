@@ -108,7 +108,6 @@ const TextField = ({
   label: string;
   description?: string;
   error?: string;
-  // eslint-disable-next-line no-unused-vars
   children: (describedBy: string | undefined) => ReactNode;
 }) => {
   const describedBy =

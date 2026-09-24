@@ -1,0 +1,14 @@
+{
+  "//": "Type-checks the Storybook manager files (.tsx). They are bundled by Storybook, not by the Angular compiler, so they stay out of tsconfig.json (whose build does not support JSX).",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "lib": ["es2022", "dom"],
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": [".storybook/**/*.tsx"]
+}

@@ -25,9 +25,7 @@ export interface PaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'onNa
   previousLabel?: string;
   nextLabel?: string;
   lastLabel?: string;
-  // eslint-disable-next-line no-unused-vars
   pageLabel?: (n: number) => string;
-  // eslint-disable-next-line no-unused-vars
   onNavigate?: (event: PaginationEvent) => void;
 }
 

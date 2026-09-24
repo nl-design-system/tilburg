@@ -40,14 +40,12 @@ export interface ComboboxBaseProps<V> {
 export interface SingleComboboxProps<V> extends ComboboxBaseProps<V> {
   multiple?: false;
   value: SingleValue<V>;
-  /* eslint-disable-next-line no-unused-vars -- callback param in a type-only signature */
   onChange: (value: SingleValue<V>) => void;
 }
 
 export interface MultiComboboxProps<V> extends ComboboxBaseProps<V> {
   multiple: true;
   value: MultiValue<V>;
-  /* eslint-disable-next-line no-unused-vars -- callback param in a type-only signature */
   onChange: (value: V[]) => void;
 }
 
@@ -353,9 +351,7 @@ function ComboboxImpl<V>(props: ComboboxProps<V>, ref: ForwardedRef<HTMLInputEle
    `SingleComboboxProps<string[]>` and rejects `ComboboxItem<string>[]` items.
    The multi overload is tried first; it only matches when `multiple` is `true`. */
 export const Combobox = forwardRef(ComboboxImpl) as {
-  /* eslint-disable-next-line no-unused-vars -- callable signature for the forwardRef cast */
   <V = unknown>(props: MultiComboboxProps<V> & { ref?: Ref<HTMLInputElement> }): JSX.Element;
-  /* eslint-disable-next-line no-unused-vars -- callable signature for the forwardRef cast */
   <V = unknown>(props: SingleComboboxProps<V> & { ref?: Ref<HTMLInputElement> }): JSX.Element;
 };
 

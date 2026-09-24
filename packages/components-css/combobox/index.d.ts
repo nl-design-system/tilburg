@@ -5,7 +5,6 @@
  * combobox markup so consumers using the raw BEM get the same UX without
  * writing their own JS. Idempotent — already-enhanced hosts are skipped.
  */
-// eslint-disable-next-line no-unused-vars
 export function enhanceCombobox(root?: ParentNode): void;
 
 export default enhanceCombobox;
