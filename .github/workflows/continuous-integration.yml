@@ -95,6 +95,11 @@ jobs:
           BASE_URL: "/tilburg/"
         run: pnpm run build
 
+      # The React Storybook imports the built component packages (including the code Stencil generates), so its
+      # type-check runs here, after the build, rather than in the lint job.
+      - name: Type-check React Storybook
+        run: pnpm --filter @gemeente-tilburg/storybook run lint-build
+
   test:
     runs-on: ubuntu-latest
     needs: install

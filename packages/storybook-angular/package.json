@@ -15,7 +15,7 @@
   "scripts": {
     "build": "ng run storybook-angular:build-storybook",
     "clean": "rimraf dist/",
-    "lint": "tsc --noEmit --project tsconfig.json && tsc --noEmit --project tsconfig.manager.json",
+    "lint": "tsc --noEmit --project tsconfig.lint.json && tsc --noEmit --project tsconfig.manager.json",
     "storybook": "ng run storybook-angular:storybook"
   },
   "devDependencies": {
