@@ -8,7 +8,8 @@
   ],
   "private": false,
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git+ssh",
@@ -20,6 +21,7 @@
   ],
   "files": [
     "dist/",
+    "!dist/.jest-test-results.json",
     "src/design-tokens.css",
     "CHANGELOG.md"
   ],
@@ -88,7 +90,7 @@
   "typings": "dist/index.d.ts",
   "exports": {
     "./package.json": {
-      "default": "./dist/package.json"
+      "default": "./package.json"
     },
     ".": {
       "types": "./dist/index.d.ts",
