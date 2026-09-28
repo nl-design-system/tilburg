@@ -1,0 +1,9 @@
+{
+  "//": "Type-checks the stories and config against the components-angular source, so linting works without building the library first (as in CI's lint job). The Storybook build itself uses tsconfig.json and the built package.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@gemeente-tilburg/components-angular": ["../components-angular/src/public-api.ts"]
+    }
+  }
+}
