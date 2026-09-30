@@ -48,7 +48,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm run build
+        # Builds everything and puts the Angular Storybook in `angular/` inside the React Storybook output.
+        run: pnpm run build:site
 
       - name: Upload artefact for GitHub Pages
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
