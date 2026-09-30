@@ -3,7 +3,7 @@
     "heading-1": {
       "color": {
         "type": "color",
-        "value": "{tilburg.heading.color}"
+        "value": "{tilburg.heading.color.h1}"
       },
       "font-family": {
         "value": "{tilburg.heading.font-family}",

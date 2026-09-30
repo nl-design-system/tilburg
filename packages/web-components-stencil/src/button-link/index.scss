@@ -1,0 +1,7 @@
+@use "../../../components-css/button-link/index";
+
+/* The wrapped `<a>` is button-shaped; size the host by its content so it
+   takes part in inline flow (same rule as `tilburg-wbc-button`). */
+tilburg-wbc-button-link {
+  display: inline-block;
+}

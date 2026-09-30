@@ -1,0 +1,18 @@
+{/* @license CC0-1.0 */}
+
+{/* Composed from shared fragments in `storybook-shared/src/documentation/` so both Storybooks render the same prose. */}
+{/* Keep the comments on one line each: Prettier rewrites multi-line MDX comments into `{/_ … _/}`, which is not a comment. */}
+
+import { Markdown, Meta } from "@storybook/addon-docs";
+import gettingStarted from "../../../storybook-shared/src/documentation/getting-started.md?raw";
+import layerAngular from "../../../storybook-shared/src/documentation/intro-layer-angular.md?raw";
+import layerHtmlCss from "../../../storybook-shared/src/documentation/intro-layer-html-css.md?raw";
+import layerReact from "../../../storybook-shared/src/documentation/intro-layer-react.md?raw";
+import layerWebComponents from "../../../storybook-shared/src/documentation/intro-layer-web-components.md?raw";
+import troubleshooting from "../../../storybook-shared/src/documentation/intro-troubleshooting.md?raw";
+
+<Meta title="Tilburg/Aan de slag" />
+
+<Markdown>
+  {[gettingStarted, layerHtmlCss, layerReact, layerAngular, layerWebComponents, troubleshooting].join("\n\n")}
+</Markdown>

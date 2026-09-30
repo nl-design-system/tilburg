@@ -1,0 +1,27 @@
+{
+  "motion": {
+    "tilburg": {
+      "motion": {
+        "duration": {
+          "short": {
+            "$value": "200ms"
+          },
+          "medium": {
+            "$value": "400ms"
+          },
+          "long": {
+            "$value": "500ms"
+          }
+        },
+        "easing": {
+          "standard": {
+            "$value": "ease-in-out"
+          },
+          "emphasized": {
+            "$value": "cubic-bezier(0.4, 0, 0.2, 1)"
+          }
+        }
+      }
+    }
+  }
+}

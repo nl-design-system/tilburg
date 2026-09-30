@@ -24,7 +24,9 @@ tmp/
 
 # Cache
 .cache/
-tsconfig.tsbuildinfo
+.stencil/
+.swc/
+*.tsbuildinfo
 
 # Ignore log files
 *.err
@@ -61,3 +63,12 @@ pnpm-lock.yaml
 
 # Ignore generated files from Stencil
 components.d.ts
+
+*storybook.log
+*.angular
+
+# Local package tarballs (pnpm run pack:local)
+.tarballs/
+
+# Created by the components-react test script for next/jest
+packages/components-react/pages/

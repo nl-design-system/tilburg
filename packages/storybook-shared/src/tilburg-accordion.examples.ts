@@ -1,0 +1,295 @@
+/* @license CC0-1.0 */
+
+/* Canonical HTML/CSS reference markup for the Tilburg accordion. Imported by
+   both the React storybook (`packages/storybook`) and the Angular storybook
+   (`packages/storybook-angular`). Each storybook's `tilburg-accordion.stories.*`
+   file is a thin renderer wrapper around the strings below.
+
+   The accordion is interactive in the HTML/CSS layer too — `data-tilburg-
+   accordion-enhance` on the root opts the markup in to the small enhancement
+   script at `packages/components-css/accordion/index.js`. The storybook
+   previews import that script so clicks toggle sections; consumers using the
+   HTML/CSS layer in their own app load it via
+   `import '@gemeente-tilburg/components-css/accordion'`. */
+
+export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Faccordion';
+
+const intro = `Tilburg accordion built on \`.utrecht-accordion\`. Sections have a thin gray border, no internal panel padding, and the projected expand/collapse icon stays at the right edge. Arrow Up/Down and Home/End move focus between section buttons.`;
+
+const usageAngular = `### Angular
+
+\`\`\`html
+<tilburg-accordion ariaLabel="Veelgestelde vragen">
+  <tilburg-accordion-section
+    key="apply"
+    label="Hoe vraag ik een vergunning aan?"
+    [expanded]="openId === 'apply'"
+    (toggled)="openId = openId === 'apply' ? null : 'apply'"
+  >
+    <p class="utrecht-paragraph">Je kunt een vergunning aanvragen via …</p>
+  </tilburg-accordion-section>
+
+  <tilburg-accordion-section key="time" label="Hoe lang duurt de behandeling?" [autoToggle]="true">
+    <p class="utrecht-paragraph">De behandeltijd hangt af van …</p>
+  </tilburg-accordion-section>
+</tilburg-accordion>
+\`\`\`
+
+\`<tilburg-accordion>\` inputs: \`ariaLabel\`, \`headingLevel\` (1–6, default 2), \`displayName\`.
+\`<tilburg-accordion-section>\` inputs: \`key\`, \`label\`, \`expanded\`, \`disabled\`, \`autoToggle\`; output: \`(toggled)\`.`;
+
+const usageReact = `### React
+
+\`\`\`tsx
+import { Accordion, AccordionSection } from '@gemeente-tilburg/components-react';
+import { useState } from 'react';
+
+export function Faq() {
+  const [openId, setOpenId] = useState<string | null>('apply');
+  return (
+    <Accordion aria-label="Veelgestelde vragen">
+      <AccordionSection
+        sectionKey="apply"
+        label="Hoe vraag ik een vergunning aan?"
+        expanded={openId === 'apply'}
+        onToggle={() => setOpenId(openId === 'apply' ? null : 'apply')}
+      >
+        <p className="utrecht-paragraph">Je kunt een vergunning aanvragen via …</p>
+      </AccordionSection>
+
+      <AccordionSection sectionKey="time" label="Hoe lang duurt de behandeling?" autoToggle>
+        <p className="utrecht-paragraph">De behandeltijd hangt af van …</p>
+      </AccordionSection>
+    </Accordion>
+  );
+}
+\`\`\`
+
+A section is controlled by default: \`expanded\` decides what's open and \`onToggle(nextExpanded)\` tells you the user asked to flip it. Set \`autoToggle\` to hand that bookkeeping to the section itself — it then keeps its own state and \`onToggle\` is a pure notification.
+
+To swap the expand/collapse glyph, pass your own nodes as the \`iconCollapsed\` and \`iconExpanded\` props. Both default to the plain \`+\` / \`−\` characters.
+
+\`\`\`tsx
+<AccordionSection
+  sectionKey="appeal"
+  label="Kan ik bezwaar maken?"
+  autoToggle
+  iconCollapsed={<ChevronDown />}
+  iconExpanded={<ChevronUp />}
+>
+  <p className="utrecht-paragraph">Ja, je kunt binnen 6 weken bezwaar maken.</p>
+</AccordionSection>
+\`\`\`
+
+\`<Accordion>\` props: \`headingLevel\` (1–6, default 2), \`displayName\`, plus any \`<div>\` attribute and a forwarded \`ref\`. Name the accordion with the standard \`aria-label\` attribute; setting it also puts \`role="region"\` on the root.
+
+\`<AccordionSection>\` props: \`sectionKey\` (spelled out because \`key\` is reserved by React; it builds the \`utrecht-accordion-<sectionKey>-button\` / \`-panel\` ids), \`label\`, \`expanded\` (default \`false\`), \`disabled\` (default \`false\`), \`autoToggle\` (default \`false\`), \`iconCollapsed\` and \`iconExpanded\` (\`ReactNode\`), \`onToggle\` (\`(nextExpanded: boolean) => void\`), plus any \`<div>\` attribute and a forwarded \`ref\`. \`AccordionProps\` and \`AccordionSectionProps\` are exported as types.
+
+Note that the React sections do not (yet) implement the Arrow Up/Down and Home/End roving focus that the HTML/CSS enhancer provides — Tab still moves between section buttons.`;
+
+/* The plain HTML/CSS section is shared by all three descriptions below. The only
+   difference is the phrase naming the framework wrappers, so that phrase is a
+   parameter: the Angular storybook keeps its wording byte-for-byte, while the
+   React and HTML/CSS pages get a variant that never mentions Angular. */
+const usagePlainHtmlFor = (wrappers: string) => `### Plain HTML / CSS
+
+The CSS in \`@gemeente-tilburg/components-css/accordion/index.scss\` paints the panels, borders, and the \`+\` / \`−\` glyph (driven off \`[aria-expanded]\` via \`:empty::before\` rules on \`utrecht-accordion__button-icon\`) — but it can't toggle \`aria-expanded\` or hide a panel on its own. To get the same UX as ${wrappers} without writing your own controller, opt in to the bundled JS enhancement.
+
+**How to load it.** The enhancement ships as an ES module alongside the SCSS:
+
+\`\`\`html
+<script type="module" src="/node_modules/@gemeente-tilburg/components-css/accordion/index.js"></script>
+\`\`\`
+
+or, if you bundle your own JS:
+
+\`\`\`ts
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+enhanceAccordion();           // walk \`document\` and enhance every opt-in host
+enhanceAccordion(myFragment); // or scope to a subtree
+\`\`\`
+
+When loaded as a \`<script type="module">\`, it auto-runs once on \`DOMContentLoaded\` (or immediately if the DOM is already parsed). SSR-safe — the browser-only branch is guarded on \`typeof document\`.
+
+**Opting in.** Add \`data-tilburg-accordion-enhance\` to the \`.utrecht-accordion\` root. Roots without that attribute are skipped — that's how ${wrappers} stay untouched (they have their own controllers and don't emit the flag). The enhancer is idempotent: it stamps each enhanced root with \`data-tilburg-accordion-enhanced\` and re-runs are no-ops, so it's safe to call again after dynamically inserting more markup.
+
+**What it wires up.**
+
+- *Click to toggle.* Clicking a \`.utrecht-accordion__button\` flips its \`aria-expanded\` and adds/removes \`[hidden]\` on the matching \`.utrecht-accordion__panel\` (resolved via \`aria-controls\`). Disabled buttons are no-ops.
+- *Keyboard nav.* On a focused section button: ArrowDown/Up move focus to the next/previous enabled section (wraps), Home/End jump to the first/last. Tab/Shift+Tab stay native and move out of the accordion entirely.
+- *Glyph swap.* The script doesn't touch the \`<span class="utrecht-accordion__button-icon">\` — the \`+\` / \`−\` swap is pure CSS, keyed on the button's \`[aria-expanded]\`. Keep the span empty to use the default; fill it with your own icon and the CSS \`:empty::before\` rule sits out.
+
+**State lives in the DOM.** There's no internal store — every behaviour is driven by attributes you can also inspect or set yourself:
+
+- \`button[aria-expanded]\` — section open/closed
+- \`panel[hidden]\` — kept in sync with the button (the enhancer adds/removes it as the button toggles)
+- \`button[aria-controls]\` — id link from button to panel (the enhancer needs this to find the panel)
+- \`button[disabled]\` — locks the section closed and excludes it from keyboard nav
+
+**The reference markup.**
+
+\`\`\`html
+<div class="utrecht-accordion" data-tilburg-accordion-enhance role="region" aria-label="Veelgestelde vragen">
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button
+        type="button"
+        class="utrecht-button utrecht-button--subtle utrecht-accordion__button"
+        id="apply-btn"
+        aria-expanded="true"
+        aria-controls="apply-panel"
+      >
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Hoe vraag ik een vergunning aan?</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="apply-panel" role="region" aria-labelledby="apply-btn">
+      <p class="utrecht-paragraph">Je kunt een vergunning aanvragen via …</p>
+    </div>
+  </div>
+</div>
+\`\`\`
+
+The first section ships expanded (\`aria-expanded="true"\` + no \`[hidden]\` on its panel); for any section that should start collapsed, set \`aria-expanded="false"\` on the button and \`hidden\` on its panel. The two attributes must agree on first paint — after that the enhancer keeps them in sync.`;
+
+const usagePlainHtml = usagePlainHtmlFor('the Angular/React wrappers');
+const usagePlainHtmlStandalone = usagePlainHtmlFor('the component wrappers');
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtmlStandalone}
+`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-wbc-accordion display-name="Veelgestelde vragen" heading-level="2">
+  <tilburg-wbc-accordion-section section-key="openingstijden" label="Wat zijn de openingstijden?" auto-toggle>
+    <p class="utrecht-paragraph">Maandag t/m vrijdag van 9.00 tot 17.00 uur.</p>
+  </tilburg-wbc-accordion-section>
+  <tilburg-wbc-accordion-section section-key="afspraak" label="Moet ik een afspraak maken?" auto-toggle>
+    <p class="utrecht-paragraph">Ja, voor de meeste producten.</p>
+  </tilburg-wbc-accordion-section>
+</tilburg-wbc-accordion>
+\`\`\`
+
+Accordion attributes: \`display-name\`, \`heading-level\` (1–6, default 2), \`aria-label\` (moved onto the inner accordion, which then gets \`role="region"\`). Arrow Up/Down, Home and End move focus between the section headers.
+
+Section attributes: \`section-key\` (builds the \`utrecht-accordion-{key}-button\` / \`-panel\` IDs; a unique key is generated when unset), \`label\`, \`expanded\` (reflected), \`disabled\`, \`auto-toggle\` (the section opens/closes itself; without it the section only emits \`tilburgToggle\` and you set \`expanded\`). Event: \`tilburgToggle\` with the requested state in \`event.detail\`. Slots: default (panel), \`icon-expanded\`, \`icon-collapsed\` (default \`−\` / \`+\`).`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtmlStandalone}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtmlStandalone}
+`;
+
+export interface Example {
+  name: string;
+  html: string;
+}
+
+/* Each named export is one story. Using a typed object literal (not a
+   `Record<string, Example>`) so consumers' strict TS settings —
+   `noPropertyAccessFromIndexSignature` in particular — still allow dot
+   access (`examples.default.html` instead of `examples['default'].html`). */
+export const examples = {
+  multipleSections: {
+    name: 'Multiple sections',
+    html: `<div class="utrecht-accordion" data-tilburg-accordion-enhance role="region" aria-label="Veelgestelde vragen">
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-apply-button" aria-expanded="true" aria-controls="accordion-apply-panel">
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Hoe vraag ik een vergunning aan?</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-apply-panel" role="region" aria-labelledby="accordion-apply-button">
+      <p class="utrecht-paragraph">Je kunt een vergunning aanvragen via het online formulier op deze website. Vul alle verplichte velden in en upload de benodigde documenten.</p>
+    </div>
+  </div>
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-time-button" aria-expanded="false" aria-controls="accordion-time-panel">
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Hoe lang duurt de behandeling?</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-time-panel" role="region" aria-labelledby="accordion-time-button" hidden>
+      <p class="utrecht-paragraph">De behandeltijd is afhankelijk van het type vergunning. In de meeste gevallen ontvang je binnen 8 weken een beslissing.</p>
+    </div>
+  </div>
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-appeal-button" aria-expanded="false" aria-controls="accordion-appeal-panel">
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Kan ik bezwaar maken?</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-appeal-panel" role="region" aria-labelledby="accordion-appeal-button" hidden>
+      <p class="utrecht-paragraph">Ja, je kunt bezwaar maken tegen een beslissing. Je hebt hiervoor 6 weken de tijd na de datum van het besluit.</p>
+    </div>
+  </div>
+</div>`,
+  },
+  withDisabledSection: {
+    name: 'With a disabled section',
+    html: `<div class="utrecht-accordion" data-tilburg-accordion-enhance role="region" aria-label="Veelgestelde vragen">
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-open-button" aria-expanded="false" aria-controls="accordion-open-panel">
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Beschikbaar</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-open-panel" role="region" aria-labelledby="accordion-open-button" hidden>
+      <p class="utrecht-paragraph">Deze sectie is normaal te openen.</p>
+    </div>
+  </div>
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-disabled-button" aria-expanded="false" aria-controls="accordion-disabled-panel" disabled>
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Nog niet beschikbaar</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-disabled-panel" role="region" aria-labelledby="accordion-disabled-button" hidden>
+      <p class="utrecht-paragraph">(Disabled — deze sectie is niet uit te klappen)</p>
+    </div>
+  </div>
+  <div class="utrecht-accordion__section">
+    <span class="utrecht-accordion__header">
+      <button type="button" class="utrecht-button utrecht-button--subtle utrecht-accordion__button" id="accordion-other-button" aria-expanded="false" aria-controls="accordion-other-panel">
+        <span class="utrecht-accordion__button-icon" aria-hidden="true"></span>
+        <span class="utrecht-accordion__button-label tilburg-accordion__display-name">Ook beschikbaar</span>
+      </button>
+    </span>
+    <div class="utrecht-accordion__panel" id="accordion-other-panel" role="region" aria-labelledby="accordion-other-button" hidden>
+      <p class="utrecht-paragraph">Deze sectie is ook normaal te openen.</p>
+    </div>
+  </div>
+</div>`,
+  },
+} satisfies Record<string, Example>;

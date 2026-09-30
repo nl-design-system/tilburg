@@ -1,0 +1,174 @@
+/* @license CC0-1.0 */
+
+/* Canonical HTML/CSS reference markup for the Tilburg form field. */
+
+export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-field';
+
+const intro = `Form field grouping a label, description, and control. The Tilburg layer adds a \`tilburg-warning\` modifier that colours the field with the warning palette (used for non-blocking advisory messages).`;
+
+const usageAngular = `### Angular
+
+\`\`\`html
+<tilburg-form-field type="text" [invalid]="emailCtrl.invalid && emailCtrl.touched" [warning]="aboutToExpire">
+  <label class="utrecht-form-label" for="email">E-mailadres</label>
+  <tilburg-textbox id="email" [control]="emailCtrl" />
+  <tilburg-validation-message *ngIf="emailCtrl.invalid && emailCtrl.touched" type="error">
+    Vul een geldig e-mailadres in.
+  </tilburg-validation-message>
+</tilburg-form-field>
+\`\`\`
+
+Inputs: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), \`class\`.`;
+
+const usageReact = `### React
+
+\`FormField\` is a plain wrapper: it renders the \`<div class="utrecht-form-field">\` and its modifier classes, and you compose the label, description, control, and validation message as children.
+
+\`\`\`tsx
+import {
+  FormField,
+  FormFieldDescription,
+  FormLabel,
+  Textbox,
+  ValidationMessage,
+} from '@gemeente-tilburg/components-react';
+
+export function EmailField({ invalid, aboutToExpire }: { invalid: boolean; aboutToExpire: boolean }) {
+  return (
+    <FormField type="text" invalid={invalid} warning={aboutToExpire}>
+      <FormLabel htmlFor="email">E-mailadres</FormLabel>
+      <FormFieldDescription id="email-desc">We gebruiken dit alleen om je te bereiken.</FormFieldDescription>
+      <Textbox id="email" type="email" invalid={invalid} aria-describedby="email-desc" />
+      {invalid && <ValidationMessage type="error">Vul een geldig e-mailadres in.</ValidationMessage>}
+    </FormField>
+  );
+}
+\`\`\`
+
+Props: \`invalid\`, \`warning\`, \`type\` (\`'checkbox' | 'radio' | 'text'\`), plus any standard \`<div>\` attribute (\`className\`, \`id\`, …) — \`className\` is merged with the utrecht classes, it does not replace them. \`FormFieldProps\` and \`FormFieldType\` are exported as type aliases.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
+
+\`\`\`html
+<!-- Standard invalid -->
+<div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid">
+  …
+</div>
+
+<!-- Tilburg warning -->
+<div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid tilburg-warning">
+  …
+</div>
+\`\`\`
+
+Adding \`tilburg-warning\` on top of \`utrecht-form-field--invalid\` swaps the invalid colour set for the warning palette.`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`<tilburg-wbc-form-field>\` is a plain wrapper, like the Angular and React ones: it renders the \`<div class="utrecht-form-field">\` and its modifier classes, and you compose the label, description, control and validation message as children.
+
+\`\`\`html
+<tilburg-wbc-form-field type="text" invalid warning>
+  <tilburg-wbc-form-label for="email">E-mailadres</tilburg-wbc-form-label>
+  <tilburg-wbc-form-field-description id="email-desc">We gebruiken dit alleen om je te bereiken.</tilburg-wbc-form-field-description>
+  <input id="email" type="email" class="utrecht-textbox utrecht-textbox--html-input" aria-describedby="email-desc" />
+  <tilburg-wbc-validation-message type="warning">De aanvraagperiode sluit binnenkort.</tilburg-wbc-validation-message>
+</tilburg-wbc-form-field>
+\`\`\`
+
+Attributes: \`invalid\`, \`warning\` (Tilburg modifier, adds \`tilburg-warning\`), \`type\` (\`'checkbox' | 'radio' | 'text'\`). Slot: default (label, description, control, validation message). The Angular \`class\` input has no counterpart: a \`class\` written on \`<tilburg-wbc-form-field>\` stays on the host element and is not copied onto the inner \`.utrecht-form-field\`.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+`;
+
+export interface Example {
+  name: string;
+  html: string;
+}
+
+/* Unclassed demo wrapper: pins the width of the example so the field does not
+   stretch to the full canvas. Presentation of the example, not of the
+   component — the form field itself carries no inline styling. */
+const wrapperStyle = 'max-width:24rem';
+
+const triangleIcon = `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1 1 19h18L10 1Zm0 5 1 7h-2l1-7Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>`;
+const circleIcon = `<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm1 13H9v-2h2v2Zm0-4H9V5h2v5Z"/></svg>`;
+
+export const examples = {
+  default: {
+    name: 'Default',
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text">
+    <label class="utrecht-form-label" for="ff-default">E-mailadres</label>
+    <div class="utrecht-form-field-description">We gebruiken dit alleen om je te bereiken.</div>
+    <input id="ff-default" type="email" class="utrecht-textbox utrecht-textbox--html-input" placeholder="naam@voorbeeld.nl" />
+  </div>
+</div>`,
+  },
+  invalid: {
+    name: 'Invalid',
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid">
+    <label class="utrecht-form-label utrecht-form-label--invalid" for="ff-invalid">E-mailadres</label>
+    <input id="ff-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="niet-geldig" aria-invalid="true" aria-describedby="ff-invalid-error" />
+    <div id="ff-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert" aria-live="polite">
+      <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
+      <span>Vul een geldig e-mailadres in.</span>
+    </div>
+  </div>
+</div>`,
+  },
+  warning: {
+    name: 'Warning (Tilburg modifier)',
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid tilburg-warning">
+    <label class="utrecht-form-label" for="ff-warning">Aanvraagdatum</label>
+    <input id="ff-warning" type="text" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="2026-05-31" aria-describedby="ff-warning-msg" />
+    <div id="ff-warning-msg" class="tilburg-validation-message tilburg-validation-message--warning utrecht-form-field-description utrecht-form-field-description--warning" role="alert" aria-live="polite">
+      <span class="tilburg-validation-message__icon" aria-hidden="true">${triangleIcon}</span>
+      <span>De aanvraagperiode sluit binnenkort.</span>
+    </div>
+  </div>
+</div>`,
+  },
+  disabled: {
+    name: 'Disabled',
+    html: `<div style="${wrapperStyle}">
+  <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--disabled">
+    <label class="utrecht-form-label utrecht-form-label--disabled" for="ff-disabled">Burgerservicenummer</label>
+    <input id="ff-disabled" type="text" class="utrecht-textbox utrecht-textbox--html-input" value="123456789" disabled />
+  </div>
+</div>`,
+  },
+} satisfies Record<string, Example>;

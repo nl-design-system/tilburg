@@ -25,11 +25,11 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: 'variables.cjs',
+            destination: prefix + '/variables.cjs',
             format: 'javascript/module-flat',
           },
           {
-            destination: 'variables.mjs',
+            destination: prefix + '/variables.mjs',
             format: 'javascript/es6',
           },
         ],
@@ -41,7 +41,7 @@ export const createStyleDictionaryConfig = ({
         files: [
           {
             format: 'javascript/module',
-            destination: 'tokens.cjs',
+            destination: prefix + '/tokens.cjs',
           },
         ],
       },
@@ -51,15 +51,15 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: 'tokens.json',
+            destination: prefix + '/tokens.json',
             format: 'json',
           },
           {
-            destination: 'list.json',
+            destination: prefix + '/list.json',
             format: 'json/list',
           },
           {
-            destination: 'variables.json',
+            destination: prefix + '/variables.json',
             format: 'json/flat',
           },
         ],
@@ -70,7 +70,7 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: 'theme.css',
+            destination: prefix + '/theme.css',
             format: 'css/variables',
             options: {
               selector: `.${themeName}`,
@@ -78,7 +78,7 @@ export const createStyleDictionaryConfig = ({
             },
           },
           {
-            destination: 'variables.css',
+            destination: prefix + '/variables.css',
             format: 'css/variables',
             options: {
               selector: `:root`,
@@ -93,7 +93,7 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: '_variables.scss',
+            destination: prefix + '/_variables.scss',
             format: 'scss/variables',
             options: {
               outputReferences: true,
@@ -106,7 +106,7 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: '_mixin.scss',
+            destination: prefix + '/_mixin.scss',
             format: 'css/variables',
             options: {
               selector: `@mixin ${themeName}`,
@@ -121,7 +121,7 @@ export const createStyleDictionaryConfig = ({
         buildPath: 'dist/',
         files: [
           {
-            destination: 'variables.less',
+            destination: prefix + '/variables.less',
             format: 'less/variables',
             options: {
               outputReferences: true,
@@ -136,11 +136,11 @@ export const createStyleDictionaryConfig = ({
         files: [
           {
             format: 'typescript/es6-declarations',
-            destination: 'variables.d.ts',
+            destination: prefix + '/variables.d.ts',
           },
           {
             format: 'typescript/module-declarations',
-            destination: 'tokens.d.ts',
+            destination: prefix + '/tokens.d.ts',
           },
         ],
       },

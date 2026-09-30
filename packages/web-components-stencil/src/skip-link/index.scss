@@ -1,0 +1,5 @@
+@use "../../../components-css/skip-link/index";
+
+/* No host display rule: the Angular component has none either. The `<a>` is
+   positioned by utrecht's `.utrecht-skip-link--*` modifiers; an inline host
+   keeps it out of the layout flow. */

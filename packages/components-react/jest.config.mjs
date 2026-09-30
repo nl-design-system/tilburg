@@ -1,19 +1,23 @@
 /* eslint-env node */
-import nextJest from 'next/jest.js';
-
-// Next Jest config is great for Jest 27 + React + TypeScript, so let's use that as basis
-const createJestConfig = nextJest({
-  dir: './',
-});
-
-const customJestConfig = {
-  // Add more setup options before each test is run
-  // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
-  moduleDirectories: ['node_modules', '<rootDir>/'],
+/* Jest for the React components: TypeScript and JSX go through babel-jest (the Babel presets are devDependencies), and
+   stylesheets are stubbed because the tests check the DOM, not the styling. This used to be `next/jest`, which pulled
+   in all of Next.js (and its security advisories) for just these two things. */
+export default {
   testEnvironment: 'jest-environment-jsdom',
-  testPathIgnorePatterns: ['/dist/'],
-  // transformIgnorePatterns: ['node_modules/(?!@utrecht/web-component-library-react)'],
+  testPathIgnorePatterns: ['/dist/', '/node_modules/'],
+  moduleNameMapper: {
+    '\\.(css|scss)$': '<rootDir>/jest.style-mock.cjs',
+  },
+  transform: {
+    '^.+\\.[jt]sx?$': [
+      'babel-jest',
+      {
+        presets: [
+          ['@babel/preset-env', { targets: { node: 'current' } }],
+          ['@babel/preset-react', { runtime: 'automatic' }],
+          '@babel/preset-typescript',
+        ],
+      },
+    ],
+  },
 };
-
-export default createJestConfig(customJestConfig);

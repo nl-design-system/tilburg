@@ -1,0 +1,11 @@
+<header class="tilburg-page-header" [attr.aria-label]="ariaLabel || null">
+  <div class="tilburg-page-header__container">
+    <a *ngIf="logoSrc || title" class="tilburg-page-header__brand" [href]="titleHref || '/'">
+      <img *ngIf="logoSrc" class="tilburg-page-header__logo" [src]="logoSrc" [alt]="logoAlt" />
+      <span *ngIf="title" class="tilburg-page-header__title">{{ title }}</span>
+    </a>
+    <div class="tilburg-page-header__actions">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</header>

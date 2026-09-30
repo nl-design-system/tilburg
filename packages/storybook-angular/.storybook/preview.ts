@@ -1,0 +1,95 @@
+/* Global styles are wired via `angular.json` → architect.build.options.styles
+   (see `src/styles.scss`). Angular's SCSS pipeline handles them; importing
+   SCSS directly here would route through Storybook's Webpack which doesn't
+   ship a css-loader for raw SCSS by default. */
+
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { TilburgComponentsModule } from '@gemeente-tilburg/components-angular';
+/* Opt-in accordion enhancement (toggle + keyboard nav) for the HTML/CSS
+   reference stories. The Angular wrapper stories aren't affected — the
+   script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`,
+   and the wrapper's template never emits that attribute. */
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
+/* Opt-in combobox enhancement for the HTML/CSS reference stories.
+   `.utrecht-combobox[data-tilburg-combobox-enhance]` only — the Angular
+   wrapper template doesn't emit that attribute. */
+import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
+/* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
+   token reference tables with `getComputedStyle()` output at runtime. */
+import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
+import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Preview } from '@storybook/angular';
+import { theme } from './theme';
+
+if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
+  const reenhance = () => {
+    enhanceAccordion(document);
+    enhanceCombobox(document);
+    resolveTokens(document);
+  };
+  new MutationObserver(reenhance).observe(document.body, { childList: true, subtree: true });
+  reenhance();
+}
+
+/* Compodoc is disabled (`compodoc: false` in angular.json), so we deliberately
+   do not call `setCompodocJson` — passing a null/stub value to it makes
+   Storybook's `extractArgTypes` throw "Invalid compodoc JSON". Without
+   compodoc the autodocs Controls panel won't auto-populate from component
+   metadata; explicit `argTypes` on each story's meta supplies the types. */
+
+const preview: Preview = {
+  decorators: [
+    applicationConfig({
+      providers: [provideAnimations()],
+    }),
+    moduleMetadata({
+      imports: [TilburgComponentsModule],
+    }),
+    /* Mirror the React Storybook decorator (see
+       `packages/storybook/config/ParametersArgsDecorator.tsx`): design tokens
+       are scoped under `.tilburg-theme`, and `tilburg-document` applies the
+       Utrecht document defaults that components inherit from. */
+    componentWrapperDecorator(
+      (story) => `<div class="tilburg-theme"><tilburg-document>${story}</tilburg-document></div>`,
+    ),
+  ],
+  parameters: {
+    controls: { expanded: false },
+    options: {
+      storySort: {
+        /* `Tilburg Angular` at the top so the cold-start landing story is
+           `Tilburg Angular/Intro`, then the shared `Tilburg HTML/…` reference,
+           then `Tokens` — still discoverable but no longer the default
+           landing.
+
+           Unlike the React Storybook — where the `Tilburg/…` section holds only
+           documentation — this section mixes the MDX pages in with all the
+           Angular components. Without naming them explicitly the `*` wildcard
+           sorts them alphabetically among the components, which buried
+           Implementatiestatus, the licence and the usage notice below Heading.
+           So every MDX page is listed ahead of the wildcard. */
+        order: [
+          'Tilburg Angular',
+          [
+            'Intro',
+            'Aan de slag',
+            'Tips & valkuilen',
+            'Implementatiestatus',
+            'Open Source License',
+            'Toestemming voor gebruik',
+            '*',
+          ],
+          'Tilburg HTML',
+          'Tokens',
+          ['Intro', '*'],
+        ],
+      },
+    },
+    docs: {
+      toc: true,
+      theme: theme,
+    },
+  },
+  tags: ['autodocs'],
+};
+
+export default preview;

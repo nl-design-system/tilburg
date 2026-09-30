@@ -1,0 +1,6 @@
+/* No components-css layer: the utrecht base CSS styles
+   `.utrecht-form-field-description`. Light-DOM host defaults to
+   `display: inline`; force block flow (same rule as the Angular `:host`). */
+tilburg-wbc-form-field-description {
+  display: block;
+}

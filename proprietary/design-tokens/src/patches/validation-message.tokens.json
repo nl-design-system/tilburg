@@ -1,0 +1,14 @@
+{
+  "components/validation-message": {
+    "tilburg": {
+      "validation-message": {
+        "gap": {
+          "$value": "{tilburg.space.inline.beetle}"
+        },
+        "margin-block-end": {
+          "$value": "{tilburg.space.row.ant}"
+        }
+      }
+    }
+  }
+}

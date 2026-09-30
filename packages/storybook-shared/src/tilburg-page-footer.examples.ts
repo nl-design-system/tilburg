@@ -1,0 +1,167 @@
+/* @license CC0-1.0 */
+
+/* Canonical HTML/CSS reference markup for the Tilburg page footer. Imported
+   by both the React storybook (`packages/storybook`) and the Angular
+   storybook (`packages/storybook-angular`) so the HTML lives in one place. */
+
+export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fpage-footer';
+
+const intro = `**Tilburg component**: not based on an Utrecht component; its markup and CSS use the \`tilburg-*\` class set.
+
+Bottom-of-page link bar. Centered horizontal list of legal / accessibility links on a darker blue background, white text, with an optional primary call-to-action row above.`;
+
+const usageAngular = `### Angular
+
+\`\`\`html
+<tilburg-page-footer
+  [primaryLink]="{ label: 'Contact', href: '/contact' }"
+  [links]="[
+    { label: 'Privacystatement', href: '/privacystatement' },
+    { label: 'Cookies',          href: '/cookies' },
+    { label: 'Toegankelijkheid', href: '/toegankelijkheid' },
+    { label: 'Proclaimer',       href: '/proclaimer' },
+  ]"
+/>
+\`\`\`
+
+Inputs: \`primaryLink\` (optional \`{ label, href }\`), \`links\` (array of \`{ label, href }\`), \`ariaLabel\`. You can also project extra content via \`<ng-content>\`.`;
+
+const usageReact = `### React
+
+\`PageFooter\` renders a \`<footer class="tilburg-page-footer">\` and builds both link lists from data — you do not write the \`<ul>\`/\`<li>\`/\`<a>\` markup yourself. Links are typed as \`PageFooterLink\`, i.e. \`{ label: string; href: string }\`.
+
+\`\`\`tsx
+import { Page, PageFooter, type PageFooterLink } from '@gemeente-tilburg/components-react';
+
+const legalLinks: PageFooterLink[] = [
+  { label: 'Privacystatement', href: '/privacystatement' },
+  { label: 'Cookies', href: '/cookies' },
+  { label: 'Toegankelijkheid', href: '/toegankelijkheid' },
+  { label: 'Proclaimer', href: '/proclaimer' },
+];
+
+export function AppFooter() {
+  return (
+    <Page>
+      <PageFooter primaryLink={{ label: 'Contact', href: '/contact' }} links={legalLinks} aria-label="Footer" />
+    </Page>
+  );
+}
+\`\`\`
+
+Props: \`links\` (\`PageFooterLink[]\`, default \`[]\`), \`primaryLink\` (\`PageFooterLink | null\`, optional — rendered as the call-to-action row above the list), \`children\` (extra content, rendered inside the container before both lists), \`className\` (merged with \`tilburg-page-footer\`), plus any standard \`<footer>\` attribute — write the native \`aria-label\` attribute when you need to name the landmark. \`PageFooterLink\` and \`PageFooterProps\` are exported as types. The component forwards its ref to the underlying \`<footer>\`.`;
+
+const usagePlainHtml = `### Plain HTML / CSS
+
+\`\`\`html
+<footer class="tilburg-page-footer">
+  <div class="tilburg-page-footer__container">
+    <ul class="tilburg-page-footer__primary">
+      <li><a class="tilburg-page-footer__primary-link" href="/contact">Contact</a></li>
+    </ul>
+    <ul class="tilburg-page-footer__list">
+      <li><a class="tilburg-page-footer__link" href="/privacystatement">Privacystatement</a></li>
+      <li><a class="tilburg-page-footer__link" href="/cookies">Cookies</a></li>
+      <li><a class="tilburg-page-footer__link" href="/toegankelijkheid">Toegankelijkheid</a></li>
+      <li><a class="tilburg-page-footer__link" href="/proclaimer">Proclaimer</a></li>
+    </ul>
+  </div>
+</footer>
+\`\`\``;
+
+const theming = `Theming via custom properties: \`--tilburg-page-footer-background-color\`, \`--tilburg-page-footer-color\`, \`--tilburg-page-footer-margin-block-start\` (default 5rem), \`--tilburg-page-footer-max-inline-size\` (default 1150px).`;
+
+export const description = `${intro}
+
+## Usage
+
+${usageAngular}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionReact = `${intro}
+
+## Usage
+
+${usageReact}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+const usageWebComponents = `### Web Components (Stencil)
+
+\`\`\`html
+<tilburg-wbc-page-footer
+  aria-label="Footer"
+  primary-link='{"label":"Contact","href":"/contact"}'
+  links='[{"label":"Privacystatement","href":"/privacystatement"},{"label":"Cookies","href":"/cookies"}]'
+></tilburg-wbc-page-footer>
+
+<script type="module">
+  /* …or set the data as properties */
+  document.querySelector('tilburg-wbc-page-footer').links = [{ label: 'Toegankelijkheid', href: '/toegankelijkheid' }];
+</script>
+\`\`\`
+
+Attributes: \`links\` (\`{ label, href }[]\`, default \`[]\`) and \`primary-link\` (\`{ label, href }\`, rendered as the call-to-action row above the list) — set them as JS properties or as JSON attributes; invalid JSON renders nothing. \`aria-label\` is moved onto the \`<footer>\` landmark (replaces Angular's \`ariaLabel\` input). Slot: default (extra content, rendered inside the container before both lists). No events.`;
+
+export const descriptionWebComponents = `${intro}
+
+## Usage
+
+${usageWebComponents}
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export const descriptionHtml = `${intro}
+
+## Usage
+
+${usagePlainHtml}
+
+${theming}
+`;
+
+export interface Example {
+  name: string;
+  html: string;
+}
+
+const linksHtml = `<ul class="tilburg-page-footer__list">
+      <li><a class="tilburg-page-footer__link" href="#">Privacystatement</a></li>
+      <li><a class="tilburg-page-footer__link" href="#">Cookies</a></li>
+      <li><a class="tilburg-page-footer__link" href="#">Toegankelijkheid</a></li>
+      <li><a class="tilburg-page-footer__link" href="#">Proclaimer</a></li>
+    </ul>`;
+
+export const examples = {
+  default: {
+    name: 'Links only',
+    html: `<footer class="tilburg-page-footer">
+  <div class="tilburg-page-footer__container">
+    ${linksHtml}
+  </div>
+</footer>`,
+  },
+  withPrimaryAction: {
+    name: 'With primary action',
+    html: `<footer class="tilburg-page-footer">
+  <div class="tilburg-page-footer__container">
+    <ul class="tilburg-page-footer__primary">
+      <li>
+        <a class="tilburg-page-footer__primary-link" href="#">Contact &nbsp;&rsaquo;</a>
+      </li>
+    </ul>
+    ${linksHtml}
+  </div>
+</footer>`,
+  },
+} satisfies Record<string, Example>;

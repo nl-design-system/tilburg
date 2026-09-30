@@ -1,0 +1,35 @@
+{
+  "components/accordion": {
+    "tilburg": {
+      "accordion": {
+        "section": {
+          "margin-block-end": {
+            "$value": "{tilburg.space.row.ant}"
+          },
+          "transition-duration": {
+            "$value": "{tilburg.motion.duration.long}"
+          },
+          "focus-border-width": {
+            "$value": "2px"
+          }
+        },
+        "button": {
+          "padding-block": {
+            "$value": "11px"
+          },
+          "font-weight": {
+            "$value": "700"
+          }
+        },
+        "panel": {
+          "margin": {
+            "$value": "{tilburg.space.inline.mouse}"
+          },
+          "transition-duration": {
+            "$value": "{tilburg.motion.duration.short}"
+          }
+        }
+      }
+    }
+  }
+}

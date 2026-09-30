@@ -1,0 +1,21 @@
+.utrecht-button-link {
+  /* Same font-metric problem as .utrecht-button: TradeGothicCondensed18 has
+     more empty descent space below the baseline than ascent space above, so
+     with `line-height: 1` the visible letters sit in the upper half of the
+     line-box and read as above the geometric centre of the button. We
+     compensate by shifting the line-box downward via asymmetric
+     padding-block. Button-link has no size variants in Tilburg, so a
+     single offset is applied. The shift amount is owned by the design-token
+     layer: `--tilburg-fix-button-link-baseline-offset` (see
+     `proprietary/design-tokens/src/patches/button-link.tokens.json`).
+     See the "Vertical baseline shift" section in the Button storybook
+     docs for the full rationale. */
+  --_tilburg-button-link-baseline-offset: var(--tilburg-fix-button-link-baseline-offset);
+  --utrecht-button-line-height: 1;
+  --utrecht-button-padding-block-start: calc(
+    var(--tilburg-space-block-snail) + var(--_tilburg-button-link-baseline-offset)
+  );
+  --utrecht-button-padding-block-end: calc(
+    var(--tilburg-space-block-snail) - var(--_tilburg-button-link-baseline-offset)
+  );
+}

@@ -10,8 +10,12 @@ tmp/
 
 # Ignore generated files from Stencil
 components/components.d.ts
+packages/components-angular/test-exports.mjs
 packages/web-components-angular/src/directives/angular-component-lib/utils.ts
 packages/web-components-angular/src/directives/proxies.ts
 packages/web-components-stencil/loader
 packages/web-components-react/src/react-component-lib/
 packages/web-components-react/src/components.ts
+
+# ESLint skips dot-folders by default; lint the Angular Storybook config too
+!packages/storybook-angular/.storybook/

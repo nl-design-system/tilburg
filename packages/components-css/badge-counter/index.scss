@@ -1,0 +1,8 @@
+/* Tilburg-branded notification counter. utrecht-css uses
+   `--utrecht-badge-counter-{background-color,color}` which fall back to the
+   generic `--utrecht-badge-*` tokens — point them at the Tilburg pink accent
+   so counters read as a brand-accented notification dot. */
+.utrecht-badge-counter {
+  --utrecht-badge-counter-background-color: var(--tilburg-color-pink-300);
+  --utrecht-badge-counter-color: var(--tilburg-color-white);
+}

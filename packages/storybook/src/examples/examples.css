@@ -1,0 +1,42 @@
+/* Layout around the Tilburg components in the example pages. The components bring their own look; this only lines the
+   main content up with the page header and footer (same max width and side padding) and spaces the parts of a page.
+   Values come from the Tilburg tokens where there is one. */
+
+.tilburg-example__content {
+  box-sizing: border-box;
+  margin-inline: auto;
+  max-inline-size: var(--tilburg-page-header-max-inline-size, 1150px);
+  padding-block: var(--tilburg-space-block-cat) var(--tilburg-space-block-dog);
+  padding-inline: var(--tilburg-space-block-snail);
+}
+
+.tilburg-example__content:focus {
+  outline: none;
+}
+
+/* A form or a text column: short lines read and scan better. */
+.tilburg-example__column {
+  max-inline-size: 40rem;
+}
+
+/* Vertical rhythm between the blocks of a page (headings bring their own margins). */
+.tilburg-example__stack > * + * {
+  margin-block-start: var(--tilburg-space-block-rabbit);
+}
+
+.tilburg-example__actions {
+  margin-block-start: var(--tilburg-space-block-cat);
+}
+
+/* A row with a heading on one side and an action on the other, wrapping on a small screen. */
+.tilburg-example__toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tilburg-space-block-snail) var(--tilburg-space-block-rabbit);
+  justify-content: space-between;
+}
+
+.tilburg-example__table-wrapper {
+  overflow-x: auto;
+}

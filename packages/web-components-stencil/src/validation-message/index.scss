@@ -1,0 +1,7 @@
+@use "../../../components-css/validation-message/index";
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-validation-message {
+  display: block;
+}
