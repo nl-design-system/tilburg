@@ -49,6 +49,7 @@
   },
   "scripts": {
     "build": "pnpm --recursive run build",
+    "build:site": "pnpm run build && rm -rf packages/storybook/dist/angular && cp -R packages/storybook-angular/dist packages/storybook/dist/angular",
     "clean": "pnpm --recursive run clean",
     "lint": "npm-run-all --continue-on-error lint:** lint-workspaces",
     "lint-fix": "npm-run-all --continue-on-error lint-fix:** prettier",
