@@ -15,7 +15,7 @@
 
 Deze Storybook bevat de **HTML/CSS-referentie** (`Tilburg HTML/…`) de **React-componenten** (`Tilburg React/…`) en de **Web Components** (`Tilburg Web Components/…`, via de gegenereerde React-wrappers). Elke React- en Web Components-story documenteert de beschikbare props in de **Usage**-sectie van zijn auto-docs-pagina.
 
-Er bestaat **een tweede, onafhankelijke Storybook** voor de Angular-laag, die de Angular-componenten (`Tilburg Angular/…`) plus dezelfde HTML/CSS-referentie documenteert. De twee Storybooks zijn niet aan elkaar gekoppeld — open de Angular-Storybook direct als je Angular-werk doet.
+Er bestaat **een tweede, onafhankelijke Storybook** voor de Angular-laag, die de Angular-componenten (`Tilburg Angular/…`) plus dezelfde HTML/CSS-referentie documenteert. Op de gepubliceerde site staat die onder <a href="angular/" target="_top">/angular/</a>; bij lokaal werken start je hem apart (`pnpm run storybook:angular`).
 
 Componenten met het label **TLB** introduceert Tilburg zelf; ze zijn niet gebaseerd op een Utrecht-component (zie
 _Tilburg en NL Design System_ hieronder). Met de knop **Alle componenten** in de toolbar filter je de zijbalk op
