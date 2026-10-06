@@ -3,8 +3,11 @@
     text-decoration: underline;
   }
 
+  /* The theme's hover token (Tilburg: the darker interaction-hover colour).
+     This used to read the visited colour, which equals the default link colour,
+     so hovering a link no longer changed its colour. */
   &:hover {
-    color: var(--utrecht-link-visited-color);
+    color: var(--utrecht-link-hover-color);
   }
 
   &:focus,

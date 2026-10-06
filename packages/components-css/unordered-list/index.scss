@@ -1,7 +1,7 @@
 .tilburg-unordered-list {
   list-style-type: disc;
-  margin-block-end: var(--tilburg-space-block-rabbit);
-  margin-block-start: var(--tilburg-space-block-rabbit);
+  margin-block-end: var(--tilburg-unordered-list-margin-block-end, var(--tilburg-space-block-rabbit));
+  margin-block-start: var(--tilburg-unordered-list-margin-block-start, var(--tilburg-space-block-rabbit));
 }
 
 /* Nested lists collapse their outer margins. */

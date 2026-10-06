@@ -10,7 +10,7 @@
      `proprietary/design-tokens/src/patches/button-link.tokens.json`).
      See the "Vertical baseline shift" section in the Button storybook
      docs for the full rationale. */
-  --_tilburg-button-link-baseline-offset: var(--tilburg-fix-button-link-baseline-offset);
+  --_tilburg-button-link-baseline-offset: var(--tilburg-fix-button-link-baseline-offset, 0px);
   --utrecht-button-line-height: 1;
   --utrecht-button-padding-block-start: calc(
     var(--tilburg-space-block-snail) + var(--_tilburg-button-link-baseline-offset)
