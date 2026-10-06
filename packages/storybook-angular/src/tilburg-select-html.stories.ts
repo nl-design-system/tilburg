@@ -9,7 +9,7 @@ import { bugs, descriptionHtml, examples } from '../../storybook-shared/src/tilb
 const meta: Meta = {
   title: 'Tilburg HTML/Select',
   id: 'tilburg-select',
-  tags: ['autodocs'],
+  tags: ['!autodocs'],
   parameters: {
     bugs,
     docs: { description: { component: descriptionHtml } },

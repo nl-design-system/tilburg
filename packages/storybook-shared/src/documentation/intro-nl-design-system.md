@@ -54,8 +54,8 @@ Wat dat betekent in de praktijk:
 - **De meeste componenten zijn een Utrecht-component met de Tilburg-huisstijl.** Knop, formuliervelden, koppen,
   tabel, accordion, kruimelpad: de HTML gebruikt `utrecht-*`-classes, het uiterlijk komt uit de Tilburg-tokens.
 - **Sommige componenten introduceert Tilburg zelf.** Ze hebben eigen `tilburg-*`-markup en geen Utrecht-basis:
-  data-list, language-toggle, loading-spinner, modal, page-footer, page-header, pagination, progress-bar en
-  validation-message. In de zijbalk staan ze met het label **TLB**.
+  data-list, language-toggle, loading-spinner, modal, page-footer, page-header, pagination, password-input,
+  progress-bar, tooltip en validation-message. In de zijbalk staan ze met het label **TLB**.
 - **Bestaat er een Utrecht-component, dan gebruikt Tilburg dat.** Een nieuw Tilburg-component komt er alleen als
   Utrecht niets heeft dat past.
 - **Een fout in de basis van een component** (de HTML of het gedrag van een Utrecht-component) hoort bij Utrecht of

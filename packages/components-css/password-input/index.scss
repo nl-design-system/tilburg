@@ -1,0 +1,111 @@
+/* Password input (Tilburg component, bq-tlb-frontend TIL-72): a textbox with a button that shows or hides the password.
+
+   <div class="tilburg-password-input">
+     input.utrecht-textbox.utrecht-textbox--html-input.utrecht-textbox--password#id
+     button.tilburg-password-input__toggle[aria-pressed][aria-controls=id]   ← "Wachtwoord tonen", eye icons
+     span.tilburg-password-input__status[aria-live=polite]                   ← "Wachtwoord is nu zichtbaar."
+
+   The toggle is a toggle button: a fixed label plus `aria-pressed` (true = the password is visible), not a label that
+   changes with its state. The status line tells screen-reader users what happened; it stays empty until the first
+   click, so nothing is announced on page load (WCAG 4.1.3). */
+
+.tilburg-password-input {
+  --_tilburg-password-input-toggle-size: var(--utrecht-pointer-target-min-size, 44px);
+
+  display: block;
+  max-inline-size: var(--utrecht-textbox-max-inline-size, var(--utrecht-form-control-max-inline-size));
+  position: relative;
+}
+
+/* Keep the text clear of the toggle. */
+.tilburg-password-input .utrecht-textbox {
+  padding-inline-end: var(--_tilburg-password-input-toggle-size);
+
+  /* Edge adds its own reveal eye (and a clear cross) to password fields: next to ours that is two eyes. */
+  &::-ms-reveal,
+  &::-ms-clear {
+    display: none;
+  }
+}
+
+.tilburg-password-input__toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+  cursor: pointer;
+  display: flex;
+  inset-block: 0;
+  inset-inline-end: 0;
+  justify-content: center;
+  min-inline-size: var(--_tilburg-password-input-toggle-size);
+  padding-block: 0;
+  padding-inline: 0;
+  position: absolute;
+  transition: color var(--tilburg-motion-duration-short, 120ms) ease-out;
+
+  &:hover {
+    color: var(--tilburg-interaction-hover-color, var(--utrecht-form-control-focus-color));
+  }
+
+  &:active {
+    color: var(--tilburg-interaction-active-color, var(--tilburg-interaction-hover-color));
+  }
+
+  &:focus-visible {
+    outline-color: var(--utrecht-focus-outline-color, currentcolor);
+    outline-offset: calc(-1 * var(--utrecht-focus-outline-width, 2px));
+    outline-style: solid;
+    outline-width: var(--utrecht-focus-outline-width, 2px);
+  }
+
+  &:disabled {
+    color: var(--utrecht-form-control-disabled-color);
+    cursor: not-allowed;
+  }
+}
+
+.tilburg-password-input__icon {
+  block-size: var(--tilburg-password-input-icon-size, 20px);
+  inline-size: var(--tilburg-password-input-icon-size, 20px);
+}
+
+/* One of the two eyes at a time: the open eye while the password is hidden, the crossed-out eye while it is shown. */
+.tilburg-password-input__toggle[aria-pressed="true"] .tilburg-password-input__icon--show,
+.tilburg-password-input__toggle:not([aria-pressed="true"]) .tilburg-password-input__icon--hide {
+  display: none;
+}
+
+/* Read by screen readers, not shown. */
+.tilburg-password-input__status {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  margin-block: -1px;
+  margin-inline: -1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilburg-password-input__toggle {
+    transition: none;
+  }
+}
+
+/* Windows high contrast (forced colours): the icon and focus ring in system colours, so the toggle stays visible. */
+@media (forced-colors: active) {
+  .tilburg-password-input__toggle {
+    color: buttontext;
+
+    &:hover,
+    &:active {
+      color: highlight;
+    }
+
+    &:focus-visible {
+      outline-color: buttontext;
+    }
+  }
+}

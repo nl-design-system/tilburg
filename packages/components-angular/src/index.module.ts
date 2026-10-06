@@ -36,6 +36,7 @@ import { TilburgPageFooter } from './page-footer/component';
 import { TilburgPageHeader } from './page-header/component';
 import { TilburgPagination } from './pagination/component';
 import { TilburgParagraph } from './paragraph/component';
+import { TilburgPasswordInput } from './password-input/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
@@ -53,6 +54,7 @@ import { TilburgTableRowAttr } from './table-row/component';
 import { TilburgTextarea } from './textarea/component';
 import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-directive';
 import { TilburgTextbox } from './textbox/component';
+import { TilburgTooltip } from './tooltip/component';
 import { TilburgUnorderedList } from './unordered-list/component';
 import { TilburgValidationMessage } from './validation-message/component';
 
@@ -93,6 +95,7 @@ const components = [
   TilburgPageHeader,
   TilburgPagination,
   TilburgParagraph,
+  TilburgPasswordInput,
   TilburgProgressBar,
   TilburgTable,
   TilburgTableBodyAttr,
@@ -112,6 +115,7 @@ const components = [
   TilburgTextarea,
   TilburgTextbox,
   TilburgRadioButton,
+  TilburgTooltip,
   TilburgUnorderedList,
   TilburgValidationMessage,
 ];

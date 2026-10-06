@@ -3,16 +3,25 @@
 import { FormControl, Validators } from '@angular/forms';
 import { TilburgSelect } from '@gemeente-tilburg/components-angular';
 import type { Meta, StoryObj } from '@storybook/angular';
-import { bugs, description, stadsdelen } from '../../storybook-shared/src/tilburg-select.examples';
+import { argDescriptions, bugs, description, stadsdelen } from '../../storybook-shared/src/tilburg-select.examples';
 
 const meta: Meta<TilburgSelect> = {
   title: 'Tilburg Angular/Select',
   id: 'tilburg-select-angular',
   component: TilburgSelect,
-  tags: ['autodocs'],
+  tags: ['!autodocs'],
+  args: { name: 'stadsdeel', placeholder: 'Maak een keuze', disabled: false, invalid: false, required: false },
+  argTypes: {
+    name: { control: 'text', description: argDescriptions.name },
+    placeholder: { control: 'text', description: argDescriptions.placeholder },
+    disabled: { control: 'boolean', description: argDescriptions.disabled },
+    invalid: { control: 'boolean', description: argDescriptions.invalid },
+    required: { control: 'boolean', description: argDescriptions.required },
+  },
   parameters: {
     bugs,
     docs: { description: { component: description } },
+    controls: { include: ['name', 'placeholder', 'disabled', 'invalid', 'required'] },
   },
 };
 
@@ -26,19 +35,22 @@ const field = (id: string, select: string) => `
   </div>
 `;
 
+/* Every input that has a control, bound so the controls change the story. */
+const boundSelect = (id: string, extra = '') =>
+  `<tilburg-select id="${id}" [name]="name" [options]="options" [placeholder]="placeholder" [disabled]="disabled"
+     [invalid]="invalid" [required]="required"${extra}></tilburg-select>`;
+
 export const Default: Story = {
-  render: () => ({
-    props: { options: stadsdelen },
-    template: field(
-      'select-ng-default',
-      `<tilburg-select id="select-ng-default" name="stadsdeel" [options]="options" placeholder="Maak een keuze"></tilburg-select>`,
-    ),
+  render: (args) => ({
+    props: { ...args, options: stadsdelen },
+    template: field('select-ng-default', boundSelect('select-ng-default')),
   }),
 };
 
 /* Reactive forms: the FormControl owns the value, the validity and the disabled state. */
 export const Reactive: Story = {
   name: 'With a FormControl',
+  parameters: { controls: { disable: true } },
   render: () => ({
     props: { options: stadsdelen, control: new FormControl('', Validators.required) },
     template: field(
@@ -51,22 +63,17 @@ export const Reactive: Story = {
 };
 
 export const Invalid: Story = {
-  render: () => ({
-    props: { options: stadsdelen },
-    template: field(
-      'select-ng-invalid',
-      `<tilburg-select id="select-ng-invalid" name="stadsdeel" [options]="options" placeholder="Maak een keuze"
-         [required]="true" [invalid]="true"></tilburg-select>`,
-    ),
+  args: { required: true, invalid: true },
+  render: (args) => ({
+    props: { ...args, options: stadsdelen },
+    template: field('select-ng-invalid', boundSelect('select-ng-invalid')),
   }),
 };
 
 export const Disabled: Story = {
-  render: () => ({
-    props: { options: stadsdelen },
-    template: field(
-      'select-ng-disabled',
-      `<tilburg-select id="select-ng-disabled" name="stadsdeel" [options]="options" value="centrum" [disabled]="true"></tilburg-select>`,
-    ),
+  args: { disabled: true },
+  render: (args) => ({
+    props: { ...args, options: stadsdelen },
+    template: field('select-ng-disabled', boundSelect('select-ng-disabled', ' value="centrum"')),
   }),
 };

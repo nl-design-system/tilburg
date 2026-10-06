@@ -1,0 +1,4 @@
+<span #root class="tilburg-tooltip" [class.tilburg-tooltip--below]="placement === 'below'">
+  <ng-content></ng-content>
+  <span class="tilburg-tooltip__popup" [id]="popupId" role="tooltip">{{ text }}</span>
+</span>

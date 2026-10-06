@@ -193,3 +193,15 @@ ${options('centrum')}
 </div>`,
   },
 } satisfies Record<string, Example>;
+
+/** Control descriptions, shared by the React, Web Components and Angular stories so the props tables agree. */
+export const argDescriptions = {
+  name: 'Name of the field in the submitted form data.',
+  placeholder:
+    'Text of an empty first option (`value=""`), shown until a choice is made. With `required`, the empty option cannot be submitted.',
+  disabled: 'Disables the select: it is skipped in the tab order and left out of the form data.',
+  invalid:
+    'Shows the error state and sets `aria-invalid="true"`. Show the error text next to it and link it with `aria-describedby`.',
+  required: 'A choice is required; sets `required` and `aria-required="true"`.',
+  options: 'The options, as `{ value, label, disabled? }` objects.',
+};

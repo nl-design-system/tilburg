@@ -3,16 +3,28 @@
 import { FormLabel, Select, ValidationMessage } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { type ReactNode, useState } from 'react';
-import { bugs, descriptionReact, stadsdelen } from '../../storybook-shared/src/tilburg-select.examples';
+import {
+  argDescriptions,
+  bugs,
+  descriptionReact,
+  stadsdelen,
+} from '../../storybook-shared/src/tilburg-select.examples';
 
 const meta = {
   title: 'Tilburg React/Select',
   id: 'tilburg-select-react',
   component: Select,
-  tags: ['autodocs'],
+  args: { name: 'stadsdeel', disabled: false, invalid: false, required: false },
+  argTypes: {
+    name: { control: 'text', description: argDescriptions.name },
+    disabled: { control: 'boolean', description: argDescriptions.disabled },
+    invalid: { control: 'boolean', description: argDescriptions.invalid },
+    required: { control: 'boolean', description: argDescriptions.required },
+  },
   parameters: {
     bugs,
     docs: { description: { component: descriptionReact } },
+    controls: { include: ['name', 'disabled', 'invalid', 'required'] },
   },
 } satisfies Meta<typeof Select>;
 
@@ -38,9 +50,9 @@ const Field = ({ id, children }: { id: string; children: ReactNode }) => (
 );
 
 export const Default: Story = {
-  render: () => (
+  render: (args) => (
     <Field id="select-react-default">
-      <Select id="select-react-default" name="stadsdeel" defaultValue="">
+      <Select id="select-react-default" defaultValue="" {...args}>
         <Options />
       </Select>
     </Field>
@@ -50,6 +62,7 @@ export const Default: Story = {
 /* Controlled, with validation: choose nothing and leave the field to see the error. */
 export const Controlled: Story = {
   name: 'Controlled, with validation',
+  parameters: { controls: { disable: true } },
   render: function Render() {
     const [value, setValue] = useState('');
     const [touched, setTouched] = useState(false);
@@ -79,9 +92,10 @@ export const Controlled: Story = {
 };
 
 export const Disabled: Story = {
-  render: () => (
+  args: { disabled: true },
+  render: (args) => (
     <Field id="select-react-disabled">
-      <Select id="select-react-disabled" name="stadsdeel" defaultValue="centrum" disabled>
+      <Select id="select-react-disabled" defaultValue="centrum" {...args}>
         <Options />
       </Select>
     </Field>
