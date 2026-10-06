@@ -62,6 +62,14 @@ describe('PageHeader', () => {
     expect(screen.getByAltText('Tilburg logo')).toBeInTheDocument();
   });
 
+  it('names a logo-only brand link after the organisation, and keeps the logo decorative next to a title', () => {
+    const { container, rerender } = render(<PageHeader logoSrc="/logo.svg" />);
+    expect(screen.getByRole('link', { name: 'Gemeente Tilburg' })).toBeInTheDocument();
+    rerender(<PageHeader title="Mijn Tilburg" logoSrc="/logo.svg" />);
+    expect(container.querySelector('img')).toHaveAttribute('alt', '');
+    expect(screen.getByRole('link', { name: 'Mijn Tilburg' })).toBeInTheDocument();
+  });
+
   it('renders action children', () => {
     render(
       <PageHeader>

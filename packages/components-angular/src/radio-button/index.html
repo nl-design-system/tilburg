@@ -4,7 +4,7 @@
   [attr.aria-label]="ariaLabel || null"
   [attr.aria-labelledby]="ariaLabelledBy || null"
   [attr.aria-describedby]="ariaDescribedBy || null"
-  [attr.aria-invalid]="invalid ? 'true' : null"
+  [invalid]="!!invalid"
   [attr.aria-required]="required ? 'true' : null"
   [disabled]="disabled"
   [required]="required"

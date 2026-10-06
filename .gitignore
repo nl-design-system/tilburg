@@ -69,6 +69,3 @@ components.d.ts
 
 # Local package tarballs (pnpm run pack:local)
 .tarballs/
-
-# Created by the components-react test script for next/jest
-packages/components-react/pages/

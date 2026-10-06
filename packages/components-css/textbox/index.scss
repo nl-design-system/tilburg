@@ -1,3 +1,22 @@
+/* Not red before the user has had a go (WCAG 3.3.1 / bq-tlb-frontend TIL-69). A required field is `:invalid` from the
+   first render, so styling `:invalid` paints every empty required field red on page load. The invalid look now waits for
+   `:user-invalid` (after the user has changed the field or tried to submit), or for `aria-invalid="true"`, which an app
+   sets when it decides there is an error. Until then the utrecht base rule for `:invalid` gets the normal values through
+   its own invalid tokens. Browsers without `:user-invalid` drop that rule and keep the old behaviour. */
+.utrecht-textbox--html-input:where(:invalid:not(:user-invalid, [aria-invalid="true"])) {
+  --utrecht-textbox-invalid-background-color: var(
+    --utrecht-textbox-background-color,
+    var(--utrecht-form-control-background-color)
+  );
+  --utrecht-textbox-invalid-border-color: var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color));
+  --utrecht-textbox-invalid-border-width: var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width));
+  --utrecht-textbox-invalid-border-bottom-width: var(
+    --utrecht-textbox-border-bottom-width,
+    var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width))
+  );
+  --utrecht-textbox-invalid-color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+}
+
 .utrecht-textbox--html-input {
   &:hover:not(:disabled, :focus, :focus-visible) {
     background-color: var(

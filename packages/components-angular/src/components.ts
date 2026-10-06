@@ -35,6 +35,7 @@ export * from './pagination/component';
 export * from './paragraph/component';
 export * from './progress-bar/component';
 export * from './radio-button/component';
+export * from './select/component';
 export * from './separator/component';
 export * from './skip-link/component';
 export * from './story/component';

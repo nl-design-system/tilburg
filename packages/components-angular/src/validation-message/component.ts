@@ -11,7 +11,12 @@ export type TilburgValidationLiveRegion = 'polite' | 'assertive' | 'off';
 })
 export class TilburgValidationMessage {
   @Input() type?: string | null = 'error';
-  @Input() ariaLive: TilburgValidationLiveRegion = 'polite';
+  /** `assertive` (default) renders an alert, `polite` a status, `off` no live role. */
+  @Input() ariaLive: TilburgValidationLiveRegion = 'assertive';
+
+  get role(): 'alert' | 'status' | null {
+    return this.ariaLive === 'assertive' ? 'alert' : this.ariaLive === 'polite' ? 'status' : null;
+  }
 
   get resolvedType(): TilburgValidationMessageType {
     return this.type === 'warning' ? 'warning' : 'error';

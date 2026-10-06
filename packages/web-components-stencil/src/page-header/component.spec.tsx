@@ -26,6 +26,11 @@ describe('tilburg-wbc-page-header', () => {
     expect(page.root!.querySelector('.tilburg-page-header__title')).toBeNull();
   });
 
+  it('names a logo-only brand link after the organisation when no logo-alt is given', async () => {
+    const page = await render('<tilburg-wbc-page-header logo-src="/logo.svg"></tilburg-wbc-page-header>');
+    expect(page.root!.querySelector('img')!.getAttribute('alt')).toBe('Gemeente Tilburg');
+  });
+
   it('omits the brand link without logo and heading', async () => {
     const page = await render('<tilburg-wbc-page-header></tilburg-wbc-page-header>');
     expect(page.root!.querySelector('.tilburg-page-header__brand')).toBeNull();

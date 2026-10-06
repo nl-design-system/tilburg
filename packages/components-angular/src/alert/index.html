@@ -1,10 +1,10 @@
 <div
   class="utrecht-alert tilburg-alert"
   [ngClass]="variantClass"
-  [attr.role]="resolvedRole"
-  [attr.aria-live]="resolvedLiveRegion"
+  [attr.role]="announce ? null : resolvedRole"
+  [attr.aria-live]="announce ? null : resolvedLiveRegion"
   [attr.aria-label]="ariaLabel || null"
-  aria-atomic="true"
+  [attr.aria-atomic]="announce ? null : 'true'"
 >
   <div class="utrecht-alert__icon" aria-hidden="true">
     <ng-content select="[slot=icon]"></ng-content>
@@ -19,7 +19,7 @@
       <tilburg-heading-6 *ngSwitchCase="6" class="tilburg-alert__title">{{ title }}</tilburg-heading-6>
     </ng-container>
     <div class="utrecht-alert__message">
-      <span *ngIf="srPrefix" class="utrecht-visually-hidden">{{ srPrefix }}</span>
+      <span *ngIf="resolvedSrPrefix" class="utrecht-visually-hidden">{{ resolvedSrPrefix }} </span>
       <ng-content></ng-content>
     </div>
   </div>

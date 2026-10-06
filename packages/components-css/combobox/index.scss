@@ -512,3 +512,21 @@
 .bat-theme .utrecht-combobox .tilburg-combobox__clear {
   inline-size: 24px;
 }
+
+/* Windows high contrast (forced colours): the active and selected options differ only by stripe colour and background,
+   which the system palette replaces. Mark them with system colours instead: the active option in the highlight colour,
+   the selected one with a stripe in the selected-item colour. */
+@media (forced-colors: active) {
+  .utrecht-listbox__option[aria-selected="true"] {
+    border-inline-start-color: selecteditem;
+    forced-color-adjust: none;
+  }
+
+  .utrecht-listbox__option[data-active="true"]:not([aria-disabled="true"]),
+  .utrecht-combobox .utrecht-listbox__option:hover:not([aria-disabled="true"]) {
+    background-color: highlight;
+    border-inline-start-color: highlighttext;
+    color: highlighttext;
+    forced-color-adjust: none;
+  }
+}

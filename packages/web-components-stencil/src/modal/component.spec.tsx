@@ -83,4 +83,13 @@ describe('tilburg-wbc-modal', () => {
     await page.waitForChanges();
     expect(page.root!.querySelector('dialog')!.hasAttribute('open')).toBe(false);
   });
+
+  it('moves aria-describedby from the host to the dialog', async () => {
+    const page = await newSpecPage({
+      components: [TilburgWbcModal],
+      html: '<tilburg-wbc-modal heading="Sessie verloopt" aria-describedby="uitleg"><p id="uitleg">Over 2 minuten.</p></tilburg-wbc-modal>',
+    });
+    expect(page.root!.hasAttribute('aria-describedby')).toBe(false);
+    expect(page.root!.querySelector('dialog')!.getAttribute('aria-describedby')).toBe('uitleg');
+  });
 });

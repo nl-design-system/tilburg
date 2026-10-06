@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
+import { announce } from '../utils/announce';
 
 export type TilburgAlertVariant = 'info' | 'success' | 'warning' | 'danger';
 export type TilburgAlertLiveRegion = 'polite' | 'assertive' | 'off';
@@ -15,6 +25,14 @@ const VARIANT_TO_UTRECHT: Record<TilburgAlertVariant, string> = {
 // `ViewEncapsulation.None` lets the SCSS rule for the icon's inner `<i>` reach
 // projected `<app-icon>` content (was previously `::ng-deep`, which the repo
 // stylelint config disallows). Selectors stay scoped under `.tilburg-alert`.
+/* The alert type, read out before the message (bq-tlb-frontend TIL-51): the colour and icon show it visually only. */
+const DEFAULT_SR_PREFIX: Record<string, string> = {
+  info: 'Informatie:',
+  success: 'Succes:',
+  warning: 'Waarschuwing:',
+  danger: 'Fout:',
+};
+
 @Component({
   selector: 'tilburg-alert',
   templateUrl: 'index.html',
@@ -22,7 +40,7 @@ const VARIANT_TO_UTRECHT: Record<TilburgAlertVariant, string> = {
   encapsulation: ViewEncapsulation.None,
   standalone: false,
 })
-export class TilburgAlert {
+export class TilburgAlert implements AfterViewChecked {
   @Input() variant: TilburgAlertVariant | null | undefined = 'info';
   @Input() title?: string | null;
   @Input() headingLevel: 1 | 2 | 3 | 4 | 5 | 6 = 3;
@@ -30,8 +48,20 @@ export class TilburgAlert {
   @Input() liveRegion: TilburgAlertLiveRegion = 'polite';
   @Input() ariaLabel?: string | null;
   @Input() closeButtonAriaLabel = 'sluit alert';
-  /** Visually hidden text prepended to the alert message for screen readers (e.g. "Fout:", "Waarschuwing:"). */
+  /** Visually hidden text prepended to the alert message for screen readers (e.g. "Fout:", "Waarschuwing:").
+   *  Defaults per variant; pass `''` or `null` for none. */
   @Input() srPrefix?: string | null;
+  /** Read the alert out through a persistent live region when it appears and when its text changes. Use it for an alert
+   *  that is rendered together with its text (e.g. after a submit), which a live region on the alert itself often
+   *  does not announce (TIL-40). The alert then has no live role of its own, so it is not read twice. */
+  @Input() announce = false;
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private lastAnnounced = '';
+
+  get resolvedSrPrefix(): string | null {
+    return this.srPrefix === undefined ? (DEFAULT_SR_PREFIX[this.resolvedVariant] ?? null) : this.srPrefix;
+  }
 
   @Output() closed = new EventEmitter<void>();
 
@@ -52,6 +82,20 @@ export class TilburgAlert {
       return 'assertive';
     }
     return this.liveRegion;
+  }
+
+  /* After every check, but only announces when the text differs from what was read last. */
+  ngAfterViewChecked(): void {
+    if (!this.announce || this.resolvedLiveRegion === 'off') return;
+    /* Title and message are separate blocks: join them with a space so they do not run together. */
+    const content = this.host.nativeElement.querySelector('.utrecht-alert__content');
+    const text = Array.from(content?.children ?? [], (part) => part.textContent?.trim() ?? '')
+      .filter(Boolean)
+      .join(' ');
+    if (text && text !== this.lastAnnounced) {
+      this.lastAnnounced = text;
+      announce(text, this.resolvedLiveRegion);
+    }
   }
 
   onClose(): void {

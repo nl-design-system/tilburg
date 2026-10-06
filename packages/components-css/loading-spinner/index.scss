@@ -41,3 +41,10 @@
     var(--tilburg-loading-spinner-svg-margin-block-end);
   margin-inline: 0;
 }
+
+/* Reduced motion: keep turning (a still spinner no longer says "busy"), but four times slower. */
+@media (prefers-reduced-motion: reduce) {
+  .tilburg-loading-spinner__svg {
+    animation-duration: calc(var(--tilburg-loading-spinner-animation-duration, 1000ms) * 4);
+  }
+}

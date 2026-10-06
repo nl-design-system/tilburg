@@ -27,7 +27,7 @@ export class TilburgWbcValidationMessage {
    * `aria-live` of the message. Angular calls this `ariaLive`; renamed because
    * `aria-live` is a global ARIA attribute (and `ariaLive` an HTMLElement property).
    */
-  @Prop() liveRegion: TilburgWbcValidationLiveRegion = 'polite';
+  @Prop() liveRegion: TilburgWbcValidationLiveRegion = 'assertive';
 
   private hasIcon = false;
 
@@ -47,7 +47,8 @@ export class TilburgWbcValidationMessage {
           'tilburg-validation-message--error': !isWarning,
           'tilburg-validation-message--warning': isWarning,
         }}
-        role="alert"
+        /* The role follows the live region: assertive (default) = alert, polite = status, off = none. */
+        role={this.liveRegion === 'assertive' ? 'alert' : this.liveRegion === 'polite' ? 'status' : undefined}
         aria-live={this.liveRegion}
       >
         <span class="tilburg-validation-message__icon" aria-hidden="true">

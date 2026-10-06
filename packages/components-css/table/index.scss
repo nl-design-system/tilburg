@@ -46,11 +46,20 @@
 }
 
 /* Zebra striping — odd-indexed rows pick up the uneven background. */
-.utrecht-table tbody tr:nth-child(odd) .utrecht-table__cell {
+.utrecht-table tbody tr:nth-child(odd) :is(.utrecht-table__cell, .utrecht-table__header-cell) {
   background-color: var(--utrecht-table-row-uneven-background-color);
 }
 
 /* Even rows fall back to the even background (white in the Tilburg theme). */
-.utrecht-table tbody tr:nth-child(even) .utrecht-table__cell {
+.utrecht-table tbody tr:nth-child(even) :is(.utrecht-table__cell, .utrecht-table__header-cell) {
   background-color: var(--utrecht-table-row-even-background-color);
+}
+
+/* Row headers (`<th scope="row">` in the body, bq-tlb-frontend TIL-88) belong to their row: they take the row's border
+   and zebra background (above) instead of the column-header tint and blue rule, and keep the bold weight that marks
+   them as headers. */
+.utrecht-table tbody .utrecht-table__header-cell {
+  border-block-end-color: var(--utrecht-table-row-border-color);
+  border-block-end-width: var(--utrecht-table-row-border-width);
+  color: inherit;
 }

@@ -14,9 +14,16 @@ describe('tilburg-wbc-badge-status', () => {
     expect(badge.textContent).toBe('Goedgekeurd');
   });
 
-  it('uses the status as accessible name when no aria-label is given', async () => {
+  it('keeps the visible text as accessible name: the status code is not a label', async () => {
     const page = await render('<tilburg-wbc-badge-status status="warning">Let op</tilburg-wbc-badge-status>');
-    expect(page.root!.querySelector('span')!.getAttribute('aria-label')).toBe('warning');
+    expect(page.root!.querySelector('span')!.hasAttribute('aria-label')).toBe(false);
+  });
+
+  it('announces an urgent status as an assertive alert', async () => {
+    const page = await render('<tilburg-wbc-badge-status status="danger">Afgewezen</tilburg-wbc-badge-status>');
+    const badge = page.root!.querySelector('span')!;
+    expect(badge.getAttribute('role')).toBe('alert');
+    expect(badge.getAttribute('aria-live')).toBe('assertive');
   });
 
   it('renders no modifier and no aria-label without a status', async () => {

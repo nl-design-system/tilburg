@@ -24,9 +24,9 @@ export function AanvraagStatus() {
 }
 \`\`\`
 
-Props: \`status\` (\`string\`, appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), plus any standard \`<span>\` attribute (\`aria-label\`, \`className\`, …). \`BadgeStatusProps\` is exported as a type alias.
+Props: \`status\` (\`string\`, appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`; default \`'assertive'\` for an urgent status, otherwise \`'polite'\`), plus any standard \`<span>\` attribute (\`aria-label\`, \`className\`, …). \`BadgeStatusProps\` is exported as a type alias.
 
-\`role="status"\` and \`aria-live\` are set for you. If you don't pass an \`aria-label\`, the \`status\` value is used as the accessible name.`;
+\`role\` and \`aria-live\` are set for you: \`role="status"\` with \`aria-live="polite"\`, and for an urgent status (\`danger\`, \`error\`, \`invalid\`) \`role="alert"\` with \`aria-live="assertive"\`; \`liveRegion\` overrides the live region. The visible text is the accessible name; pass an \`aria-label\` only when the text alone is not clear.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -61,7 +61,7 @@ const usageWebComponents = `### Web Components (Stencil)
 </tilburg-wbc-badge-status>
 \`\`\`
 
-Attributes: \`status\` (appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'polite'\`), and \`aria-label\` / \`aria-describedby\` / \`title\`, moved onto the inner badge. Angular's \`ariaLabel\` input is the plain \`aria-label\` attribute here; without it the \`status\` value is the accessible name. \`role="status"\` and \`aria-live\` are set for you. Slot: default (the badge text). No events.`;
+Attributes: \`status\` (appended as the \`utrecht-badge-status--{status}\` modifier — \`'info' | 'success' | 'warning' | 'error'\`, plus the utrecht feedback aliases \`'safe' | 'danger' | 'invalid' | 'inactive' | 'neutral'\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`; default \`'assertive'\` for an urgent status, otherwise \`'polite'\`), and \`aria-label\` / \`aria-describedby\` / \`title\`, moved onto the inner badge. Angular's \`ariaLabel\` input is the plain \`aria-label\` attribute here; without it the visible text is the accessible name. \`role\` (\`alert\` for an urgent status, else \`status\`) and \`aria-live\` are set for you. Slot: default (the badge text). No events.`;
 
 export const descriptionWebComponents = `${intro}
 
@@ -91,7 +91,7 @@ export const examples = {
   <span class="utrecht-badge-status utrecht-badge-status--info" role="status">In behandeling</span>
   <span class="utrecht-badge-status utrecht-badge-status--success" role="status">Goedgekeurd</span>
   <span class="utrecht-badge-status utrecht-badge-status--warning" role="status">Aandacht vereist</span>
-  <span class="utrecht-badge-status utrecht-badge-status--error" role="status">Afgewezen</span>
+  <span class="utrecht-badge-status utrecht-badge-status--error" role="alert" aria-live="assertive">Afgewezen</span>
 </div>`,
   },
 } satisfies Record<string, Example>;

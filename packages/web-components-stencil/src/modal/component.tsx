@@ -3,7 +3,8 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, Element, Event, EventEmitter, h, Method, Prop, Watch } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Method, Prop, State, Watch } from '@stencil/core';
+import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { hasSlot } from '../utils/slots';
 
 let modalCount = 0;
@@ -20,6 +21,10 @@ let modalCount = 0;
 export class TilburgWbcModal {
   @Element() host!: HTMLElement;
 
+  /* `aria-describedby` on the host (the id of the text that explains the dialog) belongs on the `<dialog>`. */
+  @State() inherited: InheritedAttributes = {};
+  private inheritor?: AttributeInheritor;
+
   /** Heading text; also the dialog's accessible name. Named `heading` because `title` is a global HTML attribute. */
   @Prop() heading?: string;
   /** `true` opens the dialog modally (`showModal()`), `false` closes it. Reflects the current state. */
@@ -35,6 +40,16 @@ export class TilburgWbcModal {
   private dialog?: HTMLDialogElement;
   private readonly titleId = `tilburg-wbc-modal-${++modalCount}-title`;
   private hasFooter = false;
+
+  connectedCallback() {
+    this.inheritor = inheritAttributes(this.host, ['aria-describedby'], (attributes) => {
+      this.inherited = attributes;
+    });
+  }
+
+  disconnectedCallback() {
+    this.inheritor?.disconnect();
+  }
 
   componentWillLoad() {
     this.hasFooter = hasSlot(this.host, 'footer');
@@ -108,6 +123,7 @@ export class TilburgWbcModal {
         ref={(el) => (this.dialog = el)}
         class="tilburg-modal"
         aria-labelledby={this.titleId}
+        aria-describedby={this.inherited['aria-describedby'] || undefined}
         onClose={this.onDialogClose}
         onClick={this.onDialogClick}
       >

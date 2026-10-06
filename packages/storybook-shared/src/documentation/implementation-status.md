@@ -4,14 +4,14 @@ Welke van de vier lagen bestaat er per component. De tabel is afgeleid uit de re
 `packages/components-css/*/index.scss`, `packages/components-angular/src/*/component.ts`,
 `packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is een momentopname van 21 september 2026.
 
-**39 componenten** zijn gedocumenteerd. **38** hebben een React-wrapper, **38** een Angular-wrapper en **38** een
+**40 componenten** zijn gedocumenteerd. **39** hebben een React-wrapper, **39** een Angular-wrapper en **39** een
 Web Component (`@gemeente-tilburg/web-components-stencil`).
 Er is op dit moment geen enkel component dat wél in React maar niet in Angular bestaat, of andersom.
 
 ## Wat de kolommen betekenen
 
 - **HTML/CSS** — de leidende laag. ✅ betekent dat er een eigen `@gemeente-tilburg/components-css`-laag
-  bovenop utrecht ligt (32 componenten). `utrecht` betekent dat de utrecht-basisstijl volstaat en Tilburg
+  bovenop utrecht ligt (33 componenten). `utrecht` betekent dat de utrecht-basisstijl volstaat en Tilburg
   niets overschrijft (7 componenten) — dat is een bewuste keuze, geen ontbrekend werk.
 - **React** — er is een component in `@gemeente-tilburg/components-react`.
 - **Angular** — er is een component in `@gemeente-tilburg/components-angular`.
@@ -53,6 +53,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Paragraph              | utrecht  | ✅    | ✅      | ✅             |
 | Progress Bar           | ✅       | ✅    | ✅      | ✅             |
 | Radio Button           | ✅       | ✅    | ✅      | ✅             |
+| Select                 | ✅       | ✅    | ✅      | ✅             |
 | Separator              | ✅       | ✅    | ✅      | ✅             |
 | Skip Link              | ✅       | ✅    | ✅      | ✅             |
 | Table                  | ✅       | ✅    | ✅      | ✅             |

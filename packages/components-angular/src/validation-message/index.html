@@ -5,7 +5,7 @@
   [class.utrecht-form-field-description--warning]="resolvedType === 'warning'"
   [class.tilburg-validation-message--error]="resolvedType === 'error'"
   [class.tilburg-validation-message--warning]="resolvedType === 'warning'"
-  role="alert"
+  [attr.role]="role"
   [attr.aria-live]="ariaLive"
 >
   <span class="tilburg-validation-message__icon" aria-hidden="true">

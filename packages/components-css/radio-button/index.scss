@@ -15,7 +15,7 @@
 }
 
 .utrecht-radio-button--html-input.utrecht-radio-button {
-  &:invalid:not(:checked) {
+  &:is(:user-invalid, [aria-invalid="true"]):not(:checked) {
     background-color: var(--utrecht-radio-button-invalid-background-color);
   }
 
@@ -106,5 +106,23 @@
      canonical reference rows carry. */
   &:not(:last-child) {
     margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
+  }
+}
+
+/* Not red before the user has had a go (WCAG 3.3.1 / bq-tlb-frontend TIL-69). A required field is `:invalid` from the
+   first render, so styling `:invalid` paints every empty required field red on page load. The invalid look now waits for
+   `:user-invalid` (after the user has changed the field or tried to submit), or for `aria-invalid="true"`, which an app
+   sets when it decides there is an error. Until then the utrecht base rule for `:invalid` gets the normal values through
+   its own invalid tokens. Browsers without `:user-invalid` drop that rule and keep the old behaviour. */
+.utrecht-radio-button--html-input:where(:invalid:not(:user-invalid, [aria-invalid="true"])) {
+  --utrecht-radio-button-invalid-border-color: var(--utrecht-radio-button-border-color);
+  --utrecht-radio-button-invalid-border-width: var(--utrecht-radio-button-border-width);
+  --utrecht-radio-button-invalid-color: var(--utrecht-radio-button-color);
+}
+
+/* Windows high contrast (forced colours): show the native radio button, drawn in system colours. */
+@media (forced-colors: active) {
+  .utrecht-radio-button--html-input.utrecht-radio-button {
+    appearance: auto;
   }
 }

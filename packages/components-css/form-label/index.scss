@@ -33,7 +33,8 @@
   > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(
     + .utrecht-textbox,
     + .utrecht-textarea,
-    + .utrecht-combobox
+    + .utrecht-combobox,
+    + .utrecht-select
   ) {
   margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
 }

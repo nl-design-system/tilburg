@@ -25,7 +25,7 @@ const usageAngular = `### Angular
 </tilburg-alert>
 \`\`\`
 
-Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden severity prefix for screen readers, e.g. \`"Fout:"\`). Output: \`(closed)\`. Content: default projection for the message, \`slot="icon"\` / \`slot="close-icon"\` to replace the default icons. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\`, \`liveRegion\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` when \`variant="danger"\`), \`ariaLabel\`, \`closeButtonAriaLabel\`, \`srPrefix\` (visually-hidden type read before the message; defaults per variant to \`Informatie:\` / \`Succes:\` / \`Waarschuwing:\` / \`Fout:\`, \`''\` for none). \`announce\` (read the alert out through a persistent live region when it appears or its text changes; use it for an alert rendered together with its text, e.g. after a submit, which screen readers otherwise often miss). Output: \`(closed)\`. Content: default projection for the message, \`slot="icon"\` / \`slot="close-icon"\` to replace the default icons. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
 const usageReact = `### React
 
@@ -48,12 +48,11 @@ Both icons are plain \`ReactNode\` props — \`icon\` for the severity glyph, \`
 
 \`\`\`tsx
 <Alert variant="danger" title="Er ging iets mis" icon={<ErrorIcon />} closable closeIcon={<CrossIcon />}>
-  <span className="utrecht-visually-hidden">Fout:</span>
   Probeer het opnieuw of neem contact op met de gemeente.
 </Alert>
 \`\`\`
 
-Props: \`variant\` (\`AlertVariant\` = \`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\` (default \`false\`), \`liveRegion\` (\`AlertLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, defaults to \`'assertive'\` when \`variant="danger"\` and \`'polite'\` otherwise), \`closeButtonAriaLabel\` (default \`'sluit alert'\`), \`icon\` and \`closeIcon\` (\`ReactNode\`), \`onClose\` (\`() => void\`), plus any \`<div>\` attribute (\`className\`, \`aria-label\`, …) and a forwarded \`ref\`. \`AlertProps\`, \`AlertVariant\` and \`AlertLiveRegion\` are exported as types. There is no \`srPrefix\` prop — render the visually-hidden severity prefix yourself as the first child, as above. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+Props: \`variant\` (\`AlertVariant\` = \`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`title\`, \`headingLevel\` (1–6, default 3), \`closable\` (default \`false\`), \`liveRegion\` (\`AlertLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, defaults to \`'assertive'\` when \`variant="danger"\` and \`'polite'\` otherwise), \`closeButtonAriaLabel\` (default \`'sluit alert'\`), \`icon\` and \`closeIcon\` (\`ReactNode\`), \`onClose\` (\`() => void\`), plus any \`<div>\` attribute (\`className\`, \`aria-label\`, …) and a forwarded \`ref\`. \`AlertProps\`, \`AlertVariant\` and \`AlertLiveRegion\` are exported as types. \`srPrefix\` is the visually-hidden type read before the message; it defaults per variant (\`Informatie:\`, \`Succes:\`, \`Waarschuwing:\`, \`Fout:\`), pass \`''\` for none. \`announce\` (read the alert out through a persistent live region when it appears or its text changes; use it for an alert rendered together with its text, e.g. after a submit, which screen readers otherwise often miss). The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -127,13 +126,13 @@ const usageWebComponents = `### Web Components (Stencil)
 Leave the \`icon\` / \`close-icon\` slots empty to get the CSS default glyphs, or pass your own element:
 
 \`\`\`html
-<tilburg-wbc-alert variant="danger" heading="Er ging iets mis" sr-prefix="Fout:">
+<tilburg-wbc-alert variant="danger" heading="Er ging iets mis">
   <svg slot="icon" aria-hidden="true"><!-- … --></svg>
   Probeer het opnieuw of neem contact op met de gemeente.
 </tilburg-wbc-alert>
 \`\`\`
 
-Attributes: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`heading-level\` (1–6, default 3), \`closable\`, \`live-region\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` for \`danger\` and \`polite\` otherwise), \`close-button-aria-label\` (default \`'sluit alert'\`), \`sr-prefix\`, and \`aria-label\` (moved onto the inner alert). Event: \`tilburgClose\` — the alert does not remove itself. Slots: default (message), \`icon\`, \`close-icon\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
+Attributes: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'info'\`), \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`heading-level\` (1–6, default 3), \`closable\`, \`live-region\` (\`'polite' | 'assertive' | 'off'\`, defaults to \`assertive\` for \`danger\` and \`polite\` otherwise), \`close-button-aria-label\` (default \`'sluit alert'\`), \`sr-prefix\` (defaults per variant to \`Informatie:\` / \`Succes:\` / \`Waarschuwing:\` / \`Fout:\`; \`sr-prefix=""\` for none), \`announce\` (same as Angular/React: read out through a persistent live region; the alert then has no live role of its own). and \`aria-label\` (moved onto the inner alert). Event: \`tilburgClose\` — the alert does not remove itself. Slots: default (message), \`icon\`, \`close-icon\`. The \`role\` attribute (\`alert\` for \`danger\`, \`status\` otherwise) is derived automatically.`;
 
 export const descriptionWebComponents = `${intro}
 

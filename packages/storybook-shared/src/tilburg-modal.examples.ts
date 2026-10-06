@@ -57,7 +57,7 @@ const usageAngular = `### Angular
 </tilburg-modal>
 \`\`\`
 
-Inputs: \`title\` (heading + accessible name), \`open\` (\`true\` opens via \`showModal()\`, \`false\` closes), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`). Output: \`(closed)\` — fires for every way of closing (close button, Escape, backdrop, \`close()\`); set your \`open\` back to \`false\` there. Content: default projection for the body, \`slot="footer"\` on each action (they become the footer's flex items; the footer disappears when empty). Public methods \`showModal()\` / \`close()\` via \`@ViewChild(TilburgModal)\`.`;
+Inputs: \`title\` (heading + accessible name), \`open\` (\`true\` opens via \`showModal()\`, \`false\` closes), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`). Output: \`(closed)\` — fires for every way of closing (close button, Escape, backdrop, \`close()\`); set your \`open\` back to \`false\` there. Content: default projection for the body, \`slot="footer"\` on each action (they become the footer's flex items; the footer disappears when empty). Public methods \`showModal()\` / \`close()\` via \`@ViewChild(TilburgModal)\`. \`ariaDescribedBy\` (id of the text that explains the dialog, read after the title). Focus goes to the first focusable element when the dialog opens (the close button); put \`autofocus\` on the primary action to start there instead.`;
 
 const usageReact = `### React
 
@@ -88,7 +88,7 @@ export function ConfirmApplication() {
 }
 \`\`\`
 
-Props: \`title\` (heading + accessible name), \`open\` (controlled; \`true\` opens via \`showModal()\`), \`onClose\` (fires for every way of closing — keep your state in sync there), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`), \`footer\` (\`ReactNode\`; no footer when omitted), plus any \`<dialog>\` attribute. The forwarded \`ref\` is the \`<dialog>\`, so \`ref.current.showModal()\` works too. \`AlertDialog\` (with \`customFooter\`) is a deprecated alias that renders through \`Modal\`.`;
+Props: \`title\` (heading + accessible name), \`open\` (controlled; \`true\` opens via \`showModal()\`), \`onClose\` (fires for every way of closing — keep your state in sync there), \`closeLabel\` (default \`'Sluiten'\`), \`closeOnBackdropClick\` (default \`true\`), \`footer\` (\`ReactNode\`; no footer when omitted), plus any \`<dialog>\` attribute. The forwarded \`ref\` is the \`<dialog>\`, so \`ref.current.showModal()\` works too. \`AlertDialog\` (with \`customFooter\`) is a deprecated alias that renders through \`Modal\`. \`aria-describedby\` (id of the text that explains the dialog, read after the title) passes through to the \`<dialog>\`. Focus goes to the first focusable element when the dialog opens (the close button); put \`autofocus\` on the primary action to start there instead.`;
 
 const usageWebComponents = `### Web Components (Stencil)
 
@@ -108,7 +108,7 @@ const usageWebComponents = `### Web Components (Stencil)
 </script>
 \`\`\`
 
-Attributes: \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`open\` (reflected; set it to open, it is removed when the dialog closes), \`close-label\` (default \`'Sluiten'\`), \`close-on-backdrop-click\` (default \`true\`). Methods: \`showModal()\`, \`close()\`. Event: \`tilburgClose\` for every way of closing. Slots: default (body), \`footer\` — put \`slot="footer"\` on each action so they become the footer's flex items; the footer is omitted when unused.`;
+Attributes: \`heading\` (the title — named \`heading\` because \`title\` is a global HTML attribute), \`open\` (reflected; set it to open, it is removed when the dialog closes), \`close-label\` (default \`'Sluiten'\`), \`close-on-backdrop-click\` (default \`true\`). Methods: \`showModal()\`, \`close()\`. Event: \`tilburgClose\` for every way of closing. Slots: default (body), \`footer\` — put \`slot="footer"\` on each action so they become the footer's flex items; the footer is omitted when unused. \`aria-describedby\` on the element (id of the text that explains the dialog) is moved onto the \`<dialog>\`. Focus goes to the first focusable element when the dialog opens (the close button); put \`autofocus\` on the primary action to start there instead.`;
 
 export const description = `${intro}
 
