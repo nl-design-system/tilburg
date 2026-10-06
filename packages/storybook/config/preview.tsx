@@ -34,12 +34,14 @@ import '@gemeente-tilburg/components-css/page-header/index.scss';
 import '@gemeente-tilburg/components-css/pagination/index.scss';
 import '@gemeente-tilburg/components-css/progress-bar/index.scss';
 import '@gemeente-tilburg/components-css/radio-button/index.scss';
+import '@gemeente-tilburg/components-css/password-input/index.scss';
 import '@gemeente-tilburg/components-css/select/index.scss';
 import '@gemeente-tilburg/components-css/separator/index.scss';
 import '@gemeente-tilburg/components-css/skip-link/index.scss';
 import '@gemeente-tilburg/components-css/table/index.scss';
 import '@gemeente-tilburg/components-css/textarea/index.scss';
 import '@gemeente-tilburg/components-css/textbox/index.scss';
+import '@gemeente-tilburg/components-css/tooltip/index.scss';
 import '@gemeente-tilburg/components-css/unordered-list/index.scss';
 import '@gemeente-tilburg/components-css/validation-message/index.scss';
 import '@gemeente-tilburg/font/src/index.scss';
@@ -51,9 +53,13 @@ import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
    the HTML/CSS reference stories. Same idempotency rule — only enhances
    `.utrecht-combobox[data-tilburg-combobox-enhance]`. */
 import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
+/* Show/hide toggle of the HTML/CSS password input (`[data-tilburg-password-input-enhance]`). */
+import { enhancePasswordInput } from '@gemeente-tilburg/components-css/password-input';
+/* Hover/focus/Escape behaviour of the HTML/CSS tooltip (`[data-tilburg-tooltip-enhance]`). */
+import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
+import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
-import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
 import { Controls, Description, Primary, Stories } from '@storybook/addon-docs';
 import type { Preview } from '@storybook/react';
@@ -69,6 +75,8 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
   const reenhance = () => {
     enhanceAccordion(document);
     enhanceCombobox(document);
+    enhancePasswordInput(document);
+    enhanceTooltip(document);
     resolveTokens(document);
   };
   new MutationObserver(reenhance).observe(document.body, { childList: true, subtree: true });

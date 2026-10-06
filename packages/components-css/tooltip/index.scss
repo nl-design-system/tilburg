@@ -1,0 +1,98 @@
+/* Tooltip (Tilburg component, bq-tlb-frontend TIL-53/54): a short description of a control, shown on hover and focus.
+
+   <span class="tilburg-tooltip">                         ← `--open` while shown, `--below` to place it under the trigger
+     <button … aria-describedby="tip-1">                   ← the trigger: any focusable element
+     <span class="tilburg-tooltip__popup" id="tip-1" role="tooltip">Tekst</span>
+
+   The popup stays in the DOM while closed (only hidden from view), so `aria-describedby` gives screen-reader users
+   the text whether it is open or not. Opening and closing is done by script (the enhancer, or the component in each
+   layer): hover with a short delay, focus, Escape to dismiss, and the pointer can move onto the popup (WCAG 1.4.13).
+
+   The script also keeps the open popup in view: it sets `data-tilburg-tooltip-placement` when the preferred side has no
+   room (flip) and `--_tilburg-tooltip-shift` when it would stick out past the left or right edge. Without the script
+   the `--below` class alone decides the side. */
+
+@mixin popup-above {
+  inset-block-end: calc(100% + var(--_tilburg-tooltip-gap));
+  inset-block-start: auto;
+
+  &::after {
+    inset-block-end: auto;
+    inset-block-start: 100%;
+  }
+}
+
+@mixin popup-below {
+  inset-block-end: auto;
+  inset-block-start: calc(100% + var(--_tilburg-tooltip-gap));
+
+  &::after {
+    inset-block-end: 100%;
+    inset-block-start: auto;
+  }
+}
+
+.tilburg-tooltip {
+  --_tilburg-tooltip-gap: var(--tilburg-tooltip-gap, 8px);
+
+  display: inline-block;
+  position: relative;
+}
+
+.tilburg-tooltip__popup {
+  background-color: var(--tilburg-tooltip-background-color, var(--tilburg-color-gray-500, #333));
+  border-radius: var(--tilburg-tooltip-border-radius, 4px);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+  color: var(--tilburg-tooltip-color, var(--tilburg-color-white, #fff));
+  display: none;
+  font-family: var(--utrecht-document-font-family, inherit);
+  font-size: var(--tilburg-tooltip-font-size, 0.8125rem);
+  font-weight: 400;
+  inline-size: max-content;
+  inset-inline-start: 50%;
+  line-height: 1.4;
+  max-inline-size: var(--tilburg-tooltip-max-inline-size, 20rem);
+  overflow-wrap: anywhere;
+  padding-block: var(--tilburg-space-block-beetle, 8px);
+  padding-inline: var(--tilburg-space-inline-snail, 12px);
+  position: absolute;
+  text-align: start;
+  translate: calc(-50% + var(--_tilburg-tooltip-shift, 0px)) 0;
+  white-space: normal;
+  z-index: var(--tilburg-tooltip-z-index, 1000);
+
+  /* An invisible bridge over the gap to the trigger, so moving the pointer from the trigger onto the popup does not
+     leave the tooltip on the way (WCAG 1.4.13: hoverable). */
+  &::after {
+    block-size: var(--_tilburg-tooltip-gap);
+    content: "";
+    inset-inline: 0;
+    position: absolute;
+  }
+
+  @include popup-above;
+}
+
+.tilburg-tooltip--below .tilburg-tooltip__popup {
+  @include popup-below;
+}
+
+/* Set by the script after measuring; wins over the `--below` class. */
+.tilburg-tooltip[data-tilburg-tooltip-placement="above"] .tilburg-tooltip__popup {
+  @include popup-above;
+}
+
+.tilburg-tooltip[data-tilburg-tooltip-placement="below"] .tilburg-tooltip__popup {
+  @include popup-below;
+}
+
+.tilburg-tooltip--open .tilburg-tooltip__popup {
+  display: block;
+}
+
+/* Windows high contrast (forced colours): the shadow is dropped, so outline the popup to keep its edge. */
+@media (forced-colors: active) {
+  .tilburg-tooltip__popup {
+    border: 1px solid canvastext;
+  }
+}

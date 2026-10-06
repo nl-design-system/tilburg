@@ -21,3 +21,8 @@
 .tilburg-high-contrast[class*="-theme"] .utrecht-select--html-select:not([multiple]) {
   --utrecht-select-background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath stroke='%23fff' d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
 }
+
+/* The tooltip popup is dark on a black page in high contrast: a white border keeps its edge. */
+.tilburg-high-contrast[class*="-theme"] .tilburg-tooltip__popup {
+  border: 2px solid #fff;
+}
