@@ -71,3 +71,24 @@
     var(--utrecht-page-background-color, #fff);
   transition: width var(--tilburg-progress-bar-transition-duration) var(--tilburg-motion-easing-standard, ease-in-out);
 }
+
+/* Reduced motion: the bar jumps to the new step instead of sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .tilburg-progress-bar__track,
+  .tilburg-progress-bar__indicator {
+    transition: none;
+  }
+}
+
+/* Windows high contrast (forced colours): track and bar would both get the system background, so the progress would
+   disappear; draw the bar in the system highlight colour and outline the track. */
+@media (forced-colors: active) {
+  .tilburg-progress-bar__track {
+    border: 1px solid canvastext;
+  }
+
+  .tilburg-progress-bar__indicator {
+    background-color: highlight;
+    forced-color-adjust: none;
+  }
+}

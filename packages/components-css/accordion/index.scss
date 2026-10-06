@@ -84,3 +84,11 @@
 .utrecht-accordion__panel[hidden] {
   display: none;
 }
+
+/* Reduced motion (bq-tlb-frontend guards all its motion): the section and panel change state without animating. */
+@media (prefers-reduced-motion: reduce) {
+  .utrecht-accordion__section,
+  .utrecht-accordion__panel {
+    transition: none;
+  }
+}

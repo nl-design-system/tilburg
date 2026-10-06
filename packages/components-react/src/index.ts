@@ -72,6 +72,8 @@ export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { RadioButton } from './RadioButton';
 export type { RadioButtonProps } from './RadioButton';
+export { Select } from './Select';
+export type { SelectProps } from './Select';
 export { Separator } from './Separator';
 export type { SeparatorProps } from './Separator';
 export { SkipLink } from './SkipLink';

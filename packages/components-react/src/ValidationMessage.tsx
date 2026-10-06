@@ -22,6 +22,14 @@ const TYPE_GLYPH: Record<ValidationMessageType, ReactNode> = {
   warning: <TriangleIcon />,
 };
 
+/* The role follows the live region, so they never contradict each other: `assertive` (default, as in bq-tlb-frontend) is an
+   alert, `polite` a status, `off` no live role at all. */
+const LIVE_ROLE: Record<ValidationLiveRegion, 'alert' | 'status' | undefined> = {
+  assertive: 'alert',
+  polite: 'status',
+  off: undefined,
+};
+
 export interface ValidationMessageProps extends HTMLAttributes<HTMLDivElement> {
   type?: ValidationMessageType;
   ariaLive?: ValidationLiveRegion;
@@ -33,7 +41,7 @@ export const ValidationMessage = forwardRef(
   (
     {
       type = 'error',
-      ariaLive = 'polite',
+      ariaLive = 'assertive',
       icon,
       className,
       children,
@@ -47,7 +55,7 @@ export const ValidationMessage = forwardRef(
     return (
       <div
         ref={ref}
-        role="alert"
+        role={LIVE_ROLE[ariaLive]}
         aria-live={ariaLive}
         className={clsx(
           'tilburg-validation-message',

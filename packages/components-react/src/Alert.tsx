@@ -1,6 +1,7 @@
 import '@gemeente-tilburg/components-css/alert/index.scss';
+import { announce as announceToScreenReader } from '@gemeente-tilburg/components-css/announce/index.js';
 import clsx from 'clsx';
-import { ForwardedRef, forwardRef, HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
+import { ForwardedRef, forwardRef, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useRef } from 'react';
 import { Heading1 } from './Heading1';
 import { Heading2 } from './Heading2';
 import { Heading3 } from './Heading3';
@@ -72,6 +73,14 @@ const IconWrap = ({ children }: { children: ReactNode }) => (
   </i>
 );
 
+/* The alert type, read out before the message (bq-tlb-frontend TIL-51): the colour and icon show it visually only. */
+const DEFAULT_SR_PREFIX: Record<string, string> = {
+  info: 'Informatie:',
+  success: 'Succes:',
+  warning: 'Waarschuwing:',
+  danger: 'Fout:',
+};
+
 export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: AlertVariant;
   title?: string;
@@ -79,6 +88,12 @@ export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   closable?: boolean;
   liveRegion?: AlertLiveRegion;
   closeButtonAriaLabel?: string;
+  /** Read the alert out through a persistent live region when it appears and when its text changes. Use it for an alert
+   *  that is rendered together with its text (e.g. after a submit), which a live region on the alert itself often
+   *  does not announce (TIL-40). The alert then has no live role of its own, so it is not read twice. */
+  announce?: boolean;
+  /** Visually hidden text read before the message, e.g. "Fout:". Defaults per variant; `''` or `null` for none. */
+  srPrefix?: string | null;
   /** Override the default per-variant icon. Pass `null` to render no icon. */
   icon?: ReactNode;
   /** Override the default close icon (× glyph). */
@@ -95,6 +110,8 @@ export const Alert = forwardRef(
       closable = false,
       liveRegion,
       closeButtonAriaLabel = 'sluit alert',
+      srPrefix,
+      announce = false,
       icon,
       closeIcon,
       onClose,
@@ -107,21 +124,47 @@ export const Alert = forwardRef(
     const HeadingTag = HEADINGS[headingLevel];
     const renderedIcon = icon === undefined ? VARIANT_GLYPH[variant] : icon;
     const renderedCloseIcon = closeIcon === undefined ? <CloseGlyph /> : closeIcon;
+    const prefix = srPrefix === undefined ? DEFAULT_SR_PREFIX[variant] : srPrefix;
     const role = variant === 'danger' ? 'alert' : 'status';
     const resolvedLiveRegion = liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
+
+    const localRef = useRef<HTMLDivElement | null>(null);
+    const lastAnnounced = useRef('');
+    const setRef = (node: HTMLDivElement | null) => {
+      localRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    };
+    /* Runs after every render, but only announces when the text differs from what was read last. */
+    useEffect(() => {
+      if (!announce || resolvedLiveRegion === 'off') return;
+      /* Title and message are separate blocks: join them with a space, or "Er ging iets mis" + "Fout:" run together. */
+      const content = localRef.current?.querySelector('.utrecht-alert__content');
+      const text = Array.from(content?.children ?? [], (part) => part.textContent?.trim() ?? '')
+        .filter(Boolean)
+        .join(' ');
+      if (text && text !== lastAnnounced.current) {
+        lastAnnounced.current = text;
+        announceToScreenReader(text, resolvedLiveRegion);
+      }
+    });
+
     return (
       <div
-        ref={ref}
-        role={role}
-        aria-live={resolvedLiveRegion}
-        aria-atomic="true"
+        ref={setRef}
+        role={announce ? undefined : role}
+        aria-live={announce ? undefined : resolvedLiveRegion}
+        aria-atomic={announce ? undefined : 'true'}
         className={clsx('utrecht-alert', 'tilburg-alert', `utrecht-alert--${VARIANT_TO_UTRECHT[variant]}`, className)}
         {...restProps}
       >
         <div className="utrecht-alert__icon">{renderedIcon && <IconWrap>{renderedIcon}</IconWrap>}</div>
         <div className="utrecht-alert__content">
           {title && <HeadingTag className="tilburg-alert__title">{title}</HeadingTag>}
-          <div className="utrecht-alert__message">{children}</div>
+          <div className="utrecht-alert__message">
+            {prefix && <span className="utrecht-visually-hidden">{prefix} </span>}
+            {children}
+          </div>
         </div>
         {closable && (
           <button type="button" className="tilburg-alert__close" aria-label={closeButtonAriaLabel} onClick={onClose}>

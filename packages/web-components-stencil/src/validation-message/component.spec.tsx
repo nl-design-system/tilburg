@@ -11,7 +11,7 @@ describe('tilburg-wbc-validation-message', () => {
     expect(root).toHaveClasses(['utrecht-form-field-error-message', 'tilburg-validation-message--error']);
     expect(root).not.toHaveClass('utrecht-form-field-description');
     expect(root.getAttribute('role')).toBe('alert');
-    expect(root.getAttribute('aria-live')).toBe('polite');
+    expect(root.getAttribute('aria-live')).toBe('assertive');
     expect(root.textContent).toContain('Verplicht');
   });
 
@@ -31,11 +31,13 @@ describe('tilburg-wbc-validation-message', () => {
     expect(page.root!.querySelector('.tilburg-validation-message')).toHaveClass('tilburg-validation-message--error');
   });
 
-  it('maps live-region to aria-live', async () => {
+  it('maps live-region to aria-live and a matching role', async () => {
     const page = await render(
-      '<tilburg-wbc-validation-message live-region="assertive">X</tilburg-wbc-validation-message>',
+      '<tilburg-wbc-validation-message live-region="polite">X</tilburg-wbc-validation-message>',
     );
-    expect(page.root!.querySelector('.tilburg-validation-message')!.getAttribute('aria-live')).toBe('assertive');
+    const message = page.root!.querySelector('.tilburg-validation-message')!;
+    expect(message.getAttribute('aria-live')).toBe('polite');
+    expect(message.getAttribute('role')).toBe('status');
   });
 
   it('keeps the icon container empty so the CSS default icon is painted', async () => {

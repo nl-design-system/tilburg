@@ -56,7 +56,14 @@ export class TilburgWbcPageHeader {
         <div class="tilburg-page-header__container">
           {(this.logoSrc || this.heading) && (
             <a class="tilburg-page-header__brand" href={this.titleHref || '/'}>
-              {this.logoSrc && <img class="tilburg-page-header__logo" src={this.logoSrc} alt={this.logoAlt} />}
+              {this.logoSrc && (
+                <img
+                  class="tilburg-page-header__logo"
+                  src={this.logoSrc}
+                  /* Without a heading the logo is the link's only content, so its alt is the link name (TIL-89). */
+                  alt={this.logoAlt || (this.heading ? '' : 'Gemeente Tilburg')}
+                />
+              )}
               {this.heading && <span class="tilburg-page-header__title">{this.heading}</span>}
             </a>
           )}

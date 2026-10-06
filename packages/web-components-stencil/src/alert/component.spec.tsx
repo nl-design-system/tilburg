@@ -59,7 +59,9 @@ describe('tilburg-wbc-alert', () => {
 
   it('renders the screen-reader prefix', async () => {
     const page = await render('<tilburg-wbc-alert sr-prefix="Fout:">Tekst</tilburg-wbc-alert>');
-    expect(page.root!.querySelector('.utrecht-alert__message .utrecht-visually-hidden')!.textContent).toBe('Fout:');
+    expect(page.root!.querySelector('.utrecht-alert__message .utrecht-visually-hidden')!.textContent!.trim()).toBe(
+      'Fout:',
+    );
   });
 
   it('renders a close button that emits tilburgClose', async () => {
@@ -78,5 +80,25 @@ describe('tilburg-wbc-alert', () => {
     const page = await render('<tilburg-wbc-alert aria-label="Melding">Tekst</tilburg-wbc-alert>');
     expect(page.root!.hasAttribute('aria-label')).toBe(false);
     expect(page.root!.querySelector('.utrecht-alert')!.getAttribute('aria-label')).toBe('Melding');
+  });
+
+  it('reads the alert type before the message by default, per variant, unless sr-prefix is empty', async () => {
+    const warning = await render('<tilburg-wbc-alert variant="warning">Tekst</tilburg-wbc-alert>');
+    expect(warning.root!.querySelector('.utrecht-visually-hidden')!.textContent!.trim()).toBe('Waarschuwing:');
+    const none = await render('<tilburg-wbc-alert variant="danger" sr-prefix="">Tekst</tilburg-wbc-alert>');
+    expect(none.root!.querySelector('.utrecht-alert__message .utrecht-visually-hidden')).toBeNull();
+  });
+
+  it('with announce, reads the alert out through the shared live region instead of its own role', async () => {
+    const page = await render(
+      '<tilburg-wbc-alert variant="danger" heading="Er ging iets mis" announce>Probeer het opnieuw.</tilburg-wbc-alert>',
+    );
+    const alert = page.root!.querySelector('.utrecht-alert')!;
+    expect(alert.hasAttribute('role')).toBe(false);
+    expect(alert.hasAttribute('aria-live')).toBe(false);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const region = page.doc.getElementById('tilburg-announcer-assertive')!;
+    expect(region.getAttribute('aria-live')).toBe('assertive');
+    expect(region.textContent).toBe('Er ging iets mis Fout: Probeer het opnieuw.');
   });
 });

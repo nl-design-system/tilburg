@@ -27,6 +27,8 @@ let nextModalId = 0;
 export class TilburgModal implements AfterViewInit, OnChanges {
   /** Heading text; also the dialog's accessible name (`aria-labelledby`). */
   @Input() title?: string | null;
+  /** Id of the element that explains the dialog (e.g. its first paragraph); read after the title when it opens. */
+  @Input() ariaDescribedBy?: string | null;
   /** `true` opens the dialog modally (`showModal()`), `false` closes it. */
   @Input() open = false;
   /** Visible text of the close button in the header. */

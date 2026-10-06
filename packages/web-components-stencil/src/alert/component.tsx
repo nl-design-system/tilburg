@@ -4,6 +4,7 @@
  */
 
 import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
+import { announce } from '../utils/announce';
 import { Heading, HeadingLevel } from '../utils/heading';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { hasSlot } from '../utils/slots';
@@ -25,6 +26,14 @@ const VARIANT_TO_UTRECHT: Record<TilburgWbcAlertVariant, string> = {
  * @slot icon - Replaces the default per-variant icon (painted by CSS when empty).
  * @slot close-icon - Replaces the default × in the close button (painted by CSS when empty).
  */
+/* The alert type, read out before the message (bq-tlb-frontend TIL-51): the colour and icon show it visually only. */
+const DEFAULT_SR_PREFIX: Record<string, string> = {
+  info: 'Informatie:',
+  success: 'Succes:',
+  warning: 'Waarschuwing:',
+  danger: 'Fout:',
+};
+
 @Component({
   tag: 'tilburg-wbc-alert',
   styleUrl: 'index.scss',
@@ -40,9 +49,31 @@ export class TilburgWbcAlert {
   @Prop() closable = false;
   /** Defaults to `assertive` for `danger`, `polite` otherwise. */
   @Prop() liveRegion?: TilburgWbcAlertLiveRegion;
+  /** Read the alert out through a persistent live region when it appears and when its text changes (TIL-40); the
+   *  alert then has no live role of its own, so it is not read twice. */
+  @Prop() announce = false;
+
+  private lastAnnounced = '';
+
+  /* After every render, but only announces when the text differs from what was read last. */
+  componentDidRender() {
+    const variant = VARIANT_TO_UTRECHT[this.variant] ? this.variant : 'info';
+    const liveRegion = this.liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
+    if (!this.announce || liveRegion === 'off') return;
+    /* Title and message are separate blocks: join them with a space so they do not run together. */
+    const content = this.host.querySelector('.utrecht-alert__content');
+    const text = Array.from(content?.children ?? [], (part) => part.textContent?.trim() ?? '')
+      .filter(Boolean)
+      .join(' ');
+    if (text && text !== this.lastAnnounced) {
+      this.lastAnnounced = text;
+      announce(text, liveRegion);
+    }
+  }
   @Prop() closeButtonAriaLabel = 'sluit alert';
-  /** Visually hidden text prepended to the message for screen readers (e.g. "Fout:"). */
-  @Prop() srPrefix?: string;
+  /** Visually hidden text prepended to the message for screen readers (e.g. "Fout:"). Defaults per variant;
+   *  `sr-prefix=""` for none. */
+  @Prop() srPrefix?: string | null;
 
   /** Fired when the close button is activated. The alert does not remove itself. */
   @Event() tilburgClose!: EventEmitter<void>;
@@ -72,15 +103,16 @@ export class TilburgWbcAlert {
   };
 
   render() {
+    const prefix = this.srPrefix === undefined ? DEFAULT_SR_PREFIX[this.variant] : this.srPrefix;
     const variant = VARIANT_TO_UTRECHT[this.variant] ? this.variant : 'info';
     const liveRegion = this.liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
     return (
       <div
         {...this.inherited}
         class={`utrecht-alert tilburg-alert utrecht-alert--${VARIANT_TO_UTRECHT[variant]}`}
-        role={variant === 'danger' ? 'alert' : 'status'}
-        aria-live={liveRegion}
-        aria-atomic="true"
+        role={this.announce ? undefined : variant === 'danger' ? 'alert' : 'status'}
+        aria-live={this.announce ? undefined : liveRegion}
+        aria-atomic={this.announce ? undefined : 'true'}
       >
         <div class="utrecht-alert__icon" aria-hidden="true">
           {this.hasIcon && <slot name="icon" />}
@@ -92,7 +124,7 @@ export class TilburgWbcAlert {
             </Heading>
           )}
           <div class="utrecht-alert__message">
-            {this.srPrefix && <span class="utrecht-visually-hidden">{this.srPrefix}</span>}
+            {prefix && <span class="utrecht-visually-hidden">{prefix} </span>}
             <slot />
           </div>
         </div>

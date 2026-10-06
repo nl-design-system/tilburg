@@ -38,6 +38,7 @@ import { TilburgPagination } from './pagination/component';
 import { TilburgParagraph } from './paragraph/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
+import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
 import { TilburgSkipLink } from './skip-link/component';
 import { ExampleStoryComponent } from './story/component';
@@ -104,6 +105,7 @@ const components = [
   TilburgDocument,
   TilburgHtmlContent,
   TilburgFormLabel,
+  TilburgSelect,
   TilburgSeparator,
   TilburgSkipLink,
   TilburgTextareaAutoresizeDirective,

@@ -12,6 +12,10 @@ utrecht-heading-2 {
 utrecht-heading-2,
 .utrecht-heading-2 {
   --utrecht-heading-2-font-size: var(--tilburg-heading-2-large-vw-font-size);
+
+  /* Long words (Dutch compounds, URLs) wrap instead of overflowing at 320px wide / 400% zoom (WCAG 1.4.10,
+     bq-tlb-frontend b98ab78). Only breaks a word when it would not fit otherwise. */
+  overflow-wrap: anywhere;
 }
 
 @media (width <= 768px) {

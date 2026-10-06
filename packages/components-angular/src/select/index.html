@@ -1,0 +1,51 @@
+<!-- With a FormControl the control owns the value and the disabled state (binding `[disabled]` next to
+     `[formControl]` triggers Angular's reactive-forms warning); without one, `value` and `disabled` are inputs. -->
+<select
+  *ngIf="control; else plain"
+  class="utrecht-select utrecht-select--html-select"
+  [class.utrecht-select--disabled]="isDisabled"
+  [class.utrecht-select--invalid]="invalid"
+  [formControl]="control"
+  [attr.id]="id || null"
+  [attr.name]="name || null"
+  [required]="required"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-invalid]="invalid ? 'true' : null"
+  [attr.aria-required]="required ? 'true' : null"
+  (change)="onChange($event)"
+>
+  <option *ngIf="placeholder !== undefined" value="">{{ placeholder }}</option>
+  <option *ngFor="let option of options" [value]="option.value" [disabled]="option.disabled ?? false">
+    {{ option.label }}
+  </option>
+</select>
+
+<ng-template #plain>
+  <select
+    class="utrecht-select utrecht-select--html-select"
+    [class.utrecht-select--disabled]="disabled"
+    [class.utrecht-select--invalid]="invalid"
+    [attr.id]="id || null"
+    [attr.name]="name || null"
+    [disabled]="disabled"
+    [required]="required"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    [attr.aria-describedby]="ariaDescribedBy || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-required]="required ? 'true' : null"
+    (change)="onChange($event)"
+  >
+    <option *ngIf="placeholder !== undefined" value="" [selected]="!value">{{ placeholder }}</option>
+    <option
+      *ngFor="let option of options"
+      [value]="option.value"
+      [selected]="option.value === value"
+      [disabled]="option.disabled ?? false"
+    >
+      {{ option.label }}
+    </option>
+  </select>
+</ng-template>

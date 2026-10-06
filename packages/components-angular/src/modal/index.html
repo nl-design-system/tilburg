@@ -2,6 +2,7 @@
   #dialog
   class="tilburg-modal"
   [attr.aria-labelledby]="titleId"
+  [attr.aria-describedby]="ariaDescribedBy || null"
   (close)="onDialogClose($event)"
   (click)="onDialogClick($event)"
 >

@@ -1,3 +1,28 @@
+/* Not red before the user has had a go (WCAG 3.3.1 / bq-tlb-frontend TIL-69). A required field is `:invalid` from the
+   first render, so styling `:invalid` paints every empty required field red on page load. The invalid look now waits for
+   `:user-invalid` (after the user has changed the field or tried to submit), or for `aria-invalid="true"`, which an app
+   sets when it decides there is an error. Until then the utrecht base rule for `:invalid` gets the normal values through
+   its own invalid tokens. Browsers without `:user-invalid` drop that rule and keep the old behaviour. */
+.utrecht-textarea:where(:invalid:not(:user-invalid, [aria-invalid="true"])) {
+  --utrecht-textarea-invalid-background-color: var(
+    --utrecht-textarea-background-color,
+    var(--utrecht-form-control-background-color)
+  );
+  --utrecht-textarea-invalid-border-color: var(
+    --utrecht-textarea-border-color,
+    var(--utrecht-form-control-border-color)
+  );
+  --utrecht-textarea-invalid-border-width: var(
+    --utrecht-textarea-border-width,
+    var(--utrecht-form-control-border-width)
+  );
+  --utrecht-textarea-invalid-border-block-end-width: var(
+    --utrecht-textarea-border-block-end-width,
+    var(--utrecht-textarea-border-width, var(--utrecht-form-control-border-width))
+  );
+  --utrecht-textarea-invalid-color: var(--utrecht-textarea-color, var(--utrecht-form-control-color));
+}
+
 .utrecht-textarea {
   max-inline-size: var(--tilburg-textarea-max-inline-size);
   min-block-size: 5em;
@@ -11,7 +36,7 @@
      disabled textarea still looked editable. Re-declare them on the base
      class, with the same token chains utrecht uses, so every layer agrees
      whether or not the modifier is present. */
-  &:invalid,
+  &:user-invalid,
   &[aria-invalid="true"] {
     --_tilburg-textarea-invalid-border-width: var(
       --utrecht-textarea-invalid-border-width,

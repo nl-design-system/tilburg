@@ -7,6 +7,43 @@ import { ProgressBar } from './ProgressBar';
 import '@testing-library/jest-dom';
 
 describe('Alert', () => {
+  it('with announce, reads the alert out through the shared live region instead of its own role', () => {
+    jest.useFakeTimers();
+    const { container, rerender } = render(
+      <Alert variant="danger" title="Er ging iets mis" announce>
+        Probeer het opnieuw.
+      </Alert>,
+    );
+    expect(container.firstChild).not.toHaveAttribute('role');
+    expect(container.firstChild).not.toHaveAttribute('aria-live');
+    jest.advanceTimersByTime(200);
+    const region = document.getElementById('tilburg-announcer-assertive');
+    expect(region).toHaveAttribute('aria-live', 'assertive');
+    expect(region).toHaveTextContent('Er ging iets mis Fout: Probeer het opnieuw.');
+    region!.textContent = '';
+    rerender(
+      <Alert variant="danger" title="Er ging iets mis" announce>
+        Probeer het opnieuw.
+      </Alert>,
+    );
+    jest.advanceTimersByTime(200);
+    expect(region).toHaveTextContent('');
+    jest.useRealTimers();
+  });
+
+  it('reads the alert type before the message by default, per variant, unless srPrefix is empty', () => {
+    const { container, rerender } = render(<Alert variant="danger">Er ging iets mis.</Alert>);
+    expect(container.querySelector('.utrecht-alert__message .utrecht-visually-hidden')).toHaveTextContent('Fout:');
+    rerender(<Alert variant="success">Opgeslagen.</Alert>);
+    expect(container.querySelector('.utrecht-alert__message .utrecht-visually-hidden')).toHaveTextContent('Succes:');
+    rerender(
+      <Alert variant="danger" srPrefix="">
+        Er ging iets mis.
+      </Alert>,
+    );
+    expect(container.querySelector('.utrecht-alert__message .utrecht-visually-hidden')).toBeNull();
+  });
+
   it('maps variant to utrecht class', () => {
     const { container } = render(
       <Alert variant="success" title="Done">
@@ -33,6 +70,23 @@ describe('BadgeStatus', () => {
     const el = container.firstChild as HTMLElement;
     expect(el).toHaveAttribute('role', 'status');
     expect(el).toHaveAttribute('aria-live', 'polite');
+  });
+
+  it('keeps the visible text as accessible name: the status code is not a label', () => {
+    const { container } = render(<BadgeStatus status="warning">Let op</BadgeStatus>);
+    expect(container.firstChild).not.toHaveAttribute('aria-label');
+  });
+
+  it('announces an urgent status as an assertive alert, unless a live region is given', () => {
+    const { container, rerender } = render(<BadgeStatus status="danger">Afgewezen</BadgeStatus>);
+    expect(container.firstChild).toHaveAttribute('role', 'alert');
+    expect(container.firstChild).toHaveAttribute('aria-live', 'assertive');
+    rerender(
+      <BadgeStatus status="danger" liveRegion="polite">
+        Afgewezen
+      </BadgeStatus>,
+    );
+    expect(container.firstChild).toHaveAttribute('aria-live', 'polite');
   });
 });
 

@@ -6,6 +6,16 @@
   padding-inline: 0;
 }
 
+/* Not red before the user has had a go (WCAG 3.3.1 / bq-tlb-frontend TIL-69). A required field is `:invalid` from the
+   first render, so styling `:invalid` paints every empty required field red on page load. The invalid look now waits for
+   `:user-invalid` (after the user has changed the field or tried to submit), or for `aria-invalid="true"`, which an app
+   sets when it decides there is an error. Until then the utrecht base rule for `:invalid` gets the normal values through
+   its own invalid tokens. Browsers without `:user-invalid` drop that rule and keep the old behaviour. */
+.utrecht-checkbox--html-input.utrecht-checkbox--custom:where(:invalid:not(:user-invalid, [aria-invalid="true"])) {
+  --utrecht-checkbox-invalid-border-color: var(--utrecht-checkbox-border-color);
+  --utrecht-checkbox-invalid-border-width: var(--utrecht-checkbox-border-width);
+}
+
 .utrecht-checkbox--html-input.utrecht-checkbox--custom {
   /* Strip the check mark while unchecked. `:indeterminate` has to stay
      exempt: it is not `:checked`, but utrecht-css paints its own dash SVG
@@ -19,7 +29,8 @@
     --utrecht-checkbox-border-width: 2px;
   }
 
-  &:invalid {
+  &:user-invalid,
+  &[aria-invalid="true"] {
     background-color: var(--tilburg-checkbox-invalid-background-color, var(--tilburg-color-red-100));
   }
 
@@ -49,7 +60,7 @@
       );
     }
 
-    &:invalid {
+    &:user-invalid {
       background-color: var(--utrecht-checkbox-disabled-border-color);
     }
 
@@ -86,5 +97,15 @@
      boxes with no block margins and the options collapse onto each other. */
   &:not(:last-child) {
     margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
+  }
+}
+
+/* Windows high contrast (forced colours): the custom box and its dark SVG check mark do not survive the system palette
+   (the mark disappears on a dark background). Hand the control back to the browser, which draws the native checkbox in
+   system colours. */
+@media (forced-colors: active) {
+  .utrecht-checkbox--html-input.utrecht-checkbox--custom {
+    appearance: auto;
+    background-image: none;
   }
 }

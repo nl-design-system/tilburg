@@ -1,0 +1,7 @@
+@import "../../../components-css/select/index";
+
+/* Block host so the select stacks above/below its siblings inside a form field, instead of running inline with the
+   label (same rule as the textbox). */
+:host {
+  display: block;
+}

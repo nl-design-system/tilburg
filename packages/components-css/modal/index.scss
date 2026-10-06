@@ -149,3 +149,10 @@
 body:has(.tilburg-modal[open]) {
   overflow-y: clip;
 }
+
+/* Windows high contrast (forced colours): shadows are dropped, so give the dialog a visible edge. */
+@media (forced-colors: active) {
+  .tilburg-modal {
+    border: 2px solid canvastext;
+  }
+}
