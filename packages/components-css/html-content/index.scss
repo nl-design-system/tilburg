@@ -27,7 +27,12 @@
     --utrecht-heading-3-font-size: var(--tilburg-heading-3-small-vw-font-size);
     --utrecht-heading-4-font-size: var(--tilburg-heading-4-small-vw-font-size);
     --utrecht-heading-5-font-size: var(--tilburg-heading-5-small-vw-font-size);
-    --utrecht-heading-6-font-size: var(--tilburg-heading-6-small-vw-font-size);
+
+    /* There is no heading-6 small-viewport token (1–5 have one); fall back to the large size. */
+    --utrecht-heading-6-font-size: var(
+      --tilburg-heading-6-small-vw-font-size,
+      var(--tilburg-heading-6-large-vw-font-size)
+    );
   }
 }
 

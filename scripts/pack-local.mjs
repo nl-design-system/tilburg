@@ -1,9 +1,11 @@
 /* Builds the Tilburg packages and packs them as tarballs into `.tarballs/`, so another local repository (for
    example HLTsamen) can install them with `file:../tilburg/.tarballs/<name>.tgz` before anything is published.
 
-   Uses `pnpm pack` (not `npm pack`) so `workspace:*` dependencies become real versions. The Angular package is
-   packed from its ng-packagr output (`dist/`); the others from the package root, so import paths such as
-   `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css` stay the same as after an npm release. */
+   Uses `pnpm pack` (not `npm pack`) so `workspace:*` dependencies become real versions. Every package is packed
+   from its root, exactly as CI publishes it, so import paths such as
+   `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css` stay the same as after an npm release. The Angular
+   package must not be packed from its ng-packagr output (`dist/`): the package.json copied there keeps
+   `"files": ["dist/"]`, which matches nothing inside dist/, so the tarball would hold no bundle at all. */
 import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -21,7 +23,6 @@ const packages = [
     name: '@gemeente-tilburg/components-angular',
     dir: 'packages/components-angular',
     build: 'build:components',
-    packDir: 'dist',
   },
   { name: '@gemeente-tilburg/storybook-shared', dir: 'packages/storybook-shared', build: 'build' },
 ];
@@ -37,7 +38,7 @@ for (const pkg of packages) {
     run(`pnpm --filter ${pkg.name} run ${pkg.build}`);
   }
   console.log(`\n▶ pack ${pkg.name}`);
-  run(`pnpm pack --pack-destination ${out}`, resolve(root, pkg.dir, pkg.packDir ?? '.'));
+  run(`pnpm pack --pack-destination ${out}`, resolve(root, pkg.dir));
 }
 
 console.log(`\nTarballs in ${out}:`);

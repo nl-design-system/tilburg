@@ -1,7 +1,7 @@
 .tilburg-ordered-list {
   list-style-type: decimal;
-  margin-block-end: var(--tilburg-space-block-rabbit);
-  margin-block-start: var(--tilburg-space-block-rabbit);
+  margin-block-end: var(--tilburg-ordered-list-margin-block-end, var(--tilburg-space-block-rabbit));
+  margin-block-start: var(--tilburg-ordered-list-margin-block-start, var(--tilburg-space-block-rabbit));
 }
 
 .tilburg-ordered-list--by-letter {
