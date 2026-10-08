@@ -1,0 +1,6 @@
+@import "../../../components-css/tooltip/index";
+
+/* Inline host: the tooltip wraps a single control in the text or button flow. */
+:host {
+  display: inline-block;
+}

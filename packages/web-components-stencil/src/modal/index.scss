@@ -1,0 +1,7 @@
+@use "../../../components-css/modal/index";
+
+/* The dialog lives in the top layer while open and is `display: none` while
+   closed, so the host never needs a box of its own. */
+tilburg-wbc-modal {
+  display: contents;
+}

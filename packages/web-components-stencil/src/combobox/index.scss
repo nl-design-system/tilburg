@@ -1,0 +1,20 @@
+@use "../../../components-css/combobox/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow so the
+   `.utrecht-combobox` field and its popover lay out like the HTML/CSS
+   reference. */
+tilburg-wbc-combobox {
+  display: block;
+}
+
+/* components-css spaces a stacked label from the control directly after it
+   (`.utrecht-form-label:has(+ .utrecht-combobox)`, see form-label). Here the next
+   sibling is this host, or the label itself sits in a
+   `<tilburg-wbc-form-label>` host; same spacing, same exclusions. */
+:not(.utrecht-form-field)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(+ tilburg-wbc-combobox),
+:not(.utrecht-form-field)
+  > tilburg-wbc-form-label:has(+ tilburg-wbc-combobox)
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio) {
+  margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
+}

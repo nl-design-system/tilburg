@@ -1,0 +1,44 @@
+{
+  "name": "@gemeente-tilburg/storybook-shared",
+  "version": "0.0.0",
+  "description": "Shared HTML/CSS reference examples and documentation for the Tilburg Storybooks, reusable by other design systems built on the Tilburg components",
+  "author": "Community for NL Design System",
+  "license": "EUPL-1.2",
+  "keywords": [
+    "nl-design-system"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git+ssh",
+    "url": "git@github.com:nl-design-system/tilburg.git",
+    "directory": "packages/storybook-shared"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./documentation/*": "./src/documentation/*",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/",
+    "src/documentation/"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.build.json",
+    "clean": "rimraf dist/"
+  },
+  "devDependencies": {
+    "rimraf": "6.0.1",
+    "typescript": "5.4.5"
+  }
+}

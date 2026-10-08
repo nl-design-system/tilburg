@@ -1,0 +1,14 @@
+/* Tilburg skip-link — no component-specific SCSS rules.
+ *
+ * utrecht ships the full styling for `.utrecht-skip-link` and its modifiers
+ * (`--visible-on-focus`, `--visible`, `--hidden`, `--focus`) in
+ * `@utrecht/component-library-css`. Tilburg's design-tokens
+ * (`proprietary/design-tokens/dist/tilburg/theme.css`) wire the
+ * `--utrecht-skip-link-*` slots (padding, background, colour, focus-*,
+ * min-size) to brand primitives — see the `--utrecht-skip-link-{padding-*,
+ * background-color,color,focus-*}` assignments in theme.css.
+ *
+ * The skip-link already renders correctly without anything in this file. It
+ * exists so the `packages/components-css/*` listing is complete and so future
+ * Tilburg-specific overrides — if any are ever needed — have a documented
+ * home alongside the other components-css/* SCSS files. */

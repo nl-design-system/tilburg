@@ -1,0 +1,19 @@
+<nav *ngIf="items?.length" [attr.aria-label]="ariaLabel" class="utrecht-breadcrumb-nav tilburg-breadcrumb">
+  <ol class="utrecht-breadcrumb-nav__list utrecht-breadcrumb-nav__list--html-ol">
+    <ng-container *ngFor="let item of items; let last = last; trackBy: trackByLabel">
+      <li class="utrecht-breadcrumb-nav__item">
+        <ng-container *ngIf="!last && !item.current; else current">
+          <a class="utrecht-breadcrumb-nav__link" [attr.href]="item.href || '#'" (click)="onClick(item, $event)"
+            >{{ item.label }}</a
+          >
+          <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">&rsaquo;</span>
+        </ng-container>
+        <ng-template #current>
+          <span aria-current="page" class="utrecht-breadcrumb-nav__link utrecht-breadcrumb-nav__link--current"
+            >{{ item.label }}</span
+          >
+        </ng-template>
+      </li>
+    </ng-container>
+  </ol>
+</nav>

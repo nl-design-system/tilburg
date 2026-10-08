@@ -40,6 +40,7 @@
         "./.eslintrc.react.json"
       ],
       "files": ["*.js", "*.jsx"],
+      "excludedFiles": ["*.mjs"],
       "plugins": ["import"]
     },
     {
@@ -79,7 +80,10 @@
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
         "project": [
+          "packages/components-angular/tsconfig.json",
           "packages/storybook/tsconfig.json",
+          "packages/storybook-angular/tsconfig.json",
+          "packages/storybook-angular/tsconfig.manager.json",
           "packages/web-components-react/tsconfig.json",
           "packages/components-react/tsconfig.json",
           "packages/components-react/tsconfig.test.json",
@@ -88,6 +92,21 @@
         ]
       },
       "plugins": ["@typescript-eslint"]
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error"
+      }
+    },
+    {
+      "files": ["*.mjs"],
+      "parserOptions": {
+        "ecmaVersion": 2022,
+        "sourceType": "module"
+      }
     }
   ]
 }

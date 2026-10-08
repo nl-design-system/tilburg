@@ -5,6 +5,11 @@ on:
     branches: main
 permissions: {}
 
+# One Pages deployment at a time; the newest push wins.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -42,7 +47,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm run build
+        # Builds everything and puts the Angular Storybook in `angular/` inside the React Storybook output.
+        run: pnpm run build:site
 
       - name: Upload artefact for GitHub Pages
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

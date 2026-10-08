@@ -1,0 +1,81 @@
+<!-- With a FormControl the control owns the value and the disabled state (binding `[disabled]` next to `[formControl]`
+     triggers Angular's reactive-forms warning); without one, the input is a plain field. `invalid` and `required` are
+     inputs of the utrecht directive, which writes `aria-invalid`, `required` and the modifier classes itself. -->
+<div class="tilburg-password-input">
+  @if (control) {
+  <input
+    #input
+    [id]="inputId"
+    [type]="visible ? 'text' : 'password'"
+    [attr.type]="visible ? 'text' : 'password'"
+    [formControl]="control"
+    [invalid]="invalid"
+    [required]="required"
+    [attr.autocomplete]="autocomplete || null"
+    [attr.placeholder]="placeholder || null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-describedby]="ariaDescribedBy || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    [attr.aria-required]="required ? 'true' : null"
+    class="utrecht-textbox--password"
+    utrecht-textbox
+  />
+  } @else {
+  <input
+    #input
+    [id]="inputId"
+    [type]="visible ? 'text' : 'password'"
+    [attr.type]="visible ? 'text' : 'password'"
+    [disabled]="disabled"
+    [invalid]="invalid"
+    [required]="required"
+    [attr.autocomplete]="autocomplete || null"
+    [attr.placeholder]="placeholder || null"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-describedby]="ariaDescribedBy || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    [attr.aria-required]="required ? 'true' : null"
+    class="utrecht-textbox--password"
+    utrecht-textbox
+  />
+  }
+  <button
+    type="button"
+    class="tilburg-password-input__toggle"
+    [attr.aria-pressed]="visible"
+    [attr.aria-controls]="inputId"
+    [attr.aria-label]="toggleLabel"
+    [disabled]="isDisabled"
+    (click)="toggle()"
+  >
+    <svg
+      class="tilburg-password-input__icon tilburg-password-input__icon--show"
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+    <svg
+      class="tilburg-password-input__icon tilburg-password-input__icon--hide"
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path
+        d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"
+      />
+      <path d="M1 1l22 22" />
+    </svg>
+  </button>
+  <span class="tilburg-password-input__status" aria-live="polite">{{ status }}</span>
+</div>

@@ -1,0 +1,51 @@
+<!-- `type` is an input of the utrecht directive, which only uses it for the modifier classes (`--password`, `--url`,
+     `--numeric`) and never writes it to the element: `[type]` alone left every field a text field, so a password field
+     showed the password. `[attr.type]` sets the real input type.
+     With a FormControl the control owns the value and the disabled state (binding `[disabled]` next to
+     `[formControl]` triggers Angular's reactive-forms warning); without one, `disabled` is an input.
+     `name`, `dir` and `inputmode` are written in `ngAfterViewChecked`: the utrecht directive's host bindings would
+     strip them otherwise. -->
+@if (control) {
+<input
+  #input
+  [attr.id]="id || null"
+  [formControl]="control"
+  [class.utrecht-textbox--disabled]="control.disabled"
+  [invalid]="invalid"
+  [required]="required"
+  [readonly]="readonly"
+  [type]="type"
+  [attr.type]="type || 'text'"
+  [attr.placeholder]="placeholder || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-invalid]="invalid ? 'true' : null"
+  [attr.aria-required]="required ? 'true' : null"
+  [attr.autocomplete]="autocomplete || null"
+  (blur)="blur.emit($event)"
+  (focus)="focus.emit($event)"
+  utrecht-textbox
+/>
+} @else {
+<input
+  #input
+  [attr.id]="id || null"
+  [disabled]="disabled"
+  [invalid]="invalid"
+  [required]="required"
+  [readonly]="readonly"
+  [type]="type"
+  [attr.type]="type || 'text'"
+  [attr.placeholder]="placeholder || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-invalid]="invalid ? 'true' : null"
+  [attr.aria-required]="required ? 'true' : null"
+  [attr.autocomplete]="autocomplete || null"
+  (blur)="blur.emit($event)"
+  (focus)="focus.emit($event)"
+  utrecht-textbox
+/>
+}

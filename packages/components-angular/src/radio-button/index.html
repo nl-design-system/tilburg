@@ -1,0 +1,39 @@
+<!-- With a FormControl the control owns the checked and disabled state (binding `[disabled]` or `[checked]` next to
+     `[formControl]` triggers Angular's reactive-forms warning and fights the value accessor); without one, `checked`
+     and `disabled` are inputs. `aria-disabled` mirrors what the utrecht directive sets in the plain variant. -->
+@if (control) {
+<input
+  type="radio"
+  [attr.id]="id || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-disabled]="control.disabled || null"
+  [invalid]="!!invalid"
+  [attr.aria-required]="required ? 'true' : null"
+  [required]="required"
+  [attr.name]="name"
+  [name]="name"
+  [value]="value"
+  [attr.value]="value"
+  [formControl]="control"
+  utrecht-radio-button
+/>
+} @else {
+<input
+  type="radio"
+  [attr.id]="id || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [invalid]="!!invalid"
+  [attr.aria-required]="required ? 'true' : null"
+  [disabled]="disabled"
+  [required]="required"
+  [attr.name]="name"
+  [value]="value"
+  [attr.value]="value"
+  [checked]="checked"
+  utrecht-radio-button
+/>
+}

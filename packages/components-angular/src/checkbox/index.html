@@ -1,0 +1,40 @@
+<!-- `invalid`, `required`, `disabled` and `checked` are inputs of the utrecht directive: it writes `aria-invalid`,
+     `aria-required`/`required`, `disabled` and the modifier classes itself, so they are passed to it rather than set as
+     attributes next to it (two bindings for one attribute fight each other on every change detection).
+     With a FormControl the control owns the value and the disabled state (binding `[disabled]` next to `[formControl]`
+     triggers Angular's reactive-forms warning). -->
+@if (control) {
+<input
+  type="checkbox"
+  [attr.id]="id || null"
+  [attr.name]="name || null"
+  [formControl]="control"
+  [checked]="control.value === true"
+  [required]="required"
+  [invalid]="!!invalid"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-required]="required ? 'true' : null"
+  (change)="onCheckChange($event)"
+  utrecht-checkbox
+  appearance="custom"
+/>
+} @else {
+<input
+  type="checkbox"
+  [attr.id]="id || null"
+  [attr.name]="name || null"
+  [disabled]="disabled == true"
+  [required]="required"
+  [checked]="checked"
+  [invalid]="!!invalid"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+  [attr.aria-required]="required ? 'true' : null"
+  (change)="onCheckChange($event)"
+  utrecht-checkbox
+  appearance="custom"
+/>
+}

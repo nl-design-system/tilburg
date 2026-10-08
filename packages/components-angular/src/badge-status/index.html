@@ -1,0 +1,8 @@
+<span
+  class="utrecht-badge-status"
+  [ngClass]="status ? 'utrecht-badge-status--' + status : null"
+  [attr.role]="urgent ? 'alert' : 'status'"
+  [attr.aria-live]="liveRegion ?? (urgent ? 'assertive' : 'polite')"
+  [attr.aria-label]="ariaLabel || null"
+  ><ng-content></ng-content
+></span>

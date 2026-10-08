@@ -1,0 +1,6 @@
+@use "../../../components-css/password-input/index";
+
+/* Block host so the field stacks below its label (same rule as the textbox host). */
+tilburg-wbc-password-input {
+  display: block;
+}

@@ -1,0 +1,185 @@
+/* Select: a native `<select class="utrecht-select utrecht-select--html-select">`. The utrecht base styles it from the
+   form-control tokens (the Tilburg theme maps every `--utrecht-select-*` token onto them) and removes the native arrow
+   (`appearance: none`), drawing `--utrecht-select-background-image` instead. The Tilburg theme sets no image, so this
+   layer adds the chevron of the Tilburg combobox and the textbox's hover state (focus comes from the utrecht base).
+
+   A background image cannot use `currentColor` or a custom property, so the chevron colour is written out: the
+   form-control colour (gray-500, #333) and, when disabled, the disabled colour (gray-400, #616161). High contrast
+   swaps in a white chevron (`proprietary/design-tokens/high-contrast/components.css`). */
+
+$tilburg-select-chevron: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath stroke='%23333' d='M6 9l6 6 6-6'/%3e%3c/svg%3e" !default;
+$tilburg-select-chevron-disabled: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath stroke='%23616161' d='M6 9l6 6 6-6'/%3e%3c/svg%3e" !default;
+
+.utrecht-select--html-select:not([multiple]) {
+  --utrecht-select-background-image: url("#{$tilburg-select-chevron}");
+  --_tilburg-select-icon-size: var(--tilburg-select-icon-size, 20px);
+  --_tilburg-select-padding-inline-end: var(
+    --utrecht-select-padding-inline-end,
+    var(--utrecht-form-control-padding-inline-end, 12px)
+  );
+
+  /* The chevron sits one form-control end-padding in from the border, like the combobox chevron; the text keeps
+     clear of it. */
+  background-position: right var(--_tilburg-select-padding-inline-end) center;
+  background-size: var(--_tilburg-select-icon-size);
+  padding-inline-end: calc(
+    var(--_tilburg-select-padding-inline-end) + var(--_tilburg-select-icon-size) + var(--tilburg-space-inline-ant, 4px)
+  );
+
+  &:dir(rtl) {
+    background-position: left var(--_tilburg-select-padding-inline-end) center;
+  }
+
+  &:disabled {
+    --utrecht-select-background-image: url("#{$tilburg-select-chevron-disabled}");
+  }
+
+  /* A theme whose focus state is light text on a dark background (BAT) sets a light chevron here. */
+  &:focus {
+    --utrecht-select-background-image: var(--tilburg-select-focus-background-image, url("#{$tilburg-select-chevron}"));
+  }
+}
+
+.utrecht-select--html-select {
+  &:hover:not(:disabled, :focus, :focus-visible) {
+    background-color: var(
+      --tilburg-form-control-hover-background-color,
+      var(
+        --utrecht-form-control-focus-background-color,
+        var(--utrecht-select-background-color, var(--utrecht-form-control-background-color))
+      )
+    );
+    border-color: var(
+      --tilburg-form-control-hover-border-color,
+      var(
+        --utrecht-form-control-focus-border-color,
+        var(--utrecht-select-border-color, var(--utrecht-form-control-border-color))
+      )
+    );
+    color: var(
+      --tilburg-form-control-hover-color,
+      var(--utrecht-form-control-focus-color, var(--utrecht-select-color, var(--utrecht-form-control-color)))
+    );
+  }
+
+  /* Invalid: the utrecht class covers `utrecht-select--invalid`; the ARIA attribute gets the same look, so plain
+     HTML that only sets `aria-invalid` is covered too. */
+  &[aria-invalid="true"] {
+    background-color: var(
+      --utrecht-select-invalid-background-color,
+      var(--utrecht-form-control-invalid-background-color, var(--utrecht-select-background-color))
+    );
+    border-color: var(--utrecht-select-invalid-border-color, var(--utrecht-form-control-invalid-border-color));
+    border-width: var(--utrecht-select-invalid-border-width, var(--utrecht-form-control-invalid-border-width));
+  }
+}
+
+/* The option list, styled like the combobox popover (`components-css/combobox`): the form-control surface with a
+   subtle border and shadow, compact rows, and a 4px stripe on the inline-start side that marks the active option
+   (pink) and the selected option (blue), so state is shown by shape as well as colour (WCAG 1.4.1). The colours are
+   the combobox option tokens, so both components match in every theme and in high contrast.
+
+   Only browsers with customizable select (`appearance: base-select`) render this; the others keep the system list,
+   which is still a fully working native select. */
+@supports (appearance: base-select) {
+  /* stylelint-disable selector-pseudo-element-no-unknown -- `::picker(select)`, `::picker-icon` and `::checkmark`
+     are the customizable-select pseudo-elements, newer than the linter's list. */
+  .utrecht-select--html-select:not([multiple]) {
+    appearance: base-select;
+
+    /* The chevron is the background image above; hide the one base-select adds. */
+    &::picker-icon {
+      display: none;
+    }
+
+    &::picker(select) {
+      appearance: base-select;
+      background-color: var(--utrecht-select-background-color, var(--utrecht-form-control-background-color, canvas));
+      border-color: var(--utrecht-select-border-color, var(--utrecht-form-control-border-color));
+      border-radius: var(--utrecht-select-border-radius, var(--utrecht-form-control-border-radius, 0));
+      border-style: solid;
+      border-width: var(--utrecht-select-border-width, var(--utrecht-form-control-border-width, 1px));
+      box-shadow: 0 var(--tilburg-space-block-flea, 2px) var(--tilburg-space-block-beetle, 8px) rgb(0 0 0 / 8%);
+      margin-block-start: 0;
+      padding-block: 0;
+    }
+
+    /* Group labels line up with the option text (the browser already sets them in bold). */
+    optgroup {
+      padding-block-start: var(--tilburg-space-block-beetle, 8px);
+      padding-inline-start: var(--tilburg-space-inline-snail, 12px);
+    }
+
+    option {
+      border-inline-start: var(--tilburg-space-inline-ant, 4px) solid transparent;
+      cursor: pointer;
+      line-height: var(--tilburg-typography-line-height-md, 1.5);
+      margin-block-end: var(--tilburg-space-block-flea, 2px);
+      padding-block: var(--tilburg-space-block-beetle, 8px);
+      padding-inline-start: var(--tilburg-space-inline-snail, 12px);
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
+
+      &:last-child {
+        margin-block-end: 0;
+      }
+
+      /* The selected option is shown by its stripe and background, as in the combobox, not by a check mark. */
+      &::checkmark {
+        display: none;
+      }
+
+      &:disabled {
+        color: var(--utrecht-form-control-disabled-color);
+        cursor: not-allowed;
+      }
+
+      &:checked {
+        background-color: var(--tilburg-combobox-option-selected-background-color, var(--tilburg-color-blue-50));
+        border-inline-start-color: var(--tilburg-combobox-option-selected-border-color, var(--tilburg-color-blue-400));
+      }
+
+      &:is(:hover, :focus-visible):not(:disabled) {
+        background-color: var(--tilburg-combobox-option-active-background-color, var(--tilburg-color-blue-50));
+        border-inline-start-color: var(--tilburg-combobox-option-active-border-color, var(--tilburg-color-pink-300));
+        outline: none;
+      }
+
+      &:checked:is(:hover, :focus-visible):not(:disabled) {
+        background-color: var(
+          --tilburg-combobox-option-active-selected-background-color,
+          var(--tilburg-color-blue-100)
+        );
+        border-inline-start-color: var(--tilburg-combobox-option-active-border-color, var(--tilburg-color-pink-300));
+      }
+    }
+  }
+  /* stylelint-enable selector-pseudo-element-no-unknown */
+}
+
+/* Windows high contrast (forced colours), for the styled option list: same system-colour marking as the combobox. */
+@media (forced-colors: active) {
+  @supports (appearance: base-select) {
+    .utrecht-select--html-select:not([multiple]) option {
+      &:checked {
+        border-inline-start-color: selecteditem;
+        forced-color-adjust: none;
+      }
+
+      &:is(:hover, :focus-visible):not(:disabled) {
+        background-color: highlight;
+        border-inline-start-color: highlighttext;
+        color: highlighttext;
+        forced-color-adjust: none;
+      }
+    }
+  }
+}
+
+/* Skip the option hover fade for users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .utrecht-select--html-select:not([multiple]) option {
+    transition: none;
+  }
+}

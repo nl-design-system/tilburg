@@ -1,0 +1,20 @@
+.utrecht-link {
+  &:visited {
+    text-decoration: underline;
+  }
+
+  /* The theme's hover token (Tilburg: the darker interaction-hover colour).
+     This used to read the visited colour, which equals the default link colour,
+     so hovering a link no longer changed its colour. */
+  &:hover {
+    color: var(--utrecht-link-hover-color);
+  }
+
+  /* Focus is white text on the focus background (Tilburg: pink). utrecht-css only paints that background for
+     `.utrecht-link--html-a`; setting the text colour alone left any other `.utrecht-link` white on white. */
+  &:focus,
+  &:focus-visible {
+    background-color: var(--utrecht-link-focus-background-color);
+    color: var(--utrecht-link-focus-color);
+  }
+}

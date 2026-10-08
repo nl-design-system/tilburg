@@ -1,0 +1,11 @@
+{
+  "components/button-link": {
+    "tilburg-fix": {
+      "button-link": {
+        "baseline-offset": {
+          "$value": "2px"
+        }
+      }
+    }
+  }
+}
