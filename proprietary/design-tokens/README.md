@@ -12,7 +12,7 @@ Tilburg's CSS layer mixes **two families** of custom properties. Both resolve at
 
 ### 1. Tilburg-owned tokens (`--tilburg-*`)
 
-The Tilburg brand decisions. Defined in `src/` (and the legacy `legacy/` tree), built by `style-dictionary-build.mjs` into `dist/tilburg/theme.css`. Reference these in your own app CSS when you need a brand colour, spacing step, or font size:
+The Tilburg brand decisions. Defined in `src/`, built by `style-dictionary-build.mjs` into `dist/tilburg/theme.css`. Reference these in your own app CSS when you need a brand colour, spacing step, or font size:
 
 | Family                  | Examples                                                                                                                      | What it controls                                                                                                                                                              |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -67,7 +67,7 @@ Component-level slots (`--tilburg-<component>-*`, e.g. `--tilburg-page-header-ba
 
 ## Build pipeline
 
-- Source files: `src/` (DTCG-format JSON) and `legacy/` (Style-Dictionary-format JSON).
+- Source files: `src/` (DTCG-format JSON). `legacy/` is an archive of the old Style-Dictionary-format tokens; the build does not read it.
 - Build script: `style-dictionary-build.mjs` — outputs to `dist/tilburg/`: `theme.css` (tokens on `.tilburg-theme`), `variables.css` (the same tokens on `:root`), `list.json`, `tokens.cjs`, `_mixin.scss`.
 - `pnpm run pack:dist` builds and packs `dist/` into a `.tgz` for downstream apps that consume a tarball. In that tarball `dist/` is the package root, so the import path is `@gemeente-tilburg/design-tokens/tilburg/theme.css` (without `dist/`); the npm release via changesets keeps `dist/` in the path.
 

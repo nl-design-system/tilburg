@@ -9,6 +9,11 @@ permissions:
   id-token: write
   pull-requests: write # Needed to create and update pull requests
 
+# Never run two releases at once; a newer push waits instead of cancelling a publish halfway.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -45,8 +50,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm run --if-present lint
+
       - name: Build
         run: pnpm run build
+
+      - name: Test
+        run: pnpm run test
 
       - name: Publish to the npm Registry
         uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1

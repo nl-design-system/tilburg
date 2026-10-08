@@ -117,13 +117,13 @@ Er zijn nu twee manieren waarop packages bij afnemers komen:
 1. **npm, via changesets (CI).** Beschrijf je wijziging met `pnpm changeset` (kies patch/minor/major per package). Na
    een merge naar `main` maakt `.github/workflows/publish.yml` een release-PR; na het mergen daarvan publiceert hij de
    packages die niet `private` zijn: `design-tokens`, `components-react` en `components-angular`.
-2. **Lokaal gepackte tarballs.** `pnpm --filter <package> run pack:dist` bouwt en maakt een `.tgz` (voor
-   `components-react`, `components-angular` en `design-tokens`), bv. om een nog niet gepubliceerde versie in een
-   afnemend project te testen.
+2. **Lokaal gepackte tarballs.** `pnpm run pack:local` (zie hieronder) maakt ze voor alle packages tegelijk;
+   `pnpm --filter <package> run pack:dist` doet het voor één package (`components-react`, `components-angular` of
+   `design-tokens`) en zet de `.tgz` in diens `dist/`. Bv. om een nog niet gepubliceerde versie in een afnemend project
+   te testen.
 
-Let op bij `design-tokens`: `pack:dist` pakt de map `dist/` in als root van het package. In die tarball is het pad
-dus `@gemeente-tilburg/design-tokens/tilburg/theme.css`, zonder `dist/`. Via npm (changesets) is het
-`…/dist/tilburg/theme.css`, zoals de Storybook-documentatie beschrijft.
+Beide routes pakken het package vanuit zijn root in, net als de release via npm. De paden in de tarball zijn dus
+dezelfde als na een release, bv. `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`.
 
 ## Lokaal gebruiken in een andere repository
 
@@ -141,10 +141,10 @@ Dat bouwt de design tokens, `components-css`, `components-react`, de Web Compone
 nieuwe `pack:local` haalt een gewone `pnpm install` daar de wijzigingen op.
 
 `@gemeente-tilburg/storybook-shared` (de HTML-voorbeelden en documentatie) en de token-bronnen in
-`@gemeente-tilburg/design-tokens` (`figma/tilburg/`, `src/`) worden meegepakt zodat zo'n repo dezelfde stories kan
+`@gemeente-tilburg/design-tokens` (`figma/tilburg/`, `figma/bat/`, `src/`) worden meegepakt zodat zo'n repo dezelfde stories kan
 tonen en eigen thema's op de Tilburg-tokens kan bouwen.
 
 ## Deployen
 
-`.github/workflows/deploy.yml` bouwt bij elke push naar `main` en zet de **React-Storybook** op GitHub Pages. De
-Angular-Storybook wordt nu niet gedeployed.
+`.github/workflows/deploy.yml` bouwt bij elke push naar `main` beide Storybooks en zet ze op GitHub Pages: de
+React-Storybook in de root, de Angular-Storybook onder `angular/`.

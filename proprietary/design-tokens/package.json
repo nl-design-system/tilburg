@@ -20,7 +20,7 @@
   "scripts": {
     "clean": "rimraf dist/",
     "build": "node ./style-dictionary-build.mjs",
-    "pack:dist": "node ./style-dictionary-build.mjs && cd dist && rm -f *.tgz && npm pack",
+    "pack:dist": "node ./style-dictionary-build.mjs && pnpm pack --pack-destination dist",
     "watch": "npm-run-all watch:**",
     "watch:style-dictionary": "chokidar --follow-symlinks --initial --command 'pnpm run build' 'src/**/*.tokens.json'"
   },
@@ -34,7 +34,9 @@
   "files": [
     "dist/",
     "!dist/*.tgz",
+    "!dist/package.json",
     "figma/tilburg/",
+    "figma/bat/",
     "src/",
     "high-contrast/",
     "LICENSE.md",

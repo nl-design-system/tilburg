@@ -65,6 +65,12 @@
   }
 }
 
+/* While the textbox has focus the button sits on its focus background, which is dark in some themes (BAT: white text
+   on dark blue). Take the textbox's focus text colour, also on hover, so the eye keeps its contrast. */
+.tilburg-password-input .utrecht-textbox:focus ~ .tilburg-password-input__toggle:not(:disabled) {
+  color: var(--utrecht-textbox-focus-color, var(--utrecht-form-control-focus-color, currentcolor));
+}
+
 .tilburg-password-input__icon {
   block-size: var(--tilburg-password-input-icon-size, 20px);
   inline-size: var(--tilburg-password-input-icon-size, 20px);

@@ -1,32 +1,47 @@
-import { Directive, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Directive, DoCheck, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 
+/** Grows a textarea with its content: at least `minRows` lines (the `rows` attribute, default 4), at most 8 or
+ *  `minRows` if that is larger; beyond that it scrolls. */
 @Directive({ selector: '[tilburgTextAreaAutoResize]', standalone: false })
-export class TilburgTextareaAutoresizeDirective implements OnInit {
-  private _elementRef: ElementRef;
+export class TilburgTextareaAutoresizeDirective implements OnInit, DoCheck {
+  @Input() rows?: number;
 
-  constructor(private elementRef: ElementRef) {
-    this._elementRef = elementRef;
-  }
+  private lastValue?: string;
 
-  @HostListener(':input') onInput() {
+  constructor(private readonly elementRef: ElementRef<HTMLTextAreaElement>) {}
+
+  @HostListener('input') onInput() {
     this.resize();
   }
 
   ngOnInit() {
-    if (this._elementRef.nativeElement.scrollHeight) {
+    if (this.elementRef.nativeElement.scrollHeight) {
       setTimeout(() => this.resize());
     }
   }
 
+  // A value set from code (FormControl.setValue, a reset) fires no `input` event.
+  ngDoCheck() {
+    const value = this.elementRef.nativeElement.value;
+    if (value !== this.lastValue) {
+      this.lastValue = value;
+      this.resize();
+    }
+  }
+
   resize() {
-    this._elementRef.nativeElement.style.height = '0';
-    let style = window.getComputedStyle(this._elementRef.nativeElement);
-    const paddingTop = parseInt(style.paddingTop.replace('px', ''), 10);
-    const paddingBottom = parseInt(style.paddingBottom.replace('px', ''), 10);
-    const lineHeight = parseInt(style.lineHeight.replace('px', ''), 10);
-    this._elementRef.nativeElement.style.minHeight = lineHeight * 4 + paddingTop + paddingBottom;
-    let maxSize = Math.min(lineHeight * 8 + paddingTop + paddingBottom, this.elementRef.nativeElement.scrollHeight);
-    let minSize = lineHeight * 4 + paddingTop + paddingBottom;
-    this._elementRef.nativeElement.style.height = Math.max(minSize, maxSize) + 'px';
+    const element = this.elementRef.nativeElement;
+    element.style.height = '0';
+    const style = window.getComputedStyle(element);
+    const paddingTop = parseFloat(style.paddingTop) || 0;
+    const paddingBottom = parseFloat(style.paddingBottom) || 0;
+    // `line-height: normal` has no pixel value; browsers render it at roughly 1.2 × the font size.
+    const lineHeight = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) || 16) * 1.2;
+    const minRows = this.rows && this.rows > 0 ? this.rows : 4;
+    const maxRows = Math.max(8, minRows);
+    const minSize = lineHeight * minRows + paddingTop + paddingBottom;
+    const maxSize = Math.min(lineHeight * maxRows + paddingTop + paddingBottom, element.scrollHeight);
+    element.style.minHeight = `${minSize}px`;
+    element.style.height = `${Math.max(minSize, maxSize)}px`;
   }
 }

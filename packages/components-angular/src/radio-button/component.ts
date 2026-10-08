@@ -20,11 +20,10 @@ export class TilburgRadioButton {
   @Input() ariaDescribedBy?: string;
   @Input() name: string = '';
   @Input() value: any;
-  @Input() control!: FormControl;
+  /** Reactive-forms binding. Without it, the radio is driven by `checked` and `disabled`. */
+  @Input() control?: FormControl;
   @Input() invalid: boolean = false;
   @Input() required: boolean = false;
   @Input() disabled: boolean = false;
   @Input() checked: boolean = false;
-
-  constructor() {}
 }

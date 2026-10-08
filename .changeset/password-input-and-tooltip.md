@@ -19,6 +19,10 @@ New Tilburg components, brought over from bq-tlb-frontend:
   container such as a table cell) it opens on the other side, and it shifts sideways instead of sticking out past the
   left or right edge.
 
+BAT theme: BAT focuses form fields with white text on dark blue. The password input's eye button now takes the
+field's focus text colour, and the select shows a white chevron while focused (new optional token
+`--tilburg-select-focus-background-image`, set by the BAT theme), so both keep their contrast.
+
 Fix: Angular `<tilburg-textbox type="…">` rendered every field as a text field — `type` only reached the utrecht
 directive, which never writes it to the element — so a password field showed the password. The real input type is now
 set.

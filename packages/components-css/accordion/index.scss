@@ -1,5 +1,5 @@
 .utrecht-accordion {
-  margin-block-end: var(--tilburg-container-bottom-margin);
+  margin-block-end: var(--tilburg-container-bottom-margin, var(--tilburg-space-block-rabbit));
 }
 
 // De-nested from `.utrecht-accordion`: in the Angular wrapper, `TilburgAccordion`

@@ -132,17 +132,20 @@
   text-decoration: var(--utrecht-link-text-decoration, underline);
 }
 
+/* Order matters: visited before hover and focus, or a visited link never shows them. */
+.utrecht-html-content a:visited {
+  color: var(--utrecht-link-visited-color, var(--utrecht-link-color, inherit));
+}
+
 .utrecht-html-content a:hover {
   color: var(--utrecht-link-hover-color, var(--utrecht-link-color, inherit));
 }
 
+/* The focus colour (Tilburg: white) needs the focus background, or the link is white on white. */
 .utrecht-html-content a:focus,
 .utrecht-html-content a:focus-visible {
+  background-color: var(--utrecht-link-focus-background-color, transparent);
   color: var(--utrecht-link-focus-color, var(--utrecht-link-color, inherit));
-}
-
-.utrecht-html-content a:visited {
-  color: var(--utrecht-link-visited-color, var(--utrecht-link-color, inherit));
 }
 
 .utrecht-html-content ul,

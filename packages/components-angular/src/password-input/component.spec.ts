@@ -39,6 +39,8 @@ describe('TilburgPasswordInput', () => {
     expect(input('pw').type).toBe('password');
     expect(input('pw').classList).toContain('utrecht-textbox');
     expect(input('pw').getAttribute('autocomplete')).toBe('current-password');
+    // The utrecht directive would strip it; password managers need it.
+    expect(input('pw').getAttribute('name')).toBe('wachtwoord');
     expect(fixture.nativeElement.querySelectorAll('#pw')).toHaveLength(1);
     expect((fixture.nativeElement.querySelector('label') as HTMLLabelElement).control).toBe(input('pw'));
     expect(toggle('pw').getAttribute('aria-label')).toBe('Wachtwoord tonen');

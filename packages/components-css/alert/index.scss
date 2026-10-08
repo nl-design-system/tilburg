@@ -100,3 +100,12 @@
     padding-inline: 0;
   }
 }
+
+/* Forced colours (Windows High Contrast) override `background-color`, which is what paints this mask icon, so it
+   vanished. Paint it in the system text colour instead. */
+@media (forced-colors: active) {
+  .tilburg-alert .utrecht-alert__icon:empty::before {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+}

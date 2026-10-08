@@ -33,6 +33,11 @@ $tilburg-select-chevron-disabled: "data:image/svg+xml,%3csvg xmlns='http://www.w
   &:disabled {
     --utrecht-select-background-image: url("#{$tilburg-select-chevron-disabled}");
   }
+
+  /* A theme whose focus state is light text on a dark background (BAT) sets a light chevron here. */
+  &:focus {
+    --utrecht-select-background-image: var(--tilburg-select-focus-background-image, url("#{$tilburg-select-chevron}"));
+  }
 }
 
 .utrecht-select--html-select {
@@ -102,16 +107,16 @@ $tilburg-select-chevron-disabled: "data:image/svg+xml,%3csvg xmlns='http://www.w
     /* Group labels line up with the option text (the browser already sets them in bold). */
     optgroup {
       padding-block-start: var(--tilburg-space-block-beetle, 8px);
-      padding-inline-start: var(--tilburg-space-inline-snail, 10px);
+      padding-inline-start: var(--tilburg-space-inline-snail, 12px);
     }
 
     option {
       border-inline-start: var(--tilburg-space-inline-ant, 4px) solid transparent;
       cursor: pointer;
-      line-height: var(--tilburg-line-height-md, 1.5);
+      line-height: var(--tilburg-typography-line-height-md, 1.5);
       margin-block-end: var(--tilburg-space-block-flea, 2px);
       padding-block: var(--tilburg-space-block-beetle, 8px);
-      padding-inline-start: var(--tilburg-space-inline-snail, 10px);
+      padding-inline-start: var(--tilburg-space-inline-snail, 12px);
       transition:
         background-color 120ms ease,
         border-color 120ms ease;
@@ -169,5 +174,12 @@ $tilburg-select-chevron-disabled: "data:image/svg+xml,%3csvg xmlns='http://www.w
         forced-color-adjust: none;
       }
     }
+  }
+}
+
+/* Skip the option hover fade for users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .utrecht-select--html-select:not([multiple]) option {
+    transition: none;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'tilburg-progress-bar',
@@ -11,6 +11,9 @@ export class TilburgProgressBar {
   @Input() total: number | null | undefined = 0;
   @Input() label?: string | null;
   @Input() title?: string | null;
+  /** `title` is an input here, but a static `title="…"` would also land on the host element as the native
+   *  attribute (a browser tooltip and an extra accessible description). Keep it off the host. */
+  @HostBinding('attr.title') readonly hostTitle = null;
   @Input() backLabel?: string | null;
   @Input() showBack = false;
   @Input() ariaLabel?: string | null;

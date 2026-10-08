@@ -42,7 +42,6 @@ import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
 import { TilburgSkipLink } from './skip-link/component';
-import { ExampleStoryComponent } from './story/component';
 import { TilburgTable } from './table/component';
 import { TilburgTableBodyAttr } from './table-body/component';
 import { TilburgTableCaptionAttr } from './table-caption/component';
@@ -59,7 +58,6 @@ import { TilburgUnorderedList } from './unordered-list/component';
 import { TilburgValidationMessage } from './validation-message/component';
 
 const components = [
-  ExampleStoryComponent,
   TilburgAccordion,
   TilburgAccordionSection,
   TilburgAlert,

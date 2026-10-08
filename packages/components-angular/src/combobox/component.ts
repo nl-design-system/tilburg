@@ -33,15 +33,11 @@ let nextUniqueId = 0;
 @Component({
   selector: 'tilburg-combobox',
   templateUrl: 'index.html',
-  /* No `styleUrls` and `encapsulation: None`: the combobox SCSS is already
-     imported globally via the consuming app's stylesheet
-     (`storybook-angular/src/styles.scss` and the React/HTML preview); pulling
-     it in again through `styleUrls` injected a second `<style>` block whose
-     duplicate rules sat AFTER the global ones in the cascade. The duplicate
-     was bundled at the time the components-angular `dist/` was built, so it
-     was always one revision behind the live SCSS — that's why hover beat the
-     open-state rule even after the gating was fixed, and why the listbox kept
-     its 4px `padding-block` after we set it to 0. */
+  /* `encapsulation: None`: the styles are the shared, class-based components-css rules (same DOM as the HTML/CSS
+     reference), so they must reach the rendered markup unscoped. They are bundled here so npm consumers get them —
+     components-css itself is not published. (Apps that also import components-css globally, like the Angular
+     Storybook, get identical duplicate rules, which is harmless now that dist/ is rebuilt with every pack.) */
+  styleUrls: ['index.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: false,
 })
@@ -64,7 +60,8 @@ export class TilburgCombobox<T = unknown> {
    *  label's `for=…` resolves — but having it on the host as well violates
    *  "every id is unique on the page" (WCAG 4.1.1). Strip it from the host. */
   @HostBinding('attr.id') readonly hostId: null = null;
-  @Input() control!: FormControl;
+  /** Holds the selection: one value, or an array when `multiple`. Without it nothing can be selected. */
+  @Input() control?: FormControl;
   @Input() items: T[] = [];
   @Input() bindLabel: LabelFn<T> = 'displayValue';
   @Input() bindValue: ValueFn<T> = 'value';
@@ -75,12 +72,16 @@ export class TilburgCombobox<T = unknown> {
   @Input() invalid = false;
   @Input() required = false;
   @Input() ariaLabel?: string;
+  @Input() ariaLabelledBy?: string;
   @Input() ariaDescribedBy?: string;
-  /** Reserved for a future cut. Always treated as `false` in v1. */
+  /** @deprecated Not implemented; has no effect. */
   @Input() searchable = false;
-  /** Reserved for a future cut. Always treated as `false` in v1. */
+  /** @deprecated Not implemented; has no effect. */
   @Input() loading = false;
 
+  /** Emits the new value after every selection change. */
+  @Output() valueChange = new EventEmitter<unknown>();
+  /** @deprecated Use `valueChange`; `change` collides with the native DOM `change` event name on the host. */
   @Output() change = new EventEmitter<unknown>();
 
   @ViewChild('inputEl', { static: true }) inputEl!: ElementRef<HTMLInputElement>;
@@ -164,7 +165,7 @@ export class TilburgCombobox<T = unknown> {
   }
 
   /** Select the option at the given index. In multi-mode, toggles; in
-   *  single-mode, replaces and closes. Emits `change`. */
+   *  single-mode, replaces and closes. Emits `valueChange` (and the deprecated `change`). */
   selectOption(index: number): void {
     const item = this.items[index];
     if (!item) return;
@@ -172,28 +173,41 @@ export class TilburgCombobox<T = unknown> {
     if (this.multiple) {
       const current = this.selectedValues();
       const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
-      this.control?.setValue(next);
-      this.change.emit(next);
+      this.select(next);
     } else {
-      this.control?.setValue(value);
-      this.change.emit(value);
+      this.select(value);
       this.close();
       this.inputEl.nativeElement.focus();
     }
   }
 
+  private select(value: unknown): void {
+    this.control?.setValue(value);
+    this.valueChange.emit(value);
+    this.change.emit(value);
+  }
+
+  /** Leaving the field counts as having interacted with it, so validation may now show. */
+  onBlur(): void {
+    this.control?.markAsTouched();
+  }
+
+  /** Invalid when the consumer says so, or when the control is invalid after the user has interacted with it —
+   *  not on page load, when an empty required combobox is already invalid. */
+  get showInvalid(): boolean {
+    return this.invalid || (!!this.control?.invalid && this.control.touched);
+  }
+
   removeChip(value: unknown, event?: Event): void {
     event?.stopPropagation();
     const next = this.selectedValues().filter((v) => v !== value);
-    this.control?.setValue(next);
-    this.change.emit(next);
+    this.select(next);
   }
 
   clear(event?: Event): void {
     event?.stopPropagation();
     const next = this.multiple ? [] : null;
-    this.control?.setValue(next);
-    this.change.emit(next);
+    this.select(next);
   }
 
   onInputKeydown(event: KeyboardEvent): void {

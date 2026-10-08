@@ -9,6 +9,8 @@ import { Component, Input } from '@angular/core';
 export class TilburgTable {
   @Input() caption?: string;
   @Input() ariaLabel?: string;
+  @Input() ariaLabelledBy?: string;
+  /** @deprecated Use `ariaLabelledBy` (same casing as the form controls). */
   @Input() ariaLabelledby?: string;
   @Input() ariaDescribedBy?: string;
 }
