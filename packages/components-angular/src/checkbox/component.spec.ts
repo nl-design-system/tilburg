@@ -17,6 +17,14 @@ class HostComponent {
   control = new FormControl(false);
 }
 
+@Component({ template: `<tilburg-checkbox name="los"></tilburg-checkbox>`, standalone: false })
+class NoIdHostComponent {}
+
+@Component({ template: `<tilburg-checkbox [control]="control"></tilburg-checkbox>`, standalone: false })
+class ArrayHostComponent {
+  control = new FormControl(['optie-1']);
+}
+
 describe('TilburgCheckbox', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
@@ -24,7 +32,7 @@ describe('TilburgCheckbox', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TilburgCheckbox, HostComponent],
+      declarations: [TilburgCheckbox, HostComponent, NoIdHostComponent, ArrayHostComponent],
       imports: [ReactiveFormsModule, UtrechtComponentsModule],
     });
     fixture = TestBed.createComponent(HostComponent);
@@ -61,5 +69,20 @@ describe('TilburgCheckbox', () => {
     fixture.detectChanges();
     expect(input('reactive').disabled).toBe(true);
     expect(host.control.disabled).toBe(true);
+  });
+
+  it('does not write id="undefined" when no id is given', () => {
+    const f = TestBed.createComponent(NoIdHostComponent);
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('input').hasAttribute('id')).toBe(false);
+  });
+
+  it('warns in dev mode when the control holds an array (a checkbox group needs checked + checkChanged)', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const f = TestBed.createComponent(ArrayHostComponent);
+    f.detectChanges();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('holds an array'));
+    expect(f.nativeElement.querySelector('input').hasAttribute('checked')).toBe(false);
+    warn.mockRestore();
   });
 });

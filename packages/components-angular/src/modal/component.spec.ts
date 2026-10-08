@@ -34,13 +34,21 @@ class HostComponent {
   }
 }
 
+@Component({
+  template: `<tilburg-modal title="Twee kanten" [(open)]="open"><p>Inhoud</p></tilburg-modal>`,
+  standalone: false,
+})
+class TwoWayHostComponent {
+  open = false;
+}
+
 describe('TilburgModal', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
   const dialog = () => fixture.nativeElement.querySelector('dialog') as HTMLDialogElement;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ declarations: [TilburgModal, HostComponent] });
+    TestBed.configureTestingModule({ declarations: [TilburgModal, HostComponent, TwoWayHostComponent] });
     fixture = TestBed.createComponent(HostComponent);
     host = fixture.componentInstance;
     fixture.detectChanges();
@@ -95,5 +103,20 @@ describe('TilburgModal', () => {
     fixture.detectChanges();
     dialog().click();
     expect(dialog().hasAttribute('open')).toBe(true);
+  });
+
+  it('supports [(open)]: closing from the inside reports open=false, so the dialog can be reopened', () => {
+    const twoWay = TestBed.createComponent(TwoWayHostComponent);
+    twoWay.detectChanges();
+    twoWay.componentInstance.open = true;
+    twoWay.detectChanges();
+    const twoWayDialog = twoWay.nativeElement.querySelector('dialog') as HTMLDialogElement;
+    expect(twoWayDialog.open).toBe(true);
+    twoWayDialog.close();
+    twoWay.detectChanges();
+    expect(twoWay.componentInstance.open).toBe(false);
+    twoWay.componentInstance.open = true;
+    twoWay.detectChanges();
+    expect(twoWayDialog.open).toBe(true);
   });
 });

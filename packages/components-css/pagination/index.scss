@@ -68,7 +68,7 @@
 .tilburg-pagination__pages {
   align-items: center;
   display: flex;
-  gap: var(--tilburg-space-row-ant, 0.25rem);
+  gap: var(--tilburg-space-row-ant, 2px);
   list-style: none;
   margin-block: 0;
   margin-inline: 0;
@@ -84,8 +84,8 @@
   font: inherit;
   font-variant-numeric: tabular-nums;
   min-inline-size: 1.75rem;
-  padding-block: var(--tilburg-space-row-ant, 0.25rem);
-  padding-inline: var(--tilburg-space-row-ant, 0.25rem);
+  padding-block: var(--tilburg-space-row-ant, 2px);
+  padding-inline: var(--tilburg-space-row-ant, 2px);
   text-align: center;
 }
 
@@ -109,5 +109,5 @@
 
 .tilburg-pagination__ellipsis {
   color: var(--tilburg-color-gray-500);
-  padding-inline: var(--tilburg-space-row-ant, 0.25rem);
+  padding-inline: var(--tilburg-space-row-ant, 2px);
 }

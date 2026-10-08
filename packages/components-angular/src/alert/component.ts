@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   inject,
   Input,
   Output,
@@ -43,6 +44,9 @@ const DEFAULT_SR_PREFIX: Record<string, string> = {
 export class TilburgAlert implements AfterViewChecked {
   @Input() variant: TilburgAlertVariant | null | undefined = 'info';
   @Input() title?: string | null;
+  /** `title` is an input here, but a static `title="…"` would also land on the host element as the native
+   *  attribute (a browser tooltip and an extra accessible description). Keep it off the host. */
+  @HostBinding('attr.title') readonly hostTitle = null;
   @Input() headingLevel: 1 | 2 | 3 | 4 | 5 | 6 = 3;
   @Input() closable: boolean | null | undefined = false;
   @Input() liveRegion: TilburgAlertLiveRegion = 'polite';

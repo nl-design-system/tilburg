@@ -6,10 +6,10 @@
 @if (control) {
 <input
   type="checkbox"
-  [id]="id"
+  [attr.id]="id || null"
   [attr.name]="name || null"
   [formControl]="control"
-  [checked]="!!control.value"
+  [checked]="control.value === true"
   [required]="required"
   [invalid]="!!invalid"
   [attr.aria-label]="ariaLabel || null"
@@ -23,7 +23,7 @@
 } @else {
 <input
   type="checkbox"
-  [id]="id"
+  [attr.id]="id || null"
   [attr.name]="name || null"
   [disabled]="disabled == true"
   [required]="required"

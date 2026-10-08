@@ -27,11 +27,17 @@
           }
         },
         "danger": {
+          "background-color": {
+            "$value": "{tilburg.feedback.negative.color}"
+          },
           "color": {
             "$value": "{tilburg.color.white}"
           }
         },
         "invalid": {
+          "background-color": {
+            "$value": "{tilburg.feedback.negative.color}"
+          },
           "color": {
             "$value": "{tilburg.color.white}"
           }

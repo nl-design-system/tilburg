@@ -27,7 +27,8 @@ wat je doet als het er niet goed uitziet.
 
 - **React-Storybook** — HTML/CSS, React en Web Components. Wordt bij elke push naar `main` gepubliceerd op de GitHub
   Pages-site van deze repository.
-- **Angular-Storybook** — HTML/CSS en Angular. Nu alleen lokaal: `pnpm storybook:angular`.
+- **Angular-Storybook** — HTML/CSS en Angular. Wordt op dezelfde site gepubliceerd onder `angular/`; lokaal met
+  `pnpm storybook:angular`.
 
 ## Bijdragen
 

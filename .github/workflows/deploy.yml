@@ -5,6 +5,11 @@ on:
     branches: main
 permissions: {}
 
+# One Pages deployment at a time; the newest push wins.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

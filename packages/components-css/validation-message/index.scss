@@ -40,3 +40,12 @@
 .tilburg-validation-message--warning .tilburg-validation-message__icon:empty::before {
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M10 1 1 19h18L10 1Zm0 5 1 7h-2l1-7Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z'/></svg>");
 }
+
+/* Forced colours (Windows High Contrast) override `background-color`, which is what paints this mask icon, so it
+   vanished. Paint it in the system text colour instead. */
+@media (forced-colors: active) {
+  .tilburg-validation-message__icon:empty::before {
+    background-color: CanvasText;
+    forced-color-adjust: none;
+  }
+}

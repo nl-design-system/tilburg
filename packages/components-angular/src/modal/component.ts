@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   OnChanges,
   Output,
@@ -27,6 +28,9 @@ let nextModalId = 0;
 export class TilburgModal implements AfterViewInit, OnChanges {
   /** Heading text; also the dialog's accessible name (`aria-labelledby`). */
   @Input() title?: string | null;
+  /** `title` is an input here, but a static `title="…"` would also land on the host element as the native
+   *  attribute (a browser tooltip and an extra accessible description). Keep it off the host. */
+  @HostBinding('attr.title') readonly hostTitle = null;
   /** Id of the element that explains the dialog (e.g. its first paragraph); read after the title when it opens. */
   @Input() ariaDescribedBy?: string | null;
   /** `true` opens the dialog modally (`showModal()`), `false` closes it. */
@@ -38,6 +42,9 @@ export class TilburgModal implements AfterViewInit, OnChanges {
 
   /** Emitted after the dialog closed — close button, Escape, backdrop click or `close()`. */
   @Output() closed = new EventEmitter<void>();
+  /** Emits when the dialog opens or closes from the inside (`showModal()`, close button, Escape, backdrop), so
+   *  `[(open)]` stays in sync: without it a bound `open` stayed `true` after closing and could not reopen. */
+  @Output() openChange = new EventEmitter<boolean>();
 
   @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLDialogElement>;
 
@@ -56,7 +63,10 @@ export class TilburgModal implements AfterViewInit, OnChanges {
   /** Opens the dialog modally. */
   showModal(): void {
     const dialog = this.dialog.nativeElement;
-    this.open = true;
+    if (!this.open) {
+      this.open = true;
+      this.openChange.emit(true);
+    }
     if (!dialog.open) {
       dialog.showModal();
     }
@@ -75,6 +85,7 @@ export class TilburgModal implements AfterViewInit, OnChanges {
       return;
     }
     this.open = false;
+    this.openChange.emit(false);
     this.closed.emit();
   }
 

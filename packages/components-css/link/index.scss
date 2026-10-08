@@ -10,8 +10,11 @@
     color: var(--utrecht-link-hover-color);
   }
 
+  /* Focus is white text on the focus background (Tilburg: pink). utrecht-css only paints that background for
+     `.utrecht-link--html-a`; setting the text colour alone left any other `.utrecht-link` white on white. */
   &:focus,
   &:focus-visible {
-    color: var(--tilburg-color-white);
+    background-color: var(--utrecht-link-focus-background-color);
+    color: var(--utrecht-link-focus-color);
   }
 }

@@ -10,6 +10,8 @@ export class TilburgFieldset {
   @Input() disabled?: boolean = false;
   @Input() invalid?: boolean = false;
   @Input() ariaLabel?: string;
+  @Input() ariaLabelledBy?: string;
+  /** @deprecated Use `ariaLabelledBy` (same casing as the form controls). */
   @Input() ariaLabelledby?: string;
   @Input() ariaDescribedBy?: string;
 }

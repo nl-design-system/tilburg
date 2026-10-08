@@ -1,5 +1,6 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostBinding, Input, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { setNativeAttributes } from '../utils/native-attributes';
 
 let nextId = 0;
 
@@ -10,7 +11,7 @@ let nextId = 0;
   styleUrls: ['index.scss'],
   standalone: false,
 })
-export class TilburgPasswordInput {
+export class TilburgPasswordInput implements AfterViewChecked {
   @Input() id?: string = undefined;
 
   /** The id belongs on the inner `<input>`, so `<label for>` resolves to it; strip it from the host. */
@@ -24,6 +25,7 @@ export class TilburgPasswordInput {
   @Input() disabled = false;
   @Input() invalid = false;
   @Input() required = false;
+  @Input() ariaLabel?: string;
   @Input() ariaDescribedBy?: string;
   @Input() ariaLabelledBy?: string;
   /** Label of the show/hide button; it stays the same, `aria-pressed` reports the state. */
@@ -36,6 +38,14 @@ export class TilburgPasswordInput {
   status = '';
 
   private readonly fallbackId = `tilburg-password-input-${++nextId}`;
+
+  // `read: ElementRef`: the utrecht textbox is a component, so a bare `#input` would resolve to its instance.
+  @ViewChild('input', { read: ElementRef }) private input?: ElementRef<HTMLInputElement>;
+
+  /** The utrecht directive's host binding strips `name` (no autofill for password managers); write it back. */
+  ngAfterViewChecked(): void {
+    setNativeAttributes(this.input?.nativeElement, { name: this.name });
+  }
 
   get inputId(): string {
     return this.id || this.fallbackId;

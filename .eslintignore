@@ -8,11 +8,10 @@ coverage/
 dist/
 tmp/
 
-# Ignore generated files from Stencil
-components/components.d.ts
+# Node script outside the Angular TypeScript project
 packages/components-angular/test-exports.mjs
-packages/web-components-angular/src/directives/angular-component-lib/utils.ts
-packages/web-components-angular/src/directives/proxies.ts
+
+# Ignore generated files from Stencil
 packages/web-components-stencil/loader
 packages/web-components-react/src/react-component-lib/
 packages/web-components-react/src/components.ts

@@ -4,15 +4,16 @@
 <div class="tilburg-password-input">
   @if (control) {
   <input
+    #input
     [id]="inputId"
     [type]="visible ? 'text' : 'password'"
     [attr.type]="visible ? 'text' : 'password'"
     [formControl]="control"
     [invalid]="invalid"
     [required]="required"
-    [attr.name]="name || null"
     [attr.autocomplete]="autocomplete || null"
     [attr.placeholder]="placeholder || null"
+    [attr.aria-label]="ariaLabel || null"
     [attr.aria-describedby]="ariaDescribedBy || null"
     [attr.aria-labelledby]="ariaLabelledBy || null"
     [attr.aria-required]="required ? 'true' : null"
@@ -21,15 +22,16 @@
   />
   } @else {
   <input
+    #input
     [id]="inputId"
     [type]="visible ? 'text' : 'password'"
     [attr.type]="visible ? 'text' : 'password'"
     [disabled]="disabled"
     [invalid]="invalid"
     [required]="required"
-    [attr.name]="name || null"
     [attr.autocomplete]="autocomplete || null"
     [attr.placeholder]="placeholder || null"
+    [attr.aria-label]="ariaLabel || null"
     [attr.aria-describedby]="ariaDescribedBy || null"
     [attr.aria-labelledby]="ariaLabelledBy || null"
     [attr.aria-required]="required ? 'true' : null"

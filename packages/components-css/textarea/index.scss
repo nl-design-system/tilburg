@@ -24,7 +24,9 @@
 }
 
 .utrecht-textarea {
-  max-inline-size: var(--tilburg-textarea-max-inline-size);
+  /* The BAT theme has no textarea width token, and BAT textareas have always been full width. The explicit `none`
+     keeps that (falling back to the 400px form-control width would shrink them). */
+  max-inline-size: var(--tilburg-textarea-max-inline-size, none);
   min-block-size: 5em;
   min-inline-size: 5em;
 
@@ -146,13 +148,13 @@
       --utrecht-textarea-focus-border-color,
       var(
         --utrecht-form-control-focus-border-color,
-        var(--utrecht-texarea-border-color, var(--utrecht-form-control-border-color))
+        var(--utrecht-textarea-border-color, var(--utrecht-form-control-border-color))
       )
     );
     box-shadow: var(--_utrecht-focus-ring-box-shadow);
     color: var(
-      --utrecht-textbox-focus-color,
-      var(--utrecht-form-control-focus-color, var(--utrecht-textbox-color, var(--utrecht-form-control-color)))
+      --utrecht-textarea-focus-color,
+      var(--utrecht-form-control-focus-color, var(--utrecht-textarea-color, var(--utrecht-form-control-color)))
     );
     outline-color: var(--utrecht-focus-outline-color, revert);
     outline-offset: var(--utrecht-focus-outline-offset, revert);

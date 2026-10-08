@@ -46,4 +46,10 @@ utrecht-form-field.tilburg-warning,
   --utrecht-form-field-invalid-border-inline-start-color: var(--utrecht-feedback-warning-color);
   --utrecht-textbox-invalid-border-color: var(--utrecht-feedback-warning-border-color);
   --utrecht-textbox-invalid-background-color: var(--utrecht-feedback-warning-background-color);
+
+  /* The same warning look for the other text fields; they kept the red invalid colours. */
+  --utrecht-textarea-invalid-border-color: var(--utrecht-feedback-warning-border-color);
+  --utrecht-textarea-invalid-background-color: var(--utrecht-feedback-warning-background-color);
+  --utrecht-select-invalid-border-color: var(--utrecht-feedback-warning-border-color);
+  --utrecht-select-invalid-background-color: var(--utrecht-feedback-warning-background-color);
 }

@@ -23,3 +23,12 @@
     color: var(--tilburg-language-toggle-option-active-color);
   }
 }
+
+/* The active option is shown by background colour only, which forced colours remove; mark it with system colours. */
+@media (forced-colors: active) {
+  .tilburg-language-toggle__option--active {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+}

@@ -66,6 +66,8 @@ export class TilburgAccordion {
   }
 }
 
+let nextSectionId = 0;
+
 @Component({
   selector: 'tilburg-accordion-section',
   templateUrl: 'section.html',
@@ -80,12 +82,16 @@ export class TilburgAccordionSection {
   @Input() autoToggle = false;
   @Output() toggled = new EventEmitter<boolean>();
 
+  /** Without a `key`, every section used to get the same ids (`utrecht-accordion--panel`), breaking
+   *  `aria-controls`/`aria-labelledby`; fall back to a per-instance id. */
+  private readonly fallbackKey = `section-${++nextSectionId}`;
+
   get panelId(): string {
-    return `utrecht-accordion-${this.key ?? ''}-panel`;
+    return `utrecht-accordion-${this.key || this.fallbackKey}-panel`;
   }
 
   get buttonId(): string {
-    return `utrecht-accordion-${this.key ?? ''}-button`;
+    return `utrecht-accordion-${this.key || this.fallbackKey}-button`;
   }
 
   onToggle(): void {

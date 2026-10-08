@@ -451,12 +451,12 @@
 
   border-inline-start: var(--tilburg-space-inline-ant, 4px) solid transparent;
   cursor: pointer;
-  line-height: var(--tilburg-line-height-md, 1.5);
+  line-height: var(--tilburg-typography-line-height-md, 1.5);
   margin-block-end: var(--tilburg-space-block-flea, 2px);
   min-block-size: 0;
   padding-block-end: var(--tilburg-space-block-beetle, 8px);
   padding-block-start: var(--tilburg-space-block-beetle, 8px);
-  padding-inline-start: var(--tilburg-space-inline-snail, 10px);
+  padding-inline-start: var(--tilburg-space-inline-snail, 12px);
   transition:
     background-color 120ms ease,
     border-color 120ms ease;
@@ -528,5 +528,13 @@
     border-inline-start-color: highlighttext;
     color: highlighttext;
     forced-color-adjust: none;
+  }
+}
+
+/* Skip the hover/focus/selection fades for users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .utrecht-combobox,
+  .utrecht-combobox * {
+    transition: none;
   }
 }

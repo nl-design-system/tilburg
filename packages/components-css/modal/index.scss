@@ -115,8 +115,12 @@
   padding-inline: 0;
 }
 
-.tilburg-modal__close-button svg {
-  transition: rotate 250ms cubic-bezier(0.1, 0.1, 0, 1);
+/* The close icon's turn on hover/focus is motion like the dialog's own animation: only without a reduced-motion
+   preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .tilburg-modal__close-button svg {
+    transition: rotate 250ms cubic-bezier(0.1, 0.1, 0, 1);
+  }
 }
 
 .tilburg-modal__close-button:where(:hover, :focus-visible) {

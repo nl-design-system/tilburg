@@ -2,6 +2,40 @@ const stringSort = (a, b) => (a === b ? 0 : a > b ? 1 : -1);
 
 const sortByName = (a, b) => stringSort(a.name, b.name);
 
+/* The figma export carries token sets for components Tilburg does not have (`todo.*` for the NL Design System
+   candidates, `voorbeeld.*` and `denhaag.*` from the example theme). They are left out of every output, except the ones
+   that are referenced by a kept token or already used by consumers (bq-tlb-frontend), so nothing that resolves today
+   stops resolving. */
+const placeholderSets = ['todo', 'voorbeeld', 'denhaag'];
+const keptPlaceholderTokens = new Set([
+  'voorbeeld.code.font-family', // --utrecht-code(-block)-font-family refer to it
+  'todo.checkbox-group.row-gap',
+  'todo.radio-group.row-gap',
+  'todo.status-badge.color',
+  'todo.status-badge.informative.marker',
+  'todo.status-badge.negative.marker',
+  'todo.status-badge.positive.marker',
+  'todo.status-badge.warning.marker',
+]);
+
+export const isPublicToken = (token) =>
+  !placeholderSets.includes(token.path[0]) || keptPlaceholderTokens.has(token.path.join('.'));
+
+/** Applies `isPublicToken` to every file of every platform (combined with a file's own filter, if it has one). */
+export const withPublicTokensOnly = (platforms) =>
+  Object.fromEntries(
+    Object.entries(platforms).map(([name, platform]) => [
+      name,
+      {
+        ...platform,
+        files: platform.files?.map((file) => ({
+          ...file,
+          filter: file.filter ? (token, options) => isPublicToken(token) && file.filter(token, options) : isPublicToken,
+        })),
+      },
+    ]),
+  );
+
 export const createStyleDictionaryConfig = ({
   selector,
   source = ['src/**/tokens.json', 'src/**/*.tokens.json', 'figma/**/*.tokens.json'],
@@ -18,9 +52,9 @@ export const createStyleDictionaryConfig = ({
       },
     },
     source,
-    platforms: {
+    platforms: withPublicTokensOnly({
       js: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['name/camel', 'color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -35,7 +69,7 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       tokenTree: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -46,7 +80,7 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       json: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['name/camel', 'color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -65,7 +99,7 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       css: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['name/kebab', 'color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -88,7 +122,7 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       scss: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['name/kebab', 'color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -116,7 +150,7 @@ export const createStyleDictionaryConfig = ({
         ],
       },
       less: {
-        transformGroups: 'tokens-studio',
+        transformGroup: 'tilburg/tokens-studio',
         transforms: ['name/kebab', 'color/hsl-4'],
         buildPath: 'dist/',
         files: [
@@ -144,6 +178,6 @@ export const createStyleDictionaryConfig = ({
           },
         ],
       },
-    },
+    }),
   };
 };

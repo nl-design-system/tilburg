@@ -1,5 +1,0 @@
-{
-  "linterOptions": {
-    "exclude": ["**/*.js", "*.mjs", "**/*.stories.ts"]
-  }
-}
