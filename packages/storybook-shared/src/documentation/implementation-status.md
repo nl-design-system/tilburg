@@ -2,7 +2,8 @@
 
 Welke van de vier lagen bestaat er per component. De tabel is afgeleid uit de repository zelf — uit
 `packages/components-css/*/index.scss`, `packages/components-angular/src/*/component.ts`,
-`packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is een momentopname van 21 september 2026.
+`packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is bijgewerkt op 12 oktober 2026. `pnpm parity` controleert in de repository of de bestanden nog kloppen met deze
+tabel; `pnpm verify` draait die controle mee.
 
 **42 componenten** zijn gedocumenteerd. **41** hebben een React-wrapper, **41** een Angular-wrapper en **41** een
 Web Component (`@gemeente-tilburg/web-components-stencil`).

@@ -17,7 +17,7 @@ The Tilburg design system uses **two custom-property namespaces** that live on t
 
 ### 1. `--tilburg-*` — Tilburg's own decisions
 
-The brand palette (`--tilburg-color-*`), the animal-named space scale (`--tilburg-space-{block,row,column,inline}-*`), typography (`--tilburg-typography-font-size-*`, `--tilburg-typography-font-family-*`), borders (`--tilburg-border-width-sm/md/lg`), interaction accents (`--tilburg-interaction-color`), and component-specific slots (`--tilburg-table-footer-border-width`, `--tilburg-accordion-section-border-color`, …). Authored in `proprietary/design-tokens/src/` and built into `dist/tilburg/theme.css`. Reference these directly in app CSS.
+The brand palette (`--tilburg-color-*`), the animal-named space scale (`--tilburg-space-{block,row,column,inline}-*`), typography (`--tilburg-typography-font-size-*`, `--tilburg-typography-font-family-*`), borders (`--tilburg-border-width-sm/md/lg`), interaction accents (`--tilburg-interaction-color`), and component-specific slots (`--tilburg-table-footer-border-width`, `--tilburg-accordion-section-border-color`, …). Exported from Figma per theme (`proprietary/design-tokens/figma/tilburg/`, `figma/bat/`), topped up by `src/patches/` for tokens Figma does not have yet, and built into `dist/<theme>/theme.css`. Reference these directly in app CSS.
 
 ### 2. `--utrecht-*` — Plumbing inherited from @utrecht/component-library-css
 

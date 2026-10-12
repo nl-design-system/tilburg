@@ -11,4 +11,7 @@
 - **Een specifieke component?** Elke component heeft per laag een pagina in de zijbalk, met voorbeelden en een
   **Usage**-sectie met de API.
 
+- **Zelf iets veranderen aan het Design System?** _Je eerste wijziging_ loopt in een kwartier langs alles, van
+  `node scripts/setup.mjs` tot en met de pull request.
+
 Alle pagina's staan in de zijbalk onder _Tilburg_.
