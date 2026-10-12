@@ -34,6 +34,22 @@ Animaties gebruiken een kleine schaal: `--tilburg-motion-duration-short` (200ms)
 (500ms), met `--tilburg-motion-easing-standard` en `--tilburg-motion-easing-emphasized`. Pas je die aan, dan bewegen
 accordion, voortgangsbalk en modal mee.
 
+### Thema's
+
+Er zijn twee thema's met dezelfde componenten: **Tilburg** (`dist/tilburg/`, class `tilburg-theme`) en **BAT**
+(`dist/bat/`, class `bat-theme`). Ze verschillen alleen in tokens. Een voorbeeld: BAT toont een veld met focus als witte
+tekst op donkerblauw, dus het oogje van het wachtwoordveld en het pijltje van de select worden daar wit; dat regelt het
+BAT-thema zelf (`--tilburg-select-focus-background-image`). Controleer een wijziging daarom ook in BAT.
+
+### Waar de tokens vandaan komen
+
+De waarden komen uit Figma: per thema één export (`figma/tilburg/`, `figma/bat/`), die de build omzet in de bestanden in
+`dist/`. Tokens die (nog) niet in Figma staan, staan in `src/patches/` (en `src/patches/bat/` voor BAT): een brug, zodat
+de code verder kan terwijl Figma bijloopt. Die tokens horen uiteindelijk in Figma; daarna kan de patch weg.
+
+De afspraak: tokens gaan één kant op, **Figma → export → repository**, en na elke ontwerpwijziging wordt opnieuw
+geëxporteerd. Zo werken ontwerp en code met dezelfde waarden, en loopt het tokenbestand in de ontwerpfase niet achter.
+
 ### Hoog contrast
 
 Laad `@gemeente-tilburg/design-tokens/dist/high-contrast.css` en zet de class `tilburg-high-contrast` **op hetzelfde

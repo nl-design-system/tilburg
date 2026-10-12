@@ -3,7 +3,7 @@
 ## React
 
 Voor React-projecten — `<Alert>`, `<Textbox>`, `<Modal>`, etc. De React-laag rendert dezelfde DOM als de
-HTML/CSS-laag. React 18 is vereist.
+HTML/CSS-laag. React 18 of 19 is vereist.
 
 ### Installatie (React)
 

@@ -33,6 +33,9 @@ De tokens zijn CSS custom properties (`--tilburg-…`, `--utrecht-…`). Er zijn
 | `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`     | `.tilburg-theme` | Aanbevolen. Je bepaalt zelf waar de huisstijl geldt, bv. naast andere thema's. |
 | `@gemeente-tilburg/design-tokens/dist/tilburg/variables.css` | `:root`          | De hele pagina is Tilburg en je wilt geen extra class.                         |
 
+Voor het **BAT-thema** gebruik je dezelfde bestanden uit `dist/bat/` (`theme.css` met de class `bat-theme`, of
+`variables.css`); de componenten zijn hetzelfde, alleen de tokens verschillen.
+
 > ⚠️ Gebruik je `theme.css`, zet dan **`class="tilburg-theme"`** op een element rond je content (meestal `<body>`).
 > Zonder die class zijn alle tokens leeg en ziet elke component er ongestyled uit. Dit is de meest gemaakte fout.
 

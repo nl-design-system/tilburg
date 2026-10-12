@@ -3,6 +3,7 @@
 import { spawn } from 'node:child_process';
 import { c, printBanner, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
+import { randomSaying } from './lib/sayings.mjs';
 
 const COLUMNS = 3;
 const COLUMN_WIDTH = 18;
@@ -74,6 +75,9 @@ function run(script) {
 
 process.stdout.write('\x1b[2J\x1b[H\x1b[?25l');
 printBanner('Menu');
+/* Below the title, a different Tilburg saying every time (scripts/lib/sayings.mjs). */
+const [saying, meaning] = randomSaying();
+console.log(`      ${c.magenta}${c.bold}“${saying}”${c.reset}  ${c.gray}${meaning}${c.reset}\n`);
 render();
 
 process.stdin.setRawMode(true);
