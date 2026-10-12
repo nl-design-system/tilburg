@@ -26,20 +26,23 @@ elke laag nodig heeft (tokens, de `tilburg-theme`-class, Utrecht-basis-CSS, font
 wat je doet als het er niet goed uitziet.
 
 - **React-Storybook** — HTML/CSS, React en Web Components. Wordt bij elke push naar `main` gepubliceerd op de GitHub
-  Pages-site van deze repository.
+  Pages-site van deze repository; lokaal met `pnpm dev react`.
 - **Angular-Storybook** — HTML/CSS en Angular. Wordt op dezelfde site gepubliceerd onder `angular/`; lokaal met
-  `pnpm storybook:angular`.
+  `pnpm dev angular`.
 
 ## Bijdragen
 
-Hoe je de repository opzet (Node 24, pnpm 11), test, lint, een component in alle lagen toevoegt en releaset, staat in
-[`CONTRIBUTING.md`](CONTRIBUTING.md). Kort:
+Eén commando na het clonen; het zet alles op wat ontbreekt (Node 24, pnpm, dependencies, builds) en start daarna de
+Storybooks:
 
 ```bash
-nvm use && corepack enable
-pnpm install
-pnpm storybook:react   # http://localhost:6006
+git clone git@github.com:nl-design-system/tilburg.git && cd tilburg
+node scripts/setup.mjs
 ```
+
+Daarna is `pnpm start` het beginpunt: een menu met alle commando's. Nieuw hier? Volg
+[Je eerste wijziging in 15 minuten](packages/storybook-shared/src/documentation/first-change.md). Hoe alles in elkaar
+zit (lagen, testen, een component toevoegen, releasen) staat in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Vragen of bugs: [GitHub-issues](https://github.com/nl-design-system/tilburg/issues). Meer over de NL Design
 System-community: het `#nl-design-system`-kanaal via [praatmee.codefor.nl](https://praatmee.codefor.nl).

@@ -74,7 +74,7 @@ watcher nodig.
 | `pnpm verify`     | Wat CI op een pull request controleert, plus `parity` en of er een changeset bij hoort         |
 | `pnpm sync`       | Packt en installeert deze werkkopie in `../bq-tlb-frontend` en `../hltsamen` (`--to` voor één) |
 | `pnpm clean:pick` | Kiezen wat weg mag (build-output, caches, `node_modules`), met grootte                         |
-| `pnpm commands`   | Alle commando's op een rij; `pnpm menu` als menu                                               |
+| `pnpm commands`   | Alle commando's op een rij; `pnpm start` (of `pnpm menu`) als menu                             |
 
 De scripts staan in `scripts/` en gebruiken alleen Node zelf, zodat `pnpm check` ook werkt als de install kapot is.
 Poorten, libraries en afnemende repo's staan op één plek: `scripts/dev-config.mjs`. Gaat een stap mis, dan herkennen
