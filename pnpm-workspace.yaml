@@ -1,7 +1,9 @@
+# Edit this file by hand. Using `pnpm config` reformats the file and removes all comments.
+
 packages:
-  - components/**
-  - packages/*
-  - proprietary/*
+  - "components/**"
+  - "packages/*"
+  - "proprietary/*"
 
 allowBuilds:
   "@bundled-es-modules/glob": true
@@ -11,29 +13,42 @@ allowBuilds:
   msgpackr-extract: true
   style-dictionary: true
 
+# Run the root preinstall/postinstall hooks (scripts/preflight.mjs: Node check; scripts/welcome.mjs: banner and next
+# steps) on every `pnpm install`. pnpm's default skips them when the install has nothing to do, which is most runs.
+# Costs ~2 s on such a run; CI always does a real install, so it is not affected.
+optimisticRepeatInstall: false
+
 # Configure pnpm so peer dependencies must be explicitly added instead of being automatically installed.
 autoInstallPeers: false
 
+# Configure pnpm so that it will not install any package that claims to not be compatible with the current Node.js
+# version.
 engineStrict: true
 
+# Configure pnpm so it only installs package versions that have been published on the npm registry for at least 24 hours
+# (1440 minutes). This helps mitigate the risk of supply chain attacks by avoiding newly published, potentially
+# malicious versions. Keep this in sync with npm-check-updates's `cooldown` configuration.
 minimumReleaseAge: 1440
 
+# Make an exception for trusted packages, notably our own
 minimumReleaseAgeExclude:
-  - '@amsterdam/*'
-  - '@gemeente-denhaag/*'
-  - '@gemeente-rotterdam/*'
-  - '@nl-design-system/*'
-  - '@nl-design-system-candidate/*'
-  - '@nl-design-system-community/*'
-  - '@nl-design-system-unstable/*'
-  - '@nl-rvo/*'
-  - '@rijkshuisstijl-community/*'
-  - '@utrecht/*'
+  - "@amsterdam/*"
+  - "@gemeente-denhaag/*"
+  - "@gemeente-rotterdam/*"
+  - "@nl-design-system/*"
+  - "@nl-design-system-candidate/*"
+  - "@nl-design-system-community/*"
+  - "@nl-design-system-unstable/*"
+  - "@nl-rvo/*"
+  - "@rijkshuisstijl-community/*"
+  - "@utrecht/*"
 
 overrides:
   form-data@>=4.0.0 <4.0.6: ^4.0.6
   # Critical advisory in shell-quote <1.11.0 (GHSA-pqg4-j6r4-53mv), via changesets, npm-run-all and webpack-dev-server.
   shell-quote@<1.11.0: ^1.11.0
+  # Critical advisories in handlebars <=4.7.9 (JavaScript injection in compile), via ts-jest in the Angular tests.
+  handlebars@>=4.0.0 <4.7.10: ^4.7.10
   # High advisory in @modelcontextprotocol/sdk <1.31.0 (OAuth credentials), pinned at 1.30.0 by @angular/cli 20.3.37.
   "@modelcontextprotocol/sdk@>=1.12.0 <1.31.0": ^1.31.0
   tar@<=7.5.18: ^7.5.19
@@ -46,8 +61,12 @@ overrides:
   source-map-js@<1.2.2: ^1.2.2
   webpack-dev-middleware@>=7.0.0 <7.4.5: ^7.4.5
 
+# Configure pnpm to save exact version numbers (not including ^ or ~) in package.json. Lock dependencies to specific
+# versions to ensure reproducible installs and prevent automatic upgrades to newer minor or patch releases.
 saveExact: true
+savePrefix: ""
 
-savePrefix: ''
-
+# Configure pnpm to not fail when there are missing or invalid peer dependencies in the tree.
 strictPeerDependencies: false
+
+provenance: true
