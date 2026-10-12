@@ -13,6 +13,11 @@ allowBuilds:
   msgpackr-extract: true
   style-dictionary: true
 
+# Run the root preinstall/postinstall hooks (scripts/preflight.mjs: Node check; scripts/welcome.mjs: banner and next
+# steps) on every `pnpm install`. pnpm's default skips them when the install has nothing to do, which is most runs.
+# Costs ~2 s on such a run; CI always does a real install, so it is not affected.
+optimisticRepeatInstall: false
+
 # Configure pnpm so peer dependencies must be explicitly added instead of being automatically installed.
 autoInstallPeers: false
 
@@ -42,6 +47,8 @@ overrides:
   form-data@>=4.0.0 <4.0.6: ^4.0.6
   # Critical advisory in shell-quote <1.11.0 (GHSA-pqg4-j6r4-53mv), via changesets, npm-run-all and webpack-dev-server.
   shell-quote@<1.11.0: ^1.11.0
+  # Critical advisories in handlebars <=4.7.9 (JavaScript injection in compile), via ts-jest in the Angular tests.
+  handlebars@>=4.0.0 <4.7.10: ^4.7.10
   # High advisory in @modelcontextprotocol/sdk <1.31.0 (OAuth credentials), pinned at 1.30.0 by @angular/cli 20.3.37.
   "@modelcontextprotocol/sdk@>=1.12.0 <1.31.0": ^1.31.0
   tar@<=7.5.18: ^7.5.19

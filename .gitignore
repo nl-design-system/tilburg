@@ -36,7 +36,9 @@ tmp/
 # Code editor files
 .idea/
 .vs/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
 .code-workspace/
 *.sublime-project
 *.sublime-workspace

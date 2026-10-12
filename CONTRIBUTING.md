@@ -12,8 +12,11 @@ _Aan de slag_ in de Storybook.
 | Node.js | 24 (zie `.nvmrc`; `engines`: `>=24 <=25`) | `nvm use`                                                   |
 | pnpm    | 11 (`packageManager` in `package.json`)   | `corepack enable`, dan kiest corepack de juiste versie zelf |
 
-pnpm weigert te installeren onder een andere Node-versie (`engineStrict`). Zie je
-`ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`, dan draai je nog op een oudere Node.
+`pnpm install` controleert eerst je Node-versie (`scripts/preflight.mjs`) en stopt met uitleg als het niet Node 24 is;
+daarnaast weigert pnpm zelf een andere versie (`engineStrict`). Zie je `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` of
+"This version of pnpm requires at least Node.js", dan start pnpm 11 op een oudere Node uit je `PATH` (vaak een
+nvm-default van 20) en komt het niet eens aan die controle toe: `nvm use`, of `nvm alias default 24`.
+`node scripts/check.mjs` werkt ook zonder pnpm en zegt welke van de twee het is.
 
 Goed om te weten over `pnpm-workspace.yaml` en `.npmrc`:
 
@@ -22,23 +25,75 @@ Goed om te weten over `pnpm-workspace.yaml` en `.npmrc`:
   onder `minimumReleaseAgeExclude`.
 - **`autoInstallPeers: false`** — peer-dependencies voeg je zelf expliciet toe.
 - **`saveExact: true`** — versies worden zonder `^` of `~` opgeslagen.
-- **`ignore-scripts=true`** (`.npmrc`) — install-scripts draaien niet; pakketten die dat wel mogen staan onder
-  `allowBuilds`.
+- **`allowBuilds`** — install-scripts van dependencies draaien alleen voor de pakketten die daar staan. Een nieuw
+  pakket met een install-script geeft `ERR_PNPM_IGNORED_BUILDS`: kijk wat het doet en zet het er dan bij.
+  (`ignore-scripts=true` in `.npmrc` leest pnpm 11 niet meer; de scripts van de root, zoals `preinstall` en husky's
+  `prepare`, draaien gewoon.)
 
 ## Eerste keer opzetten
 
 ```bash
 git clone git@github.com:nl-design-system/tilburg.git
 cd tilburg
-nvm use && corepack enable
-pnpm install
-pnpm storybook:react     # React-Storybook op http://localhost:6006
-pnpm storybook:angular   # Angular-Storybook op http://localhost:6007
+node scripts/setup.mjs   # of `pnpm setup` als pnpm al werkt
 ```
 
-Beide `storybook:*`-scripts bouwen eerst wat ze nodig hebben (tokens, de React- of Angular-library, de Web Components)
-en starten daarna de Storybook. `pnpm storybook` start beide tegelijk. Een volledige build van alles doe je met
-`pnpm build`.
+Setup doet alles wat nog ontbreekt en slaat over wat al klopt, dus je kunt hem altijd opnieuw draaien:
+
+1. **Node 24** — staat die er niet, dan installeert hij hem met nvm (na een vraag) en gaat daarop verder. Hij biedt ook
+   aan om 24 de standaard te maken voor nieuwe terminals (`nvm alias default 24`); anders start pnpm daar niet.
+2. **pnpm** via corepack, de versie uit `packageManager`. Staat er een andere pnpm vóór op je `PATH` (Homebrew, een
+   globale npm-install), dan zegt hij welke.
+3. **`pnpm install`**, de **git-hooks** (husky) en de **libraries** die de Storybooks uit `dist/` laden.
+4. De tabel van `pnpm check`, en de vraag of hij `pnpm dev` meteen start.
+
+Opties gaan via `pnpm run setup …` (pnpm leest opties bij `pnpm setup` als zijn eigen ingebouwde commando): `--yes`
+(geen vragen), `--skip-dev` (niet aanbieden `pnpm dev` te starten). `pnpm setup:reset` begint met een schone
+`node_modules`. Daarna werk je met:
+
+```bash
+pnpm check   # klopt alles? Node, pnpm, install, builds, poorten
+pnpm dev     # beide Storybooks; elke library wordt opnieuw gebouwd zodra je opslaat
+```
+
+`pnpm dev` start van elke library de watcher (tokens, React, Angular, Stencil en de React-wrappers), wacht op de eerste
+build en start dan de Storybook(s) op 6006 en 6007, of op de eerstvolgende vrije poort. Draait er al een Storybook op
+die poort, dan gebruikt hij die. Je ziet alleen rebuilds en fouten (met waarom en wat te doen); `v` toont alle output,
+`o` opent de browser, `q` stopt alles. Alleen één Storybook: `pnpm dev:react` of `pnpm dev:angular`. De SCSS van
+`components-css` en de voorbeelden in `storybook-shared` lezen de Storybooks direct uit de bron; die hebben geen
+watcher nodig.
+
+### Handige commando's
+
+| Commando          | Wat het doet                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `pnpm setup`      | Van verse clone naar draaiende Storybook; slaat over wat al klopt                              |
+| `pnpm check`      | Omgeving nalopen: Node, pnpm, install, verouderde builds, poorten, git-hooks                   |
+| `pnpm parity`     | Is elke component compleet in elke laag? (`pnpm parity tooltip` voor één, `--tests` per test)  |
+| `pnpm dev`        | Beide Storybooks met live rebuild van alle libraries                                           |
+| `pnpm verify`     | Wat CI op een pull request controleert, plus `parity` en of er een changeset bij hoort         |
+| `pnpm sync`       | Packt en installeert deze werkkopie in `../bq-tlb-frontend` en `../hltsamen` (`--to` voor één) |
+| `pnpm clean:pick` | Kiezen wat weg mag (build-output, caches, `node_modules`), met grootte                         |
+| `pnpm commands`   | Alle commando's op een rij; `pnpm menu` als menu                                               |
+
+De scripts staan in `scripts/` en gebruiken alleen Node zelf, zodat `pnpm check` ook werkt als de install kapot is.
+Poorten, libraries en afnemende repo's staan op één plek: `scripts/dev-config.mjs`. Gaat een stap mis, dan herkennen
+ze de bekende oorzaken (verkeerde Node, de 24-uursregel, `allowBuilds`, een Jest-crash op Node 24, een library die niet
+gebouwd is, een bezette poort) en zeggen wat je moet doen.
+
+Gaat een stap mis, dan zie je niet de hele uitvoer van de tool maar wat ertoe doet: waarom (als de oorzaak bekend is),
+wat je moet doen, de foutregels van de tool zelf en een link naar de volledige log (in de temp-map, onder
+`tilburg-logs/`; de laatste 40 blijven bewaard). Een tool die iets vraagt, krijgt geen invoer en stopt meteen in plaats
+van eindeloos te wachten. Ctrl-C stopt ook alles wat het script gestart heeft. Draait `pnpm dev`, dan vragen `verify`,
+`sync` en `setup` eerst of ze mogen bouwen: twee builds tegelijk in dezelfde `dist/` mislukken. De scripts hebben zelf
+ook tests (`pnpm run test:scripts`, onderdeel van `pnpm test`).
+
+### Je eerste wijziging
+
+Nieuw hier? [Je eerste wijziging in 15 minuten](packages/storybook-shared/src/documentation/first-change.md) loopt met een
+echte kleine wijziging langs alles: `pnpm where`, `pnpm dev tooltip`, de wijziging, `pnpm test tooltip`, `pnpm parity`,
+een changeset, `pnpm verify` en de pull request. Dezelfde tekst staat in beide Storybooks onder _Tilburg / Je eerste
+wijziging_.
 
 ## Hoe de repository in elkaar zit
 
@@ -71,6 +126,8 @@ beide Storybooks volgen.
   staat in de `description*`-strings van de `*.examples.ts`.
 
 ## Een nieuwe component toevoegen in alle lagen
+
+`pnpm parity <naam>` laat zien welke van de stappen hieronder nog ontbreken, met het pad van elk bestand.
 
 1. **CSS** — `packages/components-css/<naam>/index.scss`. Ontbreekt er een token, voeg het toe in
    `proprietary/design-tokens/src/`.
@@ -108,7 +165,8 @@ pnpm lint        # stylelint, eslint, markdownlint, package.json-lint en de lint
 pnpm lint-fix    # repareert wat automatisch kan, en draait prettier
 ```
 
-Een pre-commit-hook (husky + lint-staged) controleert de gestagede bestanden met dezelfde tools.
+Een pre-commit-hook (husky + lint-staged) controleert de gestagede bestanden met dezelfde tools en formatteert ze met
+prettier. Vóór een pull request: `pnpm verify` doet wat CI doet.
 
 ## Releasen
 
@@ -127,8 +185,10 @@ dezelfde als na een release, bv. `@gemeente-tilburg/design-tokens/dist/tilburg/t
 
 ## Lokaal gebruiken in een andere repository
 
-Wil je de packages gebruiken in een andere repo voordat ze gepubliceerd zijn (bijvoorbeeld HLTsamen), maak dan
-lokale tarballs:
+Voor bq-tlb-frontend en HLTsamen (naast deze repo uitgecheckt) doet `pnpm sync` alles in één keer: packen, de
+tarballs controleren en het sync-script van die repo zelf draaien.
+
+Voor een andere repo maak je de lokale tarballs zelf:
 
 ```bash
 pnpm run pack:local
