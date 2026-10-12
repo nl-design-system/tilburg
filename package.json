@@ -16,7 +16,8 @@
   "engines": {
     "//": "Update @types/node to match the highest node version here",
     "node": ">=24 <=25",
-    "pnpm": "^11.4.0"
+    "pnpm": "^11.4.0",
+    "npm": "please use pnpm: node scripts/setup.mjs"
   },
   "workspaces": [
     "./packages/*",
@@ -77,9 +78,10 @@
     "prepare": "husky",
     "prettier": "prettier --write .",
     "publish": "changeset publish",
+    "serve": "http-server packages/storybook/dist/",
     "setup": "node scripts/setup.mjs",
     "setup:reset": "node scripts/setup.mjs --reset",
-    "start": "http-server packages/storybook/dist/",
+    "start": "node scripts/hub.mjs",
     "storybook": "node scripts/dev.mjs",
     "storybook:angular": "node scripts/dev.mjs angular",
     "storybook:react": "node scripts/dev.mjs react",

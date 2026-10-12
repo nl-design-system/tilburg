@@ -50,7 +50,8 @@ export const SECTIONS = [
     colour: c.yellow,
     items: [
       { script: 'clean:pick', what: 'delete build output, caches or node_modules' },
-      { script: 'commands', what: 'this list (also: pnpm run help)' },
+      { script: 'commands', what: 'this list (also: pnpm run help); pnpm start opens it as a menu' },
+      { script: 'serve', what: 'serve the built React Storybook (after pnpm build)' },
     ],
   },
 ];

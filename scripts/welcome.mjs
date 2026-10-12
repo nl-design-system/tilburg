@@ -19,7 +19,7 @@ try {
       ['pnpm dev', 'both Storybooks, with every library rebuilt as you save'],
       ['pnpm where', 'where a component lives (pnpm where tooltip)'],
       ['pnpm check', 'is anything stale or missing? (Node, build output, ports)'],
-      ['pnpm menu', 'every command in a menu'],
+      ['pnpm start', 'every command in a menu'],
     ];
     for (const [command, what] of rows)
       console.log(`    ${c.cyan}${command.padEnd(12)}${c.reset} ${c.gray}${what}${c.reset}`);
