@@ -62,6 +62,84 @@ export const bannerLines = [
   '   ╚═╝   ╚═╝╚══════╝╚═════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ',
 ];
 
+/* Tilburg's brand colours (design tokens blue-300 → pink-300), as [hue, saturation, lightness]. */
+const BRAND_FROM = [197, 100, 43];
+const BRAND_TO = [328, 100, 44];
+
+/** How many colours this terminal shows: 'truecolor', '256' or 'basic'. */
+function colourDepth() {
+  const term = `${process.env.TERM ?? ''} ${process.env.TERM_PROGRAM ?? ''}`.toLowerCase();
+  if (
+    /truecolor|24bit/i.test(process.env.COLORTERM ?? '') ||
+    /iterm|vscode|wezterm|warp|ghostty|kitty|hyper|alacritty/.test(term)
+  ) {
+    return 'truecolor';
+  }
+  return /256/.test(term) || process.env.TERM_PROGRAM === 'Apple_Terminal' ? '256' : 'basic';
+}
+
+function hslToRgb([h, sPercent, lPercent]) {
+  const s = sPercent / 100;
+  const l = lPercent / 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [f(0), f(8), f(4)].map((value) => Math.round(value * 255));
+}
+
+/** A foreground colour escape for [r, g, b] in the depth the terminal has. */
+function fg([r, g, b], depth) {
+  if (depth === 'truecolor') return `\x1b[38;2;${r};${g};${b}m`;
+  /* The nearest colour of the 6×6×6 cube in the 256-colour palette. */
+  const level = (value) => (value < 48 ? 0 : value < 115 ? 1 : Math.round((value - 35) / 40));
+  return `\x1b[38;5;${16 + 36 * level(r) + 6 * level(g) + level(b)}m`;
+}
+
+/** Mix two sRGB colours in linear light: a straight mix in sRGB (or a walk round the hue circle) goes muddy or garish. */
+function mix(from, to, t) {
+  const linear = (value) => (value / 255 <= 0.04045 ? value / 255 / 12.92 : ((value / 255 + 0.055) / 1.055) ** 2.4);
+  const srgb = (value) => Math.round(255 * (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055));
+  return from.map((value, index) => srgb(linear(value) + (linear(to[index]) - linear(value)) * t));
+}
+
+/** Raise a colour's saturation to at least `minimum` (0–1) at the same hue and lightness: a mix greys in the middle. */
+function saturate([r, g, b], minimum) {
+  const max = Math.max(r, g, b) / 255;
+  const min = Math.min(r, g, b) / 255;
+  const l = (max + min) / 2;
+  if (max === min) return [r, g, b];
+  const d = max - min;
+  const sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  const hue =
+    max === r / 255
+      ? ((g - b) / 255 / d + (g < b ? 6 : 0)) * 60
+      : max === g / 255
+        ? ((b - r) / 255 / d + 2) * 60
+        : ((r - g) / 255 / d + 4) * 60;
+  return hslToRgb([hue, Math.max(sat, minimum) * 100, l * 100]);
+}
+
+/**
+ * The banner in Tilburg blue running into Tilburg pink, column by column: the █ blocks are the letters, the ╔═╗ lines
+ * become their drop shadow (the same colour, darker). Same size as the plain version.
+ */
+function colourBanner(depth) {
+  const width = Math.max(...bannerLines.map((line) => line.length));
+  const [from, to] = [hslToRgb(BRAND_FROM), hslToRgb(BRAND_TO)];
+  return bannerLines.map(
+    (line) =>
+      [...line]
+        .map((char, column) => {
+          if (char === ' ') return char;
+          if (depth === 'basic') return char === '█' ? `${c.blue}${char}` : `${c.gray}${char}`;
+          const face = saturate(mix(from, to, width > 1 ? column / (width - 1) : 0), 0.8);
+          const colour = char === '█' ? face : face.map((value) => Math.round(value * 0.45));
+          return `${fg(colour, depth)}${char}`;
+        })
+        .join('') + c.reset,
+  );
+}
+
 /** The banner with a subtitle such as "Environment check". Only the subtitle in CI or a log file. */
 export function printBanner(subtitle) {
   const title = `Tilburg Design System · ${subtitle}`;
@@ -69,9 +147,11 @@ export function printBanner(subtitle) {
     console.log(`\n${title}\n`);
     return;
   }
+  const depth = colourDepth();
+  const pink = depth === 'basic' ? c.magenta : fg(hslToRgb(BRAND_TO), depth);
   console.log('');
-  for (const line of bannerLines) console.log(`      ${c.blue}${line}${c.reset}`);
-  console.log(`\n      ${c.gray}${title}${c.reset}\n`);
+  for (const line of colourBanner(depth)) console.log(`      ${line}`);
+  console.log(`\n      ${c.bold}${pink}Tilburg Design System${c.reset}${c.gray} · ${subtitle}${c.reset}\n`);
 }
 
 // ─── Steps: a spinner per step, the output hidden until it matters ───────────
