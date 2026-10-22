@@ -13,8 +13,8 @@ Componenten en design tokens voor de websites en applicaties van Gemeente Tilbur
 | ---------------- | ------------------------------------------ | ------------------------------------------ | ------------------------ |
 | Design tokens    | `@gemeente-tilburg/design-tokens`          | iedereen, nodig voor elke laag             | ja                       |
 | Plain HTML / CSS | `@gemeente-tilburg/components-css`         | elke stack: BEM-classes in je eigen markup | nog niet                 |
-| React            | `@gemeente-tilburg/components-react`       | React 18-projecten                         | bij de eerste release    |
-| Angular          | `@gemeente-tilburg/components-angular`     | Angular 20-projecten                       | bij de eerste release    |
+| React            | `@gemeente-tilburg/components-react`       | React 18- en 19-projecten                  | bij de eerste release    |
+| Angular          | `@gemeente-tilburg/components-angular`     | Angular 20-, 21- en 22-projecten           | bij de eerste release    |
 | Web Components   | `@gemeente-tilburg/web-components-stencil` | elke stack: `<tilburg-wbc-*>`-elementen    | nog niet (experimenteel) |
 
 De HTML/CSS-laag is leidend: React, Angular en Web Components renderen precies dezelfde DOM en classes.
@@ -42,7 +42,9 @@ node scripts/setup.mjs
 
 Daarna is `pnpm start` het beginpunt: een menu met alle commando's. Nieuw hier? Volg
 [Je eerste wijziging in 15 minuten](packages/storybook-shared/src/documentation/first-change.md). Hoe alles in elkaar
-zit (lagen, testen, een component toevoegen, releasen) staat in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+zit (lagen, testen, een component toevoegen, releasen) staat in [`CONTRIBUTING.md`](CONTRIBUTING.md). Werkt iets niet?
+`pnpm check --fix` zegt wat ontbreekt en biedt de oplossing aan; wat de scripts herkennen staat in
+[Als een script misgaat](CONTRIBUTING.md#als-een-script-misgaat).
 
 Vragen of bugs: [GitHub-issues](https://github.com/nl-design-system/tilburg/issues). Meer over de NL Design
 System-community: het `#nl-design-system`-kanaal via [praatmee.codefor.nl](https://praatmee.codefor.nl).

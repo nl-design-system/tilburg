@@ -1,6 +1,7 @@
 /* `pnpm menu`: every command in a menu, after bq-tlb-frontend's hub.mjs. ↑ ↓ ← → choose, Enter runs, H help, Q quits.
    Sections sit side by side; without a terminal it prints the help list instead. */
 import { spawn } from 'node:child_process';
+import { checkInstalled, checkInstallFresh } from './lib/checks.mjs';
 import { c, printBanner, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
 import { randomSaying } from './lib/sayings.mjs';
@@ -17,6 +18,18 @@ if (!process.stdin.isTTY || !process.stdout.isTTY) {
 let section = 0;
 let item = 0;
 let drawn = 0;
+
+/* A fresh clone, or a pull that changed the dependencies: say so and put the cursor on setup, so "pnpm start, Enter"
+   is all a new developer needs. */
+const install = !checkInstalled().ok
+  ? 'Dependencies are not installed yet.'
+  : checkInstallFresh().warn
+    ? 'node_modules is out of date with pnpm-lock.yaml.'
+    : null;
+if (install) {
+  section = SECTIONS.findIndex((current) => current.items.some(({ script }) => script === 'setup'));
+  item = SECTIONS[section].items.findIndex(({ script }) => script === 'setup');
+}
 
 const pad = (text, width) => text + ' '.repeat(Math.max(0, width - stripAnsi(text).length));
 
@@ -78,6 +91,7 @@ printBanner('Menu');
 /* Below the title, a different Tilburg saying every time (scripts/lib/sayings.mjs). */
 const [saying, meaning] = randomSaying();
 console.log(`      ${c.magenta}${c.bold}“${saying}”${c.reset}  ${c.gray}${meaning}${c.reset}\n`);
+if (install) console.log(`  ${c.yellow}⚠  ${install}${c.reset} Press Enter to run ${c.cyan}pnpm setup${c.reset}.\n`);
 render();
 
 process.stdin.setRawMode(true);

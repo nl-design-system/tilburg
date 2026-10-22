@@ -97,7 +97,8 @@ nog, dan vraagt hij eerst of hij mag bouwen (twee builds in dezelfde `dist/` teg
 
 ## 8. Pull request
 
-Maak een branch, commit (de pre-commit-hook lint en formatteert de bestanden die je stagede) en open een pull request.
+Maak een branch en commit (de pre-commit-hook lint en formatteert de bestanden die je stagede). Daarna doet `pnpm ship`
+de rest: hij draait `pnpm verify`, toont je commits, pusht na een vraag en geeft de link om de pull request te openen.
 Het PR-sjabloon heeft een korte checklist: alle lagen, het BAT-thema, toetsenbord en schermlezer.
 
 Was het een oefening? Zet de wijziging terug met `git checkout -- packages/components-css/tooltip/index.scss` en
