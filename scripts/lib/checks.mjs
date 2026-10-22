@@ -1,6 +1,9 @@
 /* The checks behind `pnpm check`, also used by `pnpm dev` and `pnpm sync`. Each returns a table row:
-   { ok, warn, label, detail, note }. `ok: false` is broken (nothing will work until it is fixed); `warn` works but
-   needs attention, with the command that sorts it out. */
+   { ok, warn, label, detail, note, fix }. `ok: false` is broken (nothing will work until it is fixed); `warn` works but
+   needs attention, with the command that sorts it out. `fix` is what `pnpm check --fix` offers: { label (a Y/n
+   question), command, order (lower runs first), run? }. Without `run` it only prints the command: `nvm use` is a shell
+   function, so a child process cannot change your shell's Node. */
+import { spawnSync } from 'node:child_process';
 import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import net from 'node:net';
 import { resolve } from 'node:path';
@@ -10,10 +13,24 @@ import { readDevLock } from './lock.mjs';
 
 const cmd = (text) => `${c.cyan}${text}${c.reset}`;
 
+/** Run a fix's command in the foreground (its output and questions go to the terminal); throws on failure. */
+export function runInherit(command) {
+  const { status, error } = spawnSync(command, { shell: true, stdio: 'inherit', cwd: ROOT });
+  if (error) throw error;
+  if (status !== 0) throw new Error(`\`${command}\` exited with ${status}`);
+}
+
+const shellFix = (label, command, order) => ({ label, command, order, run: () => runInherit(command) });
+const NVM_FIX = { label: 'Switch Node', command: 'nvm use', order: 10 };
+const COREPACK_FIX = shellFix('Run corepack enable?', 'corepack enable', 20);
+const INSTALL_FIX = shellFix('Run pnpm install?', 'pnpm install', 30);
+const HUSKY_FIX = shellFix('Install the git hooks?', 'pnpm exec husky', 40);
+
 /** Run a check so that a bug in it becomes one red row instead of killing the whole table. */
 export async function safely(label, fn, ...args) {
   try {
-    return { label, ...(await fn(...args)) };
+    /* `recheck` runs the row again after its fix (pnpm check --fix). */
+    return { label, ...(await fn(...args)), recheck: () => fn(...args) };
   } catch (error) {
     return { label, ok: false, detail: `the check crashed: ${error?.message ?? error}`, error };
   }
@@ -38,6 +55,7 @@ export function checkNode() {
     note: process.env.NVM_DIR
       ? `run ${cmd('nvm use')} in this terminal`
       : `install Node ${NODE_MAJOR} (nvm is easiest: ${cmd('nvm install')})`,
+    ...(process.env.NVM_DIR && { fix: NVM_FIX }),
   };
 }
 
@@ -52,10 +70,16 @@ export async function checkPnpm() {
       ok: false,
       detail: `cannot start: pnpm 11 runs on ${pathNode} from your PATH`,
       note: `run ${cmd('nvm use')}, or make ${NODE_MAJOR} the default: ${cmd(`nvm alias default ${NODE_MAJOR}`)}`,
+      fix: NVM_FIX,
     };
   }
   if (code !== 0 || !version) {
-    return { ok: false, detail: 'pnpm not found', note: `run ${cmd('corepack enable')} (it comes with Node)` };
+    return {
+      ok: false,
+      detail: 'pnpm not found',
+      note: `run ${cmd('corepack enable')} (it comes with Node)`,
+      fix: COREPACK_FIX,
+    };
   }
   if (PNPM_VERSION && version !== PNPM_VERSION) {
     return {
@@ -63,6 +87,7 @@ export async function checkPnpm() {
       warn: true,
       detail: `${version}, package.json pins ${PNPM_VERSION}`,
       note: `run ${cmd('corepack enable')} so this folder uses the pinned pnpm`,
+      fix: COREPACK_FIX,
     };
   }
   return { ok: true, detail: version, note: 'package.json "packageManager"' };
@@ -79,6 +104,7 @@ export async function checkGitHooks() {
     warn: true,
     detail: 'not installed, so commits are not linted',
     note: `run ${cmd('pnpm install')} (its prepare step installs them) or ${cmd('pnpm exec husky')}`,
+    fix: HUSKY_FIX,
   };
 }
 
@@ -97,13 +123,43 @@ export async function checkGitPush() {
   };
 }
 
+/**
+ * Commits the branch is behind its upstream and origin/main, from the refs already here: no fetch, so it stays fast and
+ * offline. Skipped outside a git checkout or when there is nothing to compare with.
+ */
+export async function checkBranchBehind() {
+  const note = 'as of the last fetch';
+  const git = async (args) => capture(`git ${args}`, { cwd: ROOT, timeoutMs: 5000 });
+  const count = ({ code, stdout }) => (code === 0 ? Number(stdout.trim()) : 0);
+  const [head, upstream, behindUp, behindMain, hasMain] = await Promise.all([
+    git('rev-parse --abbrev-ref HEAD'),
+    git('rev-parse --abbrev-ref "@{u}"'),
+    git('rev-list --count "HEAD..@{u}"'),
+    git('rev-list --count HEAD..origin/main'),
+    git('rev-parse --verify --quiet origin/main'),
+  ]);
+  const up = upstream.code === 0 ? upstream.stdout.trim() : null;
+  const main = hasMain.code === 0;
+  if (head.code !== 0 || (!up && !main)) return { skip: true, ok: true, detail: 'nothing to compare with' };
+
+  const behind = [];
+  if (up && count(behindUp)) behind.push(`${count(behindUp)} commit(s) behind ${up} — run ${cmd('git pull')}`);
+  if (main && up !== 'origin/main' && count(behindMain))
+    behind.push(
+      `${count(behindMain)} commit(s) behind origin/main — run ${cmd('git fetch && git rebase origin/main')}`,
+    );
+  if (behind.length) return { ok: true, warn: true, detail: behind.join('; '), note };
+  const compared = [up, main && up !== 'origin/main' && 'origin/main'].filter(Boolean).join(' and ');
+  return { ok: true, detail: `up to date with ${compared}`, note };
+}
+
 // ─── Install ─────────────────────────────────────────────────────────────────
 
 const installMarker = resolve(ROOT, 'node_modules/.modules.yaml');
 
 export function checkInstalled() {
   if (!existsSync(installMarker)) {
-    return { ok: false, detail: 'node_modules is missing', note: `run ${cmd('pnpm install')}` };
+    return { ok: false, detail: 'node_modules is missing', note: `run ${cmd('pnpm install')}`, fix: INSTALL_FIX };
   }
   return { ok: true, detail: `installed ${ago(statSync(installMarker).mtimeMs)}`, note: 'node_modules' };
 }
@@ -124,6 +180,7 @@ export function checkInstallFresh() {
     warn: true,
     detail: 'pnpm-lock.yaml differs from what is installed',
     note: `run ${cmd('pnpm install')} (a branch switch or pull changed the dependencies)`,
+    fix: INSTALL_FIX,
   };
 }
 
@@ -271,6 +328,7 @@ export async function runAllChecks() {
         safely('pnpm', checkPnpm),
         safely('Git hooks', checkGitHooks),
         safely('Git push', checkGitPush),
+        safely('Git branch', checkBranchBehind),
       ]),
     },
     {

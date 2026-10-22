@@ -1,0 +1,21 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.fixAll.markdownlint": "explicit"
+  },
+  "eslint.useFlatConfig": false,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "json", "mdx"],
+  "stylelint.validate": ["css", "scss"],
+  "css.validate": false,
+  "scss.validate": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "search.exclude": {
+    "**/dist": true,
+    "**/.tarballs": true,
+    "**/storybook-static": true,
+    "pnpm-lock.yaml": true
+  }
+}

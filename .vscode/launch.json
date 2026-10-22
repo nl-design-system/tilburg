@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Jest: this React test",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/components-react",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["exec", "jest", "--runInBand", "${file}"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Jest: this Angular spec",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/components-angular",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["exec", "jest", "--runInBand", "${file}"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Scripts: this test file",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeArgs": ["--test"],
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Scripts: run this script",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

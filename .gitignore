@@ -39,6 +39,8 @@ tmp/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/tasks.json
+!.vscode/settings.json
+!.vscode/launch.json
 .code-workspace/
 *.sublime-project
 *.sublime-workspace

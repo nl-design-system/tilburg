@@ -8,7 +8,7 @@ export const SECTIONS = [
     items: [
       { script: 'setup', what: 'from a fresh clone to a running Storybook (safe to rerun)' },
       { script: 'setup:reset', what: 'the same, with a clean node_modules' },
-      { script: 'check', what: 'Node, pnpm, install, stale builds, ports' },
+      { script: 'check', what: 'Node, pnpm, install, stale builds, ports (--fix offers the fixes)' },
     ],
   },
   {
@@ -33,12 +33,14 @@ export const SECTIONS = [
       { script: 'verify', what: 'everything CI checks on a pull request' },
       { script: 'lint', what: 'eslint, stylelint, markdownlint' },
       { script: 'lint-fix', what: 'fix what the linters can, then prettier' },
+      { script: 'logs', what: 'the newest step logs (--last: the end of the last failure, --open)' },
     ],
   },
   {
     label: 'SHARE',
     colour: c.magenta,
     items: [
+      { script: 'ship', what: 'verify, push and the pull request link (--dry-run, --no-verify)' },
       { script: 'sync', what: 'pack and install into bq-tlb-frontend and hltsamen' },
       { script: 'pack:local', what: 'every package as a tarball in .tarballs/' },
       { script: 'build', what: 'build every package' },

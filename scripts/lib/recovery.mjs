@@ -11,7 +11,7 @@ import { ROOT } from '../dev-config.mjs';
 import { c, fail, printError, printToolOutput, runStep, stepDone, stepFail, stepStart } from './cli-utils.mjs';
 
 /* Ordered: the first match wins, so specific causes come before generic ones. */
-const FAILURES = [
+export const FAILURES = [
   {
     kind: 'node-version',
     test: /ERR_UNKNOWN_BUILTIN_MODULE|node:sqlite|requires at least Node|ERR_PNPM_UNSUPPORTED_ENGINE|Unsupported engine|Node\.js version v[\d.]+ detected/i,
