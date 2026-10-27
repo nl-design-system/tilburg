@@ -289,8 +289,8 @@ importers:
         specifier: workspace:*
         version: link:../web-components-stencil
       '@storybook/addon-a11y':
-        specifier: 8.4.0
-        version: 8.4.0(storybook@8.3.6(supports-color@9.4.0))
+        specifier: 8.3.6
+        version: 8.3.6(storybook@8.3.6(supports-color@9.4.0))
       '@storybook/addon-actions':
         specifier: 8.3.6
         version: 8.3.6(storybook@8.3.6(supports-color@9.4.0))
@@ -304,8 +304,8 @@ importers:
         specifier: 8.3.6
         version: 8.3.6(react@18.3.1)(storybook@8.3.6(supports-color@9.4.0))
       '@storybook/addon-viewport':
-        specifier: 8.4.0
-        version: 8.4.0(storybook@8.3.6(supports-color@9.4.0))
+        specifier: 8.3.6
+        version: 8.3.6(storybook@8.3.6(supports-color@9.4.0))
       '@storybook/manager-api':
         specifier: 8.3.6
         version: 8.3.6(storybook@8.3.6(supports-color@9.4.0))
@@ -445,8 +445,8 @@ importers:
         specifier: workspace:*
         version: link:../web-components-stencil
       '@types/node':
-        specifier: 24.3.0
-        version: 24.3.0
+        specifier: 20.12.14
+        version: 20.12.14
       '@types/react':
         specifier: 18.3.3
         version: 18.3.3
@@ -3691,10 +3691,10 @@ packages:
     peerDependencies:
       '@stencil/core': ^4.0.0 || ^5.0.0 || >=5.0.0-alpha.19 <5.0.0-next.0
 
-  '@storybook/addon-a11y@8.4.0':
-    resolution: {integrity: sha512-FbvdAnYG5y0l1iBvtwlN8sQL39/FyQefKGK4+0MDmdDvCDq2JpkNU9rDL4HT8aYVAiPfr+M2DmXGJihLxwRyhw==}
+  '@storybook/addon-a11y@8.3.6':
+    resolution: {integrity: sha512-EeVzUN+WaLtz/DXVBL3rIGvP8+pTuJXA3lEz9CbTQXRO7QMhzTTXLKmp8xmSA2w5H01a8XpjLcZ5LYjdKrvw0g==}
     peerDependencies:
-      storybook: ^8.4.0
+      storybook: ^8.3.6
 
   '@storybook/addon-a11y@9.1.20':
     resolution: {integrity: sha512-VFZ34y4ApmFwIzPRs2OJrG6jtYhM5y91eCZLTlR/HMGQciKF4TdOJHjj+5vf91SOER5UDcLizXetpiUowiZSgw==}
@@ -3716,10 +3716,10 @@ packages:
     peerDependencies:
       storybook: ^9.1.20
 
-  '@storybook/addon-highlight@8.4.0':
-    resolution: {integrity: sha512-tshX/2HnPzGQ9Kza2DARNfirBRhE/Ts7bldbhMiJu20YhJD1jQzXSDEX1cCgHsDc8HKYOsV/Kuu5WDzp/1i97w==}
+  '@storybook/addon-highlight@8.3.6':
+    resolution: {integrity: sha512-A7uU+1OPVXGpkklEUJjSl2VEEDLCSNvmffUJlvW1GjajsNFIHOW2CSD+KnfFlQyPxyVbnWAYLqUP4XJxoqrvDw==}
     peerDependencies:
-      storybook: ^8.4.0
+      storybook: ^8.3.6
 
   '@storybook/addon-interactions@8.3.6':
     resolution: {integrity: sha512-Y0YUJj0oE1+6DFkaTPXM/8+dwTSoy0ltj2Sn2KOTJYzxKQYXBp8TlUv0QOQiGH7o/GKXIWek/VlTuvG/JEeiWw==}
@@ -3735,10 +3735,10 @@ packages:
       react:
         optional: true
 
-  '@storybook/addon-viewport@8.4.0':
-    resolution: {integrity: sha512-hbHJzz7PcZ/bazUH3nAdG9yP3CUfF+wPdDwzcqSEVBRjdWSLZ4DHAtB0wajqhUoCsiRehg9avft1NokAc+KOgg==}
+  '@storybook/addon-viewport@8.3.6':
+    resolution: {integrity: sha512-bL51v837W1cng/+0pypkoLsWKWmvux96zLOzqLCpcWAQ4OSMhW3foIWpCiFwMG/KY+GanoOocTx6i7j5hLtuTA==}
     peerDependencies:
-      storybook: ^8.4.0
+      storybook: ^8.3.6
 
   '@storybook/angular@9.1.20':
     resolution: {integrity: sha512-ZDpOo3+qkNJOSZSqzdSNtuPFd7chmgzOuK10hoxtMUkeMc+VyqFENvw1z5ryoepbhGt1iBve/9jW2a0QhNPQhw==}
@@ -4139,14 +4139,14 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
+  '@types/node@20.12.14':
+    resolution: {integrity: sha512-scnD59RpYD91xngrQQLGkE+6UrHUPzeKZWhhjBSa3HSkwjbQc38+q3RoIVEwxQGRw3M+j5hpNAM+lgV3cVormg==}
+
   '@types/node@22.10.1':
     resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
 
   '@types/node@24.10.4':
     resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
-
-  '@types/node@24.3.0':
-    resolution: {integrity: sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -9787,11 +9787,11 @@ packages:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
 
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
-
-  undici-types@7.10.0:
-    resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
@@ -14394,9 +14394,9 @@ snapshots:
       '@stencil/core': 4.45.0
       sass-embedded: 1.105.0
 
-  '@storybook/addon-a11y@8.4.0(storybook@8.3.6(supports-color@9.4.0))':
+  '@storybook/addon-a11y@8.3.6(storybook@8.3.6(supports-color@9.4.0))':
     dependencies:
-      '@storybook/addon-highlight': 8.4.0(storybook@8.3.6(supports-color@9.4.0))
+      '@storybook/addon-highlight': 8.3.6(storybook@8.3.6(supports-color@9.4.0))
       axe-core: 4.13.0
       storybook: 8.3.6(supports-color@9.4.0)
 
@@ -14444,7 +14444,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@storybook/addon-highlight@8.4.0(storybook@8.3.6(supports-color@9.4.0))':
+  '@storybook/addon-highlight@8.3.6(storybook@8.3.6(supports-color@9.4.0))':
     dependencies:
       '@storybook/global': 5.0.0
       storybook: 8.3.6(supports-color@9.4.0)
@@ -14467,7 +14467,7 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
 
-  '@storybook/addon-viewport@8.4.0(storybook@8.3.6(supports-color@9.4.0))':
+  '@storybook/addon-viewport@8.3.6(storybook@8.3.6(supports-color@9.4.0))':
     dependencies:
       memoizerific: 1.11.3
       storybook: 8.3.6(supports-color@9.4.0)
@@ -15007,6 +15007,10 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
+  '@types/node@20.12.14':
+    dependencies:
+      undici-types: 5.26.5
+
   '@types/node@22.10.1':
     dependencies:
       undici-types: 6.20.0
@@ -15014,10 +15018,6 @@ snapshots:
   '@types/node@24.10.4':
     dependencies:
       undici-types: 7.16.0
-
-  '@types/node@24.3.0':
-    dependencies:
-      undici-types: 7.10.0
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -22139,9 +22139,9 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
-  undici-types@6.20.0: {}
+  undici-types@5.26.5: {}
 
-  undici-types@7.10.0: {}
+  undici-types@6.20.0: {}
 
   undici-types@7.16.0: {}
 
