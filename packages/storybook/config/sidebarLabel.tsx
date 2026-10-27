@@ -3,6 +3,7 @@
    style an Utrecht component. The same file as `packages/storybook-angular/.storybook/sidebarLabel.tsx`. */
 
 import type { API } from '@storybook/manager-api';
+import React from 'react';
 import { TooltipNote, WithTooltip } from 'storybook/internal/components';
 
 interface SidebarEntry {

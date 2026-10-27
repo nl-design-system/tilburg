@@ -4,7 +4,7 @@
    Storybook 9 can only include a tag, not exclude it. The choice is remembered per browser. The same file as
    `packages/storybook-angular/.storybook/TlbFilter.tsx`, with the Storybook 8 imports. */
 import { type API, useStorybookApi } from '@storybook/manager-api';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { IconButton, TooltipLinkList, WithTooltip } from 'storybook/internal/components';
 import { TILBURG_TAG } from './sidebarLabel';
 
