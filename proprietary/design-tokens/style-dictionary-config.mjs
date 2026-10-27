@@ -38,11 +38,7 @@ export const withPublicTokensOnly = (platforms) =>
 
 export const createStyleDictionaryConfig = ({
   selector,
-  source = [
-    "src/**/tokens.json",
-    "src/**/*.tokens.json",
-    selector + "/**/*.tokens.json",
-  ],
+  source = ['src/**/tokens.json', 'src/**/*.tokens.json', 'figma/**/*.tokens.json'],
 }) => {
   const prefix = selector.replace(/^\.(.+)-theme/, '$1');
   const themeName = `${prefix}-theme`;

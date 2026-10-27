@@ -4,25 +4,12 @@ import { typeDtcgDelegate } from 'style-dictionary/utils';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { createStyleDictionaryConfig, withPublicTokensOnly } from './style-dictionary-config.mjs';
 
-// --- Original Custom Action ---
 StyleDictionary.registerAction({
-  name: "log-missing-tokens",
+  name: 'log-missing-tokens',
   do: function (dictionary) {
     // Report references that did not resolve; listing every token only buried them.
     const unresolvedReferences = dictionary.allTokens.filter((token) => {
-      // A simple check: if the value is still a string containing { } it might be unresolved
-      // Note: This isn't foolproof as transforms might output strings with braces.
-      // A more robust check would compare original.value to final value if original contained braces.
-      return (
-        typeof token.value === "string" &&
-        token.value.includes("{") &&
-        token.value.includes("}") &&
-        // Add check to see if original value was also a reference
-        typeof token.original.value === "string" &&
-        token.original.value.includes("{") &&
-        token.original.value.includes("}") &&
-        token.value === token.original.value // Only flag if final value is identical to original reference string
-      );
+      return typeof token.value === 'string' && token.value.includes('{') && token.value.includes('}');
     });
 
     unresolvedReferences.forEach((token) => {
@@ -44,8 +31,8 @@ const sharedTokenFiles = async (themes) => {
 };
 
 const build = async () => {
-  const themeConfig = JSON.parse(await readFile("./config.json", "utf-8"));
-  console.log("Starting build..."); // Debugging statement
+  const themeConfig = JSON.parse(await readFile('./config.json', 'utf-8'));
+  console.log('Starting build...'); // Debugging statement
 
   // Register preprocessors and transformers
   StyleDictionary.registerPreprocessor({
@@ -55,7 +42,6 @@ const build = async () => {
 
   register(StyleDictionary, {
     excludeParentKeys: true,
-    // Add other sd-transforms options if necessary
   });
 
   /* The themes were built with `transformGroups` (plural), a key Style Dictionary does not read, so for a long time
@@ -168,8 +154,4 @@ const build = async () => {
   console.log('Build process finished!');
 };
 
-// --- Run Build ---
-build().catch((error) => {
-  console.error("❌ Build script failed:", error);
-  process.exit(1);
-});
+build();
