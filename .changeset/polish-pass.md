@@ -1,7 +1,6 @@
 ---
 "@gemeente-tilburg/components-angular": minor
 "@gemeente-tilburg/components-react": patch
-"@gemeente-tilburg/components-css": patch
 "@gemeente-tilburg/design-tokens": patch
 ---
 
