@@ -2,6 +2,7 @@ export * from './accordion/component';
 export * from './action-group/component';
 export * from './alert/component';
 export * from './article/component';
+export * from './backdrop/component';
 export * from './badge-list/component';
 export * from './badge-status/component';
 export * from './blockquote/component';

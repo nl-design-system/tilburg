@@ -6,6 +6,7 @@ import { TilburgAccordion, TilburgAccordionSection } from './accordion/component
 import { TilburgActionGroup } from './action-group/component';
 import { TilburgAlert } from './alert/component';
 import { TilburgArticle } from './article/component';
+import { TilburgBackdrop } from './backdrop/component';
 import { TilburgBadgeList } from './badge-list/component';
 import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgBlockquote } from './blockquote/component';
@@ -97,6 +98,7 @@ const components = [
   TilburgActionGroup,
   TilburgAlert,
   TilburgArticle,
+  TilburgBackdrop,
   TilburgBadgeList,
   TilburgBadgeStatus,
   TilburgBlockquote,

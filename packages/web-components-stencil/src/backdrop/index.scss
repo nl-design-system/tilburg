@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-backdrop` is styled by
+   `@utrecht/component-library-css` with the Tilburg tokens, there is no components-css folder. */
+
+/* The backdrop is absolutely positioned against the consumer's positioned ancestor; the host adds no box (same rule
+   as the Angular `:host`). */
+tilburg-wbc-backdrop {
+  display: contents;
+}

@@ -8,6 +8,8 @@ export { AlertDialog } from './AlertDialog';
 export type { AlertDialogProps } from './AlertDialog';
 export { Article } from './Article';
 export type { ArticleProps } from './Article';
+export { Backdrop } from './Backdrop';
+export type { BackdropProps } from './Backdrop';
 export { BadgeList } from './BadgeList';
 export type { BadgeListProps } from './BadgeList';
 export { BadgeStatus } from './BadgeStatus';
