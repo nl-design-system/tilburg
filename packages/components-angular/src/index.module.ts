@@ -17,6 +17,7 @@ import { TilburgCode } from './code/component';
 import { TilburgCodeBlock } from './code-block/component';
 import { TilburgColorSample } from './color-sample/component';
 import { TilburgCombobox } from './combobox/component';
+import { TilburgCurrencyData } from './currency-data/component';
 import { TilburgDataBadge } from './data-badge/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDataPlaceholder } from './data-placeholder/component';
@@ -94,6 +95,7 @@ const components = [
   TilburgCode,
   TilburgCodeBlock,
   TilburgCombobox,
+  TilburgCurrencyData,
   TilburgDataBadge,
   TilburgDataList,
   TilburgDataListItem,

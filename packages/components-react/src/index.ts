@@ -30,6 +30,8 @@ export { ColorSample } from './ColorSample';
 export type { ColorSampleProps } from './ColorSample';
 export { Combobox } from './Combobox';
 export type { ComboboxItem, ComboboxProps, MultiComboboxProps, SingleComboboxProps } from './Combobox';
+export { CurrencyData } from './CurrencyData';
+export type { CurrencyDataProps } from './CurrencyData';
 export { DataBadge } from './DataBadge';
 export type { DataBadgeProps } from './DataBadge';
 export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';

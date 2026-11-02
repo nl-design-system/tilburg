@@ -1,0 +1,8 @@
+@let f = formatted;
+<data
+  class="utrecht-currency-data"
+  [class.utrecht-currency-data--negative]="f.amount < 0"
+  [class.utrecht-currency-data--positive]="f.amount > 0"
+  [attr.value]="f.value"
+  >{{ f.text }}</data
+>
