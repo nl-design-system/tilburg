@@ -3,7 +3,7 @@
 # @gemeente-tilburg/components-react
 
 React-componenten voor Gemeente Tilburg, gebaseerd op het NL Design System. Ze renderen dezelfde DOM en classes als de
-HTML/CSS-referentie. Vereist React 18.
+HTML/CSS-referentie. Vereist React 18 of 19.
 
 ```bash
 npm install @gemeente-tilburg/components-react @gemeente-tilburg/design-tokens @utrecht/component-library-css

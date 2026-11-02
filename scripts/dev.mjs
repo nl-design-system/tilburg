@@ -4,10 +4,13 @@
    The Storybooks load the React, Angular and Web Component libraries from their build output (dist/), so editing a
    component used to mean rebuilding by hand. This starts every library's watcher, waits for their first build,
    then starts the Storybook(s) on a free port (or points at one that is already running). While it runs it shows
-   only rebuilds and errors; V shows all output, O opens the browser, Q (or Ctrl-C) stops everything.
+   only rebuilds and errors, with the addresses and keys on the bottom lines; V shows all output, S only the
+   Storybooks', O opens the browser, Q (or Ctrl-C) stops everything.
 
    Components-css (SCSS) and storybook-shared are read from source by the Storybooks, so they need no watcher. */
 import { spawn } from 'node:child_process';
+import { watchFile } from 'node:fs';
+import { resolve } from 'node:path';
 import { LIBRARIES, ROOT, STORYBOOKS } from './dev-config.mjs';
 import { checkInstalled, checkInstallFresh, checkNode, libraryState } from './lib/checks.mjs';
 import {
@@ -33,7 +36,9 @@ import { requireComponent, storyUrl } from './lib/components.mjs';
 import { readDevLock, writeDevLock } from './lib/lock.mjs';
 import { choosePort, printStorybookLinks, waitForStorybook } from './lib/storybook.mjs';
 
-installCrashHandler('pnpm dev', { signals: false });
+/* With the shared signal handlers until dev's own take over below: a SIGTERM or a closed terminal during the first
+   pnpm install would otherwise end dev without stopping that install (it runs detached, so it outlives dev). */
+installCrashHandler('pnpm dev');
 
 const args = process.argv.slice(2);
 const words = args.filter((arg) => !arg.startsWith('-'));
@@ -67,9 +72,10 @@ printBanner(`Dev · ${storybookKeys.map((key) => STORYBOOKS[key].name).join(' + 
 
 const node = checkNode();
 if (!node.ok) {
-  fail({ what: `Node ${process.versions.node} is not the Node this repo uses`, why: node.detail, fix: 'nvm use' });
+  fail({ what: `Node ${process.versions.node} is not the Node this repo uses`, why: node.detail, fix: node.note });
   process.exit(1);
 }
+if (node.warn) console.log(`  ${c.yellow}⚠${c.reset}  Node ${node.detail}: ${node.note}.`);
 if (!checkInstalled().ok) {
   fail({ what: 'Dependencies are not installed', why: 'node_modules is missing.', fix: 'pnpm install' });
   process.exit(1);
@@ -78,7 +84,7 @@ if (checkInstallFresh().warn) {
   console.log(`  ${c.yellow}⚠${c.reset}  pnpm-lock.yaml differs from what is installed (a branch switch or pull?).`);
   if (await confirm('Run pnpm install first?', { default: true, fallback: false })) {
     try {
-      await runStepWithRecovery('Installing dependencies', 'pnpm install');
+      await runStepWithRecovery('Installing dependencies', 'pnpm install', { cwd: ROOT });
     } catch (err) {
       reportStepFailure('pnpm install', err);
       process.exit(1);
@@ -140,10 +146,32 @@ writeDevLock({ storybooks: storybooks.map(({ name, port, note }) => ({ name, por
 
 const processes = [];
 let stopping = false;
+let storybookOutput = false;
 const time = () => new Date().toLocaleTimeString('nl-NL');
 
+/* The last lines of the terminal while watching: every console.log goes above them, so they never scroll away. */
+let footer = [];
+const printLine = console.log;
+const clearFooter = () => {
+  if (footer.length) process.stdout.write(`\r${footer.length > 1 ? `\x1b[${footer.length - 1}A` : ''}\x1b[J`);
+};
+function setFooter(lines) {
+  clearFooter();
+  /* A line that wraps would leave a copy behind on every redraw: cut it to the terminal's width. */
+  const width = (process.stdout.columns || 80) - 1;
+  footer = interactive
+    ? lines.map((line) => (stripAnsi(line).length > width ? stripAnsi(line).slice(0, width) : line))
+    : [];
+  process.stdout.write(footer.join('\n'));
+}
+console.log = (...args) => {
+  clearFooter();
+  printLine(...args);
+  process.stdout.write(footer.join('\n'));
+};
+
 /** Start a long-running command; its output goes through onLine(), which decides what is shown. */
-function start({ name, command, colour, onLine, onExit }) {
+function start({ name, command, colour, onLine, onExit, storybook = false }) {
   /* Every process logs to its own file: when one stops, the report points at everything it said. */
   const log = newLogFile(`dev-${name}`);
   appendLog(log, `$ ${command}\n# ${new Date().toISOString()}\n\n`);
@@ -169,7 +197,7 @@ function start({ name, command, colour, onLine, onExit }) {
       const plain = stripAnsi(line);
       entry.tail = [...entry.tail.slice(-199), plain];
       appendLog(log, `${plain}\n`);
-      if (verbose) console.log(`${colour}[${name}]${c.reset} ${line}`);
+      if (verbose || (storybook && storybookOutput)) console.log(`${colour}[${name}]${c.reset} ${line}`);
       onLine?.(plain, line);
     }
   };
@@ -187,6 +215,7 @@ function start({ name, command, colour, onLine, onExit }) {
 function stopAll(exitCode = 0) {
   if (stopping) return;
   stopping = true;
+  setFooter([]);
   try {
     if (process.stdin.isTTY) process.stdin.setRawMode(false);
   } catch {
@@ -200,10 +229,18 @@ function stopAll(exitCode = 0) {
   }, 1500).unref();
   setTimeout(() => process.exit(exitCode), 1600);
 }
+for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.removeAllListeners(signal);
 process.on('SIGINT', () => stopAll(0));
 process.on('SIGTERM', () => stopAll(0));
-/* The terminal window was closed: stop too, or the watchers keep running without anyone to see them. */
-process.on('SIGHUP', () => stopAll(0));
+/* The terminal window was closed (SIGHUP, and every write fails with EIO): stop too, or the watchers keep running
+   without anyone to see them. The usual EPIPE exit, or a crash on EIO, ended this process before the SIGKILL in
+   stopAll, leaving a watcher that ignores SIGTERM behind: write nowhere instead, and stop the normal way. */
+function hangUp() {
+  for (const stream of [process.stdout, process.stderr]) stream.write = () => true;
+  stopAll(0);
+}
+process.on('SIGHUP', hangUp);
+for (const stream of [process.stdout, process.stderr]) stream.removeAllListeners('error').on('error', hangUp);
 
 /** Explain a process that stopped on its own: why (when recognised), what it said, where its log is, what now. */
 function reportExit(name, code, signal, tail, log, consequence) {
@@ -224,7 +261,7 @@ const tokens = libraries.find((library) => library.key === 'tokens');
 if (tokens && libraryState(tokens).state !== 'fresh') {
   /* The token watcher only builds after a change, so bring a stale build up to date first. */
   try {
-    await runStepWithRecovery('Building design-tokens', tokens.build);
+    await runStepWithRecovery('Building design-tokens', tokens.build, { cwd: ROOT });
   } catch (err) {
     reportStepFailure('Building design-tokens', err);
     process.exit(1);
@@ -242,8 +279,10 @@ const firstBuilds = libraries.map((library, index) => {
   let errorLinesLeft = 0;
   let lastDone = 0;
   return new Promise((resolveFirst) => {
-    /* The token watcher has nothing to build until a file changes: ready at once. */
-    if (library.key === 'tokens') resolveFirst({ library, ok: true });
+    /* The token watcher has nothing to build until a file changes, and a watcher that leaves dist/ in place while it
+       builds cannot break a Storybook that starts on an up-to-date build: ready at once. Its first build still runs. */
+    if (library.key === 'tokens' || (library.keepsDist && libraryState(library).state === 'fresh'))
+      resolveFirst({ library, ok: true });
     start({
       name: library.name,
       command: library.watch,
@@ -302,6 +341,53 @@ const firstBuilds = libraries.map((library, index) => {
   });
 });
 
+// ─── 6. Storybooks ───────────────────────────────────────────────────────────
+
+const toStart = storybooks.filter((storybook) => !storybook.running);
+/* Each Storybook starts as soon as its own libraries have built, while the others are still building. */
+const ready = toStart.map((storybook, index) =>
+  Promise.all(firstBuilds.filter((_, i) => libraries[i].for.includes(storybook.key))).then(
+    () =>
+      new Promise((resolveReady) => {
+        if (stopping) return resolveReady(false);
+        let exited = false;
+        start({
+          name: storybook.name,
+          command: storybook.command(storybook.port),
+          colour: colours[(libraries.length + index) % colours.length],
+          storybook: true,
+          onLine: (plain) => {
+            if (
+              !verbose &&
+              !storybookOutput &&
+              /\bERROR\b|Error:|✖|Module not found|Failed to (resolve|load)/.test(plain)
+            ) {
+              console.log(`${c.red}[${storybook.name}]${c.reset} ${plain}`);
+            }
+          },
+          onExit: (code, signal, tail, log) => {
+            exited = true;
+            resolveReady(false);
+            reportExit(storybook.name, code, signal, tail, log, 'Stopping everything.');
+            stopAll(1);
+          },
+        });
+        /* performance.now(), not Date.now(): time the laptop spent asleep does not count against the limit. */
+        const startedAt = performance.now();
+        let warned = false;
+        waitForStorybook(storybook.port, () => {
+          if (!warned && performance.now() - startedAt > STORYBOOK_LIMIT_MS / 2) {
+            warned = true;
+            console.log(
+              `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} for 5 minutes. [v] shows what it is doing.`,
+            );
+          }
+          return exited || stopping || performance.now() - startedAt > STORYBOOK_LIMIT_MS;
+        }).then(resolveReady);
+      }),
+  ),
+);
+
 const step = stepStart(`Building ${libraries.length} libraries in watch mode`);
 if (interactive) process.stdout.write(`  ${c.gray}(the first build takes a minute)${c.reset}`);
 const results = await Promise.all(firstBuilds);
@@ -316,50 +402,17 @@ if (brokenLibraries.length) {
   stepFail(step);
   for (const { library, exited } of brokenLibraries) {
     console.log(
-      `  ${c.yellow}⚠${c.reset}  ${library.name} ${exited ? 'stopped' : 'did not build'}: the Storybook shows its previous build.` +
+      `  ${c.yellow}⚠${c.reset}  ${library.name} ${exited ? 'stopped' : 'did not build'}: ` +
+        /* No dist/ at all (a fresh clone, or a watcher that empties it first): there is no previous build to show. */
+        (libraryState(library).state === 'missing'
+          ? 'it has no build yet, so the Storybook cannot load it.'
+          : 'the Storybook shows its previous build.') +
         (exited ? '' : ` Fix the error above and save; the watcher tries again.`),
     );
   }
 } else {
   stepDone(step);
 }
-
-// ─── 6. Storybooks ───────────────────────────────────────────────────────────
-
-const toStart = storybooks.filter((storybook) => !storybook.running);
-const ready = toStart.map(
-  (storybook, index) =>
-    new Promise((resolveReady) => {
-      let exited = false;
-      start({
-        name: storybook.name,
-        command: storybook.command(storybook.port),
-        colour: colours[(libraries.length + index) % colours.length],
-        onLine: (plain) => {
-          if (!verbose && /\bERROR\b|Error:|✖|Module not found|Failed to (resolve|load)/.test(plain)) {
-            console.log(`${c.red}[${storybook.name}]${c.reset} ${plain}`);
-          }
-        },
-        onExit: (code, signal, tail, log) => {
-          exited = true;
-          resolveReady(false);
-          reportExit(storybook.name, code, signal, tail, log, 'Stopping everything.');
-          stopAll(1);
-        },
-      });
-      const startedAt = Date.now();
-      let warned = false;
-      waitForStorybook(storybook.port, () => {
-        if (!warned && Date.now() - startedAt > STORYBOOK_LIMIT_MS / 2) {
-          warned = true;
-          console.log(
-            `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} for 5 minutes. [v] shows what it is doing.`,
-          );
-        }
-        return exited || stopping || Date.now() - startedAt > STORYBOOK_LIMIT_MS;
-      }).then(resolveReady);
-    }),
-);
 
 if (toStart.length) {
   const storybookStep = stepStart(`Starting the ${toStart.map((storybook) => storybook.name).join(' and ')}`);
@@ -386,7 +439,22 @@ if (!stopping) {
   console.log(
     `  ${c.gray}Watching. Save a file and the Storybook reloads; rebuilds and errors show up here.${c.reset}`,
   );
-  console.log(`  ${c.gray}[v] all output  [o] open in browser  [q] stop${c.reset}\n`);
+  console.log('');
+  setFooter([
+    `  ${storybooks.map(({ name, port }) => `${c.cyan}${name.replace(' Storybook', '')}${c.reset} http://localhost:${port}/`).join('   ')}`,
+    `  ${c.gray}[v] all output  [s] Storybook output  [o] open in browser  [q] stop${c.reset}`,
+  ]);
+}
+
+/* A `git checkout` or pull while this runs can change the dependencies under the running watchers and Storybooks. */
+if (!stopping) {
+  watchFile(resolve(ROOT, 'pnpm-lock.yaml'), { interval: 2000 }, (now, before) => {
+    if (now.mtimeMs === before.mtimeMs || !checkInstallFresh().warn) return;
+    console.log(
+      `\n  ${c.yellow}⚠${c.reset}  pnpm-lock.yaml changed and no longer matches node_modules (a branch switch or pull?).` +
+        `\n     ${c.gray}Errors from here on may come from that: stop (q), run ${c.cyan}pnpm install${c.gray}, then pnpm dev again.${c.reset}\n`,
+    );
+  }).unref();
 }
 
 // ─── 7. Keys ─────────────────────────────────────────────────────────────────
@@ -400,6 +468,11 @@ if (process.stdin.isTTY && !stopping) {
     else if (key === 'v' || key === 'V') {
       verbose = !verbose;
       console.log(`  ${c.gray}${verbose ? 'Showing all output.' : 'Showing rebuilds and errors only.'}${c.reset}`);
+    } else if (key === 's' || key === 'S') {
+      storybookOutput = !storybookOutput;
+      console.log(
+        `  ${c.gray}${storybookOutput ? 'Showing the Storybook output.' : 'Hiding the Storybook output (errors still show).'}${c.reset}`,
+      );
     } else if (key === 'o' || key === 'O') pagesFor(storybooks).forEach(openUrl);
   });
 }

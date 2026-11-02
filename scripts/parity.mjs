@@ -11,15 +11,13 @@
    and the other way round: a component with files but no row in the table. Exits 1 on ❌ (the table and the files
    disagree, or a layer misses a file), not on missing tests: the Tests column counts them, `--tests` lists them. */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { ROOT } from './dev-config.mjs';
-import { c, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
-import { loadComponents, STATUS_FILE } from './lib/components.mjs';
+import { parseArgs } from 'node:util';
+import { c, fail, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
+import { findComponent, loadComponents, P, STATUS_FILE } from './lib/components.mjs';
 
 installCrashHandler('pnpm parity');
 printBanner('Parity: every component in every layer');
 
-const P = (...parts) => resolve(ROOT, 'packages', ...parts);
 const read = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
 
 // ─── The promise: the table (through the shared component lookup) ────────────
@@ -36,14 +34,42 @@ const rows = loadComponents().map(({ name, slug, names, layers }) => ({
   ...names,
 }));
 
-const listTests = process.argv.includes('--tests');
-const filter = process.argv
-  .slice(2)
-  .find((arg) => !arg.startsWith('-'))
-  ?.toLowerCase();
-const selected = filter
-  ? rows.filter((row) => row.slug.includes(filter) || row.name.toLowerCase().includes(filter))
-  : rows;
+let args;
+let positionals;
+try {
+  ({ values: args, positionals } = parseArgs({ allowPositionals: true, options: { tests: { type: 'boolean' } } }));
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm parity [component] [--tests]' });
+  process.exit(1);
+}
+const listTests = Boolean(args.tests);
+/* The same lookup as pnpm where and pnpm test ("PasswordInput", "<tilburg-tooltip>", "heading-1"); a name that fits
+   several components (pnpm parity form) checks them all. A name that is given but empty is not "everything". */
+const filter = positionals.join(' ').trim();
+if (positionals.length && !filter) {
+  fail({ what: 'The component name is empty', fix: 'pnpm parity <component>, or pnpm parity for everything' });
+  process.exit(1);
+}
+const found = filter ? findComponent(filter) : null;
+const wanted = found?.component ? [found.component] : (found?.matches ?? []);
+if (found && !wanted.length) {
+  const close = found.suggestions.map((component) => component.name).join(', ');
+  fail({
+    what: `No component matches "${filter}"`,
+    fix: close ? `did you mean: ${close}?` : 'pnpm where --list shows every component',
+  });
+  process.exit(1);
+}
+const selected = filter ? rows.filter((row) => wanted.some((component) => component.slug === row.slug)) : rows;
+/* Nothing selected would report "0 components, every layer is there": parity that was never checked. */
+if (!selected.length) {
+  fail({
+    what: filter ? `No component matches "${filter}"` : 'No components found',
+    why: `${STATUS_FILE} has no row for it (or no component table at all).`,
+    fix: 'pnpm where --list shows every component',
+  });
+  process.exit(1);
+}
 
 // ─── The facts: the files ────────────────────────────────────────────────────
 
@@ -94,7 +120,7 @@ function checkRow(row) {
     `components-react/src/${row.react}.tsx`,
     reactIndex.includes(`from './${row.react}'`),
     'components-react/src/index.ts',
-    `components-react/src/${row.react}.test.tsx`,
+    `components-react/src/${row.reactTest ?? row.react}.test.tsx`,
   );
   layer(
     'angular',

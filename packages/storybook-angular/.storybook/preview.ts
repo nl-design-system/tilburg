@@ -76,6 +76,7 @@ const preview: Preview = {
           [
             'Intro',
             'Aan de slag',
+            'Je eerste wijziging',
             'Tips & valkuilen',
             'Implementatiestatus',
             'Open Source License',

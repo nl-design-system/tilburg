@@ -5,18 +5,28 @@
    how many passed per layer, and for a failure the test's name and what it expected. Stencil cannot run a single spec
    file, so it runs all of them (about 20 s) and only this component's results are shown. */
 import { spawnSync } from 'node:child_process';
+import { parseArgs } from 'node:util';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROOT } from './dev-config.mjs';
-import { c, installCrashHandler, LOG_DIR, printBanner, printCheckTable, stripAnsi } from './lib/cli-utils.mjs';
+import { c, fail, installCrashHandler, LOG_DIR, printBanner, printCheckTable, stripAnsi } from './lib/cli-utils.mjs';
 import { rel, requireComponent } from './lib/components.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm test');
-const query = process.argv
-  .slice(2)
-  .filter((arg) => !arg.startsWith('-'))
-  .join(' ');
+/* Strict: an unknown flag (--help, a typo such as --wach) used to be dropped, which left no name and ran everything. */
+let positionals;
+try {
+  ({ positionals } = parseArgs({ allowPositionals: true, options: {} }));
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm test   (everything, as CI does)   or   pnpm test <component>' });
+  process.exit(1);
+}
+const query = positionals.join(' ').trim();
+if (positionals.length && !query) {
+  fail({ what: 'The component name is empty', fix: 'pnpm test <component>, or pnpm test for everything' });
+  process.exit(1);
+}
 
 // ─── Everything ──────────────────────────────────────────────────────────────
 
@@ -39,19 +49,21 @@ const LAYERS = [
     layer: react,
     package: '@gemeente-tilburg/components-react',
     dir: 'packages/components-react',
-    command: (out) => `jest --json --outputFile="${out}" ${rel(react.test).replace('packages/components-react/', '')}`,
+    /* --ci: a new snapshot fails instead of being written. --forceExit: an open handle would keep Jest running forever. */
+    command: (out) =>
+      `jest --ci --forceExit --json --outputFile="${out}" ${rel(react.test).replace('packages/components-react/', '')}${react.suite ? ` -t "^${react.suite} "` : ''}`,
   },
   {
     layer: angular,
     package: '@gemeente-tilburg/components-angular',
     dir: 'packages/components-angular',
-    command: (out) => `jest --json --outputFile="${out}" src/${component.names.angular}/`,
+    command: (out) => `jest --ci --forceExit --json --outputFile="${out}" src/${component.names.angular}/`,
   },
   {
     layer: wbc,
     package: '@gemeente-tilburg/web-components-stencil',
     dir: 'packages/web-components-stencil',
-    command: (out) => `stencil test --spec --runInBand --json --outputFile="${out}"`,
+    command: (out) => `stencil test --spec --runInBand --ci --json --outputFile="${out}"`,
     note: 'Stencil runs all its specs; only this one is counted',
   },
 ];
@@ -74,7 +86,7 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
   rmSync(out, { force: true });
   let runError = null;
   try {
-    await runStepWithRecovery(`${layer.label} tests`, `pnpm --filter ${name} exec ${command(out)}`);
+    await runStepWithRecovery(`${layer.label} tests`, `pnpm --filter ${name} exec ${command(out)}`, { cwd: ROOT });
   } catch (err) {
     /* Failing tests also land here (Jest exits 1): the JSON says which. Without JSON it did not get that far. */
     runError = err;
@@ -100,11 +112,14 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
     });
     continue;
   }
-  const tests = file.assertionResults ?? [];
+  /* A shared test file: only this component's describe() counts (the others are skipped by -t). */
+  const tests = (file.assertionResults ?? []).filter(
+    (test) => !layer.suite || test.ancestorTitles?.[0] === layer.suite,
+  );
   const failed = tests.filter((test) => test.status === 'failed');
   const passed = tests.filter((test) => test.status === 'passed');
-  if (file.status === 'failed' && !tests.length) {
-    /* The file itself failed to load (a syntax or import error): Jest puts that in the file's message. */
+  if (file.status === 'failed' && !failed.length) {
+    /* The file failed to load (a syntax or import error) or a hook threw: Jest puts that in the file's message. */
     failures.push({ layer: layer.label, title: `${rel(layer.test)} could not run`, message: file.message });
   }
   for (const test of failed) {
@@ -114,10 +129,18 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
       message: (test.failureMessages ?? []).join('\n'),
     });
   }
+  /* Only Stencil runs other specs too; for React and Angular a non-zero exit with this file green is still a failure. */
+  const exitFailed = Boolean(runError && !note);
+  if (exitFailed && !failed.length && file.status !== 'failed') reportStepFailure(`${layer.label} tests`, runError);
+  /* test.skip / test.todo: Jest reports them as pending / todo and exits 0. */
+  const skipped = tests.length - failed.length - passed.length;
   rows.push({
-    ok: failed.length === 0 && file.status !== 'failed',
+    ok: failed.length === 0 && file.status !== 'failed' && !exitFailed,
+    warn: !passed.length,
     label: layer.label,
-    detail: failed.length ? `${failed.length} of ${tests.length} failed` : `${passed.length} passed`,
+    detail: failed.length
+      ? `${failed.length} of ${tests.length} failed`
+      : `${passed.length} passed${skipped ? `, ${skipped} skipped` : ''}`,
     note: note ?? rel(layer.test),
   });
 }
@@ -134,7 +157,7 @@ for (const { layer, title, message } of failures) {
   console.log('');
 }
 
-const { failed } = printCheckTable([{ title: `${component.name} tests`, rows }]);
+const { failed, warned } = printCheckTable([{ title: `${component.name} tests`, rows }]);
 if (!rows.length) {
   console.log(
     `  ${c.gray}${component.name} has no wrapper in any layer, so there is nothing to test here.${c.reset}\n`,
@@ -147,6 +170,8 @@ if (!rows.length) {
   for (const command of watch) console.log(`    ${c.cyan}${command}${c.reset}`);
   console.log('');
   process.exit(1);
+} else if (warned.length) {
+  console.log(`  ${c.yellow}Nothing failed, but not every layer ran a test (⚠️  above).${c.reset}\n`);
 } else {
   console.log(`  ${c.green}All ${component.name} tests pass.${c.reset}\n`);
 }

@@ -6,7 +6,8 @@ import { relative, resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
 
 export const STATUS_FILE = 'packages/storybook-shared/src/documentation/implementation-status.md';
-const P = (...parts) => resolve(ROOT, 'packages', ...parts);
+/** A path under packages/. */
+export const P = (...parts) => resolve(ROOT, 'packages', ...parts);
 
 /** The online Storybooks (GitHub Pages, from main): the React one at the root, the Angular one under angular/. */
 export const SITE = {
@@ -16,8 +17,25 @@ export const SITE = {
 
 /* Names that do not follow "Form Label" → form-label / FormLabel. */
 const EXCEPTIONS = {
-  heading: { css: 'heading-1', react: 'Heading1', angular: 'heading-1', wbc: 'heading-1' },
+  heading: { css: 'heading-1', react: 'Heading1', reactTest: 'Heading', angular: 'heading-1', wbc: 'heading-1' },
   'form-fieldset': { react: 'Fieldset' },
+};
+
+/* React tests that share one file, with a describe() per component (Form.test.tsx has describe('Checkbox')). */
+const SHARED_REACT_TESTS = {
+  Form: [
+    'Checkbox',
+    'Fieldset',
+    'FormField',
+    'FormFieldDescription',
+    'FormLabel',
+    'Textarea',
+    'Textbox',
+    'ValidationMessage',
+  ],
+  Layout: ['Article', 'ButtonGroup', 'Document', 'Page', 'PageContent', 'PageFooter', 'PageHeader'],
+  List: ['OrderedList', 'Separator'],
+  Status: ['Alert', 'BadgeStatus', 'Breadcrumb', 'Pagination', 'ProgressBar'],
 };
 
 export const kebab = (text) =>
@@ -53,6 +71,8 @@ export function loadComponents() {
         .map((cell) => cell.trim());
       const slug = kebab(name);
       const names = { css: slug, react: pascal(slug), angular: slug, wbc: slug, ...EXCEPTIONS[slug] };
+      const shared = Object.keys(SHARED_REACT_TESTS).find((file) => SHARED_REACT_TESTS[file].includes(names.react));
+      if (shared) Object.assign(names, { reactTest: shared, reactSuite: names.react });
       const story = (storybook, suffix) =>
         storyMeta(P(storybook, 'src', `tilburg-${slug}${suffix}.stories.${storybook === 'storybook' ? 'tsx' : 'ts'}`));
       return {
@@ -74,7 +94,9 @@ export function loadComponents() {
             label: 'React',
             promised: react === '✅',
             main: P('components-react/src', `${names.react}.tsx`),
-            test: P('components-react/src', `${names.react}.test.tsx`),
+            test: P('components-react/src', `${names.reactTest ?? names.react}.test.tsx`),
+            /* In a shared test file: the describe() that holds this component's tests. */
+            suite: names.reactSuite,
             exported: () =>
               readFileSync(P('components-react/src/index.ts'), 'utf8').includes(`from './${names.react}'`),
             stories: [story('storybook', '-react')],

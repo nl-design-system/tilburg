@@ -31,11 +31,12 @@ export async function choosePort(storybook, reserved = []) {
 
 /** Resolves once the Storybook on `port` serves its index, or with false when `stop()` says to give up. */
 export async function waitForStorybook(port, stop) {
-  while (!stop()) {
-    if (await isStorybookOn(port)) return true;
+  /* Look before giving up: after the laptop slept, the wall-clock limit has passed although the Storybook is up. */
+  while (!(await isStorybookOn(port))) {
+    if (stop()) return false;
     await sleep(1000);
   }
-  return false;
+  return true;
 }
 
 /** The box with the addresses of the running Storybooks: [{ name, port, note }]. */

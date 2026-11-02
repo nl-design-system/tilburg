@@ -19,7 +19,7 @@ try {
       what: `Node ${process.versions.node} is not the Node this repo uses (${NODE_MAJOR})`,
       why: `.nvmrc pins Node ${NODE_MAJOR}; package.json "engines" and engineStrict refuse other versions, and the Angular and Stencil tooling is only tested on it.`,
       fix: process.env.NVM_DIR
-        ? 'nvm use   (then pnpm install again, in the same terminal), or pnpm setup to sort it out'
+        ? 'nvm use   (then pnpm install again, in the same terminal), or node scripts/setup.mjs to sort it out'
         : `install Node ${NODE_MAJOR}, e.g. with nvm (nvm install), then pnpm install again`,
     });
   }

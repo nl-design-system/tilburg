@@ -2,10 +2,9 @@
    own `tilburg-*` markup instead of an Utrecht base) get a "TLB" badge, so they stand out between the components that
    style an Utrecht component. The same file as `packages/storybook-angular/.storybook/sidebarLabel.tsx`. */
 
-import type { API } from '@storybook/manager-api';
-// @ts-expect-error TS6133 — required at runtime in the production manager bundle
 import React from 'react';
 import { TooltipNote, WithTooltip } from 'storybook/internal/components';
+import type { API } from 'storybook/manager-api';
 
 interface SidebarEntry {
   name: string;

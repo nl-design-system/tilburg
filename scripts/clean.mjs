@@ -1,7 +1,7 @@
 /* `pnpm run clean:pick`: choose what to delete, with sizes. Build output and caches are ticked; node_modules is not,
    and asks again. Without a terminal it only lists the ticked defaults, unless `--yes` is passed. (`pnpm clean` still runs every package's own
    clean script.) */
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { promisify } from 'node:util';
@@ -16,6 +16,7 @@ import {
   stepFail,
   stepStart,
 } from './lib/cli-utils.mjs';
+import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm run clean:pick');
 printBanner('Clean');
@@ -59,7 +60,7 @@ const TARGETS = [
 async function size(paths) {
   if (!paths.length) return null;
   try {
-    const { stdout } = await promisify(exec)(`du -sk ${paths.map((path) => `"${path}"`).join(' ')}`);
+    const { stdout } = await promisify(execFile)('du', ['-sk', ...paths]);
     const kb = stdout
       .trim()
       .split('\n')
@@ -130,7 +131,7 @@ if (process.stdin.isTTY) {
 } else {
   /* No one to ask: deleting without a question needs --yes, so a piped or scripted run cannot wipe dist/ by accident. */
   selected = TARGETS.filter((target) => target.checked);
-  if (!process.argv.includes('--yes')) {
+  if (selected.length && !process.argv.includes('--yes')) {
     console.log(
       `  No terminal to ask in. These would be deleted: ${selected.map((target) => target.label).join(', ')}.`,
     );
@@ -153,6 +154,18 @@ if (selected.some((target) => target.dangerous)) {
   }
 }
 
+/* Deleting dist/ under a running pnpm dev breaks its Storybooks, and its watchers only rebuild what changes next. */
+const devLock = selected.some((target) => target.label === 'Build output') && readDevLock();
+if (devLock) {
+  console.log(
+    `\n  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${devLock.pid}) and serves the dist/ folders.`,
+  );
+  if (!(await confirm('Delete them anyway? (or stop pnpm dev with q first)', { default: false }))) {
+    console.log(`\n  ${c.gray}Nothing deleted. Stop pnpm dev with q, then run this again.${c.reset}\n`);
+    process.exit(1);
+  }
+}
+
 console.log('');
 let failures = 0;
 for (const target of selected) {
@@ -171,9 +184,9 @@ for (const target of selected) {
       err,
       locked
         ? {
-            what: `${relative(ROOT, err.path ?? target.paths[0])} is in use`,
-            why: 'A running Storybook, watcher (pnpm dev), test runner or editor holds files in it.',
-            fix: 'stop those (q in pnpm dev), then run this again',
+            what: `${relative(ROOT, err.path ?? target.paths[0])} could not be deleted`,
+            why: 'A running Storybook, watcher (pnpm dev), test runner or editor holds files in it, or a folder in it is read-only or not yours (made with sudo).',
+            fix: `stop those (q in pnpm dev), or check the owner with ls -la ${relative(ROOT, err.path ?? target.paths[0])}, then run this again`,
           }
         : { what: `Could not delete ${target.label.toLowerCase()}` },
     );

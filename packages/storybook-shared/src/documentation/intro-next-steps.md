@@ -14,4 +14,4 @@
 - **Zelf iets veranderen aan het Design System?** _Je eerste wijziging_ loopt in een kwartier langs alles, van
   `node scripts/setup.mjs` tot en met de pull request.
 
-Alle pagina's staan in de zijbalk onder _Tilburg_.
+Alle pagina's staan in de zijbalk onder _Tilburg_ (in de Angular-Storybook ook onder _Tilburg Angular_).

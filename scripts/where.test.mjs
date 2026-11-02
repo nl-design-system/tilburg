@@ -1,0 +1,56 @@
+/* `node --test scripts/`: `pnpm where` with names that fit one, several or no component, and without its table. */
+import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const scripts = fileURLToPath(new URL('.', import.meta.url));
+const where = (args, script = join(scripts, 'where.mjs')) =>
+  spawnSync(process.execPath, [script, ...args], {
+    env: { ...process.env, CI: '1' },
+    encoding: 'utf8',
+    timeout: 10_000,
+  });
+
+test('a known name shows its files and exits 0', () => {
+  const result = where(['PasswordInput']);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /Where: Password Input/);
+});
+
+test('an unknown name exits 1 and says how to find the right one', () => {
+  const result = where(['no-such-component-xyz']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /No component called "no-such-component-xyz"/);
+  assert.match(result.stdout, /pnpm where --list/);
+});
+
+test('a near miss suggests the closest name', () => {
+  const result = where(['tooltipp']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Did you mean Tooltip/);
+});
+
+test('a name that fits several exits 1 and lists each candidate', () => {
+  const result = where(['list']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /"list" fits \d+ components/);
+  assert.match(result.stdout, /pnpm where data-list/);
+  assert.match(result.stdout, /pnpm where ordered-list/);
+});
+
+test('--list exits 1 when the component table is missing, instead of listing nothing', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tilburg-where-'));
+  try {
+    cpSync(scripts, join(dir, 'scripts'), { recursive: true });
+    cpSync(join(scripts, '..', 'package.json'), join(dir, 'package.json'));
+    const result = where(['--list'], join(dir, 'scripts', 'where.mjs'));
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stdout, /No components found/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

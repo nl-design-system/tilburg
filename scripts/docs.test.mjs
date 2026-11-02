@@ -1,9 +1,12 @@
 /* Every `pnpm <script>` / `pnpm run <script>` in the docs must exist in the root package.json. Only code (fenced blocks
    and `inline`) is checked, so prose like "every pnpm command" is ignored. */
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { FILE as BANNER_FILE, renderSvg } from './banner.mjs';
 import { ROOT } from './dev-config.mjs';
 import { FILE as TROUBLESHOOTING_FILE, withTable } from './troubleshooting.mjs';
 
@@ -66,3 +69,29 @@ test('the troubleshooting table in CONTRIBUTING.md matches recovery.mjs', () => 
   const markdown = readFileSync(TROUBLESHOOTING_FILE, 'utf8');
   assert.equal(withTable(markdown), markdown, 'out of date: run node scripts/troubleshooting.mjs');
 });
+
+test('.github/banner.svg matches the terminal banner', () => {
+  assert.equal(readFileSync(BANNER_FILE, 'utf8'), renderSvg(), 'out of date: run node scripts/banner.mjs');
+});
+
+/* Only while the SVG is up to date, so the script has nothing to write and the repo is left alone. */
+test(
+  'node scripts/banner.mjs still runs when the repo is reached through a symlink',
+  {
+    skip: readFileSync(BANNER_FILE, 'utf8') !== renderSvg() && 'banner.svg is out of date',
+  },
+  () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tilburg-banner-'));
+    try {
+      symlinkSync(ROOT, join(dir, 'repo'));
+      const run = spawnSync(process.execPath, [join(dir, 'repo/scripts/banner.mjs')], {
+        encoding: 'utf8',
+        timeout: 5000,
+      });
+      assert.equal(run.status, 0, run.stderr);
+      assert.match(run.stdout, /banner\.svg is up to date/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  },
+);

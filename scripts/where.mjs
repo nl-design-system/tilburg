@@ -2,20 +2,39 @@
    Storybook pages that show it, local (pnpm dev) and online. `pnpm where --list` lists every component.
    Accepts any of its names: tooltip, Tooltip, "password input", PasswordInput, tilburg-wbc-tooltip. */
 import { existsSync } from 'node:fs';
+import { parseArgs } from 'node:util';
 import { STORYBOOKS } from './dev-config.mjs';
-import { c, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
+import { c, fail, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
 import { isTlb, loadComponents, rel, requireComponent, SITE, STATUS_FILE, storyUrl } from './lib/components.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm where');
-const args = process.argv.slice(2);
-const query = args.filter((arg) => !arg.startsWith('-')).join(' ');
+let list;
+let positionals;
+try {
+  ({
+    values: { list },
+    positionals,
+  } = parseArgs({ allowPositionals: true, options: { list: { type: 'boolean' } } }));
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm where <component>   or   pnpm where --list' });
+  process.exit(1);
+}
+const query = positionals.join(' ').trim();
+if (list && query) {
+  fail({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
+  process.exit(1);
+}
 
 const link = (path) => hyperlink(rel(path), `file://${path}`);
 
-if (args.includes('--list') || !query) {
+if (list || !query) {
   printBanner('Components');
   const components = loadComponents();
+  if (!components.length) {
+    fail({ what: 'No components found', why: `${STATUS_FILE} has no component table (or is missing).` });
+    process.exit(1);
+  }
   const width = Math.max(...components.map((component) => component.name.length)) + 2;
   for (const component of components) {
     const layers = Object.values(component.layers)

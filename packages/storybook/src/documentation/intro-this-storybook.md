@@ -13,7 +13,7 @@
 
 # Tilburg Design System
 
-Deze Storybook bevat de **HTML/CSS-referentie** (`Tilburg HTML/…`) de **React-componenten** (`Tilburg React/…`) en de **Web Components** (`Tilburg Web Components/…`, via de gegenereerde React-wrappers). Elke React- en Web Components-story documenteert de beschikbare props in de **Usage**-sectie van zijn auto-docs-pagina.
+Deze Storybook bevat de **HTML/CSS-referentie** (`Tilburg HTML/…`), de **React-componenten** (`Tilburg React/…`) en de **Web Components** (`Tilburg Web Components/…`, via de gegenereerde React-wrappers). Elke React- en Web Components-story documenteert de beschikbare props in de **Usage**-sectie van zijn auto-docs-pagina.
 
 Er bestaat **een tweede, onafhankelijke Storybook** voor de Angular-laag, die de Angular-componenten (`Tilburg Angular/…`) plus dezelfde HTML/CSS-referentie documenteert. Op de gepubliceerde site staat die onder <a href="angular/" target="_top">/angular/</a>; lokaal start je hem met `pnpm dev angular`, of beide Storybooks tegelijk met `pnpm dev`.
 

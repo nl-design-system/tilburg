@@ -2,14 +2,21 @@
    that is not green. Exits 1 only for ❌ rows (things that stop you), not for ⚠️ rows (things to do).
    `pnpm check --fix` then offers each row's fix one by one (Y/n), checks those rows again and prints the table anew.
    Also works as `node scripts/check.mjs`, which is handy when pnpm itself will not start (wrong Node). */
-import { c, confirm, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
+import { parseArgs } from 'node:util';
+import { c, confirm, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
 import { runAllChecks, safely } from './lib/checks.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm check');
 printBanner('Environment check');
 
-const wantsFix = process.argv.includes('--fix');
+let wantsFix;
+try {
+  wantsFix = Boolean(parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm check   or   pnpm check --fix' });
+  process.exit(1);
+}
 const groups = await runAllChecks();
 let { failed, warned, total } = printCheckTable(groups);
 

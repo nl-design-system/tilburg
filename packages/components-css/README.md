@@ -11,7 +11,7 @@ System-team dan om een build.
 
 - **Markup per component** — de pagina's onder `Tilburg HTML/…` in de Storybook (bron:
   `packages/storybook-shared/src/tilburg-<naam>.examples.ts`).
-- **Gedrag** — `accordion/index.js` en `combobox/index.js` zijn kleine enhancer-scripts. Je zet ze per element aan
-  met `data-tilburg-accordion-enhance` / `data-tilburg-combobox-enhance`. `tokens/resolve.js` vult de
-  tokentabellen in de documentatie.
+- **Gedrag** — `accordion/index.js`, `combobox/index.js`, `password-input/index.js` en `tooltip/index.js` zijn
+  kleine enhancer-scripts. Je zet ze per element aan met `data-tilburg-<naam>-enhance` (bv.
+  `data-tilburg-accordion-enhance`). `tokens/resolve.js` vult de tokentabellen in de documentatie.
 - **Setup** — tokens, `tilburg-theme`, Utrecht-basis en fonts: zie **Aan de slag** in de Storybook.

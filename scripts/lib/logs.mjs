@@ -31,17 +31,22 @@ export function readLogs(dir = LOG_DIR) {
   return names
     .sort()
     .reverse()
-    .map((name) => {
+    .flatMap((name) => {
       const path = join(dir, name);
-      const { size, mtime } = statSync(path);
-      return {
-        path,
-        /* Names are <ISO stamp>-<slug>.log (newLogFile). */
-        step: name.replace(/^\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-/, '').replace(/\.log$/, ''),
-        time: mtime,
-        size,
-        exit: /# exit (\S+)\s*$/.exec(size ? readTail(path, 200) : '')?.[1] ?? null,
-      };
+      try {
+        const { size, mtime } = statSync(path);
+        return {
+          path,
+          /* Names are <ISO stamp>-<slug>.log (newLogFile). */
+          step: name.replace(/^\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-/, '').replace(/\.log$/, ''),
+          time: mtime,
+          size,
+          exit: /# exit (\S+)\s*$/.exec(size ? readTail(path, 200) : '')?.[1] ?? null,
+        };
+      } catch {
+        /* Pruned by a step that started meanwhile (newLogFile keeps 40). */
+        return [];
+      }
     });
 }
 

@@ -3,7 +3,7 @@
 # @gemeente-tilburg/components-angular
 
 Angular-componenten voor Gemeente Tilburg, gebaseerd op het NL Design System. Ze renderen dezelfde DOM en classes als de
-HTML/CSS-referentie. Gebouwd met Angular 20; de componenten zitten in één NgModule, `TilburgComponentsModule`.
+HTML/CSS-referentie. Werkt in Angular 20, 21 en 22 (gebouwd met Angular 20, de oudste ondersteunde versie); de componenten zitten in één NgModule, `TilburgComponentsModule`.
 
 ```bash
 npm install @gemeente-tilburg/components-angular @gemeente-tilburg/design-tokens \

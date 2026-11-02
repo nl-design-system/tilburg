@@ -1,7 +1,7 @@
 /* Mirrors `packages/storybook/config/theme.tsx` so both storybooks have the
-   same Tilburg brand chrome — logo, title, colors, fonts. Storybook 9 exposes
-   the theming API at `storybook/theming/create` (the standalone
-   `@storybook/theming` package is deprecated in v9). */
+   same Tilburg brand chrome — logo, title, colors, fonts. Since Storybook 9
+   the theming API lives at `storybook/theming/create` (the standalone
+   `@storybook/theming` package is gone). */
 
 import { create } from 'storybook/theming/create';
 

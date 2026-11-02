@@ -6,11 +6,12 @@
      components built against newer tokens lose their styling.
    - hltsamen installs everything from `.tarballs/` (`pnpm run pack:local`) and copies the stories.
    The consumers are expected next to this repository (../bq-tlb-frontend, ../hltsamen). */
-import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { CONSUMERS, ROOT } from './dev-config.mjs';
 import { c, capture, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning } from './lib/lock.mjs';
+import { confirmNoDevRunning, LOCK_FILE, readDevLock, writeDevLock } from './lib/lock.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm sync');
@@ -57,7 +58,20 @@ async function checkTarball(file, mustContain, what) {
     fail({ what: `${what}: no tarball at ${file}`, fix: 'see the build output above' });
     process.exit(1);
   }
-  const { stdout } = await capture(`tar tzf "${file}"`, { timeoutMs: 30_000 });
+  /* A version bump packs to another file name, so the old one would pass every check below. */
+  if (statSync(file).mtimeMs < packStartedAt) {
+    fail({
+      what: `${what}: the tarball at ${file} is stale`,
+      why: 'it was not rewritten by the pack just now. Did the package version change?',
+      fix: 'update the tarball name in scripts/sync-consumers.mjs, then pnpm sync again',
+    });
+    process.exit(1);
+  }
+  const { code, stdout, stderr } = await capture(`tar tzf "${file}"`, { timeoutMs: 30_000 });
+  if (code !== 0) {
+    fail({ what: `${what}: cannot read the tarball at ${file}`, why: stderr.trim(), fix: 'pnpm sync again' });
+    process.exit(1);
+  }
   if (!mustContain.test(stdout)) {
     fail({
       what: `${what}: the tarball is missing its build output`,
@@ -69,8 +83,9 @@ async function checkTarball(file, mustContain, what) {
 }
 
 /* Before packing anything: does each consumer have the script we are about to call? An older checkout may not. */
+const rows = [];
 const usable = [];
-for (const consumer of usable) {
+for (const consumer of present) {
   let scripts = {};
   try {
     scripts = JSON.parse(readFileSync(resolve(consumer.dir, 'package.json'), 'utf8')).scripts ?? {};
@@ -93,21 +108,50 @@ for (const consumer of usable) {
     });
     continue;
   }
+  /* npm/pnpm would rewrite the lockfile into the merge, and "git restore" below would not be a clean way back. */
+  const midway = ['MERGE_HEAD', 'REBASE_HEAD', 'CHERRY_PICK_HEAD'].find(
+    (ref) => spawnSync('git', ['-C', consumer.dir, 'rev-parse', '-q', '--verify', ref]).status === 0,
+  );
+  if (midway) {
+    rows.push({
+      ok: false,
+      label: consumer.key,
+      detail: `is in the middle of a ${{ MERGE_HEAD: 'merge', REBASE_HEAD: 'rebase', CHERRY_PICK_HEAD: 'cherry-pick' }[midway]}`,
+      note: `finish or abort it first (git -C "${consumer.dir}" status)`,
+    });
+    continue;
+  }
   usable.push(consumer);
 }
 if (!usable.length) {
   printCheckTable([{ title: 'Result', rows }]);
   process.exit(1);
 }
+/* Two syncs pack into the same dist/ and .tarballs/ folders: one would install what the other is still writing. */
+const SYNC_LOCK = LOCK_FILE.replace('tilburg-dev-', 'tilburg-sync-');
+const otherSync = readDevLock(SYNC_LOCK);
+if (otherSync) {
+  fail({
+    what: `Another pnpm sync is running (process ${otherSync.pid}, since ${otherSync.started})`,
+    why: 'two syncs at once rebuild the same tarballs, and a consumer could install one while it is being rewritten.',
+    fix: 'wait for it to finish, then pnpm sync again',
+  });
+  process.exit(1);
+}
+writeDevLock({}, SYNC_LOCK);
 if (!(await confirmNoDevRunning('pnpm sync rebuilds the packages it packs, and'))) process.exit(1);
 
 // ─── Pack ────────────────────────────────────────────────────────────────────
 
 const needs = new Set(usable.flatMap((consumer) => consumer.pack));
+// Whole seconds: some file systems round mtimes down.
+const packStartedAt = Math.floor(Date.now() / 1000) * 1000;
 
 if (needs.has('components-angular')) {
-  await step('Packing design-tokens', 'pnpm --filter @gemeente-tilburg/design-tokens run pack:dist');
-  await step('Packing components-angular', 'pnpm --filter @gemeente-tilburg/components-angular run pack:dist');
+  await step('Packing design-tokens', 'pnpm --filter @gemeente-tilburg/design-tokens run pack:dist', { cwd: ROOT });
+  await step('Packing components-angular', 'pnpm --filter @gemeente-tilburg/components-angular run pack:dist', {
+    cwd: ROOT,
+  });
   await checkTarball(
     resolve(ROOT, 'packages/components-angular/dist/gemeente-tilburg-components-angular-0.0.0.tgz'),
     /package\/dist\/fesm2022\/.*\.mjs/,
@@ -120,13 +164,67 @@ if (needs.has('components-angular')) {
   );
 }
 if (needs.has('all')) {
-  await step('Packing every package into .tarballs/', 'pnpm run pack:local');
+  await step('Packing every package into .tarballs/', 'pnpm run pack:local', { cwd: ROOT });
 }
 
 // ─── Sync ────────────────────────────────────────────────────────────────────
 
-const rows = [];
-for (const consumer of present) {
+/** `git status` of a consumer as Map(path → 'XY'), or null when git cannot tell (not a checkout). */
+function gitChanges(dir) {
+  const result = spawnSync('git', ['-C', dir, 'status', '--porcelain', '-z', '--untracked-files=all'], {
+    encoding: 'utf8',
+  });
+  // ponytail: a rename entry's second (old) path shows up as its own odd entry; renames are not what a sync does.
+  return result.status === 0
+    ? new Map(
+        result.stdout
+          .split('\0')
+          .filter(Boolean)
+          .map((entry) => [entry.slice(3), entry.slice(0, 2)]),
+      )
+    : null;
+}
+
+/** After a failed or interrupted sync: which files did it change in the consumer, and how to put them back. */
+function reportConsumerState(consumer, before) {
+  const after = gitChanges(consumer.dir);
+  if (!before || !after) {
+    console.log(
+      `  ${c.yellow}⚠${c.reset}  ${consumer.key} is not a git checkout, so what the sync changed is unknown.`,
+    );
+    return;
+  }
+  const changed = [...after.keys()].filter((path) => !before.has(path));
+  const already = [...before.keys()];
+  if (!changed.length) {
+    console.log(`  ${consumer.key}: no files changed by this sync; git status is as before it started.`);
+  } else {
+    const tracked = changed.filter((path) => after.get(path) !== '??');
+    const added = changed.filter((path) => after.get(path) === '??');
+    const install = existsSync(resolve(consumer.dir, 'pnpm-lock.yaml')) ? 'pnpm install' : 'npm install';
+    console.log(
+      `  ${c.yellow}⚠${c.reset}  ${consumer.key} may be half-updated. Changed by this sync: ${changed.join(', ')}`,
+    );
+    /* A file you saved in the consumer while it synced looks changed by the sync too: look before restoring. */
+    if (tracked.length) {
+      console.log(`     Check first: git -C "${consumer.dir}" diff -- ${tracked.join(' ')}`);
+      console.log(
+        `     To undo: git -C "${consumer.dir}" restore -- ${tracked.join(' ')} && cd "${consumer.dir}" && ${install}`,
+      );
+    }
+    if (added.length) console.log(`     New files (delete them to undo): ${added.join(', ')}`);
+  }
+  if (already.length) console.log(`     Already changed before this sync, left alone: ${already.join(', ')}`);
+}
+
+/* Ctrl-C (or a kill) mid-sync exits straight from the crash handler: say what state the consumer is in. */
+let syncing = null;
+process.on('exit', () => {
+  if (syncing) reportConsumerState(syncing.consumer, syncing.before);
+});
+
+for (const consumer of usable) {
+  syncing = { consumer, before: gitChanges(consumer.dir) };
   try {
     await runStepWithRecovery(`Syncing ${consumer.key}`, consumer.sync, { cwd: consumer.dir });
     rows.push({
@@ -143,7 +241,9 @@ for (const consumer of present) {
       detail: 'failed, see above',
       note: `cd ${consumer.dir} && ${consumer.sync}`,
     });
+    reportConsumerState(consumer, syncing.before);
   }
+  syncing = null;
 }
 
 console.log('');

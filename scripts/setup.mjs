@@ -44,7 +44,7 @@ async function step(label, command, options = {}) {
   } catch (err) {
     reportStepFailure(label, err);
     console.log(
-      `  ${c.gray}Fix it and run ${c.cyan}pnpm setup${c.gray} again; finished steps are skipped.${c.reset}\n`,
+      `  ${c.gray}Fix it and run ${c.cyan}node scripts/setup.mjs${c.gray} again; finished steps are skipped.${c.reset}\n`,
     );
     process.exit(1);
   }
@@ -53,6 +53,17 @@ async function step(label, command, options = {}) {
 const done = (label, why) => stepSkip(label, why);
 
 if (!process.env.TILBURG_SETUP_REEXEC) printBanner('Setup');
+
+/* Running as root through sudo: node_modules and dist/ would then belong to root, and every later pnpm install fails.
+   SUDO_USER alone is not enough: `sudo -iu dev` sets it too, and then the files belong to the right user. */
+if (process.env.SUDO_USER && process.getuid?.() === 0) {
+  fail({
+    what: 'setup is running under sudo',
+    why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER}; pnpm install without sudo then fails with EACCES.`,
+    fix: 'node scripts/setup.mjs without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)',
+  });
+  process.exit(1);
+}
 
 // ─── 1. Node ─────────────────────────────────────────────────────────────────
 
@@ -69,6 +80,16 @@ function nvmNodeBin() {
   return matching.length ? resolve(versions, matching[0], 'bin') : null;
 }
 
+/* Without this, an alias like lts/* reads as NaN and setup would try to install "Node NaN" with nvm. */
+if (!Number.isInteger(NODE_MAJOR)) {
+  fail({
+    what: '.nvmrc does not hold a Node major version',
+    why: 'setup reads the Node to switch to from .nvmrc; an alias such as lts/* does not say which.',
+    fix: 'put the major version in .nvmrc (e.g. 24), then node scripts/setup.mjs again',
+  });
+  process.exit(1);
+}
+
 const major = Number(process.versions.node.split('.')[0]);
 if (major !== NODE_MAJOR) {
   if (!hasNvm) {
@@ -83,7 +104,7 @@ if (major !== NODE_MAJOR) {
   if (!bin) {
     console.log(`  ${c.yellow}⚠${c.reset}  Node ${NODE_MAJOR} is not installed (this is ${process.versions.node}).`);
     if (!(await ask(`Install Node ${NODE_MAJOR} with nvm?`, { default: true }))) {
-      fail({ what: `Node ${NODE_MAJOR} is needed`, fix: `nvm install ${NODE_MAJOR}, then pnpm setup` });
+      fail({ what: `Node ${NODE_MAJOR} is needed`, fix: `nvm install ${NODE_MAJOR}, then node scripts/setup.mjs` });
       process.exit(1);
     }
     /* nvm is a shell function, not a program: load it in a shell and let it read .nvmrc. */
@@ -109,6 +130,19 @@ if (major !== NODE_MAJOR) {
       TILBURG_SETUP_FROM_NODE: process.versions.node,
     },
   });
+  /* Exit 9 is Node refusing its options: a NODE_OPTIONS flag the old Node took but Node 24 does not. */
+  if (result.error)
+    fail({
+      what: `Could not start Node ${NODE_MAJOR} from nvm`,
+      why: result.error.message,
+      fix: 'nvm use, then node scripts/setup.mjs',
+    });
+  else if (result.status === 9 && process.env.NODE_OPTIONS)
+    fail({
+      what: `Node ${NODE_MAJOR} does not accept your NODE_OPTIONS`,
+      why: `NODE_OPTIONS="${process.env.NODE_OPTIONS}" holds a flag that only the Node you came from knows (see above).`,
+      fix: 'remove that flag from NODE_OPTIONS (it is usually set in your shell profile), then node scripts/setup.mjs',
+    });
   process.exit(result.status ?? 1);
 }
 done(`Node ${process.versions.node}`, `.nvmrc pins ${NODE_MAJOR}`);
@@ -146,13 +180,23 @@ if ((await pnpmVersion()) === PNPM_VERSION) {
   /* COREPACK_ENABLE_DOWNLOAD_PROMPT=0: corepack would otherwise ask before downloading the pinned pnpm. */
   process.env.COREPACK_ENABLE_DOWNLOAD_PROMPT = '0';
   await step('Enabling corepack (pnpm comes with it)', 'corepack enable');
-  const version = await pnpmVersion();
+  const { stdout, stderr } = await capture('pnpm --version', { cwd: ROOT, timeoutMs: 60_000 });
+  const version = stdout.trim();
+  /* corepack downloads the pinned pnpm on first use; offline, that is what fails here, not another pnpm. */
+  if (!version && /Error when performing the request/.test(stderr)) {
+    fail({
+      what: `corepack could not download pnpm ${PNPM_VERSION}`,
+      why: stderr.match(/^Error: .*/m)?.[0] ?? 'see pnpm --version',
+      fix: 'connect to the internet (behind a proxy: set HTTPS_PROXY), then node scripts/setup.mjs again',
+    });
+    process.exit(1);
+  }
   if (version !== PNPM_VERSION) {
     const { stdout: where } = await capture('command -v pnpm', { timeoutMs: 5000 });
     fail({
       what: `pnpm is ${version || 'not runnable'}, but package.json pins ${PNPM_VERSION}`,
       why: `Another pnpm comes first on your PATH (${where.trim() || 'not found'}), before corepack's.`,
-      fix: 'remove that one (brew uninstall pnpm, or npm rm -g pnpm), then pnpm setup again',
+      fix: 'remove that one (brew uninstall pnpm, or npm rm -g pnpm), then node scripts/setup.mjs again',
     });
     process.exit(1);
   }
@@ -168,6 +212,11 @@ if (reset) {
     }
     for (const folder of folders) rmSync(folder, { recursive: true, force: true, maxRetries: 5 });
     console.log(`  ${c.green}✓${c.reset}  node_modules deleted.`);
+  } else {
+    done(
+      '--reset',
+      process.stdin.isTTY ? 'kept node_modules' : 'no terminal to confirm it: add --yes to delete without asking',
+    );
   }
 }
 if (!checkInstalled().ok || checkInstallFresh().warn) {
@@ -222,7 +271,7 @@ if (noStart || !process.stdin.isTTY) {
   console.log(`  Next: ${c.cyan}pnpm dev${c.reset}\n`);
   process.exit(0);
 }
-if (await confirm('Start pnpm dev now (both Storybooks, rebuilt as you save)?', { default: true })) {
+if (await ask('Start pnpm dev now (both Storybooks, rebuilt as you save)?', { default: true })) {
   /* pnpm dev owns the terminal now: Ctrl-C is for it (it stops its watchers itself), not for setup. */
   process.removeAllListeners('SIGINT');
   process.on('SIGINT', () => {});
@@ -231,5 +280,6 @@ if (await confirm('Start pnpm dev now (both Storybooks, rebuilt as you save)?', 
       fail({ what: 'Could not start pnpm dev', why: err.message, fix: 'pnpm dev' });
       process.exit(1);
     })
-    .on('close', (code) => process.exit(code ?? 0));
+    /* Killed by a signal (out of memory, a crash) is not a success. */
+    .on('close', (code) => process.exit(code ?? 1));
 }

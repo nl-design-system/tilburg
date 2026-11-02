@@ -31,17 +31,20 @@ export const STORYBOOKS = {
     port: 6006,
     filter: '@gemeente-tilburg/storybook',
     /* `--ci`: no browser and no "use another port?" question. `--exact-port`: stop instead of quietly moving to
-       another port (it once moved onto 6007, the Angular Storybook's port); `pnpm dev` picks the port itself. */
+       another port (it once moved onto 6007, the Angular Storybook's port); `pnpm dev` picks the port itself.
+       `--host 0.0.0.0`: Storybook 10 listens on localhost only by default; this keeps the "network" link working. */
     command: (port) =>
-      `pnpm --filter @gemeente-tilburg/storybook exec storybook dev --config-dir config/ --port ${port} --ci --exact-port`,
+      `pnpm --filter @gemeente-tilburg/storybook exec storybook dev --config-dir config/ --port ${port} --ci --exact-port --host 0.0.0.0`,
     note: 'HTML, React and Web Components',
   },
   angular: {
     name: 'Angular Storybook',
     port: 6007,
     filter: '@gemeente-tilburg/storybook-angular',
+    /* `--ci` here too: without it the builder opens its own browser tab and, on a taken port, asks a question nobody
+       can answer (stdin is closed). It has no `--exact-port`. */
     command: (port) =>
-      `pnpm --filter @gemeente-tilburg/storybook-angular exec ng run storybook-angular:storybook --port ${port}`,
+      `pnpm --filter @gemeente-tilburg/storybook-angular exec ng run storybook-angular:storybook --port ${port} --host 0.0.0.0 --ci`,
     note: 'Angular and HTML',
   },
 };
@@ -50,6 +53,8 @@ export const STORYBOOKS = {
  * The libraries the Storybooks import from their build output (`dist/`), not from source. `src` is what a change
  * is made in, `built` is the file whose age says how fresh the build is. `for` lists the Storybooks that need it.
  * `done` and `failed` match the watcher's output after a rebuild; `pnpm dev` reports those lines and hides the rest.
+ * `keepsDist`: its watcher writes over dist/ instead of emptying it first (ng-packagr and Stencil empty it), so pnpm dev
+ * need not wait for it when the build is up to date.
  * `components-css` and `storybook-shared` are missing on purpose: the Storybooks read those from source.
  */
 export const LIBRARIES = [
@@ -77,6 +82,7 @@ export const LIBRARIES = [
     build: 'pnpm --filter @gemeente-tilburg/components-react run build',
     /* `--emptyOutDir false`, or every rebuild deletes the type declarations `build:types` wrote. */
     watch: 'pnpm --filter @gemeente-tilburg/components-react exec vite build --watch --emptyOutDir false',
+    keepsDist: true,
     done: /built in \d/,
     failed: /Build failed|error during build|Transform failed|\[vite:[\w-]+\]|RollupError/i,
     for: ['react'],
@@ -105,6 +111,7 @@ export const LIBRARIES = [
     built: 'dist/index.js',
     build: 'pnpm --filter @gemeente-tilburg/web-components-react run build',
     watch: 'pnpm --filter @gemeente-tilburg/web-components-react exec tsc -p . --watch --preserveWatchOutput',
+    keepsDist: true,
     done: /Found 0 errors/,
     failed: /Found [1-9]\d* errors?|error TS\d+/,
     for: ['react'],

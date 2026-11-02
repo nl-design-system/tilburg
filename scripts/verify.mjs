@@ -57,7 +57,8 @@ for (const step of STEPS) {
     continue;
   }
   try {
-    await runStepWithRecovery(step.label, step.command, { env: { ...process.env, TILBURG_QUIET: '1' } });
+    /* cwd: run from the repository root also when started as node scripts/verify.mjs from another folder. */
+    await runStepWithRecovery(step.label, step.command, { cwd: ROOT, env: { ...process.env, TILBURG_QUIET: '1' } });
     rows.push({ ok: true, label: step.label, detail: 'passed', note: step.why });
   } catch (err) {
     reportStepFailure(step.label, err);
@@ -72,7 +73,16 @@ for (const step of STEPS) {
   }
 }
 
-rows.push(await changesetRow());
+/* Only a warning: a crash in it (a broken package.json) must not throw away the table of the steps above. */
+rows.push(
+  await changesetRow().catch((error) => ({
+    ok: true,
+    warn: true,
+    label: 'Changeset (not in CI)',
+    detail: 'could not check',
+    error,
+  })),
+);
 
 console.log('');
 const { failed, total } = printCheckTable([{ title: 'Result', rows }]);
@@ -88,9 +98,26 @@ console.log(`  ${c.green}Everything CI checks passes.${c.reset}\n`);
  */
 async function changesetRow() {
   const label = 'Changeset (not in CI)';
-  const git = async (command) => (await capture(`git ${command}`, { cwd: ROOT, timeoutMs: 15_000 })).stdout.trim();
-  const base = await git('merge-base HEAD origin/main');
-  if (!base) return { skip: true, ok: true, label, detail: 'no origin/main to compare with' };
+  /* A git that fails or times out throws (the row then says "could not check"); quotePath=false: with the default,
+     a non-ASCII name comes out as "packages/caf\303\251/…" and matches no package folder. */
+  const git = async (command) => {
+    const result = await capture(`git -c core.quotePath=false ${command}`, { cwd: ROOT, timeoutMs: 15_000 });
+    if (result.code !== 0)
+      throw new Error(`git ${command} ${result.timedOut ? 'timed out' : `failed: ${result.stderr.trim()}`}`);
+    return result.stdout.trim();
+  };
+  if ((await capture('git rev-parse --verify --quiet origin/main', { cwd: ROOT })).code !== 0)
+    return { skip: true, ok: true, label, detail: 'no origin/main to compare with' };
+  /* Fails without a shared commit: a shallow clone (CI's checkout) has cut the history off before it. */
+  const base = await git('merge-base HEAD origin/main').catch(() => '');
+  if (!base)
+    return {
+      ok: true,
+      warn: true,
+      label,
+      detail: 'could not check: no common history with origin/main',
+      note: `a shallow clone? ${c.cyan}git fetch --unshallow origin${c.reset}`,
+    };
   const changed = [
     ...(await git(`diff --name-only ${base}`)).split('\n'),
     ...(await git('ls-files --others --exclude-standard')).split('\n'),

@@ -4,9 +4,11 @@
    question), command, order (lower runs first), run? }. Without `run` it only prints the command: `nvm use` is a shell
    function, so a child process cannot change your shell's Node. */
 import { spawnSync } from 'node:child_process';
-import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import fs, { existsSync, lstatSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import http from 'node:http';
 import net from 'node:net';
-import { resolve } from 'node:path';
+import { cpus } from 'node:os';
+import { delimiter, dirname, resolve } from 'node:path';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT, STORYBOOKS } from '../dev-config.mjs';
 import { ago, c, capture } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
@@ -15,9 +17,9 @@ const cmd = (text) => `${c.cyan}${text}${c.reset}`;
 
 /** Run a fix's command in the foreground (its output and questions go to the terminal); throws on failure. */
 export function runInherit(command) {
-  const { status, error } = spawnSync(command, { shell: true, stdio: 'inherit', cwd: ROOT });
+  const { status, signal, error } = spawnSync(command, { shell: true, stdio: 'inherit', cwd: ROOT });
   if (error) throw error;
-  if (status !== 0) throw new Error(`\`${command}\` exited with ${status}`);
+  if (status !== 0) throw new Error(`\`${command}\` exited with ${status ?? signal}`);
 }
 
 const shellFix = (label, command, order) => ({ label, command, order, run: () => runInherit(command) });
@@ -38,6 +40,29 @@ export async function safely(label, fn, ...args) {
 
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
+/**
+ * The minimum that an engines range ("^22.22.3 || ^24.15.0 || >=26.0.0") sets for `version`'s major, as "24.15.0",
+ * when `version` is below it; else null. A prerelease (24.15.0-nightly…) is below its release.
+ */
+export function belowEngines(version, range) {
+  const [major, minor, patch] = version.replace(/^v/, '').split(/[.+-]/).map(Number);
+  const min = range?.match(new RegExp(`\\^${major}\\.(\\d+)\\.(\\d+)`));
+  if (!min) return null;
+  const [m, p] = [Number(min[1]), Number(min[2])];
+  const below = minor < m || (minor === m && (patch < p || (patch === p && /^v?[\d.]+-/.test(version))));
+  return below ? `${major}.${m}.${p}` : null;
+}
+
+/* Angular asks more than .nvmrc's major: Angular 22 refuses Node 24 below 24.15. Unknown until installed. */
+function angularNodeRange() {
+  try {
+    const file = resolve(ROOT, 'packages/storybook-angular/node_modules/@angular/core/package.json');
+    return JSON.parse(readFileSync(file, 'utf8')).engines?.node;
+  } catch {
+    return undefined;
+  }
+}
+
 export function checkNode() {
   const version = process.versions.node;
   if (!Number.isInteger(NODE_MAJOR)) {
@@ -48,6 +73,15 @@ export function checkNode() {
     };
   }
   const major = Number(version.split('.')[0]);
+  const angularNeeds = major === NODE_MAJOR && belowEngines(version, angularNodeRange());
+  if (angularNeeds) {
+    return {
+      ok: true,
+      warn: true,
+      detail: `v${version}, but Angular needs ${angularNeeds} or newer`,
+      note: `install a newer Node ${NODE_MAJOR}: ${cmd(`nvm install ${NODE_MAJOR}`)}`,
+    };
+  }
   if (major === NODE_MAJOR) return { ok: true, detail: `v${version}`, note: `.nvmrc pins ${NODE_MAJOR}` };
   return {
     ok: false,
@@ -59,18 +93,92 @@ export function checkNode() {
   };
 }
 
+/** Settings that make pnpm skip devDependencies, which every build, test and Storybook here needs. */
+export function checkEnvironment(env = process.env) {
+  const set = [
+    env.NODE_ENV === 'production' && 'NODE_ENV=production',
+    /^(true|1)$/i.test(env.npm_config_production ?? '') && 'npm_config_production',
+    /\bdev\b/.test(env.npm_config_omit ?? '') && 'npm_config_omit=dev',
+  ].filter(Boolean);
+  if (!set.length) return { ok: true, detail: 'no settings that skip devDependencies' };
+  return {
+    ok: true,
+    warn: true,
+    detail: `${set.join(', ')} is set: pnpm install then skips devDependencies (the build tools)`,
+    note: `unset it in this terminal (${cmd(`unset ${set.map((name) => name.split('=')[0]).join(' ')}`)}), then pnpm install`,
+  };
+}
+
+/** An x64 Node on an Apple Silicon Mac (Rosetta): native binaries in node_modules then fit only one of the two. */
+export function checkCpu(
+  { platform, arch, cpuModel } = { platform: process.platform, arch: process.arch, cpuModel: cpus()[0]?.model ?? '' },
+) {
+  /* Under Rosetta, os.cpus() still names the Apple chip while process.arch says x64. */
+  if (platform === 'darwin' && arch === 'x64' && /^Apple /.test(cpuModel)) {
+    return {
+      ok: true,
+      warn: true,
+      detail: `x64 Node under Rosetta on ${cpuModel}`,
+      note: `open a native terminal (${cmd('arch -arm64 zsh')}); if ${cmd('node -p process.arch')} still says x64, reinstall Node (${cmd(`nvm uninstall ${process.versions.node} && nvm install ${NODE_MAJOR}`)}), then ${cmd('rm -rf node_modules && pnpm install')}`,
+    };
+  }
+  return { ok: true, detail: `${arch}${cpuModel ? `, ${cpuModel}` : ''}` };
+}
+
+/** The first `corepack` on the PATH and its version (from its package.json), or null. */
+function findCorepack() {
+  for (const dir of (process.env.PATH ?? '').split(delimiter)) {
+    const path = resolve(dir || '.', 'corepack');
+    if (!existsSync(path)) continue;
+    try {
+      const pkg = resolve(dirname(realpathSync(path)), '..', 'package.json');
+      return { path, version: JSON.parse(readFileSync(pkg, 'utf8')).version };
+    } catch {
+      return { path, version: undefined };
+    }
+  }
+  return null;
+}
+
+/**
+ * corepack older than 0.31 cannot verify (or, on Node 24, even start) the pnpm 11 it has to fetch. It is usually a
+ * leftover from another install (an old Node in /usr/local, Homebrew) that comes before nvm's on the PATH.
+ */
+export function checkCorepack(found = findCorepack(), nodeBin = dirname(process.execPath)) {
+  if (!found) return { ok: true, detail: 'not on your PATH', note: `only needed for ${cmd('corepack enable')}` };
+  const [major, minor] = (found.version ?? '').split('.').map(Number);
+  if (!(major === 0 && minor < 31)) return { ok: true, detail: found.version ?? 'version unknown', note: found.path };
+  const other = dirname(found.path) !== nodeBin ? `, not the one of the Node in ${nodeBin}` : '';
+  return {
+    ok: true,
+    warn: true,
+    detail: `${found.version} at ${found.path}${other}: too old for pnpm 11`,
+    note: `run ${cmd('npm install -g corepack@latest && corepack enable')}${other && `, or remove ${found.path}`}`,
+  };
+}
+
 export async function checkPnpm() {
-  const { code, stdout, stderr } = await capture('pnpm --version', { timeoutMs: 15_000, cwd: ROOT });
+  const { code, stdout, stderr, timedOut } = await capture('pnpm --version', { timeoutMs: 15_000, cwd: ROOT });
   const version = stdout.trim();
   /* pnpm 11 runs on whatever `node` is first on the PATH, which can be another than the one running this check
      (an nvm default of 20, say). Then it cannot start at all: say so instead of "not found". */
   if (/requires at least Node|node:sqlite|ERR_UNKNOWN_BUILTIN_MODULE/.test(stderr)) {
-    const pathNode = stderr.match(/current version of Node\.js is (v[\d.]+)/)?.[1] ?? 'an older Node';
+    const pathNode = stderr.match(/current version of Node\.js is (v\d+(?:\.\d+)*)/)?.[1] ?? 'an older Node';
     return {
       ok: false,
       detail: `cannot start: pnpm 11 runs on ${pathNode} from your PATH`,
       note: `run ${cmd('nvm use')}, or make ${NODE_MAJOR} the default: ${cmd(`nvm alias default ${NODE_MAJOR}`)}`,
       fix: NVM_FIX,
+    };
+  }
+  /* It is there but does not start (corepack cannot fetch or verify it, say): "not found" would send you the wrong way. */
+  if (timedOut || (code !== 0 && code !== 127 && !/not found/.test(stderr))) {
+    const why = timedOut ? 'gave no answer in 15 s' : stderr.trim().split('\n')[0] || `exited with ${code}`;
+    return {
+      ok: false,
+      detail: `\`pnpm --version\` failed: ${why}`,
+      note: `run ${cmd('pnpm --version')} to see why; ${cmd('corepack enable')} reinstalls it`,
+      fix: COREPACK_FIX,
     };
   }
   if (code !== 0 || !version) {
@@ -172,6 +280,14 @@ export function checkInstalled() {
 export function checkInstallFresh() {
   const installedLock = resolve(ROOT, 'node_modules/.pnpm/lock.yaml');
   if (!existsSync(installedLock)) return { skip: true, ok: true, detail: 'not installed yet' };
+  /* Deleted by accident (or by a tool): restore it, since pnpm install would resolve every version anew. */
+  if (!existsSync(resolve(ROOT, 'pnpm-lock.yaml'))) {
+    return {
+      ok: false,
+      detail: 'pnpm-lock.yaml is missing',
+      note: `restore it: ${cmd('git restore pnpm-lock.yaml')} (pnpm install would resolve every version anew)`,
+    };
+  }
   if (readFileSync(installedLock, 'utf8') === readFileSync(resolve(ROOT, 'pnpm-lock.yaml'), 'utf8')) {
     return { ok: true, detail: 'match pnpm-lock.yaml' };
   }
@@ -181,6 +297,35 @@ export function checkInstallFresh() {
     detail: 'pnpm-lock.yaml differs from what is installed',
     note: `run ${cmd('pnpm install')} (a branch switch or pull changed the dependencies)`,
     fix: INSTALL_FIX,
+  };
+}
+
+/** Under 2 GB free, an install or build stops halfway with ENOSPC. */
+export function checkDiskSpace(free = fs.statfsSync && fs.statfsSync(ROOT)) {
+  /* statfsSync came in Node 18.15, and this check must still run on an old Node to say so. */
+  if (free === undefined) return { skip: true, ok: true, detail: 'unknown on this Node' };
+  if (typeof free === 'object') free = free.bavail * free.bsize;
+  const gb = (free / 1024 ** 3).toFixed(1);
+  if (free >= 2 * 1024 ** 3) return { ok: true, detail: `${gb} GB free` };
+  return {
+    ok: true,
+    warn: true,
+    detail: `only ${gb} GB free: installs and builds may stop with ENOSPC`,
+    note: `${cmd('pnpm store prune')} and ${cmd('pnpm run clean:pick')} free some`,
+  };
+}
+
+/** A synced folder (iCloud Drive, OneDrive, Dropbox) uploads node_modules and leaves "file 2" conflict copies in it. */
+export function checkFolder(root = realpathSync(ROOT)) {
+  const synced = root.match(
+    /\/Library\/(Mobile Documents|CloudStorage)\/|\/(Dropbox|OneDrive|Google Drive)[^/]*\//,
+  )?.[0];
+  if (!synced) return { ok: true, detail: 'not in a synced folder', note: root };
+  return {
+    ok: true,
+    warn: true,
+    detail: `inside a synced folder (${synced.replace(/^\/|\/$/g, '')}): sync conflicts in node_modules`,
+    note: `move it out, e.g. ${cmd(`mv "${root}" ~/Developer/`)}, then ${cmd('pnpm install')} there`,
   };
 }
 
@@ -282,14 +427,29 @@ export async function findFreePort(from, span = 20, skip = []) {
   return null;
 }
 
-/** A Storybook gives itself away by its index.json. */
-export async function isStorybookOn(port) {
-  try {
-    const response = await fetch(`http://localhost:${port}/index.json`, { signal: AbortSignal.timeout(1500) });
-    return response.ok && Boolean((await response.json())?.entries);
-  } catch {
-    return false;
-  }
+/**
+ * A Storybook gives itself away by its index.json. node:http, not fetch: Node 24's fetch (undici) sets the socket's
+ * type of service, which macOS refuses (EINVAL) on a connection the server just closed, and that error escapes as an
+ * uncaught exception no try/catch around fetch can stop (seen with a Storybook that was killed mid-check).
+ */
+export function isStorybookOn(port) {
+  return new Promise((done) => {
+    const request = http.get({ host: 'localhost', port, path: '/index.json', timeout: 1500 }, (response) => {
+      let body = '';
+      response.setEncoding('utf8');
+      response.on('data', (chunk) => (body += chunk));
+      response.on('error', () => done(false));
+      response.on('end', () => {
+        try {
+          done(response.statusCode === 200 && Boolean(JSON.parse(body)?.entries));
+        } catch {
+          done(false);
+        }
+      });
+    });
+    request.on('timeout', () => request.destroy());
+    request.on('error', () => done(false));
+  });
 }
 
 export async function checkStorybookPort(storybook) {
@@ -326,6 +486,11 @@ export async function runAllChecks() {
       rows: await Promise.all([
         safely('Node', checkNode),
         safely('pnpm', checkPnpm),
+        safely('Environment', checkEnvironment),
+        safely('CPU', checkCpu),
+        safely('corepack', checkCorepack),
+        safely('Disk space', checkDiskSpace),
+        safely('Folder', checkFolder),
         safely('Git hooks', checkGitHooks),
         safely('Git push', checkGitPush),
         safely('Git branch', checkBranchBehind),

@@ -29,7 +29,7 @@
   "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065",
   "engines": {
     "//": "Update @types/node to match the highest node version here",
-    "node": ">=24 <=25",
+    "node": ">=24.15.0 <=25",
     "pnpm": "^11.4.0",
     "npm": "please use pnpm: node scripts/setup.mjs"
   },
@@ -104,7 +104,7 @@
     "sync": "node scripts/sync-consumers.mjs",
     "test": "node scripts/test.mjs",
     "test-update": "npm-run-all --sequential clean lint build test",
-    "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
+    "test:scripts": "node --test --import ./scripts/lib/test-env.mjs \"scripts/**/*.test.mjs\"",
     "update-major": "npm-check-updates --configFileName .ncurc.major.mjs",
     "update-minor": "npm-check-updates --configFileName .ncurc.minor.mjs",
     "update-patch": "npm-check-updates --configFileName .ncurc.patch.mjs",

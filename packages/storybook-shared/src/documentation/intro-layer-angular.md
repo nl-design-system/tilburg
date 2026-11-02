@@ -3,8 +3,8 @@
 ## Angular
 
 Voor Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, `<tilburg-modal>`, etc. De Angular-laag rendert de
-gedeelde HTML/CSS in `<tilburg-…>`-componenten en een paar attribuut-directives (bv. tabellen). Gebouwd met en getest op
-Angular 20.
+gedeelde HTML/CSS in `<tilburg-…>`-componenten en een paar attribuut-directives (bv. tabellen). Werkt in Angular 20, 21
+en 22: gebouwd met Angular 20 (de oudste ondersteunde versie), de Storybook draait op Angular 22.
 
 ### Installatie (Angular)
 

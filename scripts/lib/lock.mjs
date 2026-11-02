@@ -33,9 +33,12 @@ export function readDevLock(file = LOCK_FILE) {
   try {
     lock = JSON.parse(readFileSync(file, 'utf8'));
   } catch {
+    /* unreadable or broken (also a symlink planted in a shared temp folder): remove the link itself, not its target */
+    rmSync(file, { force: true });
     return null;
   }
-  if (!Number.isInteger(lock?.pid) || lock.pid === process.pid || !isAlive(lock.pid)) {
+  /* pid 0 and negatives would signal a process group, which always "exists" */
+  if (!Number.isInteger(lock?.pid) || lock.pid <= 0 || lock.pid === process.pid || !isAlive(lock.pid)) {
     rmSync(file, { force: true });
     return null;
   }
@@ -44,11 +47,22 @@ export function readDevLock(file = LOCK_FILE) {
 
 export function writeDevLock(data, file = LOCK_FILE) {
   try {
-    writeFileSync(file, JSON.stringify({ pid: process.pid, started: new Date().toISOString(), ...data }));
+    /* 'wx': never through a symlink or over a file someone else just made (readDevLock removed a stale one). */
+    writeFileSync(file, JSON.stringify({ pid: process.pid, started: new Date().toISOString(), ...data }), {
+      flag: 'wx',
+      mode: 0o600,
+    });
   } catch {
     /* without a lock the other scripts just cannot warn: not worth stopping pnpm dev for */
   }
-  process.on('exit', () => rmSync(file, { force: true }));
+  process.on('exit', () => {
+    /* Only our own: a second pnpm dev that started at the same moment may have written its lock over this one. */
+    try {
+      if (JSON.parse(readFileSync(file, 'utf8')).pid === process.pid) rmSync(file, { force: true });
+    } catch {
+      /* gone already, or not ours to judge */
+    }
+  });
 }
 
 /**

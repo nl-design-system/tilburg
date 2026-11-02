@@ -10,6 +10,7 @@ concurrency:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
 
@@ -37,10 +38,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm run --if-present lint
+        run: pnpm run lint
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
 
@@ -77,13 +79,14 @@ jobs:
       - name: Type-check React Storybook
         run: pnpm --filter @gemeente-tilburg/storybook run lint-build
 
-      # Checks that the packed Angular package exposes its public API (the build itself no longer runs Jest; that
-      # happens in the test job).
+      # Checks that every entry point in package.json and the built dist/package.json exists (nothing is packed here;
+      # the build itself no longer runs Jest, that happens in the test job).
       - name: Check Angular package exports
         run: pnpm --filter @gemeente-tilburg/components-angular run test-build
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
 

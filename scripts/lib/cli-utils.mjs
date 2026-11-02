@@ -2,15 +2,21 @@
    Node built-ins only, so they work before `pnpm install` — which is exactly when `pnpm check` is most useful.
    Ported from the nvwa-angular and bq-tlb-frontend tooling. */
 import { spawn } from 'node:child_process';
-import { appendFileSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { inspect } from 'node:util';
 
 /**
  * No colours, spinners or banner art in CI or when the output goes to a file. TILBURG_TTY=1 says the output reaches a
  * terminal by another way (welcome.mjs writes to /dev/tty, because pnpm folds the output of install hooks away).
  */
-export const interactive = (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI;
+export const interactive =
+  (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI && process.env.TERM !== 'dumb';
+/* NO_COLOR (no-color.org) and FORCE_COLOR=0 ask for plain text, also on a terminal. */
+const colour = interactive && !process.env.NO_COLOR && process.env.FORCE_COLOR !== '0';
+/* 0 or undefined when nobody knows (TILBURG_TTY, some ptys): assume the usual 80. */
+const columns = () => process.stdout.columns || 80;
 
 const colours = {
   reset: '\x1b[0m',
@@ -25,8 +31,8 @@ const colours = {
   gray: '\x1b[90m',
 };
 
-/** Colour codes, or empty strings when the output is not a terminal. */
-export const c = interactive ? colours : Object.fromEntries(Object.keys(colours).map((key) => [key, '']));
+/** Colour codes, or empty strings when the output is not a terminal or colour is turned off. */
+export const c = colour ? colours : Object.fromEntries(Object.keys(colours).map((key) => [key, '']));
 
 /** OSC 8 hyperlink: clickable in iTerm2, the VS Code and JetBrains terminals, Warp and Windows Terminal. */
 export function hyperlink(text, url) {
@@ -124,30 +130,35 @@ function saturate([r, g, b], minimum) {
  * become their drop shadow (the same colour, darker). Same size as the plain version.
  */
 function colourBanner(depth) {
-  const width = Math.max(...bannerLines.map((line) => line.length));
-  const [from, to] = [hslToRgb(BRAND_FROM), hslToRgb(BRAND_TO)];
   return bannerLines.map(
     (line) =>
       [...line]
         .map((char, column) => {
           if (char === ' ') return char;
           if (depth === 'basic') return char === '█' ? `${c.blue}${char}` : `${c.gray}${char}`;
-          const face = saturate(mix(from, to, width > 1 ? column / (width - 1) : 0), 0.8);
-          const colour = char === '█' ? face : face.map((value) => Math.round(value * 0.45));
-          return `${fg(colour, depth)}${char}`;
+          return `${fg(bannerColour(char, column), depth)}${char}`;
         })
         .join('') + c.reset,
   );
 }
 
+/** [r, g, b] of a banner character in `column`; also used for the README image (scripts/banner.mjs). */
+export function bannerColour(char, column) {
+  const width = Math.max(...bannerLines.map((line) => line.length));
+  const face = saturate(mix(hslToRgb(BRAND_FROM), hslToRgb(BRAND_TO), width > 1 ? column / (width - 1) : 0), 0.8);
+  return char === '█' ? face : face.map((value) => Math.round(value * 0.45));
+}
+
 /** The banner with a subtitle such as "Environment check". Only the subtitle in CI or a log file. */
 export function printBanner(subtitle) {
   const title = `Tilburg Design System · ${subtitle}`;
-  if (!interactive) {
+  /* The art is 60 columns wide: in a narrower terminal every line would wrap into a mess. */
+  if (!interactive || columns() < 61) {
     console.log(`\n${title}\n`);
     return;
   }
-  const depth = colourDepth();
+  /* 'basic' with c empty draws the art without colour. */
+  const depth = colour ? colourDepth() : 'basic';
   const pink = depth === 'basic' ? c.magenta : fg(hslToRgb(BRAND_TO), depth);
   console.log('');
   for (const line of colourBanner(depth)) console.log(`      ${line}`);
@@ -255,12 +266,21 @@ const KEEP_LOGS = 40;
 /** A new log file for `label` (oldest ones are pruned). Returns its path, or null when the disk will not have it. */
 export function newLogFile(label) {
   try {
-    mkdirSync(LOG_DIR, { recursive: true });
+    /* Private: tool output can hold tokens. On a temp folder shared between users (Linux /tmp), a log folder that
+       someone else made (or a symlink) is not used: they could read the logs or point them elsewhere. */
+    mkdirSync(LOG_DIR, { recursive: true, mode: 0o700 });
+    const folder = lstatSync(LOG_DIR);
+    if (folder.isSymbolicLink() || (process.getuid && folder.uid !== process.getuid())) return null;
     const old = readdirSync(LOG_DIR)
       .filter((name) => name.endsWith('.log'))
       .sort();
-    for (const name of old.slice(0, Math.max(0, old.length - KEEP_LOGS + 1)))
-      rmSync(resolve(LOG_DIR, name), { force: true });
+    /* Never a log still being written: pnpm dev opens its watcher logs at the start, so they are the oldest names, and
+       a verify in another terminal would otherwise prune them (and their early errors) away. */
+    const busy = Date.now() - 60 * 60 * 1000;
+    for (const name of old.slice(0, Math.max(0, old.length - KEEP_LOGS + 1))) {
+      const path = resolve(LOG_DIR, name);
+      if (lstatSync(path, { throwIfNoEntry: false })?.mtimeMs < busy) rmSync(path, { force: true });
+    }
     const slug =
       label
         .toLowerCase()
@@ -268,9 +288,17 @@ export function newLogFile(label) {
         .replace(/^-|-$/g, '')
         .slice(0, 40) || 'step';
     const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const path = resolve(LOG_DIR, `${stamp}-${slug}.log`);
-    writeFileSync(path, '');
-    return path;
+    /* A retry within the same second, or another script starting at the same moment, must not truncate a log: 'wx'
+       claims the name in one step (an existsSync() check first would race). */
+    for (let n = 1; ; n++) {
+      const path = resolve(LOG_DIR, n === 1 ? `${stamp}-${slug}.log` : `${stamp}-${slug}-${n}.log`);
+      try {
+        writeFileSync(path, '', { flag: 'wx', mode: 0o600 });
+        return path;
+      } catch (err) {
+        if (err.code !== 'EEXIST') throw err;
+      }
+    }
   } catch {
     return null;
   }
@@ -328,6 +356,36 @@ export function excerpt(output, { max = 12, tail = 10 } = {}) {
   };
 }
 
+/**
+ * Everything a failed command printed, between clear start and end lines: from its log file (complete, colours
+ * stripped), or the tail runStep() kept when the log could not be written or read.
+ */
+export function printFullOutput({ command, exitCode, signal, output = '', log } = {}) {
+  let text = output;
+  let complete = false;
+  try {
+    /* The log starts with the "$ command" header runStep() wrote; the output follows the first blank line. */
+    text = readFileSync(log, 'utf8').split('\n\n').slice(1).join('\n\n');
+    complete = true;
+  } catch {
+    /* no log: show the tail instead */
+  }
+  /* All of it, also for a long build: the summary comes after it, so it stays the last thing on screen. */
+  const lines = text
+    .replace(/\n# exit \S+\n?$/, '')
+    .replace(/\s+$/, '')
+    .split('\n');
+  const how = signal ? `stopped by ${signal}` : `exit code ${exitCode ?? '?'}`;
+  const rule = (title) =>
+    console.log(
+      `\n  ${c.gray}──── ${title} ${'─'.repeat(Math.max(4, Math.min(72, columns() - 10) - title.length))}${c.reset}`,
+    );
+  rule(`Full output of \`${command ?? 'the command'}\` (${how}${complete ? '' : ', last part only'})`);
+  if (!text.trim()) console.log(`  ${c.gray}│${c.reset} (it printed nothing)`);
+  else for (const line of lines) console.log(`  ${c.gray}│${c.reset} ${line}`);
+  rule('end of output');
+}
+
 /** Print what a tool said, briefly: its error lines, else its last lines, and where the full log is. */
 export function printToolOutput({ output = '', log } = {}) {
   const { errors, last } = excerpt(output);
@@ -366,7 +424,11 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
           cwd,
           detached: process.platform !== 'win32',
           stdio: ['ignore', 'pipe', 'pipe'],
-          env: { FORCE_COLOR: '1', ...(env ?? process.env) },
+          /* Tools print colour into a pipe only when forced; not when the user asked for plain text. */
+          env: {
+            ...(process.env.NO_COLOR || process.env.FORCE_COLOR === '0' ? {} : { FORCE_COLOR: '1' }),
+            ...(env ?? process.env),
+          },
         }),
       );
     } catch (err) {
@@ -437,8 +499,9 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
       held.push({ stream, data });
       if (held.length > 5000) held.splice(0, held.length - 5000);
     };
-    child.stdout.on('data', collect(process.stdout));
-    child.stderr.on('data', collect(process.stderr));
+    /* Decode as a stream: a character split over two chunks would otherwise turn into two U+FFFD. */
+    child.stdout.setEncoding('utf8').on('data', collect(process.stdout));
+    child.stderr.setEncoding('utf8').on('data', collect(process.stderr));
 
     child.on('close', (code, signal) => {
       stopListening();
@@ -450,7 +513,8 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
       const err = new Error(
         signal ? `\`${command}\` was stopped by ${signal}` : `\`${command}\` exited with code ${code}`,
       );
-      Object.assign(err, { command, exitCode: code, signal, output: stripAnsi(tail), log });
+      /* streamed: the output was already shown live (no terminal, or V), so the report need not repeat it. */
+      Object.assign(err, { command, exitCode: code, signal, output: stripAnsi(tail), log, streamed: verbose });
       reject(err);
     });
     child.on('error', (err) => {
@@ -489,8 +553,8 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
       killTree(child, 'SIGKILL');
       done(1, { timedOut: true });
     }, timeoutMs);
-    child.stdout.on('data', (d) => (stdout += d));
-    child.stderr.on('data', (d) => (stderr += d));
+    child.stdout.setEncoding('utf8').on('data', (d) => (stdout += d));
+    child.stderr.setEncoding('utf8').on('data', (d) => (stderr += d));
     child.on('close', (code) => done(code ?? 1));
     child.on('error', (err) => {
       stderr += String(err.message ?? err);
@@ -560,10 +624,12 @@ export function printCheckTable(groups) {
 }
 
 /** The one shape for a failure: what broke, why, and what to do about it. */
-export function fail({ what, why, fix }) {
+export function fail({ what, why, auto, fix }) {
   console.log(`\n  ${c.red}✗${c.reset}  ${c.bold}${what}${c.reset}`);
   if (why) console.log(`     ${c.gray}Why:${c.reset}  ${why}`);
-  if (fix) console.log(`     ${c.gray}Fix:${c.reset}  ${c.cyan}${fix}${c.reset}`);
+  /* auto: what the scripts did or can do themselves (recovery.mjs); fix is then the manual way. */
+  if (auto) console.log(`     ${c.gray}Auto:${c.reset} ${auto}`);
+  if (fix) console.log(`     ${c.gray}${auto ? 'By hand:' : 'Fix:'}${c.reset}  ${c.cyan}${fix}${c.reset}`);
   console.log('');
 }
 
@@ -574,14 +640,21 @@ export function printError(err, { what, why, fix } = {}) {
   for (let depth = 0; current && depth < 5; depth++) {
     const prefix = depth === 0 ? '' : 'Caused by: ';
     if (current instanceof Error) {
-      console.error(
-        `  ${c.red}${prefix}${current.name}: ${current.message}${current.code ? ` [${current.code}]` : ''}${c.reset}`,
-      );
-      for (const line of (current.stack ?? '').split('\n').slice(1))
-        console.error(`  ${c.gray}${line.trim()}${c.reset}`);
-      current = current.cause;
+      try {
+        console.error(
+          `  ${c.red}${prefix}${current.name}: ${current.message}${current.code ? ` [${current.code}]` : ''}${c.reset}`,
+        );
+        const stack = String(current.stack ?? '');
+        for (const line of stack.split('\n').slice(1)) console.error(`  ${c.gray}${line.trim()}${c.reset}`);
+        current = current.cause;
+      } catch {
+        /* A getter that throws: inspect() does not call getters. Printing must not throw, or the crash handler dies
+           (exit 7) with the original error unseen. */
+        console.error(`  ${c.red}${prefix}${inspect(current)}${c.reset}`);
+        current = null;
+      }
     } else {
-      console.error(`  ${c.red}${prefix}${typeof current === 'string' ? current : JSON.stringify(current)}${c.reset}`);
+      console.error(`  ${c.red}${prefix}${typeof current === 'string' ? current : inspect(current)}${c.reset}`);
       current = null;
     }
   }

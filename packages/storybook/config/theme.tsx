@@ -1,5 +1,5 @@
-import type { ThemeVars } from '@storybook/theming';
-import { create } from '@storybook/theming/create';
+import type { ThemeVars } from 'storybook/theming';
+import { create } from 'storybook/theming/create';
 
 const tilburgColorWhite: string = '#FFFFFF';
 const tilburgColorBlack: string = '#333333';
