@@ -24,6 +24,7 @@ export * from './heading-3/component';
 export * from './heading-4/component';
 export * from './heading-5/component';
 export * from './heading-6/component';
+export * from './heading-group/component';
 export * from './html-content/component';
 export * from './language-toggle/component';
 export * from './link/component';

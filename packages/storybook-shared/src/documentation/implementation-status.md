@@ -44,6 +44,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Form Fieldset          | ✅       | ✅    | ✅      | ✅             |
 | Form Label             | ✅       | ✅    | ✅      | ✅             |
 | Heading                | ✅       | ✅    | ✅      | ✅             |
+| Heading Group          | utrecht  | ✅    | ✅      | ✅             |
 | HTML Content           | ✅       | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |
 | Link                   | ✅       | ✅    | ✅      | ✅             |

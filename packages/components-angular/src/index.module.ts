@@ -28,6 +28,7 @@ import { TilburgHeading3 } from './heading-3/component';
 import { TilburgHeading4 } from './heading-4/component';
 import { TilburgHeading5 } from './heading-5/component';
 import { TilburgHeading6 } from './heading-6/component';
+import { TilburgHeadingGroup } from './heading-group/component';
 import { TilburgHtmlContent } from './html-content/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
@@ -90,6 +91,7 @@ const components = [
   TilburgHeading4,
   TilburgHeading5,
   TilburgHeading6,
+  TilburgHeadingGroup,
   TilburgLanguageToggle,
   TilburgLink,
   TilburgLoadingSpinner,

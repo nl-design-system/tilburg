@@ -52,6 +52,8 @@ export { Heading5 } from './Heading5';
 export type { Heading5Props } from './Heading5';
 export { Heading6 } from './Heading6';
 export type { Heading6Props } from './Heading6';
+export { HeadingGroup } from './HeadingGroup';
+export type { HeadingGroupProps } from './HeadingGroup';
 export { HtmlContent } from './HtmlContent';
 export type { HtmlContentProps } from './HtmlContent';
 export { LanguageToggle } from './LanguageToggle';
