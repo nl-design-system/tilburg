@@ -59,6 +59,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Image                  | utrecht  | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |
 | Link                   | ✅       | ✅    | ✅      | ✅             |
+| Link Button            | ✅       | ✅    | ✅      | ✅             |
 | Loading Spinner        | ✅       | ✅    | ✅      | ✅             |
 | Mark                   | utrecht  | ✅    | ✅      | ✅             |
 | Modal                  | ✅       | ✅    | ✅      | ✅             |

@@ -29,6 +29,7 @@ import '@gemeente-tilburg/components-css/heading-6/index.scss';
 import '@gemeente-tilburg/components-css/html-content/index.scss';
 import '@gemeente-tilburg/components-css/language-toggle/index.scss';
 import '@gemeente-tilburg/components-css/link/index.scss';
+import '@gemeente-tilburg/components-css/link-button/index.scss';
 import '@gemeente-tilburg/components-css/loading-spinner/index.scss';
 import '@gemeente-tilburg/components-css/modal/index.scss';
 import '@gemeente-tilburg/components-css/ordered-list/index.scss';

@@ -1,0 +1,12 @@
+{
+  "components/link-button": {
+    "utrecht": {
+      "link": {
+        "placeholder-color": {
+          "$description": "Disabled link button (`.utrecht-link-button--disabled`) and placeholder link: grey, as disabled form controls. Without it the disabled link button kept the pink link colour.",
+          "$value": "{tilburg.color.gray.400}"
+        }
+      }
+    }
+  }
+}

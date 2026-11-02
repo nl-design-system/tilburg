@@ -82,6 +82,8 @@ export { LanguageToggle } from './LanguageToggle';
 export type { LanguageOption, LanguageToggleProps } from './LanguageToggle';
 export { Link } from './Link';
 export type { AriaCurrent, LinkProps } from './Link';
+export { LinkButton } from './LinkButton';
+export type { LinkButtonProps } from './LinkButton';
 export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
 export { Mark } from './Mark';

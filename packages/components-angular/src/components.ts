@@ -39,6 +39,7 @@ export * from './icon/component';
 export * from './image/component';
 export * from './language-toggle/component';
 export * from './link/component';
+export * from './link-button/component';
 export * from './loading-spinner/component';
 export * from './mark/component';
 export * from './multiline-data/component';

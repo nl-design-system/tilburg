@@ -43,6 +43,7 @@ import { TilburgIcon } from './icon/component';
 import { TilburgImage } from './image/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
+import { TilburgLinkButton } from './link-button/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
 import { TilburgMark } from './mark/component';
 import { TilburgModal } from './modal/component';
@@ -117,6 +118,7 @@ const components = [
   TilburgHeadingGroup,
   TilburgLanguageToggle,
   TilburgLink,
+  TilburgLinkButton,
   TilburgLoadingSpinner,
   TilburgMark,
   TilburgModal,

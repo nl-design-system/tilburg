@@ -1,0 +1,11 @@
+/* A button that looks like a link. Utrecht takes the layout (padding, hit area) from the `--utrecht-button-*`
+   tokens and the colours/states from `--utrecht-link-*`, but also the button typography: in Tilburg that is the
+   bold condensed button font, which made it read as button text. Use the link typography instead, so it matches
+   `.utrecht-link`. (`--utrecht-button-font-size` must be set: Utrecht's fallback for it is the font *family*.) */
+.utrecht-link-button {
+  --utrecht-button-font-family: var(--utrecht-link-font-family);
+  --utrecht-button-font-size: var(--utrecht-link-font-size);
+  --utrecht-button-font-weight: var(--utrecht-link-font-weight);
+
+  line-height: var(--utrecht-link-line-height);
+}
