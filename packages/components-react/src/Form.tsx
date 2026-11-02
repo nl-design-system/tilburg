@@ -1,3 +1,4 @@
+import '@gemeente-tilburg/components-css/form/index.scss';
 import clsx from 'clsx';
 import { FormHTMLAttributes, ForwardedRef, forwardRef, PropsWithChildren } from 'react';
 

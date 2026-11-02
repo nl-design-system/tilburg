@@ -1,3 +1,4 @@
+import '@gemeente-tilburg/components-css/figure/index.scss';
 import clsx from 'clsx';
 import { ForwardedRef, forwardRef, HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
 

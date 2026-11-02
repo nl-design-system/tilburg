@@ -27,10 +27,10 @@
           "$value": "{tilburg.space.inline.rabbit}"
         },
         "border-color": {
-          "$value": "transparent"
+          "$value": "{tilburg.line.border-color}"
         },
         "border-width": {
-          "$value": "{tilburg.border-width.md}"
+          "$value": "{tilburg.line.border-width}"
         }
       }
     }

@@ -1,10 +1,12 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'tilburg-form',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   standalone: false,
+  /* The field spacing (`.utrecht-form > * + *`) must reach projected fields, which emulated encapsulation would scope away. */
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgForm {
   @Input() id?: string;

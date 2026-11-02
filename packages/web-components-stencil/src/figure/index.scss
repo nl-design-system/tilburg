@@ -1,5 +1,4 @@
-/* utrecht-only component: `.utrecht-figure` is styled by
-   `@utrecht/component-library-css`, there is no components-css folder. */
+@use "../../../components-css/figure/index";
 
 /* Light-DOM host defaults to `display: inline`; force the block flow of the
    HTML/CSS reference (same rule as the Angular `:host`). */

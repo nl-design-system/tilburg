@@ -5,7 +5,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform';
 
-const intro = `Container for a form: a native \`<form class="utrecht-form">\` around form fields, fieldsets and a button group. The utrecht base style suffices (block flow, optional \`--utrecht-form-max-inline-size\`); Tilburg adds nothing. Give a form an accessible name (\`aria-label\` or \`aria-labelledby\` pointing at its heading) only when the page holds more than one form, so it is announced as a landmark.`;
+const intro = `Container for a form: a native \`<form class="utrecht-form">\` around form fields, fieldsets and a button group. The utrecht base style plus one Tilburg rule: the form's direct children (fields, fieldsets, the button row) get \`--tilburg-space-block-rabbit\` between them, because the utrecht form-field margins are 0 in the Tilburg theme. Give a form an accessible name (\`aria-label\` or \`aria-labelledby\` pointing at its heading) only when the page holds more than one form, so it is announced as a landmark.`;
 
 const usageAngular = `### Angular
 

@@ -36,7 +36,8 @@
               "background-color": { "$value": "{tilburg.color.gray.50}" }
             },
             "out-of-the-month": {
-              "color": { "$value": "{tilburg.color.gray.400}" }
+              "color": { "$value": "{tilburg.color.gray.400}" },
+              "background-color": { "$value": "{tilburg.color.gray.50}" }
             },
             "is-today": {
               "border-color": { "$value": "{tilburg.color.gray.500}" },

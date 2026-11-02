@@ -1,0 +1,6 @@
+/* Figure: `.utrecht-figure` is styled by `@utrecht/component-library-css`, which only sets the block margins. The
+   browser's default `<figure>` margin (40px on both sides) therefore stayed and indented the figure; Utrecht's own
+   theme resets it. */
+.utrecht-figure {
+  margin-inline: 0;
+}
