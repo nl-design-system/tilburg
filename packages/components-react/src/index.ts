@@ -80,6 +80,8 @@ export { PasswordInput } from './PasswordInput';
 export type { PasswordInputProps } from './PasswordInput';
 export { Paragraph } from './Paragraph';
 export type { ParagraphProps } from './Paragraph';
+export { PreHeading } from './PreHeading';
+export type { PreHeadingProps } from './PreHeading';
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { RadioButton } from './RadioButton';
