@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgAccordion, TilburgAccordionSection } from './accordion/component';
+import { TilburgActionGroup } from './action-group/component';
 import { TilburgAlert } from './alert/component';
 import { TilburgArticle } from './article/component';
 import { TilburgBadgeList } from './badge-list/component';
@@ -83,6 +84,7 @@ import { TilburgValidationMessage } from './validation-message/component';
 const components = [
   TilburgAccordion,
   TilburgAccordionSection,
+  TilburgActionGroup,
   TilburgAlert,
   TilburgArticle,
   TilburgBadgeList,

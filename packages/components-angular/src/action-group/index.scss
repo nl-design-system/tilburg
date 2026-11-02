@@ -1,0 +1,9 @@
+@import "../../../components-css/action-group/index";
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`,
+   which collapses the component into a text flow and prevents its block-level
+   layout from matching the HTML/CSS reference. Force block flow on the host
+   (a tag selector: `:host` does not apply without encapsulation). */
+tilburg-action-group {
+  display: block;
+}

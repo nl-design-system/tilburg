@@ -5,6 +5,7 @@ import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 // `components-css/<name>/index.scss` rules below cascade on top.
 import '@utrecht/component-library-css/dist/index.css';
 import '@gemeente-tilburg/components-css/accordion/index.scss';
+import '@gemeente-tilburg/components-css/action-group/index.scss';
 import '@gemeente-tilburg/components-css/alert/index.scss';
 import '@gemeente-tilburg/components-css/badge-counter/index.scss';
 import '@gemeente-tilburg/components-css/badge-status/index.scss';

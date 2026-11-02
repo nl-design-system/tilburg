@@ -1,5 +1,7 @@
 export { Accordion, AccordionSection } from './Accordion';
 export type { AccordionProps, AccordionSectionProps } from './Accordion';
+export { ActionGroup } from './ActionGroup';
+export type { ActionGroupDirection, ActionGroupProps } from './ActionGroup';
 export { Alert } from './Alert';
 export type { AlertLiveRegion, AlertProps, AlertVariant } from './Alert';
 export { AlertDialog } from './AlertDialog';

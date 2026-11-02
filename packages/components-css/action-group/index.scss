@@ -1,0 +1,41 @@
+/* Ported from Utrecht `components/action-group` (@utrecht/action-group-css 4.0.1, nl-design-system/utrecht main
+   @ 4d5603ed). The installed @utrecht/component-library-css 5.2.0 has no action group yet. Class names and
+   `--utrecht-action-group-*` properties are Utrecht's, so a later Utrecht upgrade can replace this file; the
+   fallbacks point at Tilburg tokens. Distinct from `.utrecht-button-group`, as in Utrecht. */
+.utrecht-action-group {
+  align-items: baseline;
+  background-color: var(--utrecht-action-group-background-color);
+  break-inside: avoid;
+  column-gap: var(--utrecht-action-group-column-gap, var(--tilburg-space-column-rat, 1em));
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-action-group-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-action-group-margin-block-start, 0));
+  min-block-size: var(--utrecht-button-block-size);
+  padding-block-end: var(--utrecht-action-group-padding-block-end);
+  padding-block-start: var(--utrecht-action-group-padding-block-start);
+  row-gap: var(--utrecht-action-group-row-gap, var(--tilburg-space-row-rat, 1em));
+}
+
+.utrecht-action-group--distanced {
+  --utrecht-space-around: 1;
+}
+
+.utrecht-action-group__link-button--row,
+.utrecht-action-group--row .utrecht-link-button,
+.utrecht-action-group:not(.utrecht-action-group--column) .utrecht-link-button {
+  --utrecht-button-padding-inline-end: 0;
+  --utrecht-button-padding-inline-start: 0;
+}
+
+.utrecht-action-group--column {
+  flex-direction: column;
+}
+
+.utrecht-action-group--column-stretch {
+  --utrecht-button-max-inline-size: none;
+
+  align-items: stretch;
+  flex-direction: column;
+  inline-size: fit-content;
+}

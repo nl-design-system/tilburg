@@ -1,4 +1,5 @@
 export * from './accordion/component';
+export * from './action-group/component';
 export * from './alert/component';
 export * from './article/component';
 export * from './badge-list/component';

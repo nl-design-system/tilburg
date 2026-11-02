@@ -1,0 +1,11 @@
+<p
+  class="utrecht-action-group"
+  [class.utrecht-action-group--row]="direction === 'row'"
+  [class.utrecht-action-group--column]="direction === 'column'"
+  [class.utrecht-action-group--column-stretch]="direction === 'column-stretch'"
+  [attr.role]="role || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+>
+  <ng-content></ng-content>
+</p>

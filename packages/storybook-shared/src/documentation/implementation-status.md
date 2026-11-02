@@ -23,6 +23,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Component              | HTML/CSS | React | Angular | Web Components |
 | ---------------------- | -------- | ----- | ------- | -------------- |
 | Accordion              | ✅       | ✅    | ✅      | ✅             |
+| Action Group           | ✅       | ✅    | ✅      | ✅             |
 | Alert                  | ✅       | ✅    | ✅      | ✅             |
 | Article                | utrecht  | ✅    | ✅      | ✅             |
 | Badge Counter          | ✅       | —     | —       | —              |
