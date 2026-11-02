@@ -39,6 +39,7 @@ export const LoadingSpinner = forwardRef(
       <div
         ref={ref}
         className="tilburg-loading-spinner__overlay"
+        role="group"
         aria-busy="true"
         aria-label={ariaLabel ?? undefined}
         {...restProps}

@@ -56,7 +56,7 @@ Props: \`visible?: boolean\` (default \`false\`), \`title?: string | null\`, \`m
 const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
-<div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
+<div class="tilburg-loading-spinner__overlay" role="group" aria-busy="true" aria-label="Bezig met laden">
   <div class="tilburg-loading-spinner__panel">
     <div class="tilburg-loading-spinner__content" role="status">
       <span class="tilburg-loading-spinner__title">Bezig met laden</span>
@@ -138,7 +138,7 @@ export interface Example {
 export const examples = {
   visible: {
     name: 'Visible overlay (title + message)',
-    html: `<div class="tilburg-loading-spinner__overlay" aria-busy="true" aria-label="Bezig met laden">
+    html: `<div class="tilburg-loading-spinner__overlay" role="group" aria-busy="true" aria-label="Bezig met laden">
   <div class="tilburg-loading-spinner__panel">
     <div class="tilburg-loading-spinner__content" role="status">
       <span class="tilburg-loading-spinner__title">Bezig met laden</span>
