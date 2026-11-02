@@ -1,0 +1,18 @@
+/* Tilburg toptask link: colours and sizes come from the `utrecht.toptask-link.*` tokens
+   (design-tokens/src/patches/toptask-link.tokens.json); this adds the button typography and the icon spacing. */
+.utrecht-toptask-link__title {
+  font-family: var(--utrecht-button-font-family);
+  font-weight: var(--utrecht-button-font-weight);
+}
+
+/* Utrecht pads the icon with `--utrecht-space-block-xs`, which Tilburg does not define. */
+.utrecht-toptask-link__icon {
+  padding-block-end: var(--tilburg-space-block-beetle);
+}
+
+/* Forced colours drop the tile background, leaving loose text; keep the tile outline visible. */
+@media (forced-colors: active) {
+  .utrecht-toptask-link {
+    border: 1px solid linktext;
+  }
+}

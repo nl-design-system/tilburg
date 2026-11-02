@@ -1,0 +1,10 @@
+<a
+  class="utrecht-toptask-link"
+  [attr.href]="href || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+>
+  <!-- No whitespace inside the icon wrapper: the component removes it when no icon is projected. -->
+  <span #icon class="utrecht-toptask-link__icon"><ng-content select="[slot=icon]"></ng-content></span>
+  <span class="utrecht-toptask-link__title"><ng-content></ng-content></span>
+</a>

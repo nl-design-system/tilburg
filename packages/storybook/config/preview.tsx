@@ -49,6 +49,7 @@ import '@gemeente-tilburg/components-css/table/index.scss';
 import '@gemeente-tilburg/components-css/textarea/index.scss';
 import '@gemeente-tilburg/components-css/textbox/index.scss';
 import '@gemeente-tilburg/components-css/tooltip/index.scss';
+import '@gemeente-tilburg/components-css/toptask-link/index.scss';
 import '@gemeente-tilburg/components-css/unordered-list/index.scss';
 import '@gemeente-tilburg/components-css/validation-message/index.scss';
 import '@gemeente-tilburg/font/src/index.scss';

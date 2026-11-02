@@ -1,0 +1,25 @@
+{
+  "components/toptask-link": {
+    "utrecht": {
+      "toptask-link": {
+        "background-color": { "$value": "{tilburg.interaction.color}" },
+        "color": { "$value": "{tilburg.color.white}" },
+        "font-size": { "$value": "{tilburg.typography.font-size.lg}" },
+        "line-height": { "$value": "{tilburg.typography.line-height.sm}" },
+        "min-block-size": { "$value": "132px" },
+        "min-inline-size": { "$value": "240px" },
+        "padding-block-start": { "$value": "{tilburg.space.block.rabbit}" },
+        "padding-block-end": { "$value": "{tilburg.space.block.rabbit}" },
+        "padding-inline-start": { "$value": "{tilburg.space.inline.rabbit}" },
+        "padding-inline-end": { "$value": "{tilburg.space.inline.rabbit}" },
+        "hover": {
+          "background-color": { "$value": "{tilburg.interaction.hover.color}" },
+          "color": { "$value": "{tilburg.color.white}" }
+        },
+        "icon": {
+          "size": { "$value": "{tilburg.icon.toptask.size}" }
+        }
+      }
+    }
+  }
+}
