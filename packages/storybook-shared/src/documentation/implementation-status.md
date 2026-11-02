@@ -67,6 +67,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Modal                  | ✅       | ✅    | ✅      | ✅             |
 | Multiline Data         | utrecht  | ✅    | ✅      | ✅             |
 | Nav Bar                | ✅       | ✅    | ✅      | ✅             |
+| Nav List               | ✅       | ✅    | ✅      | ✅             |
 | Number Data            | utrecht  | ✅    | ✅      | ✅             |
 | Ordered List           | ✅       | ✅    | ✅      | ✅             |
 | Page                   | utrecht  | ✅    | ✅      | ✅             |

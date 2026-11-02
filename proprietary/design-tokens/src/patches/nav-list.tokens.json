@@ -1,0 +1,13 @@
+{
+  "components/nav-list": {
+    "utrecht": {
+      "nav-list": {
+        "link": {
+          "font-weight": {
+            "$value": "700"
+          }
+        }
+      }
+    }
+  }
+}

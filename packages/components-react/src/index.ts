@@ -98,6 +98,8 @@ export { MultilineData } from './MultilineData';
 export type { MultilineDataProps } from './MultilineData';
 export { NavBar } from './NavBar';
 export type { NavBarProps } from './NavBar';
+export { NavList } from './NavList';
+export type { NavListItem, NavListProps } from './NavList';
 export { NumberData } from './NumberData';
 export type { NumberDataProps, NumberDataVariant } from './NumberData';
 export { OrderedList } from './OrderedList';
