@@ -1,0 +1,54 @@
+/* Tilburg layer on top of utrecht's `.utrecht-sidenav` ("navigatie sidenav", base CSS 5.2.0).
+   The utrecht rules read a few global utrecht tokens (`--utrecht-space-*`, `--utrecht-color-grey-80`,
+   the bold weight) that the Tilburg theme does not define, so the spacing and separators collapsed.
+   They are mapped onto Tilburg tokens here, scoped to the side nav. Colours come from the
+   `--utrecht-sidenav-*` tokens (dark text, pink hover/current, as in the Tilburg Figma side-nav). */
+.utrecht-sidenav {
+  --utrecht-color-grey-80: var(--tilburg-line-border-color);
+  --utrecht-space-block-xs: var(--tilburg-space-block-snail);
+  --utrecht-space-block-2xs: var(--tilburg-space-block-ant);
+  --utrecht-space-inline-3xs: var(--tilburg-space-inline-flea);
+  --utrecht-space-inline-lg: var(--tilburg-space-inline-rabbit);
+  --utrecht-typography-weight-scale-bold-font-weight: 700;
+  --utrecht-sidenav-marker-current-color: var(--tilburg-interaction-color);
+}
+
+.utrecht-sidenav__link--current,
+.utrecht-sidenav__link--current-child {
+  color: var(--tilburg-interaction-color);
+}
+
+/* utrecht hides the "metro line" below the last item only for its marker `<div>`s
+   (`.utrecht-sidenav__connection--last`); with `--pseudo-elements` it kept dangling below the list. */
+.utrecht-sidenav--pseudo-elements .utrecht-sidenav__item--last > .utrecht-sidenav__link::after {
+  display: none;
+}
+
+/* utrecht puts the marker centre at a fixed 20px (16px for children), which is the middle of utrecht's own first line
+   (8px padding + 22.4px line height); with Tilburg's padding and line height it sat 4px above the text. Centre it on
+   the first line instead, and start the connector line just below it (marker half height + outline), as utrecht
+   does. The extra classes outrank utrecht's `::after` selector, which has a `:not()` of three classes. */
+.utrecht-sidenav.utrecht-sidenav--pseudo-elements .utrecht-sidenav__item > .utrecht-sidenav__link {
+  --_tilburg-sidenav-marker-center: calc(var(--utrecht-space-block-xs) + 0.5lh);
+
+  &.utrecht-sidenav__link--child {
+    --_tilburg-sidenav-marker-center: calc(var(--utrecht-space-block-2xs) + 0.5lh);
+  }
+
+  &::before {
+    inset-block-start: var(--_tilburg-sidenav-marker-center);
+  }
+
+  &::after {
+    inset-block-start: calc(
+      var(--_tilburg-sidenav-marker-center) + var(--utrecht-sidenav-marker-height) / 2 +
+        var(--utrecht-sidenav-marker-outline-width)
+    );
+  }
+}
+
+/* utrecht fills the current child's ring with the current colour but keeps the ring in the link colour; in utrecht
+   both are the same blue, giving a solid dot. Tilburg's link colour is dark, so colour the ring too. */
+.utrecht-sidenav--pseudo-elements .utrecht-sidenav__link--child.utrecht-sidenav__link--current-child::before {
+  border-color: var(--utrecht-sidenav-marker-current-color);
+}

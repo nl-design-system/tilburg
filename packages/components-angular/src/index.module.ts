@@ -67,6 +67,7 @@ import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
+import { TilburgSideNav } from './side-nav/component';
 import { TilburgSkipLink } from './skip-link/component';
 import { TilburgSubscript } from './subscript/component';
 import { TilburgSuperscript } from './superscript/component';
@@ -166,6 +167,7 @@ const components = [
   TilburgFormLabel,
   TilburgSelect,
   TilburgSeparator,
+  TilburgSideNav,
   TilburgSkipLink,
   TilburgSubscript,
   TilburgSuperscript,

@@ -83,6 +83,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Radio Button           | ✅       | ✅    | ✅      | ✅             |
 | Select                 | ✅       | ✅    | ✅      | ✅             |
 | Separator              | ✅       | ✅    | ✅      | ✅             |
+| Side Nav               | ✅       | ✅    | ✅      | ✅             |
 | Skip Link              | ✅       | ✅    | ✅      | ✅             |
 | Subscript              | ✅       | ✅    | ✅      | ✅             |
 | Superscript            | ✅       | ✅    | ✅      | ✅             |

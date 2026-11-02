@@ -130,6 +130,8 @@ export { Select } from './Select';
 export type { SelectProps } from './Select';
 export { Separator } from './Separator';
 export type { SeparatorProps } from './Separator';
+export { SideNav } from './SideNav';
+export type { SideNavItem, SideNavProps } from './SideNav';
 export { SkipLink } from './SkipLink';
 export type { SkipLinkProps, SkipLinkVisibility } from './SkipLink';
 export { Subscript } from './Subscript';

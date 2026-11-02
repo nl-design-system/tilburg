@@ -44,6 +44,7 @@ import '@gemeente-tilburg/components-css/radio-button/index.scss';
 import '@gemeente-tilburg/components-css/password-input/index.scss';
 import '@gemeente-tilburg/components-css/select/index.scss';
 import '@gemeente-tilburg/components-css/separator/index.scss';
+import '@gemeente-tilburg/components-css/side-nav/index.scss';
 import '@gemeente-tilburg/components-css/skip-link/index.scss';
 import '@gemeente-tilburg/components-css/subscript/index.scss';
 import '@gemeente-tilburg/components-css/superscript/index.scss';

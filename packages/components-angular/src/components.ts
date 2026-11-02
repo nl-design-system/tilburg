@@ -62,6 +62,7 @@ export * from './progress-bar/component';
 export * from './radio-button/component';
 export * from './select/component';
 export * from './separator/component';
+export * from './side-nav/component';
 export * from './skip-link/component';
 export * from './subscript/component';
 export * from './superscript/component';
