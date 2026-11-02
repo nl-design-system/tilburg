@@ -13,6 +13,7 @@ export * from './code/component';
 export * from './combobox/component';
 export * from './data-list/component';
 export * from './document/component';
+export * from './emphasis/component';
 export * from './form-field-description/component';
 export * from './form-field/component';
 export * from './form-fieldset/component';

@@ -1,0 +1,8 @@
+@if (strong) {
+<strong class="utrecht-emphasis utrecht-emphasis--strong"
+  ><ng-template [ngTemplateOutlet]="content"></ng-template
+></strong>
+} @else {
+<em class="utrecht-emphasis utrecht-emphasis--stressed"><ng-template [ngTemplateOutlet]="content"></ng-template></em>
+}
+<ng-template #content><ng-content></ng-content></ng-template>

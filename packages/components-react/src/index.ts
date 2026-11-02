@@ -30,6 +30,8 @@ export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';
 export type { DataListItemProps, DataListKeyProps, DataListProps, DataListValueProps } from './DataList';
 export { Document } from './Document';
 export type { DocumentProps } from './Document';
+export { Emphasis } from './Emphasis';
+export type { EmphasisProps } from './Emphasis';
 export { Fieldset } from './Fieldset';
 export type { FieldsetProps } from './Fieldset';
 export { FormField } from './FormField';

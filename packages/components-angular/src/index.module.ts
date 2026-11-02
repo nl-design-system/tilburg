@@ -17,6 +17,7 @@ import { TilburgCodeBlock } from './code-block/component';
 import { TilburgCombobox } from './combobox/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDocument } from './document/component';
+import { TilburgEmphasis } from './emphasis/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
 import { TilburgFieldset } from './form-fieldset/component';
@@ -110,6 +111,7 @@ const components = [
   TilburgTableHeaderCellAttr,
   TilburgTableRowAttr,
   TilburgDocument,
+  TilburgEmphasis,
   TilburgHtmlContent,
   TilburgFormLabel,
   TilburgSelect,

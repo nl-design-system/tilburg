@@ -38,6 +38,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Combobox               | ✅       | ✅    | ✅      | ✅             |
 | Data List              | ✅       | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
+| Emphasis               | utrecht  | ✅    | ✅      | ✅             |
 | Form Field             | ✅       | ✅    | ✅      | ✅             |
 | Form Field Description | utrecht  | ✅    | ✅      | ✅             |
 | Form Fieldset          | ✅       | ✅    | ✅      | ✅             |
