@@ -50,6 +50,7 @@ import { TilburgLoadingSpinner } from './loading-spinner/component';
 import { TilburgMark } from './mark/component';
 import { TilburgModal } from './modal/component';
 import { TilburgMultilineData } from './multiline-data/component';
+import { TilburgNavBar } from './nav-bar/component';
 import { TilburgNumberData } from './number-data/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
@@ -130,6 +131,7 @@ const components = [
   TilburgMark,
   TilburgModal,
   TilburgMultilineData,
+  TilburgNavBar,
   TilburgNumberData,
   TilburgFormField,
   TilburgFormFieldDescription,

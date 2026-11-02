@@ -96,6 +96,8 @@ export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
 export { MultilineData } from './MultilineData';
 export type { MultilineDataProps } from './MultilineData';
+export { NavBar } from './NavBar';
+export type { NavBarProps } from './NavBar';
 export { NumberData } from './NumberData';
 export type { NumberDataProps, NumberDataVariant } from './NumberData';
 export { OrderedList } from './OrderedList';

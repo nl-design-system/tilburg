@@ -1,0 +1,11 @@
+/* Tilburg layer on top of utrecht's `.utrecht-nav-bar` (base CSS 5.2.0). The bar takes the
+   page-header look (`--utrecht-nav-bar-*` tokens: blue band, white text, 1150px content width);
+   links inside it follow the bar's text colour instead of the pink link colour. blue-400
+   rather than the header's blue-300, so white link text meets 4.5:1. */
+.utrecht-nav-bar {
+  --utrecht-link-color: var(--utrecht-nav-bar-color);
+  --utrecht-link-hover-color: var(--utrecht-nav-bar-color);
+  --utrecht-link-active-color: var(--utrecht-nav-bar-color);
+  --utrecht-link-visited-color: var(--utrecht-nav-bar-color);
+  --utrecht-link-text-decoration-color: currentColor;
+}
