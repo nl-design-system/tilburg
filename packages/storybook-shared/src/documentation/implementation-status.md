@@ -35,6 +35,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Checkbox               | ✅       | ✅    | ✅      | ✅             |
 | Code                   | utrecht  | ✅    | ✅      | ✅             |
 | Code Block             | ✅       | ✅    | ✅      | ✅             |
+| Color Sample           | utrecht  | ✅    | ✅      | ✅             |
 | Combobox               | ✅       | ✅    | ✅      | ✅             |
 | Data List              | ✅       | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
