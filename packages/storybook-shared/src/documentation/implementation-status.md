@@ -89,6 +89,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Password Input         | ✅       | ✅    | ✅      | ✅             |
 | Pre Heading            | utrecht  | ✅    | ✅      | ✅             |
 | Preserve Data          | utrecht  | ✅    | ✅      | ✅             |
+| Process Steps          | ✅       | ✅    | ✅      | ✅             |
 | Progress Bar           | ✅       | ✅    | ✅      | ✅             |
 | Radio Button           | ✅       | ✅    | ✅      | ✅             |
 | Select                 | ✅       | ✅    | ✅      | ✅             |

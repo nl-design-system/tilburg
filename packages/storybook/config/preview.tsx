@@ -45,6 +45,7 @@ import '@gemeente-tilburg/components-css/ordered-list/index.scss';
 import '@gemeente-tilburg/components-css/page-footer/index.scss';
 import '@gemeente-tilburg/components-css/page-header/index.scss';
 import '@gemeente-tilburg/components-css/pagination/index.scss';
+import '@gemeente-tilburg/components-css/process-steps/index.scss';
 import '@gemeente-tilburg/components-css/progress-bar/index.scss';
 import '@gemeente-tilburg/components-css/radio-button/index.scss';
 import '@gemeente-tilburg/components-css/password-input/index.scss';

@@ -1,0 +1,68 @@
+<ol class="denhaag-process-steps">
+  <li
+    *ngFor="let step of steps ?? []; let i = index"
+    class="denhaag-process-steps__step denhaag-process-steps__step--{{ status(step) }}"
+    [attr.aria-current]="status(step) === 'current' ? 'step' : null"
+  >
+    <div class="denhaag-process-steps__step-header">
+      <div class="denhaag-step-marker denhaag-step-marker--{{ status(step) }}" aria-hidden="true">
+        <ng-container *ngIf="status(step) === 'checked'; else number"
+          ><ng-container *ngTemplateOutlet="check"></ng-container
+        ></ng-container>
+        <ng-template #number>{{ step.marker ?? i + 1 }}</ng-template>
+      </div>
+      <p class="denhaag-process-steps__step-heading denhaag-process-steps__step-heading--{{ status(step) }}">
+        <span class="utrecht-visually-hidden">{{ statusLabels[status(step)] }}: </span>{{ step.title }}
+      </p>
+    </div>
+    <div class="denhaag-process-steps__step-body">
+      <div *ngIf="stepConnector(i) as connector" [attr.class]="connector" aria-hidden="true"></div>
+      <div *ngIf="step.meta" class="denhaag-process-steps__step-meta">{{ step.meta }}</div>
+      <div *ngIf="step.date" class="denhaag-process-steps__step-meta denhaag-process-steps__step-meta--date">
+        {{ step.date }}
+      </div>
+    </div>
+    <div *ngIf="step.steps?.length" class="denhaag-process-steps__step-details">
+      <ol class="denhaag-process-steps">
+        <li
+          *ngFor="let sub of step.steps; let j = index"
+          class="denhaag-process-steps__sub-step denhaag-process-steps__sub-step--{{ status(sub) }}"
+        >
+          <div class="denhaag-process-steps__step-header denhaag-process-steps__step-header--nested">
+            <div
+              class="denhaag-step-marker denhaag-step-marker--{{ status(sub) }} denhaag-step-marker--nested"
+              aria-hidden="true"
+            >
+              <ng-container *ngIf="status(sub) === 'checked'"
+                ><ng-container *ngTemplateOutlet="check"></ng-container
+              ></ng-container>
+            </div>
+            <p class="denhaag-process-steps__sub-step-heading">
+              <span class="utrecht-visually-hidden">{{ statusLabels[status(sub)] }}: </span>{{ sub.title }}
+            </p>
+          </div>
+          <div *ngIf="subStepConnector(i, j) as connector" [attr.class]="connector" aria-hidden="true"></div>
+          <div *ngIf="sub.date" class="denhaag-process-steps__step-meta denhaag-process-steps__step-meta--nested">
+            {{ sub.date }}
+          </div>
+        </li>
+      </ol>
+    </div>
+  </li>
+</ol>
+
+<ng-template #check>
+  <svg
+    class="denhaag-icon"
+    aria-hidden="true"
+    focusable="false"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+</ng-template>

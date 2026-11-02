@@ -142,6 +142,8 @@ export { PreHeading } from './PreHeading';
 export type { PreHeadingProps } from './PreHeading';
 export { PreserveData } from './PreserveData';
 export type { PreserveDataProps } from './PreserveData';
+export { ProcessSteps } from './ProcessSteps';
+export type { ProcessStep, ProcessStepsProps, ProcessStepStatus, ProcessSubStep } from './ProcessSteps';
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { RadioButton } from './RadioButton';

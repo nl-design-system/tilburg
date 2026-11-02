@@ -1,0 +1,343 @@
+/* Process steps, ported from Gemeente Den Haag's NL Design System components, which
+   @utrecht/components 6.2.0 (`process-steps/README.md`) points to as its source:
+   https://github.com/nl-design-system/denhaag `components/ProcessSteps/src/*.scss` (@gemeente-denhaag/process-steps
+   4.3.4) and `components/StepMarker/src/*.scss` (@gemeente-denhaag/step-marker 3.1.3), main branch, November 2026.
+   Class names and `--denhaag-*` custom properties are kept as-is so the upstream CSS can replace this file later.
+   Tilburg values are the fallbacks of those custom properties: the design-token build drops every `denhaag.*` token
+   (see `isPublicToken` in `proprietary/design-tokens/style-dictionary-config.mjs`), so a token patch would not reach
+   the theme.
+   Ported: the step list, steps, sub-steps, meta, and the checked / current / not-checked appearances.
+   Not ported (Tilburg does not render them): the collapsible header toggle and the warning / error / disabled /
+   default appearances. The connector uses logical properties instead of upstream's `left` / `top` / `height`. */
+
+/* StepList */
+.denhaag-process-steps {
+  --denhaag-process-steps-step-distance: 40px;
+  --denhaag-process-steps-sub-step-distance: 24px;
+
+  font-family: var(--denhaag-process-steps-font-family, var(--utrecht-document-font-family));
+  font-size: var(--denhaag-process-steps-font-size, var(--tilburg-typography-font-size-md));
+  line-height: var(--denhaag-process-steps-line-height, var(--tilburg-typography-line-height-md));
+  list-style: none;
+  margin-block-end: 0; /* reset <ol> */
+  margin-block-start: 0; /* reset <ol> */
+  padding-inline-start: 0; /* reset <ol> */
+  position: relative;
+}
+
+/* Step */
+.denhaag-process-steps__step {
+  padding-block-end: var(--denhaag-process-steps-step-padding-block-end, 0);
+  padding-block-start: var(--denhaag-process-steps-step-padding-block-start, 0);
+  position: relative;
+}
+
+.denhaag-process-steps__step + .denhaag-process-steps__step {
+  margin-block-start: var(--denhaag-process-steps-step-distance);
+}
+
+/* StepHeader */
+.denhaag-process-steps__step-header {
+  align-items: var(--denhaag-process-steps-step-header-align-items, center);
+  display: flex;
+  gap: 16px;
+}
+
+.denhaag-process-steps__step-header--nested {
+  gap: 24px;
+}
+
+/* StepHeading */
+.denhaag-process-steps__step-heading {
+  align-items: center;
+  color: var(--denhaag-process-steps-step-heading-color, var(--tilburg-color-gray-500));
+  display: flex;
+  font-family: var(--denhaag-process-steps-step-heading-font-family, var(--tilburg-typography-font-family-primary));
+  font-size: var(--denhaag-process-steps-step-heading-font-size, var(--tilburg-typography-font-size-lg));
+  font-weight: var(--denhaag-process-steps-step-heading-font-weight, var(--tilburg-document-strong-font-weight));
+  line-height: var(--denhaag-process-steps-step-heading-line-height, var(--tilburg-typography-line-height-sm));
+  margin-block-end: 0;
+  margin-block-start: 0;
+  overflow-wrap: var(--denhaag-process-steps-step-heading-overflow-wrap, anywhere);
+  text-align: start;
+}
+
+.denhaag-process-steps__step-heading--not-checked {
+  color: var(--denhaag-process-steps-step-heading-not-checked-color, var(--tilburg-color-gray-400));
+}
+
+.denhaag-process-steps__step-heading--checked {
+  color: var(--denhaag-process-steps-step-heading-checked-color, var(--tilburg-color-gray-500));
+  font-size: var(
+    --denhaag-process-steps-step-heading-checked-font-size,
+    var(--denhaag-process-steps-step-heading-font-size, var(--tilburg-typography-font-size-lg))
+  );
+  font-weight: var(
+    --denhaag-process-steps-step-heading-checked-font-weight,
+    var(--denhaag-process-steps-step-heading-font-weight, var(--tilburg-document-strong-font-weight))
+  );
+}
+
+.denhaag-process-steps__step-heading--current {
+  color: var(--denhaag-process-steps-step-heading-current-color, var(--tilburg-color-gray-500));
+  font-size: var(
+    --denhaag-process-steps-step-heading-current-font-size,
+    var(--denhaag-process-steps-step-heading-font-size, var(--tilburg-typography-font-size-lg))
+  );
+  font-weight: var(
+    --denhaag-process-steps-step-heading-current-font-weight,
+    var(--denhaag-process-steps-step-heading-font-weight, var(--tilburg-document-strong-font-weight))
+  );
+}
+
+/* StepDetails, StepBody */
+.denhaag-process-steps__step-details {
+  display: block;
+}
+
+.denhaag-process-steps__step-body {
+  position: relative;
+}
+
+/* StepMeta */
+.denhaag-process-steps__step-meta {
+  color: var(--denhaag-process-steps-step-meta-color, var(--tilburg-document-subtle-color));
+  font-size: var(--denhaag-process-steps-step-meta-font-size, var(--tilburg-typography-font-size-sm));
+  margin-inline-start: calc(var(--denhaag-step-marker-size, var(--tilburg-size-sm)) + 16px);
+  position: relative;
+}
+
+.denhaag-process-steps__step-meta--date {
+  color: var(
+    --denhaag-process-steps-step-meta-date-color,
+    var(--denhaag-process-steps-step-meta-color, var(--tilburg-document-subtle-color))
+  );
+  font-size: var(
+    --denhaag-process-steps-step-meta-date-font-size,
+    var(--denhaag-process-steps-step-meta-font-size, var(--tilburg-typography-font-size-sm))
+  );
+}
+
+.denhaag-process-steps__step-meta--nested {
+  font-size: var(
+    --denhaag-process-steps-step-meta-nested-font-size,
+    var(--denhaag-process-steps-step-meta-font-size, var(--tilburg-typography-font-size-sm))
+  );
+  margin-block-start: var(--denhaag-process-steps-step-meta-nested-margin-block-start, 0);
+  margin-inline-start: 48px;
+}
+
+/* SubStep, SubStepHeading */
+.denhaag-process-steps__sub-step {
+  margin-block-start: var(--denhaag-process-steps-sub-step-distance);
+  position: relative;
+}
+
+.denhaag-process-steps__sub-step-heading {
+  margin-block-end: 0; /* reset <p> */
+  margin-block-start: 0; /* reset <p> */
+}
+
+/* Tilburg addition: the status is also read out as text, not only shown by colour and icon. Utrecht CSS 5.2.0 has no
+   visually-hidden utility (see the same rule in `alert/index.scss`). */
+.denhaag-process-steps .utrecht-visually-hidden {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/* StepMarker */
+.denhaag-step-marker {
+  align-items: center;
+  background-color: var(--denhaag-step-marker-background-color, var(--tilburg-color-white));
+  block-size: var(--denhaag-step-marker-size, var(--tilburg-size-sm));
+  border-color: var(--denhaag-step-marker-border-color, transparent);
+  border-radius: var(--denhaag-step-marker-border-radius, 50%);
+  border-style: solid;
+  border-width: var(--denhaag-step-marker-border-width, var(--tilburg-border-width-md));
+  box-sizing: border-box;
+  color: var(--denhaag-step-marker-color, var(--tilburg-color-gray-400));
+  display: flex;
+  flex-grow: 0;
+  font-family: var(--denhaag-step-marker-font-family, var(--tilburg-typography-font-family-primary));
+  font-size: var(--denhaag-step-marker-font-size, var(--tilburg-typography-font-size-md));
+  font-weight: var(--denhaag-step-marker-font-weight, var(--tilburg-document-strong-font-weight));
+  inline-size: var(--denhaag-step-marker-size, var(--tilburg-size-sm));
+  justify-content: center;
+  margin-block-end: var(--denhaag-step-marker-margin, 0);
+  margin-block-start: var(--denhaag-step-marker-margin, 0);
+  min-block-size: var(--denhaag-step-marker-min-size, var(--denhaag-step-marker-size, var(--tilburg-size-sm)));
+  min-inline-size: var(--denhaag-step-marker-min-size, var(--denhaag-step-marker-size, var(--tilburg-size-sm)));
+  padding-inline-end: 0;
+  position: relative;
+  z-index: 1;
+
+  .denhaag-icon {
+    block-size: var(--denhaag-step-marker-icon-size, var(--tilburg-size-icon-sm));
+    inline-size: var(--denhaag-step-marker-icon-size, var(--tilburg-size-icon-sm));
+  }
+}
+
+.denhaag-step-marker--nested {
+  block-size: var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs));
+  border-width: var(
+    --denhaag-step-marker-nested-border-width,
+    var(--denhaag-step-marker-border-width, var(--tilburg-border-width-md))
+  );
+  inline-size: var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs));
+  margin-inline-start: calc(
+    (
+        var(--denhaag-step-marker-size, var(--tilburg-size-sm)) -
+          var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs))
+      ) / 2
+  );
+  min-block-size: var(
+    --denhaag-step-marker-nested-min-size,
+    var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs))
+  );
+  min-inline-size: var(
+    --denhaag-step-marker-nested-min-size,
+    var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs))
+  );
+
+  .denhaag-icon {
+    block-size: var(--denhaag-step-marker-nested-icon-size, 12px);
+    inline-size: var(--denhaag-step-marker-nested-icon-size, 12px);
+  }
+}
+
+.denhaag-step-marker--not-checked {
+  background-color: var(--denhaag-step-marker-not-checked-background-color, var(--tilburg-color-white));
+
+  /* gray-400, not gray-300: the empty circle of a nested step is the only thing that shows it, so it needs 3:1. */
+  border-color: var(--denhaag-step-marker-not-checked-border-color, var(--tilburg-color-gray-400));
+  color: var(--denhaag-step-marker-not-checked-color, var(--tilburg-color-gray-400));
+
+  &.denhaag-step-marker--nested {
+    background-color: var(
+      --denhaag-step-marker-not-checked-nested-background-color,
+      var(--denhaag-step-marker-not-checked-background-color, var(--tilburg-color-white))
+    );
+    border-color: var(
+      --denhaag-step-marker-not-checked-nested-border-color,
+      var(--denhaag-step-marker-not-checked-border-color, var(--tilburg-color-gray-400))
+    );
+    color: var(
+      --denhaag-step-marker-not-checked-nested-color,
+      var(--denhaag-step-marker-not-checked-color, var(--tilburg-color-gray-400))
+    );
+  }
+}
+
+.denhaag-step-marker--checked {
+  background-color: var(--denhaag-step-marker-checked-background-color, var(--tilburg-feedback-positive-color));
+  border-color: var(--denhaag-step-marker-checked-border-color, var(--tilburg-feedback-positive-color));
+  color: var(--denhaag-step-marker-checked-color, var(--tilburg-color-white));
+
+  &.denhaag-step-marker--nested {
+    background-color: var(
+      --denhaag-step-marker-checked-nested-background-color,
+      var(--denhaag-step-marker-checked-background-color, var(--tilburg-feedback-positive-color))
+    );
+    border-color: var(
+      --denhaag-step-marker-checked-nested-border-color,
+      var(--denhaag-step-marker-checked-border-color, var(--tilburg-feedback-positive-color))
+    );
+    color: var(
+      --denhaag-step-marker-checked-nested-color,
+      var(--denhaag-step-marker-checked-color, var(--tilburg-color-white))
+    );
+  }
+}
+
+.denhaag-step-marker--current {
+  background-color: var(--denhaag-step-marker-current-background-color, var(--tilburg-interaction-color));
+  border-color: var(--denhaag-step-marker-current-border-color, var(--tilburg-interaction-color));
+  color: var(--denhaag-step-marker-current-color, var(--tilburg-color-white));
+
+  &.denhaag-step-marker--nested {
+    background-color: var(
+      --denhaag-step-marker-current-nested-background-color,
+      var(--denhaag-step-marker-current-background-color, var(--tilburg-interaction-color))
+    );
+    border-color: var(
+      --denhaag-step-marker-current-nested-border-color,
+      var(--denhaag-step-marker-current-border-color, var(--tilburg-interaction-color))
+    );
+    color: var(
+      --denhaag-step-marker-current-nested-color,
+      var(--denhaag-step-marker-current-color, var(--tilburg-color-white))
+    );
+  }
+}
+
+/* StepMarkerConnector */
+.denhaag-step-marker__connector {
+  block-size: 100%;
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--denhaag-step-marker-size, var(--tilburg-size-sm)) / 2);
+  outline: var(--denhaag-step-marker-connector-width, 1px) var(--denhaag-step-marker-connector-style, dashed)
+    var(--denhaag-step-marker-connector-color, var(--tilburg-color-gray-300));
+  position: absolute;
+}
+
+.denhaag-step-marker__connector--main-to-main {
+  inset-block-start: calc(-1 * calc(var(--denhaag-step-marker-size, var(--tilburg-size-sm)) / 2));
+  padding-block-end: calc(
+    var(--denhaag-process-steps-step-distance) + var(--denhaag-step-marker-size, var(--tilburg-size-sm))
+  );
+}
+
+.denhaag-step-marker__connector--main-to-nested {
+  inset-block-start: calc(-1 * calc(var(--denhaag-step-marker-size, var(--tilburg-size-sm)) / 2));
+  padding-block-end: calc(
+    var(--denhaag-process-steps-step-distance) + var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs))
+  );
+}
+
+.denhaag-step-marker__connector--nested-to-nested {
+  inset-block-start: var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs));
+  padding-block-end: var(--denhaag-process-steps-sub-step-distance);
+}
+
+.denhaag-step-marker__connector--nested-to-main {
+  inset-block-start: var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs));
+  padding-block-end: var(--denhaag-process-steps-step-distance);
+}
+
+.denhaag-step-marker__connector--not-checked {
+  outline-color: var(
+    --denhaag-step-marker-connector-not-checked-outline-color,
+    var(--denhaag-step-marker-connector-outline-color, var(--tilburg-color-gray-300))
+  );
+  outline-style: var(--denhaag-step-marker-connector-not-checked-outline-style, dashed);
+  outline-width: var(
+    --denhaag-step-marker-connector-not-checked-outline-width,
+    var(--denhaag-step-marker-connector-outline-width, 1px)
+  );
+}
+
+.denhaag-step-marker__connector--checked,
+.denhaag-step-marker__connector--current {
+  outline-color: var(
+    --denhaag-step-marker-connector-checked-outline-color,
+    var(--denhaag-step-marker-connector-outline-color, var(--tilburg-feedback-positive-color))
+  );
+  outline-style: var(--denhaag-step-marker-connector-checked-outline-style, solid);
+  outline-width: var(
+    --denhaag-step-marker-connector-checked-outline-width,
+    var(--denhaag-step-marker-connector-outline-width, 1px)
+  );
+}
+
+/* Forced colours replace the marker fills, so the current step's marker would look like a step still to come. */
+@media (forced-colors: active) {
+  .denhaag-step-marker--current {
+    background-color: highlight;
+    color: highlighttext;
+    forced-color-adjust: none;
+  }
+}
