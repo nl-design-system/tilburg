@@ -119,7 +119,7 @@ export const AllPermutations: Story = {
       </div>
       <div>
         <h4>With displayName + headingLevel</h4>
-        <Accordion displayName="Veelgestelde vragen" headingLevel={2}>
+        <Accordion displayName="Veelgestelde vragen over afval" headingLevel={2}>
           <AccordionSection sectionKey="d1" label="Vraag 1" autoToggle>
             <Paragraph>Antwoord 1.</Paragraph>
           </AccordionSection>

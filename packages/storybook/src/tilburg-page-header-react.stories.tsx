@@ -23,16 +23,26 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
+    /* Each variant in its own labelled section: a <header> inside a section is not a banner landmark, so the story
+       does not show four banners on one page. On a real page the header sits directly in <body>. */
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <PageHeader title="Alleen titel" titleHref="/" />
-      <PageHeader title="Met logo" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/" />
-      <PageHeader title="Met acties" titleHref="/">
-        <Button appearance="subtle-button">Inloggen</Button>
-      </PageHeader>
-      <PageHeader title="Met logo en acties" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/">
-        <Button appearance="subtle-button">Inloggen</Button>
-        <Button appearance="primary-action-button">Account</Button>
-      </PageHeader>
+      <section aria-label="Alleen titel">
+        <PageHeader title="Alleen titel" titleHref="/" />
+      </section>
+      <section aria-label="Met logo">
+        <PageHeader title="Met logo" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/" />
+      </section>
+      <section aria-label="Met acties">
+        <PageHeader title="Met acties" titleHref="/">
+          <Button appearance="subtle-button">Inloggen</Button>
+        </PageHeader>
+      </section>
+      <section aria-label="Met logo en acties">
+        <PageHeader title="Met logo en acties" logoSrc="logo-on-dark.svg" logoAlt="" titleHref="/">
+          <Button appearance="subtle-button">Inloggen</Button>
+          <Button appearance="primary-action-button">Account</Button>
+        </PageHeader>
+      </section>
     </div>
   ),
 };

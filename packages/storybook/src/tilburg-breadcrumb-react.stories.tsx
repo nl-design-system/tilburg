@@ -24,6 +24,7 @@ export const AllPermutations: Story = {
       <div>
         <h4>Twee niveaus</h4>
         <Breadcrumb
+          ariaLabel="Kruimelpad, twee niveaus"
           items={[
             { label: 'Home', href: '/' },
             { label: 'Diensten', current: true },
@@ -33,6 +34,7 @@ export const AllPermutations: Story = {
       <div>
         <h4>Drie niveaus</h4>
         <Breadcrumb
+          ariaLabel="Kruimelpad, drie niveaus"
           items={[
             { label: 'Home', href: '/' },
             { label: 'Diensten', href: '/diensten' },
@@ -43,6 +45,7 @@ export const AllPermutations: Story = {
       <div>
         <h4>Diep genest</h4>
         <Breadcrumb
+          ariaLabel="Kruimelpad, diep genest"
           items={[
             { label: 'Home', href: '/' },
             { label: 'Inwoners', href: '/inwoners' },

@@ -36,13 +36,13 @@ export const AllPermutations: Story = {
         <Textbox name="x" placeholder="Verplicht" required />
       </Row>
       <Row label="readOnly">
-        <Textbox name="x" defaultValue="Alleen lezen" readOnly />
+        <Textbox name="x" defaultValue="Alleen lezen" readOnly aria-label="Alleen lezen" />
       </Row>
       <Row label="disabled">
         <Textbox name="x" placeholder="Uitgeschakeld" disabled />
       </Row>
       <Row label="invalid">
-        <Textbox name="x" defaultValue="bad value" invalid />
+        <Textbox name="x" defaultValue="bad value" invalid aria-label="Ongeldige waarde" />
       </Row>
       <Row label="type=email">
         <Textbox name="x" type="email" placeholder="naam@voorbeeld.nl" />
