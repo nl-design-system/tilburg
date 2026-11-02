@@ -1,0 +1,11 @@
+{
+  "components/icon": {
+    "utrecht": {
+      "icon": {
+        "size": {
+          "$value": "{tilburg.size.icon.md}"
+        }
+      }
+    }
+  }
+}
