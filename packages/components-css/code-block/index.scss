@@ -1,0 +1,6 @@
+/* Utrecht sets `white-space: pre` but no overflow: a long line pushed the whole page sideways at 320px wide / 400% zoom
+   (WCAG 1.4.10). Scroll inside the block instead. Chrome and Firefox make such a scroll container keyboard-focusable;
+   Safari does not. */
+.utrecht-code-block {
+  overflow-x: auto;
+}

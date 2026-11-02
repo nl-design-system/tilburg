@@ -22,6 +22,8 @@ export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
 export { Code } from './Code';
 export type { CodeProps } from './Code';
+export { CodeBlock } from './CodeBlock';
+export type { CodeBlockProps } from './CodeBlock';
 export { Combobox } from './Combobox';
 export type { ComboboxItem, ComboboxProps, MultiComboboxProps, SingleComboboxProps } from './Combobox';
 export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';

@@ -13,6 +13,7 @@ import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLink } from './button-link/component';
 import { TilburgCheckbox } from './checkbox/component';
 import { TilburgCode } from './code/component';
+import { TilburgCodeBlock } from './code-block/component';
 import { TilburgCombobox } from './combobox/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDocument } from './document/component';
@@ -72,6 +73,7 @@ const components = [
   TilburgButtonLink,
   TilburgCheckbox,
   TilburgCode,
+  TilburgCodeBlock,
   TilburgCombobox,
   TilburgDataList,
   TilburgDataListItem,
