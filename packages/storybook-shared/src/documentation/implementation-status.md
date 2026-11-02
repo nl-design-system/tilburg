@@ -2,18 +2,20 @@
 
 Welke van de vier lagen bestaat er per component. De tabel is afgeleid uit de repository zelf — uit
 `packages/components-css/*/index.scss`, `packages/components-angular/src/*/component.ts`,
-`packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is bijgewerkt op 12 oktober 2026. `pnpm parity` controleert in de repository of de bestanden nog kloppen met deze
+`packages/web-components-stencil/src/*` en de story-bestanden van beide Storybooks — en is bijgewerkt op 2 november 2026. `pnpm parity` controleert in de repository of de bestanden nog kloppen met deze
 tabel; `pnpm verify` draait die controle mee.
 
-**42 componenten** zijn gedocumenteerd. **41** hebben een React-wrapper, **41** een Angular-wrapper en **41** een
+**87 componenten** zijn gedocumenteerd. **86** hebben een React-wrapper, **86** een Angular-wrapper en **86** een
 Web Component (`@gemeente-tilburg/web-components-stencil`).
 Er is op dit moment geen enkel component dat wél in React maar niet in Angular bestaat, of andersom.
 
 ## Wat de kolommen betekenen
 
 - **HTML/CSS** — de leidende laag. ✅ betekent dat er een eigen `@gemeente-tilburg/components-css`-laag
-  bovenop utrecht ligt (35 componenten). `utrecht` betekent dat de utrecht-basisstijl volstaat en Tilburg
-  niets overschrijft (7 componenten) — dat is een bewuste keuze, geen ontbrekend werk.
+  bovenop utrecht ligt, of dat de CSS zelf in `components-css` staat omdat utrecht 5.2.0 hem nog niet heeft (54
+  componenten). `utrecht` betekent dat de utrecht-basisstijl volstaat, hooguit met Tilburg-waarden voor de
+  `--utrecht-*`-tokens in `proprietary/design-tokens/src/patches/` (33 componenten) — dat is een bewuste keuze, geen
+  ontbrekend werk.
 - **React** — er is een component in `@gemeente-tilburg/components-react`.
 - **Angular** — er is een component in `@gemeente-tilburg/components-angular`.
 - **Web Components** — er is een `<tilburg-wbc-…>`-element in `@gemeente-tilburg/web-components-stencil`. Table is
