@@ -32,7 +32,7 @@ for (const [query, slug] of [
 }
 
 test('a name that fits several lists them all', () => {
-  assert.ok(findComponent('form', components).matches.length >= 4);
+  assert.ok(findComponent('data', components).matches.length >= 4);
 });
 
 test('a typo gets a suggestion', () => {
@@ -76,10 +76,10 @@ test('requireComponent exits 1 on an unknown name, with a suggestion', () => {
 });
 
 test('requireComponent exits 1 on a name that fits several, listing each', () => {
-  const { status, stdout } = requireIn('form');
+  const { status, stdout } = requireIn('data');
   assert.equal(status, 1);
-  assert.match(stdout, /"form" fits \d+ components/);
-  assert.match(stdout, /pnpm where form-label/);
+  assert.match(stdout, /"data" fits \d+ components/);
+  assert.match(stdout, /pnpm where data-list/);
   assert.doesNotMatch(stdout, /FOUND/);
 });
 

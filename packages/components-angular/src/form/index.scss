@@ -1,0 +1,6 @@
+/* No components-css file: the utrecht base style suffices (see implementation-status.md). */
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force block flow like the `<form>`. */
+:host {
+  display: block;
+}

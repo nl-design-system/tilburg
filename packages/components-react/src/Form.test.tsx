@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { Checkbox } from './Checkbox';
 import { Fieldset } from './Fieldset';
+import { Form } from './Form';
 import { FormField } from './FormField';
 import { FormFieldDescription } from './FormFieldDescription';
 import { FormLabel } from './FormLabel';
@@ -9,6 +10,28 @@ import { Textarea } from './Textarea';
 import { Textbox } from './Textbox';
 import { ValidationMessage } from './ValidationMessage';
 import '@testing-library/jest-dom';
+
+describe('Form', () => {
+  it('renders a form.utrecht-form with the native attributes and children', () => {
+    const { container } = render(
+      <Form className="extra" aria-label="Contact" noValidate method="post">
+        <input name="naam" />
+      </Form>,
+    );
+    const form = container.querySelector('form')!;
+    expect(form).toHaveClass('utrecht-form', 'extra');
+    expect(form).toHaveAttribute('novalidate');
+    expect(form).toHaveAttribute('method', 'post');
+    expect(screen.getByRole('form', { name: 'Contact' })).toBe(form);
+    expect(form.querySelector('input[name="naam"]')).toBeInTheDocument();
+  });
+
+  it('forwards the ref to the form', () => {
+    const ref = { current: null as HTMLFormElement | null };
+    render(<Form ref={ref} />);
+    expect(ref.current).toBeInstanceOf(HTMLFormElement);
+  });
+});
 
 describe('FormField', () => {
   it('adds the warning class when warning is true', () => {

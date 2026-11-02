@@ -30,6 +30,7 @@ export * from './form-field-description/component';
 export * from './form-field/component';
 export * from './form-fieldset/component';
 export * from './form-label/component';
+export * from './form/component';
 export * from './heading-1/component';
 export * from './heading-2/component';
 export * from './heading-3/component';

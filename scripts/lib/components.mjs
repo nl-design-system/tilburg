@@ -26,6 +26,7 @@ const SHARED_REACT_TESTS = {
   Form: [
     'Checkbox',
     'Fieldset',
+    'Form',
     'FormField',
     'FormFieldDescription',
     'FormLabel',

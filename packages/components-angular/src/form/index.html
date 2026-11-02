@@ -1,0 +1,13 @@
+<!-- `ngNativeValidate` stops Angular forms' NgNoValidate directive from adding `novalidate` to every form, so the
+     `noValidate` input decides. Put `[formGroup]` / `(ngSubmit)` on the `<tilburg-form>` host: the native `submit`
+     event bubbles to it. -->
+<form
+  class="utrecht-form"
+  ngNativeValidate
+  [attr.id]="id || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  [attr.novalidate]="noValidate ? '' : null"
+>
+  <ng-content></ng-content>
+</form>

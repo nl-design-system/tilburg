@@ -58,6 +58,8 @@ export { Fieldset } from './Fieldset';
 export type { FieldsetProps } from './Fieldset';
 export { Figure } from './Figure';
 export type { FigureProps } from './Figure';
+export { Form } from './Form';
+export type { FormProps } from './Form';
 export { FormField } from './FormField';
 export type { FormFieldProps } from './FormField';
 export { FormFieldDescription } from './FormFieldDescription';

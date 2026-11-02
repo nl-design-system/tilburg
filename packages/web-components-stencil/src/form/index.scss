@@ -1,0 +1,6 @@
+/* No components-css file: the utrecht base style suffices (see implementation-status.md). */
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule as the Angular `:host`). */
+tilburg-wbc-form {
+  display: block;
+}

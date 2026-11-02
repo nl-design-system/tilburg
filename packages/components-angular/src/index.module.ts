@@ -30,6 +30,7 @@ import { TilburgDocument } from './document/component';
 import { TilburgDrawer } from './drawer/component';
 import { TilburgEmphasis } from './emphasis/component';
 import { TilburgFigure } from './figure/component';
+import { TilburgForm } from './form/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
 import { TilburgFieldset } from './form-fieldset/component';
@@ -148,6 +149,7 @@ const components = [
   TilburgNavList,
   TilburgNote,
   TilburgNumberData,
+  TilburgForm,
   TilburgFormField,
   TilburgFormFieldDescription,
   TilburgFieldset,
