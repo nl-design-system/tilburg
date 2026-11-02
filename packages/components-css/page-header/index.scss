@@ -89,3 +89,9 @@
   font-size: 1.1875rem;
   font-weight: 700;
 }
+
+/* A subtle button on the blue header: the theme's pink text is 1.9:1 against blue-300. Use the header's white text
+   (3:1 for this large bold label, WCAG 1.4.3); hover and active keep their white background with pink text. */
+.tilburg-page-header .utrecht-button--subtle {
+  --utrecht-button-subtle-color: var(--tilburg-page-header-color, var(--tilburg-color-white));
+}
