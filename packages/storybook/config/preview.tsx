@@ -14,6 +14,7 @@ import '@gemeente-tilburg/components-css/button-link/index.scss';
 import '@gemeente-tilburg/components-css/checkbox/index.scss';
 import '@gemeente-tilburg/components-css/combobox/index.scss';
 import '@gemeente-tilburg/components-css/code-block/index.scss';
+import '@gemeente-tilburg/components-css/data-badge/index.scss';
 import '@gemeente-tilburg/components-css/data-list/index.scss';
 import '@gemeente-tilburg/components-css/form-field/index.scss';
 import '@gemeente-tilburg/components-css/form-fieldset/index.scss';

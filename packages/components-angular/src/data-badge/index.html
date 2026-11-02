@@ -1,0 +1,8 @@
+<ng-template #content><ng-content></ng-content></ng-template>
+@if (dateTime !== undefined) {
+<time class="utrecht-data-badge" [attr.datetime]="dateTime"><ng-container *ngTemplateOutlet="content" /></time>
+} @else if (value !== undefined) {
+<data class="utrecht-data-badge" [attr.value]="value"><ng-container *ngTemplateOutlet="content" /></data>
+} @else {
+<span class="utrecht-data-badge"><ng-container *ngTemplateOutlet="content" /></span>
+}

@@ -12,6 +12,7 @@ export * from './code-block/component';
 export * from './code/component';
 export * from './color-sample/component';
 export * from './combobox/component';
+export * from './data-badge/component';
 export * from './data-list/component';
 export * from './data-placeholder/component';
 export * from './document/component';

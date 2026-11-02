@@ -1,0 +1,57 @@
+/* Data badge, ported from Utrecht `components/data-badge` (upstream main, the
+   successor of `badge-data`; `@utrecht/component-library-css` 5.2.0 only ships
+   the deprecated `.utrecht-badge-data`). Class names and
+   `--utrecht-data-badge-*` properties are Utrecht's, so a later Utrecht upgrade
+   can replace this file; the last fallbacks are Tilburg tokens instead of
+   Utrecht's black badge. */
+.utrecht-data-badge {
+  background-color: var(
+    --utrecht-data-badge-background-color,
+    var(--utrecht-badge-background-color, var(--tilburg-color-blue-100))
+  );
+  border-radius: var(
+    --utrecht-data-badge-border-radius,
+    var(--utrecht-badge-border-radius, var(--tilburg-border-radius-sm))
+  );
+  border-width: var(--utrecht-data-badge-border-width, 0);
+  color: var(--utrecht-data-badge-color, var(--utrecht-badge-color, var(--tilburg-color-blue-500)));
+  display: inline-block;
+  font-family: var(--utrecht-data-badge-font-family, var(--utrecht-document-font-family, sans-serif));
+  font-size: var(--utrecht-data-badge-font-size, var(--utrecht-badge-font-size, inherit));
+  font-weight: var(
+    --utrecht-data-badge-font-weight,
+    var(--utrecht-badge-font-weight, var(--tilburg-typography-font-weight-bold))
+  );
+  letter-spacing: var(--utrecht-data-badge-letter-spacing, inherit);
+  line-height: var(--utrecht-data-badge-line-height, var(--utrecht-badge-line-height, 1em));
+  max-block-size: max-content;
+  max-inline-size: max-content;
+  min-block-size: var(--utrecht-data-badge-min-block-size, 1em);
+  min-inline-size: var(--utrecht-data-badge-min-inline-size, 1em);
+  padding-block-end: var(
+    --utrecht-data-badge-padding-block,
+    var(--utrecht-badge-padding-block, var(--tilburg-space-block-beetle))
+  );
+  padding-block-start: var(
+    --utrecht-data-badge-padding-block,
+    var(--utrecht-badge-padding-block, var(--tilburg-space-block-beetle))
+  );
+  padding-inline-end: var(
+    --utrecht-data-badge-padding-inline,
+    var(--utrecht-badge-padding-inline, var(--tilburg-space-inline-snail))
+  );
+  padding-inline-start: var(
+    --utrecht-data-badge-padding-inline,
+    var(--utrecht-badge-padding-inline, var(--tilburg-space-inline-snail))
+  );
+  text-decoration: none; /* no inheritance */
+  text-transform: var(--utrecht-data-badge-text-transform, inherit);
+
+  @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+    border-color: currentColor;
+    border-style: solid;
+
+    /* Warning: there layout difference because of the added 1px border */
+    border-width: 1px;
+  }
+}
