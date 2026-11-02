@@ -58,6 +58,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Loading Spinner        | ✅       | ✅    | ✅      | ✅             |
 | Mark                   | utrecht  | ✅    | ✅      | ✅             |
 | Modal                  | ✅       | ✅    | ✅      | ✅             |
+| Number Data            | utrecht  | ✅    | ✅      | ✅             |
 | Ordered List           | ✅       | ✅    | ✅      | ✅             |
 | Page                   | utrecht  | ✅    | ✅      | ✅             |
 | Page Content           | utrecht  | ✅    | ✅      | ✅             |

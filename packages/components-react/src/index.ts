@@ -80,6 +80,8 @@ export { Mark } from './Mark';
 export type { MarkProps } from './Mark';
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
+export { NumberData } from './NumberData';
+export type { NumberDataProps, NumberDataVariant } from './NumberData';
 export { OrderedList } from './OrderedList';
 export type { OrderedListProps } from './OrderedList';
 export { Page } from './Page';
