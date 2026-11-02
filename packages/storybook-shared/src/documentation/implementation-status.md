@@ -51,6 +51,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Heading                | ✅       | ✅    | ✅      | ✅             |
 | Heading Group          | utrecht  | ✅    | ✅      | ✅             |
 | HTML Content           | ✅       | ✅    | ✅      | ✅             |
+| IBAN Data              | utrecht  | ✅    | ✅      | ✅             |
 | Icon                   | utrecht  | ✅    | ✅      | ✅             |
 | Image                  | utrecht  | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |

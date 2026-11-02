@@ -66,6 +66,8 @@ export { HeadingGroup } from './HeadingGroup';
 export type { HeadingGroupProps } from './HeadingGroup';
 export { HtmlContent } from './HtmlContent';
 export type { HtmlContentProps } from './HtmlContent';
+export { IbanData } from './IbanData';
+export type { IbanDataProps } from './IbanData';
 export { Icon } from './Icon';
 export type { IconProps } from './Icon';
 export { Image } from './Image';

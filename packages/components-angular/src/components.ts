@@ -31,6 +31,7 @@ export * from './heading-5/component';
 export * from './heading-6/component';
 export * from './heading-group/component';
 export * from './html-content/component';
+export * from './iban-data/component';
 export * from './icon/component';
 export * from './image/component';
 export * from './language-toggle/component';
