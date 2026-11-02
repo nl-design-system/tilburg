@@ -44,6 +44,7 @@ export * from './pagination/component';
 export * from './paragraph/component';
 export * from './password-input/component';
 export * from './pre-heading/component';
+export * from './preserve-data/component';
 export * from './progress-bar/component';
 export * from './radio-button/component';
 export * from './select/component';

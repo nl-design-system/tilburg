@@ -49,6 +49,7 @@ import { TilburgPagination } from './pagination/component';
 import { TilburgParagraph } from './paragraph/component';
 import { TilburgPasswordInput } from './password-input/component';
 import { TilburgPreHeading } from './pre-heading/component';
+import { TilburgPreserveData } from './preserve-data/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
@@ -116,6 +117,7 @@ const components = [
   TilburgPagination,
   TilburgParagraph,
   TilburgPasswordInput,
+  TilburgPreserveData,
   TilburgPreHeading,
   TilburgProgressBar,
   TilburgTable,
