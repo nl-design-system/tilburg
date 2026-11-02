@@ -1,0 +1,38 @@
+{
+  "components/drawer": {
+    "utrecht": {
+      "drawer": {
+        "background-color": {
+          "$value": "{tilburg.color.white}"
+        },
+        "color": {
+          "$value": "{utrecht.document.color}"
+        },
+        "backdrop-min-size": {
+          "$value": "44px"
+        },
+        "max-block-size": {
+          "$value": "100%"
+        },
+        "padding-block-start": {
+          "$value": "{tilburg.space.block.rabbit}"
+        },
+        "padding-block-end": {
+          "$value": "{tilburg.space.block.rabbit}"
+        },
+        "padding-inline-start": {
+          "$value": "{tilburg.space.inline.rabbit}"
+        },
+        "padding-inline-end": {
+          "$value": "{tilburg.space.inline.rabbit}"
+        },
+        "border-color": {
+          "$value": "transparent"
+        },
+        "border-width": {
+          "$value": "{tilburg.border-width.md}"
+        }
+      }
+    }
+  }
+}

@@ -27,6 +27,7 @@ import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataLi
 import { TilburgDataPlaceholder } from './data-placeholder/component';
 import { TilburgDatetimeValue } from './datetime-value/component';
 import { TilburgDocument } from './document/component';
+import { TilburgDrawer } from './drawer/component';
 import { TilburgEmphasis } from './emphasis/component';
 import { TilburgFigure } from './figure/component';
 import { TilburgFormField } from './form-field/component';
@@ -167,6 +168,7 @@ const components = [
   TilburgTableHeaderCellAttr,
   TilburgTableRowAttr,
   TilburgDocument,
+  TilburgDrawer,
   TilburgEmphasis,
   TilburgHtmlContent,
   TilburgIbanData,

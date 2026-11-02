@@ -48,6 +48,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Data Placeholder       | utrecht  | ✅    | ✅      | ✅             |
 | Datetime Value         | utrecht  | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
+| Drawer                 | utrecht  | ✅    | ✅      | ✅             |
 | Emphasis               | utrecht  | ✅    | ✅      | ✅             |
 | Figure                 | utrecht  | ✅    | ✅      | ✅             |
 | Form Field             | ✅       | ✅    | ✅      | ✅             |

@@ -23,6 +23,7 @@ export * from './data-list/component';
 export * from './data-placeholder/component';
 export * from './datetime-value/component';
 export * from './document/component';
+export * from './drawer/component';
 export * from './emphasis/component';
 export * from './figure/component';
 export * from './form-field-description/component';

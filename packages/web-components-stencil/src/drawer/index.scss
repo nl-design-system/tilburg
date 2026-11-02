@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-drawer` is styled by
+   `@utrecht/component-library-css` with the Tilburg tokens, there is no components-css folder. */
+
+/* The dialog lives in the top layer while open and is `display: none` while
+   closed, so the host never needs a box of its own. */
+tilburg-wbc-drawer {
+  display: contents;
+}

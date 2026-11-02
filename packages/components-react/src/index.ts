@@ -50,6 +50,8 @@ export { DatetimeValue } from './DatetimeValue';
 export type { DatetimeValueProps } from './DatetimeValue';
 export { Document } from './Document';
 export type { DocumentProps } from './Document';
+export { Drawer } from './Drawer';
+export type { DrawerAlign, DrawerProps } from './Drawer';
 export { Emphasis } from './Emphasis';
 export type { EmphasisProps } from './Emphasis';
 export { Fieldset } from './Fieldset';
