@@ -1,0 +1,7 @@
+@use "../../../components-css/superscript/index";
+
+/* Inline text-level element: the host stays in the text flow, like the native
+   element it renders (same rule as the Angular `:host`). */
+tilburg-wbc-superscript {
+  display: inline;
+}

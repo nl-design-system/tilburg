@@ -48,6 +48,7 @@ import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
 import { TilburgSkipLink } from './skip-link/component';
 import { TilburgSubscript } from './subscript/component';
+import { TilburgSuperscript } from './superscript/component';
 import { TilburgTable } from './table/component';
 import { TilburgTableBodyAttr } from './table-body/component';
 import { TilburgTableCaptionAttr } from './table-caption/component';
@@ -121,6 +122,7 @@ const components = [
   TilburgSeparator,
   TilburgSkipLink,
   TilburgSubscript,
+  TilburgSuperscript,
   TilburgTextareaAutoresizeDirective,
   TilburgTextarea,
   TilburgTextbox,

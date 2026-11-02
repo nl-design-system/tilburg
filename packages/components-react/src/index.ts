@@ -92,6 +92,8 @@ export { SkipLink } from './SkipLink';
 export type { SkipLinkProps, SkipLinkVisibility } from './SkipLink';
 export { Subscript } from './Subscript';
 export type { SubscriptProps } from './Subscript';
+export { Superscript } from './Superscript';
+export type { SuperscriptProps } from './Superscript';
 export {
   Table,
   TableBody,
