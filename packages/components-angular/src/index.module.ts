@@ -31,6 +31,7 @@ import { TilburgHeading5 } from './heading-5/component';
 import { TilburgHeading6 } from './heading-6/component';
 import { TilburgHeadingGroup } from './heading-group/component';
 import { TilburgHtmlContent } from './html-content/component';
+import { TilburgImage } from './image/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
@@ -123,6 +124,7 @@ const components = [
   TilburgDocument,
   TilburgEmphasis,
   TilburgHtmlContent,
+  TilburgImage,
   TilburgFormLabel,
   TilburgSelect,
   TilburgSeparator,

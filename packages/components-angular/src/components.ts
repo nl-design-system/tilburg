@@ -27,6 +27,7 @@ export * from './heading-5/component';
 export * from './heading-6/component';
 export * from './heading-group/component';
 export * from './html-content/component';
+export * from './image/component';
 export * from './language-toggle/component';
 export * from './link/component';
 export * from './loading-spinner/component';

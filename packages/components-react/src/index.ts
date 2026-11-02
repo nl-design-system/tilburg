@@ -58,6 +58,8 @@ export { HeadingGroup } from './HeadingGroup';
 export type { HeadingGroupProps } from './HeadingGroup';
 export { HtmlContent } from './HtmlContent';
 export type { HtmlContentProps } from './HtmlContent';
+export { Image } from './Image';
+export type { ImageProps } from './Image';
 export { LanguageToggle } from './LanguageToggle';
 export type { LanguageOption, LanguageToggleProps } from './LanguageToggle';
 export { Link } from './Link';

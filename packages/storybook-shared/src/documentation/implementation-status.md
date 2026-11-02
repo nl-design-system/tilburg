@@ -47,6 +47,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Heading                | ✅       | ✅    | ✅      | ✅             |
 | Heading Group          | utrecht  | ✅    | ✅      | ✅             |
 | HTML Content           | ✅       | ✅    | ✅      | ✅             |
+| Image                  | utrecht  | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |
 | Link                   | ✅       | ✅    | ✅      | ✅             |
 | Loading Spinner        | ✅       | ✅    | ✅      | ✅             |
