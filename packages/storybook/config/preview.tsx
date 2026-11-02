@@ -21,6 +21,7 @@ import '@gemeente-tilburg/components-css/data-list/index.scss';
 import '@gemeente-tilburg/components-css/form-field/index.scss';
 import '@gemeente-tilburg/components-css/form-fieldset/index.scss';
 import '@gemeente-tilburg/components-css/form-label/index.scss';
+import '@gemeente-tilburg/components-css/form-toggle/index.scss';
 import '@gemeente-tilburg/components-css/heading-1/index.scss';
 import '@gemeente-tilburg/components-css/heading-2/index.scss';
 import '@gemeente-tilburg/components-css/heading-3/index.scss';

@@ -1,0 +1,42 @@
+/* Tilburg layer over `utrecht-form-toggle` (@utrecht/component-library-css 5.2.0). The size, colours and thumb come
+   from the `--utrecht-form-toggle-*` tokens (design-tokens `src/patches/form-toggle.tokens.json`); this file only adds
+   what utrecht has no token for. DOM: `div.utrecht-form-toggle--html-checkbox > input.utrecht-form-toggle__checkbox +
+   label.utrecht-form-toggle__track > div.utrecht-form-toggle__thumb`. */
+
+.utrecht-form-toggle--html-checkbox {
+  &:has(> .utrecht-form-toggle__checkbox:disabled) {
+    border-color: var(--utrecht-form-toggle-disabled-border-color, var(--utrecht-form-toggle-border-color));
+    cursor: var(--utrecht-action-disabled-cursor, not-allowed);
+  }
+
+  &:hover:has(> .utrecht-form-toggle__checkbox:not(:checked, :disabled)) {
+    border-color: var(--tilburg-form-control-hover-border-color, var(--utrecht-form-toggle-border-color));
+  }
+
+  /* The border wraps the track, so in the on state it takes the track colour instead of framing it in blue. */
+  &:has(> .utrecht-form-toggle__checkbox:checked:not(:disabled)) {
+    border-color: var(--utrecht-form-toggle-checked-accent-color);
+  }
+
+  &:has(> .utrecht-form-toggle__checkbox[aria-invalid="true"]:not(:disabled)) {
+    border-color: var(--utrecht-form-control-invalid-border-color, var(--utrecht-form-toggle-border-color));
+
+    /* Thicker, like the other Tilburg form controls, so invalid is not shown by colour alone (WCAG 1.4.1). */
+    border-width: var(--utrecht-form-control-invalid-border-width, var(--utrecht-form-toggle-border-width));
+  }
+
+  /* utrecht gives the thumb one colour for both states; on the filled track it has to be light to stay visible. */
+  .utrecht-form-toggle__checkbox:checked:not(:disabled) ~ .utrecht-form-toggle__track .utrecht-form-toggle__thumb {
+    background-color: var(--tilburg-form-toggle-checked-thumb-background-color, var(--tilburg-color-white));
+  }
+}
+
+/* Forced colours drop the white thumb on the (now Canvas) track, so the on state would show no thumb at all. */
+@media (forced-colors: active) {
+  .utrecht-form-toggle--html-checkbox
+    .utrecht-form-toggle__checkbox:checked:not(:disabled)
+    ~ .utrecht-form-toggle__track
+    .utrecht-form-toggle__thumb {
+    background-color: buttontext;
+  }
+}

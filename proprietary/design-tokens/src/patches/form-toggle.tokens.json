@@ -1,0 +1,59 @@
+{
+  "components/form-toggle": {
+    "utrecht": {
+      "form-toggle": {
+        "width": {
+          "$value": "{tilburg.size.md}"
+        },
+        "height": {
+          "$value": "{tilburg.size.xs}"
+        },
+        "border-color": {
+          "$value": "{utrecht.form-control.border-color}"
+        },
+        "border-width": {
+          "$value": "{utrecht.form-control.border-width}"
+        },
+        "border-radius": {
+          "$value": "{tilburg.border-radius.round}"
+        },
+        "accent-color": {
+          "$value": "{utrecht.form-control.background-color}"
+        },
+        "checked-accent-color": {
+          "$value": "{tilburg.form-control.accent-color}"
+        },
+        "disabled-background-color": {
+          "$value": "{utrecht.form-control.disabled.background-color}"
+        },
+        "disabled-border-color": {
+          "$value": "{utrecht.form-control.disabled.border-color}"
+        },
+        "thumb-background-color": {
+          "$value": "{utrecht.form-control.border-color}"
+        },
+        "thumb-disabled-background-color": {
+          "$value": "{utrecht.form-control.disabled.color}"
+        },
+        "thumb-min-inline-size": {
+          "$value": "{tilburg.size.2xs}"
+        },
+        "thumb-margin-inline-start": {
+          "$value": "{tilburg.space.inline.ant}"
+        },
+        "thumb-margin-inline-end": {
+          "$value": "{tilburg.space.inline.ant}"
+        }
+      }
+    },
+    "tilburg": {
+      "form-toggle": {
+        "checked": {
+          "thumb-background-color": {
+            "$value": "{tilburg.color.white}"
+          }
+        }
+      }
+    }
+  }
+}

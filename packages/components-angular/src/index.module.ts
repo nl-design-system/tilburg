@@ -35,6 +35,7 @@ import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
 import { TilburgFieldset } from './form-fieldset/component';
 import { TilburgFormLabel } from './form-label/component';
+import { TilburgFormToggle } from './form-toggle/component';
 import { TilburgHeading1 } from './heading-1/component';
 import { TilburgHeading2 } from './heading-2/component';
 import { TilburgHeading3 } from './heading-3/component';
@@ -152,6 +153,7 @@ const components = [
   TilburgForm,
   TilburgFormField,
   TilburgFormFieldDescription,
+  TilburgFormToggle,
   TilburgFieldset,
   TilburgOrderedList,
   TilburgPage,
