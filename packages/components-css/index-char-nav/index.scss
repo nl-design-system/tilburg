@@ -1,0 +1,11 @@
+/* Index character navigation: `.utrecht-index-char-nav*` is styled by `@utrecht/component-library-css` and the
+   `--utrecht-index-char-nav-*` theme tokens; the characters are Tilburg button links (components-css/button-link).
+   Forced colours drop the fill that marks the current character, so give it the system highlight instead (the
+   same pattern as the language toggle). */
+@media (forced-colors: active) {
+  .utrecht-index-char-nav__link--current {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+}

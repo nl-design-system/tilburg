@@ -57,6 +57,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | IBAN Data              | utrecht  | ✅    | ✅      | ✅             |
 | Icon                   | utrecht  | ✅    | ✅      | ✅             |
 | Image                  | utrecht  | ✅    | ✅      | ✅             |
+| Index Char Nav         | ✅       | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |
 | Link                   | ✅       | ✅    | ✅      | ✅             |
 | Link Button            | ✅       | ✅    | ✅      | ✅             |

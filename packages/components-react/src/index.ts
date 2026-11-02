@@ -78,6 +78,8 @@ export { Icon } from './Icon';
 export type { IconProps } from './Icon';
 export { Image } from './Image';
 export type { ImageProps } from './Image';
+export { IndexCharNav } from './IndexCharNav';
+export type { IndexCharNavCharacter, IndexCharNavProps } from './IndexCharNav';
 export { LanguageToggle } from './LanguageToggle';
 export type { LanguageOption, LanguageToggleProps } from './LanguageToggle';
 export { Link } from './Link';

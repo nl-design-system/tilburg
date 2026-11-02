@@ -1,0 +1,24 @@
+{
+  "components/index-char-nav": {
+    "utrecht": {
+      "index-char-nav": {
+        "gap": {
+          "$value": "{tilburg.space.inline.beetle}"
+        },
+        "margin-block-start": {
+          "$value": "0"
+        },
+        "margin-block-end": {
+          "$value": "{tilburg.space.block.mouse}"
+        },
+        "link": {
+          "current": {
+            "font-weight": {
+              "$value": "700"
+            }
+          }
+        }
+      }
+    }
+  }
+}

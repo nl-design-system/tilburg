@@ -41,6 +41,7 @@ import { TilburgHtmlContent } from './html-content/component';
 import { TilburgIbanData } from './iban-data/component';
 import { TilburgIcon } from './icon/component';
 import { TilburgImage } from './image/component';
+import { TilburgIndexCharNav } from './index-char-nav/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
 import { TilburgLinkButton } from './link-button/component';
@@ -165,6 +166,7 @@ const components = [
   TilburgIbanData,
   TilburgIcon,
   TilburgImage,
+  TilburgIndexCharNav,
   TilburgFormLabel,
   TilburgSelect,
   TilburgSeparator,

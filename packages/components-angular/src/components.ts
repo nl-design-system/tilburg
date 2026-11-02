@@ -37,6 +37,7 @@ export * from './html-content/component';
 export * from './iban-data/component';
 export * from './icon/component';
 export * from './image/component';
+export * from './index-char-nav/component';
 export * from './language-toggle/component';
 export * from './link/component';
 export * from './link-button/component';

@@ -1,0 +1,17 @@
+<nav *ngIf="characters?.length" class="utrecht-index-char-nav" [attr.aria-label]="ariaLabel">
+  <a
+    *ngFor="let character of characters"
+    class="utrecht-button-link utrecht-button-link--html-a utrecht-index-char-nav__link"
+    [class.utrecht-button-link--primary-action]="character.char === currentChar"
+    [class.utrecht-button-link--secondary-action]="character.char !== currentChar"
+    [class.utrecht-button-link--placeholder]="character.disabled"
+    [class.utrecht-index-char-nav__link--current]="character.char === currentChar"
+    [class.utrecht-index-char-nav__link--disabled]="character.disabled"
+    [attr.href]="character.disabled ? null : character.href || '#'"
+    [attr.role]="character.disabled ? 'link' : null"
+    [attr.aria-disabled]="character.disabled ? 'true' : null"
+    [attr.aria-current]="character.char === currentChar ? 'page' : null"
+    (click)="onClick(character, $event)"
+    >{{ character.char }}</a
+  >
+</nav>

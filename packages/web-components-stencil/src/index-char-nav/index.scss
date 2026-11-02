@@ -1,0 +1,8 @@
+@use "../../../components-css/button-link/index";
+@use "../../../components-css/index-char-nav/index" as index-char-nav;
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-index-char-nav {
+  display: block;
+}
