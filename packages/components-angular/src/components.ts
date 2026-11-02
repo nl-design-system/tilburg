@@ -52,6 +52,7 @@ export * from './mark/component';
 export * from './multiline-data/component';
 export * from './nav-bar/component';
 export * from './nav-list/component';
+export * from './note/component';
 export * from './number-data/component';
 export * from './ordered-list/component';
 export * from './page-content/component';

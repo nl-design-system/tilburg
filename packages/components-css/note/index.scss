@@ -1,0 +1,63 @@
+/* Port of Utrecht `components/note` (@utrecht/note-css 1.0.0, nl-design-system/utrecht main @ b9c0332). Utrecht
+   5.2.0, which Tilburg uses, has no note yet. Class names and `--utrecht-note-*` properties are Utrecht's, so a later
+   Utrecht upgrade can replace this file; the fallbacks give the Tilburg look, with the feedback colours of Alert. */
+
+.utrecht-note {
+  background-color: var(
+    --_utrecht-note-background-color,
+    var(--utrecht-note-background-color, var(--tilburg-color-gray-50))
+  );
+  border-color: var(--_utrecht-note-border-color, var(--utrecht-note-border-color, var(--tilburg-line-border-color)));
+  border-radius: var(--utrecht-note-border-radius, 0);
+  border-style: solid;
+  border-width: var(--_utrecht-note-border-width, var(--utrecht-note-border-width, 0));
+  color: var(--_utrecht-note-color, var(--utrecht-note-color, var(--utrecht-document-color)));
+  display: flex;
+  flex-direction: column;
+  margin-block-end: calc(var(--utrecht-space-around, 0) * var(--utrecht-note-margin-block-end, 0));
+  margin-block-start: calc(var(--utrecht-space-around, 0) * var(--utrecht-note-margin-block-start, 0));
+  padding-block-end: var(--utrecht-note-padding-block-end, var(--tilburg-space-block-rat));
+  padding-block-start: var(--utrecht-note-padding-block-start, var(--tilburg-space-block-mouse));
+  padding-inline-end: var(--utrecht-note-padding-inline-end, var(--tilburg-space-inline-mouse));
+  padding-inline-start: var(--utrecht-note-padding-inline-start, var(--tilburg-space-inline-mouse));
+  row-gap: var(--utrecht-note-row-gap, var(--tilburg-space-row-snail));
+}
+
+@mixin utrecht-note-purpose($purpose, $feedback) {
+  --_utrecht-note-icon-color: var(--utrecht-note-icon-#{$purpose}-color, var(--#{$feedback}-color));
+  --_utrecht-note-background-color: var(
+    --utrecht-note-#{$purpose}-background-color,
+    var(--#{$feedback}-background-color)
+  );
+  --_utrecht-note-border-color: var(--utrecht-note-#{$purpose}-border-color, var(--#{$feedback}-border-color));
+  --_utrecht-note-border-width: var(--utrecht-note-#{$purpose}-border-width, var(--tilburg-border-width-md));
+  --_utrecht-note-color: var(--utrecht-note-#{$purpose}-color, var(--utrecht-document-color));
+}
+
+.utrecht-note--info {
+  @include utrecht-note-purpose("info", "tilburg-feedback-informative");
+}
+
+.utrecht-note--warning {
+  @include utrecht-note-purpose("warning", "utrecht-feedback-warning");
+}
+
+.utrecht-note--error {
+  @include utrecht-note-purpose("error", "tilburg-feedback-negative");
+}
+
+.utrecht-note--success {
+  @include utrecht-note-purpose("success", "tilburg-feedback-positive");
+}
+
+/* Children bring their own block margins (paragraphs, headings); the note's `row-gap` spaces them. */
+.utrecht-note > * {
+  margin-block: 0;
+}
+
+/* Tilburg addition: forced colours drop the background, so the neutral note (no border) lost its outline. */
+@media (forced-colors: active) {
+  .utrecht-note {
+    border-width: max(1px, var(--_utrecht-note-border-width, var(--utrecht-note-border-width, 0px)));
+  }
+}

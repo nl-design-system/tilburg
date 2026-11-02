@@ -57,6 +57,7 @@ import { TilburgModal } from './modal/component';
 import { TilburgMultilineData } from './multiline-data/component';
 import { TilburgNavBar } from './nav-bar/component';
 import { TilburgNavList } from './nav-list/component';
+import { TilburgNote } from './note/component';
 import { TilburgNumberData } from './number-data/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
@@ -144,6 +145,7 @@ const components = [
   TilburgMultilineData,
   TilburgNavBar,
   TilburgNavList,
+  TilburgNote,
   TilburgNumberData,
   TilburgFormField,
   TilburgFormFieldDescription,
