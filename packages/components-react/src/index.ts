@@ -60,6 +60,8 @@ export { Link } from './Link';
 export type { AriaCurrent, LinkProps } from './Link';
 export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
+export { Mark } from './Mark';
+export type { MarkProps } from './Mark';
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
 export { OrderedList } from './OrderedList';

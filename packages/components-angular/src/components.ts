@@ -28,6 +28,7 @@ export * from './html-content/component';
 export * from './language-toggle/component';
 export * from './link/component';
 export * from './loading-spinner/component';
+export * from './mark/component';
 export * from './ordered-list/component';
 export * from './page-content/component';
 export * from './page-footer/component';
