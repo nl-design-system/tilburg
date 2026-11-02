@@ -44,7 +44,7 @@
         },
         "inactive": {
           "background-color": {
-            "$value": "{tilburg.color.gray.300}"
+            "$value": "{tilburg.color.gray.400}"
           },
           "color": {
             "$value": "{tilburg.color.white}"
