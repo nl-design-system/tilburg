@@ -1,0 +1,17 @@
+{
+  "components/column-layout": {
+    "utrecht": {
+      "column-layout": {
+        "gap": {
+          "$value": "{tilburg.space.column.pig}"
+        },
+        "column-rule-color": {
+          "$value": "{tilburg.line.border-color}"
+        },
+        "column-rule-width": {
+          "$value": "{tilburg.line.border-width}"
+        }
+      }
+    }
+  }
+}

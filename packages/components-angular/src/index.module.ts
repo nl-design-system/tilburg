@@ -19,6 +19,7 @@ import { TilburgCheckbox } from './checkbox/component';
 import { TilburgCode } from './code/component';
 import { TilburgCodeBlock } from './code-block/component';
 import { TilburgColorSample } from './color-sample/component';
+import { TilburgColumnLayout } from './column-layout/component';
 import { TilburgCombobox } from './combobox/component';
 import { TilburgCurrencyData } from './currency-data/component';
 import { TilburgDataBadge } from './data-badge/component';
@@ -110,6 +111,7 @@ const components = [
   TilburgCard,
   TilburgCheckbox,
   TilburgColorSample,
+  TilburgColumnLayout,
   TilburgCode,
   TilburgCodeBlock,
   TilburgCombobox,

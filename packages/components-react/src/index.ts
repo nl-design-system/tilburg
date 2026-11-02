@@ -34,6 +34,8 @@ export { CodeBlock } from './CodeBlock';
 export type { CodeBlockProps } from './CodeBlock';
 export { ColorSample } from './ColorSample';
 export type { ColorSampleProps } from './ColorSample';
+export { ColumnLayout } from './ColumnLayout';
+export type { ColumnLayoutProps } from './ColumnLayout';
 export { Combobox } from './Combobox';
 export type { ComboboxItem, ComboboxProps, MultiComboboxProps, SingleComboboxProps } from './Combobox';
 export { CurrencyData } from './CurrencyData';

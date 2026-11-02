@@ -40,6 +40,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Code                   | utrecht  | ✅    | ✅      | ✅             |
 | Code Block             | ✅       | ✅    | ✅      | ✅             |
 | Color Sample           | utrecht  | ✅    | ✅      | ✅             |
+| Column Layout          | utrecht  | ✅    | ✅      | ✅             |
 | Combobox               | ✅       | ✅    | ✅      | ✅             |
 | Currency Data          | utrecht  | ✅    | ✅      | ✅             |
 | Data Badge             | ✅       | ✅    | ✅      | ✅             |
