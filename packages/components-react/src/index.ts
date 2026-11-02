@@ -34,6 +34,8 @@ export { Emphasis } from './Emphasis';
 export type { EmphasisProps } from './Emphasis';
 export { Fieldset } from './Fieldset';
 export type { FieldsetProps } from './Fieldset';
+export { Figure } from './Figure';
+export type { FigureProps } from './Figure';
 export { FormField } from './FormField';
 export type { FormFieldProps } from './FormField';
 export { FormFieldDescription } from './FormFieldDescription';

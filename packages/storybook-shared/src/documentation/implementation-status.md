@@ -39,6 +39,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Data List              | ✅       | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
 | Emphasis               | utrecht  | ✅    | ✅      | ✅             |
+| Figure                 | utrecht  | ✅    | ✅      | ✅             |
 | Form Field             | ✅       | ✅    | ✅      | ✅             |
 | Form Field Description | utrecht  | ✅    | ✅      | ✅             |
 | Form Fieldset          | ✅       | ✅    | ✅      | ✅             |

@@ -18,6 +18,7 @@ import { TilburgCombobox } from './combobox/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDocument } from './document/component';
 import { TilburgEmphasis } from './emphasis/component';
+import { TilburgFigure } from './figure/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
 import { TilburgFieldset } from './form-fieldset/component';
@@ -85,6 +86,7 @@ const components = [
   TilburgDataListItem,
   TilburgDataListKey,
   TilburgDataListValue,
+  TilburgFigure,
   TilburgHeading1,
   TilburgHeading2,
   TilburgHeading3,
