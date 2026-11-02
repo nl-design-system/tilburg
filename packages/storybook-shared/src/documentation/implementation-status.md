@@ -27,6 +27,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Article                | utrecht  | ✅    | ✅      | ✅             |
 | Badge Counter          | ✅       | —     | —       | —              |
 | Badge Status           | ✅       | ✅    | ✅      | ✅             |
+| Blockquote             | utrecht  | ✅    | ✅      | ✅             |
 | Breadcrumb             | ✅       | ✅    | ✅      | ✅             |
 | Button                 | ✅       | ✅    | ✅      | ✅             |
 | Button Group           | utrecht  | ✅    | ✅      | ✅             |

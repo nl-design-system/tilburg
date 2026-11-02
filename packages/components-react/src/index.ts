@@ -8,6 +8,8 @@ export { Article } from './Article';
 export type { ArticleProps } from './Article';
 export { BadgeStatus } from './BadgeStatus';
 export type { BadgeStatusProps } from './BadgeStatus';
+export { Blockquote } from './Blockquote';
+export type { BlockquoteProps } from './Blockquote';
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbItem, BreadcrumbProps } from './Breadcrumb';
 export { Button } from './Button';
