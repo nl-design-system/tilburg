@@ -12,7 +12,7 @@
             "$type": "fontFamilies"
           },
           "code": {
-            "$value": "\"Fira Code\", Tahoma, Verdana, sans-serif",
+            "$value": "\"Fira Code\", ui-monospace, Menlo, Consolas, monospace",
             "$type": "fontFamilies"
           }
         }
