@@ -91,6 +91,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Separator              | ✅       | ✅    | ✅      | ✅             |
 | Side Nav               | ✅       | ✅    | ✅      | ✅             |
 | Skip Link              | ✅       | ✅    | ✅      | ✅             |
+| Spotlight Section      | utrecht  | ✅    | ✅      | ✅             |
 | Subscript              | ✅       | ✅    | ✅      | ✅             |
 | Superscript            | ✅       | ✅    | ✅      | ✅             |
 | Table                  | ✅       | ✅    | ✅      | ✅             |

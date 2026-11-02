@@ -146,6 +146,8 @@ export { SideNav } from './SideNav';
 export type { SideNavItem, SideNavProps } from './SideNav';
 export { SkipLink } from './SkipLink';
 export type { SkipLinkProps, SkipLinkVisibility } from './SkipLink';
+export { SpotlightSection } from './SpotlightSection';
+export type { SpotlightSectionProps, SpotlightSectionVariant } from './SpotlightSection';
 export { Subscript } from './Subscript';
 export type { SubscriptProps } from './Subscript';
 export { Superscript } from './Superscript';

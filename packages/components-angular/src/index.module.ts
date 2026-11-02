@@ -75,6 +75,7 @@ import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
 import { TilburgSideNav } from './side-nav/component';
 import { TilburgSkipLink } from './skip-link/component';
+import { TilburgSpotlightSection } from './spotlight-section/component';
 import { TilburgSubscript } from './subscript/component';
 import { TilburgSuperscript } from './superscript/component';
 import { TilburgTable } from './table/component';
@@ -182,6 +183,7 @@ const components = [
   TilburgSeparator,
   TilburgSideNav,
   TilburgSkipLink,
+  TilburgSpotlightSection,
   TilburgSubscript,
   TilburgSuperscript,
   TilburgTextareaAutoresizeDirective,

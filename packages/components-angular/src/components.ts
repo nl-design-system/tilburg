@@ -70,6 +70,7 @@ export * from './select/component';
 export * from './separator/component';
 export * from './side-nav/component';
 export * from './skip-link/component';
+export * from './spotlight-section/component';
 export * from './subscript/component';
 export * from './superscript/component';
 export * from './table-body/component';

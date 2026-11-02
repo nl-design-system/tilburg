@@ -1,0 +1,113 @@
+{
+  "components/spotlight-section": {
+    "utrecht": {
+      "spotlight-section": {
+        "background-color": {
+          "$value": "{tilburg.color.gray.50}"
+        },
+        "color": {
+          "$value": "{utrecht.document.color}"
+        },
+        "border-color": {
+          "$value": "{tilburg.line.border-color}"
+        },
+        "border-width": {
+          "$value": "0"
+        },
+        "padding-block-start": {
+          "$value": "{tilburg.space.block.mouse}"
+        },
+        "padding-block-end": {
+          "$value": "{tilburg.space.block.rat}"
+        },
+        "padding-inline-start": {
+          "$value": "{tilburg.space.inline.mouse}"
+        },
+        "padding-inline-end": {
+          "$value": "{tilburg.space.inline.mouse}"
+        },
+        "info": {
+          "background-color": {
+            "$value": "{tilburg.feedback.informative.background-color}"
+          },
+          "border-color": {
+            "$value": "{tilburg.feedback.informative.border-color}"
+          },
+          "border-width": {
+            "$value": "{tilburg.border-width.md}"
+          },
+          "color": {
+            "$value": "{utrecht.document.color}"
+          }
+        },
+        "warning": {
+          "background-color": {
+            "$value": "{utrecht.feedback.warning.background-color}"
+          },
+          "border-color": {
+            "$value": "{utrecht.feedback.warning.border-color}"
+          },
+          "border-width": {
+            "$value": "{tilburg.border-width.md}"
+          },
+          "color": {
+            "$value": "{utrecht.document.color}"
+          }
+        },
+        "error": {
+          "background-color": {
+            "$value": "{tilburg.feedback.negative.background-color}"
+          },
+          "border-color": {
+            "$value": "{tilburg.feedback.negative.border-color}"
+          },
+          "border-width": {
+            "$value": "{tilburg.border-width.md}"
+          },
+          "color": {
+            "$value": "{utrecht.document.color}"
+          }
+        },
+        "ok": {
+          "background-color": {
+            "$value": "{tilburg.feedback.positive.background-color}"
+          },
+          "border-color": {
+            "$value": "{tilburg.feedback.positive.border-color}"
+          },
+          "border-width": {
+            "$value": "{tilburg.border-width.md}"
+          },
+          "color": {
+            "$value": "{utrecht.document.color}"
+          }
+        },
+        "icon": {
+          "color": {
+            "$value": "{tilburg.feedback.informative.color}"
+          },
+          "info": {
+            "color": {
+              "$value": "{tilburg.feedback.informative.color}"
+            }
+          },
+          "warning": {
+            "color": {
+              "$value": "{utrecht.feedback.warning.color}"
+            }
+          },
+          "error": {
+            "color": {
+              "$value": "{tilburg.feedback.negative.color}"
+            }
+          },
+          "ok": {
+            "color": {
+              "$value": "{tilburg.feedback.positive.color}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
