@@ -1,0 +1,59 @@
+{
+  "components/calendar": {
+    "utrecht": {
+      "calendar": {
+        "background-color": { "$value": "{tilburg.color.white}" },
+        "icon-size": { "$value": "{tilburg.size.icon.md}" },
+        "navigation": {
+          "color": { "$value": "{tilburg.color.gray.500}" },
+          "label-color": { "$value": "{tilburg.color.gray.500}" },
+          "label-font-size": { "$value": "{tilburg.typography.font-size.lg}" },
+          "padding-block-start": { "$value": "{tilburg.space.block.beetle}" },
+          "padding-block-end": { "$value": "{tilburg.space.block.beetle}" }
+        },
+        "button": {
+          "color": { "$value": "{tilburg.interaction.color}" },
+          "hover-color": { "$value": "{tilburg.interaction.hover.color}" },
+          "hover-background-color": { "$value": "{tilburg.color.gray.50}" },
+          "active-color": { "$value": "{tilburg.interaction.active.color}" },
+          "disabled-color": { "$value": "{tilburg.color.gray.400}" },
+          "font-weight": { "$value": "400" }
+        },
+        "table": {
+          "padding-block-start": { "$value": "{tilburg.space.block.beetle}" },
+          "padding-block-end": { "$value": "{tilburg.space.block.beetle}" },
+          "weeks-item": {
+            "width": { "$value": "44px" },
+            "padding-block-start": { "$value": "{tilburg.space.block.beetle}" },
+            "padding-block-end": { "$value": "{tilburg.space.block.beetle}" }
+          },
+          "days-item-day": {
+            "size": { "$value": "44px" },
+            "color": { "$value": "{tilburg.color.gray.500}" },
+            "border-width": { "$value": "{tilburg.border-width.sm}" },
+            "hover": {
+              "color": { "$value": "{tilburg.interaction.hover.color}" },
+              "background-color": { "$value": "{tilburg.color.gray.50}" }
+            },
+            "out-of-the-month": {
+              "color": { "$value": "{tilburg.color.gray.400}" }
+            },
+            "is-today": {
+              "border-color": { "$value": "{tilburg.color.gray.500}" },
+              "font-weight": { "$value": "700" }
+            },
+            "selected": {
+              "background-color": { "$value": "{tilburg.interaction.color}" },
+              "border-color": { "$value": "{tilburg.interaction.color}" },
+              "color": { "$value": "{tilburg.color.white}" },
+              "font-weight": { "$value": "700" }
+            },
+            "disabled": {
+              "color": { "$value": "{tilburg.color.gray.400}" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+@import "../../../components-css/calendar/index";
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; the calendar is a block of its own. */
+:host {
+  display: block;
+}

@@ -1,0 +1,74 @@
+<div class="utrecht-calendar">
+  <div class="utrecht-calendar__navigation">
+    <div class="utrecht-calendar__navigation-buttons">
+      <ng-container
+        *ngTemplateOutlet="navButton; context: { label: previousYearLabel, paths: icons.previousYear, months: -12 }"
+      ></ng-container>
+      <div class="utrecht-calendar__navigation-buttons">
+        <ng-container
+          *ngTemplateOutlet="navButton; context: { label: previousMonthLabel, paths: icons.previousMonth, months: -1 }"
+        ></ng-container>
+        <time
+          class="utrecht-calendar__navigation-label"
+          [id]="labelId"
+          [attr.datetime]="monthDateTime"
+          aria-live="polite"
+          >{{ monthLabel }}</time
+        >
+        <ng-container
+          *ngTemplateOutlet="navButton; context: { label: nextMonthLabel, paths: icons.nextMonth, months: 1 }"
+        ></ng-container>
+      </div>
+      <ng-container
+        *ngTemplateOutlet="navButton; context: { label: nextYearLabel, paths: icons.nextYear, months: 12 }"
+      ></ng-container>
+    </div>
+  </div>
+  <table class="utrecht-calendar__table" role="grid" [attr.aria-labelledby]="labelId" (keydown)="onKeydown($event)">
+    <thead class="utrecht-calendar__table-weeks-container">
+      <tr class="utrecht-calendar__table-weeks-container-content">
+        <th
+          *ngFor="let weekday of weekdays"
+          class="utrecht-calendar__table-weeks-item"
+          scope="col"
+          [attr.abbr]="weekday.long"
+        >
+          {{ weekday.short }}
+        </th>
+      </tr>
+    </thead>
+    <tbody class="utrecht-calendar__table-days-container">
+      <tr *ngFor="let week of weeks; trackBy: trackWeek">
+        <td *ngFor="let day of week; trackBy: trackDay" [attr.aria-selected]="isSelected(day) ? 'true' : null">
+          <button
+            type="button"
+            class="utrecht-button utrecht-button--subtle utrecht-calendar__button utrecht-calendar__table-days-item-day"
+            [ngClass]="dayClass(day)"
+            [attr.tabindex]="isFocused(day) ? 0 : -1"
+            [attr.aria-label]="dayLabel(day)"
+            [attr.aria-current]="isToday(day) ? 'date' : null"
+            [disabled]="isDisabled(day)"
+            (click)="select(day)"
+          >
+            {{ day.getDate() }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #navButton let-label="label" let-paths="paths" let-months="months">
+  <button
+    type="button"
+    class="utrecht-button utrecht-button--subtle utrecht-calendar__button"
+    [attr.aria-label]="label"
+    (click)="move(months)"
+  >
+    <span class="utrecht-calendar__icon">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor">
+        <path *ngFor="let d of paths" [attr.d]="d"></path>
+      </svg>
+    </span>
+  </button>
+</ng-template>

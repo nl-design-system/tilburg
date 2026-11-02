@@ -12,6 +12,7 @@ import '@gemeente-tilburg/components-css/badge-status/index.scss';
 import '@gemeente-tilburg/components-css/breadcrumb/index.scss';
 import '@gemeente-tilburg/components-css/button/index.scss';
 import '@gemeente-tilburg/components-css/button-link/index.scss';
+import '@gemeente-tilburg/components-css/calendar/index.scss';
 import '@gemeente-tilburg/components-css/card/index.scss';
 import '@gemeente-tilburg/components-css/checkbox/index.scss';
 import '@gemeente-tilburg/components-css/combobox/index.scss';

@@ -1,0 +1,69 @@
+/* Tilburg layer on the Utrecht calendar. The `utrecht-calendar*` classes come from
+   @utrecht/component-library-css 5.2.0; their Tilburg values live in
+   `proprietary/design-tokens/src/patches/calendar.tokens.json`. This file only fixes what tokens cannot. */
+.utrecht-calendar {
+  /* The calendar buttons are Utrecht subtle buttons. Tilburg's theme gives every button a block margin and a
+     condensed line-height, which would pull the grid rows apart; inside the calendar they sit flush. */
+  --utrecht-button-margin-block-start: 0;
+  --utrecht-button-margin-block-end: 0;
+  --utrecht-button-line-height: 1;
+
+  font-family: var(--utrecht-document-font-family, inherit);
+}
+
+.utrecht-calendar__table {
+  border-collapse: collapse;
+}
+
+.utrecht-calendar__table-weeks-item {
+  color: var(--tilburg-document-subtle-color, inherit);
+  font-weight: var(--tilburg-document-strong-font-weight, bold);
+  text-align: center;
+}
+
+.utrecht-calendar__navigation-label {
+  font-weight: var(--tilburg-document-strong-font-weight, bold);
+}
+
+/* Utrecht sets no focus / hover / active colours for the selected day, so Tilburg's subtle-button states (white or
+   grey background) would hide the selection while the day is focused, e.g. right after clicking it. Keep the
+   selected fill in every state, like the Utrecht calendar does; focus still adds the focus ring. Three classes: it
+   must beat Utrecht's `.utrecht-calendar__table-days-item-day:focus` / `:hover` / `:active` rules. The focus colours
+   go on the private `--_utrecht-button-appearance-focus-*` properties because `button/index.scss` sets those on
+   `.utrecht-button--subtle`, over the public ones. */
+.utrecht-calendar .utrecht-calendar__table-days-item-day.utrecht-calendar__table-days-item-day--selected {
+  --_utrecht-button-appearance-focus-background-color: var(
+    --utrecht-calendar-table-days-item-day-selected-background-color
+  );
+  --_utrecht-button-appearance-focus-color: var(--utrecht-calendar-table-days-item-day-selected-color);
+  --utrecht-calendar-button-focus-border-color: var(--utrecht-calendar-table-days-item-day-selected-border-color);
+  --utrecht-calendar-button-hover-background-color: var(
+    --utrecht-calendar-table-days-item-day-selected-background-color
+  );
+  --utrecht-calendar-button-hover-border-color: var(--utrecht-calendar-table-days-item-day-selected-border-color);
+  --utrecht-calendar-button-hover-color: var(--utrecht-calendar-table-days-item-day-selected-color);
+  --utrecht-calendar-button-active-background-color: var(
+    --utrecht-calendar-table-days-item-day-selected-background-color
+  );
+  --utrecht-calendar-button-active-border-color: var(--utrecht-calendar-table-days-item-day-selected-border-color);
+  --utrecht-calendar-button-active-color: var(--utrecht-calendar-table-days-item-day-selected-color);
+}
+
+.utrecht-calendar__table-days-item-day:disabled {
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Forced colours paint every day the same (system button colours, one border each), which drops the selected
+   background and today's border. Mark them with system colours and a non-colour cue instead. */
+@media (forced-colors: active) {
+  .utrecht-calendar__table-days-item-day--selected {
+    background-color: highlight;
+    color: highlighttext;
+    forced-color-adjust: none;
+  }
+
+  .utrecht-calendar__table-days-item-day--is-today {
+    text-decoration: underline;
+  }
+}

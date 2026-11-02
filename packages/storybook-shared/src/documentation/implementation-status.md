@@ -35,6 +35,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Button                 | ✅       | ✅    | ✅      | ✅             |
 | Button Group           | utrecht  | ✅    | ✅      | ✅             |
 | Button Link            | ✅       | ✅    | ✅      | ✅             |
+| Calendar               | ✅       | ✅    | ✅      | ✅             |
 | Card                   | ✅       | ✅    | ✅      | ✅             |
 | Checkbox               | ✅       | ✅    | ✅      | ✅             |
 | Code                   | utrecht  | ✅    | ✅      | ✅             |

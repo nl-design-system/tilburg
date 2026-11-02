@@ -10,6 +10,7 @@ export * from './breadcrumb/component';
 export * from './button-group/component';
 export * from './button-link/component';
 export * from './button/component';
+export * from './calendar/component';
 export * from './card/component';
 export * from './checkbox/component';
 export * from './code-block/component';
