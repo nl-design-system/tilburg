@@ -5,6 +5,7 @@ import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgAccordion, TilburgAccordionSection } from './accordion/component';
 import { TilburgAlert } from './alert/component';
 import { TilburgArticle } from './article/component';
+import { TilburgBadgeList } from './badge-list/component';
 import { TilburgBadgeStatus } from './badge-status/component';
 import { TilburgBlockquote } from './blockquote/component';
 import { TilburgBreadcrumb } from './breadcrumb/component';
@@ -78,6 +79,7 @@ const components = [
   TilburgAccordionSection,
   TilburgAlert,
   TilburgArticle,
+  TilburgBadgeList,
   TilburgBadgeStatus,
   TilburgBlockquote,
   TilburgBreadcrumb,

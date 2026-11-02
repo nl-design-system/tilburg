@@ -6,6 +6,8 @@ export { AlertDialog } from './AlertDialog';
 export type { AlertDialogProps } from './AlertDialog';
 export { Article } from './Article';
 export type { ArticleProps } from './Article';
+export { BadgeList } from './BadgeList';
+export type { BadgeListProps } from './BadgeList';
 export { BadgeStatus } from './BadgeStatus';
 export type { BadgeStatusProps } from './BadgeStatus';
 export { Blockquote } from './Blockquote';

@@ -1,0 +1,14 @@
+{
+  "components/badge-list": {
+    "utrecht": {
+      "badge-list": {
+        "column-gap": {
+          "$value": "{tilburg.space.column.snail}"
+        },
+        "row-gap": {
+          "$value": "{tilburg.space.row.snail}"
+        }
+      }
+    }
+  }
+}

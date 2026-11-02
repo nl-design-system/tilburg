@@ -1,6 +1,7 @@
 export * from './accordion/component';
 export * from './alert/component';
 export * from './article/component';
+export * from './badge-list/component';
 export * from './badge-status/component';
 export * from './blockquote/component';
 export * from './breadcrumb/component';
