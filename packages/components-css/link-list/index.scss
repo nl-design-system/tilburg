@@ -1,0 +1,36 @@
+/* Tilburg link list: the `tilburg.link-list.item.*` tokens from Figma. No underline at rest, underline on hover and
+   active, none on focus (the focus colours already mark it). */
+.utrecht-link-list {
+  --utrecht-link-list-link-column-gap: var(--tilburg-link-list-item-column-gap);
+  --utrecht-link-list-link-text-decoration: var(--tilburg-link-list-item-text-decoration);
+}
+
+/* Extra `.utrecht-link-list` for specificity: components-css/link underlines every `.utrecht-link:visited`, which
+   would underline only the visited links of the list. */
+.utrecht-link-list .utrecht-link-list__link {
+  &:visited {
+    text-decoration-line: var(--tilburg-link-list-item-text-decoration);
+  }
+
+  &:hover {
+    text-decoration-line: var(--tilburg-link-list-item-hover-text-decoration);
+  }
+
+  &:active {
+    text-decoration-line: var(--tilburg-link-list-item-active-text-decoration);
+  }
+
+  &:focus,
+  &:focus-visible {
+    text-decoration-line: var(--tilburg-link-list-item-focus-text-decoration);
+  }
+}
+
+/* Utrecht aligns the icon on the text baseline, which puts the bottom of the 24px chevron on the baseline and lifts
+   it above the text. Centre it on the first line instead, so a link that wraps keeps its chevron beside the first
+   line, as in Utrecht. */
+.utrecht-link-list__link > .utrecht-icon {
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin-block-start: calc((1lh - var(--utrecht-icon-size)) / 2);
+}

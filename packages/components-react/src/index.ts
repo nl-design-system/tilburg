@@ -84,6 +84,8 @@ export { Link } from './Link';
 export type { AriaCurrent, LinkProps } from './Link';
 export { LinkButton } from './LinkButton';
 export type { LinkButtonProps } from './LinkButton';
+export { LinkList } from './LinkList';
+export type { LinkListLink, LinkListProps } from './LinkList';
 export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
 export { Mark } from './Mark';
