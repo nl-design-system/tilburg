@@ -14,6 +14,7 @@ import { TilburgBreadcrumb } from './breadcrumb/component';
 import { TilburgButton } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLink } from './button-link/component';
+import { TilburgCard } from './card/component';
 import { TilburgCheckbox } from './checkbox/component';
 import { TilburgCode } from './code/component';
 import { TilburgCodeBlock } from './code-block/component';
@@ -106,6 +107,7 @@ const components = [
   TilburgButton,
   TilburgButtonGroup,
   TilburgButtonLink,
+  TilburgCard,
   TilburgCheckbox,
   TilburgColorSample,
   TilburgCode,

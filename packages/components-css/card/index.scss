@@ -1,0 +1,100 @@
+/* Port of Utrecht `components/card` (@utrecht/card-css 2.0.1, nl-design-system/utrecht main @ 4d5603e). Utrecht
+   5.2.0, which Tilburg uses, has no card yet. Class names and `--utrecht-card-*` properties are Utrecht's, so a later
+   Utrecht upgrade can replace this file; the fallbacks give the Tilburg look. */
+
+.utrecht-card {
+  background-color: var(--utrecht-card-background-color, var(--tilburg-color-white));
+  border-radius: var(--utrecht-card-border-radius, 0);
+
+  /* The design tokens emit the shadow as unitless parts, not as one value (same as the modal). */
+  box-shadow: var(
+    --utrecht-card-box-shadow,
+    calc(var(--tilburg-box-shadow-sm-x, 0) * 1px) calc(var(--tilburg-box-shadow-sm-y, 2) * 1px)
+      calc(var(--tilburg-box-shadow-sm-blur, 6) * 1px) calc(var(--tilburg-box-shadow-sm-spread, 0) * 1px)
+      var(--tilburg-box-shadow-sm-color, rgb(0 0 0 / 10%))
+  );
+  color: var(--utrecht-card-color, var(--utrecht-document-color));
+  display: flex;
+  flex-direction: column;
+  inline-size: var(--utrecht-card-inline-size, 100%);
+  max-inline-size: var(--utrecht-card-max-inline-size, 100%);
+  row-gap: var(--utrecht-card-row-gap, 0);
+}
+
+.utrecht-card--link {
+  cursor: pointer;
+
+  /* Tilburg addition: anchor for the stretched heading link below. */
+  position: relative;
+  text-decoration-skip-ink: none;
+}
+
+.utrecht-card--link:hover {
+  --utrecht-link-text-decoration: underline;
+  --utrecht-link-text-decoration-thickness: var(--utrecht-card-link-hover-text-decoration-thickness);
+}
+
+.utrecht-card__heading {
+  --utrecht-heading-color: var(--utrecht-card-heading-color);
+
+  order: 2;
+  padding-inline-end: var(--utrecht-card-heading-padding-inline-end, var(--tilburg-space-inline-rabbit));
+  padding-inline-start: var(--utrecht-card-heading-padding-inline-start, var(--tilburg-space-inline-rabbit));
+}
+
+.utrecht-card__image {
+  order: 1;
+
+  /* As Utrecht (`utrecht-img` + `utrecht-img--photo`): an image missing either size attribute scales down in both
+     directions, so `<img width="640">` without `height` does not overflow the card. */
+  img:not([height]),
+  img:not([width]) {
+    max-block-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  img:not([height]) {
+    block-size: auto;
+  }
+
+  img:not([width]) {
+    inline-size: auto;
+  }
+}
+
+.utrecht-card__content {
+  display: flex;
+  flex-direction: column;
+  padding-block-end: var(--utrecht-card-content-padding-block-end, var(--tilburg-space-block-rabbit));
+  row-gap: var(--utrecht-card-content-row-gap, var(--tilburg-space-row-mouse));
+
+  &:not(:has(img)) {
+    padding-block-start: var(--utrecht-card-content-padding-block-start, var(--tilburg-space-block-rabbit));
+  }
+}
+
+.utrecht-card__body {
+  order: 3;
+  padding-inline-end: var(--utrecht-card-body-padding-inline-end, var(--tilburg-space-inline-rabbit));
+  padding-inline-start: var(--utrecht-card-body-padding-inline-start, var(--tilburg-space-inline-rabbit));
+}
+
+/* Tilburg addition: the heading link is the card's only link and covers the whole card (a "stretched" link), so
+   the card is clickable without Utrecht React's `role="link"` + `tabindex` on the card itself — that gave two tab
+   stops and a link nested in a link. */
+.utrecht-card--link .utrecht-card__link::after {
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.utrecht-card__heading :where(h1, h2, h3, h4, h5, h6) {
+  margin-block: 0;
+}
+
+/* Tilburg addition: the Angular template always renders the image and body blocks for content projection; with
+   nothing projected they must not add a row gap. */
+.utrecht-card__image:empty,
+.utrecht-card__body:empty {
+  display: none;
+}

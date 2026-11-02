@@ -24,6 +24,8 @@ export { ButtonGroup } from './ButtonGroup';
 export type { ButtonGroupProps } from './ButtonGroup';
 export { ButtonLink } from './ButtonLink';
 export type { ButtonLinkAppearance, ButtonLinkProps } from './ButtonLink';
+export { Card } from './Card';
+export type { CardHeadingLevel, CardProps } from './Card';
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
 export { Code } from './Code';
