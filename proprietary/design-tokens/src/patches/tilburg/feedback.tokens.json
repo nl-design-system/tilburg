@@ -1,0 +1,13 @@
+{
+  "common/feedback": {
+    "tilburg": {
+      "feedback": {
+        "negative": {
+          "color": {
+            "$value": "{tilburg.color.red.400}"
+          }
+        }
+      }
+    }
+  }
+}

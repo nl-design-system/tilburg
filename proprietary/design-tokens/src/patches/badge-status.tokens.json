@@ -4,7 +4,7 @@
       "badge-status": {
         "neutral": {
           "background-color": {
-            "$value": "{tilburg.color.blue.300}"
+            "$value": "{tilburg.color.blue.400}"
           },
           "color": {
             "$value": "{tilburg.color.white}"
@@ -12,7 +12,7 @@
         },
         "safe": {
           "background-color": {
-            "$value": "{tilburg.color.green.300}"
+            "$value": "{tilburg.color.green.400}"
           },
           "color": {
             "$value": "{tilburg.color.white}"
@@ -20,7 +20,7 @@
         },
         "warning": {
           "background-color": {
-            "$value": "{tilburg.color.orange.300}"
+            "$value": "{tilburg.color.orange.500}"
           },
           "color": {
             "$value": "{tilburg.color.white}"
@@ -52,7 +52,7 @@
         },
         "info": {
           "background-color": {
-            "$value": "{tilburg.color.blue.300}"
+            "$value": "{tilburg.color.blue.400}"
           },
           "color": {
             "$value": "{tilburg.color.white}"

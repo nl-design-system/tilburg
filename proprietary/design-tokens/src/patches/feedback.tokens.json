@@ -1,0 +1,39 @@
+{
+  "brand": {
+    "tilburg": {
+      "color": {
+        "orange": {
+          "500": {
+            "$value": "#A74C01",
+            "$type": "color"
+          }
+        }
+      }
+    }
+  },
+  "common/feedback": {
+    "tilburg": {
+      "feedback": {
+        "informative": {
+          "color": {
+            "$value": "{tilburg.color.blue.400}"
+          }
+        },
+        "positive": {
+          "color": {
+            "$value": "{tilburg.color.green.400}"
+          }
+        }
+      }
+    },
+    "utrecht": {
+      "feedback": {
+        "warning": {
+          "color": {
+            "$value": "{tilburg.color.orange.500}"
+          }
+        }
+      }
+    }
+  }
+}
