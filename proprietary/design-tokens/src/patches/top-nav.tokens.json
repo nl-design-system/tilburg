@@ -1,0 +1,33 @@
+{
+  "components/top-nav": {
+    "utrecht": {
+      "topnav": {
+        "list": {
+          "background-color": {
+            "$value": "{tilburg.color.blue.400}"
+          },
+          "background-active": {
+            "$value": "{tilburg.color.blue.500}"
+          },
+          "border-color": {
+            "$value": "{tilburg.color.blue.500}"
+          }
+        },
+        "link": {
+          "color": {
+            "$value": "{tilburg.color.white}"
+          },
+          "hover-background-color": {
+            "$value": "{tilburg.color.blue.500}"
+          },
+          "focus-background-color": {
+            "$value": "{utrecht.focus.background-color}"
+          },
+          "focus-color": {
+            "$value": "{utrecht.focus.color}"
+          }
+        }
+      }
+    }
+  }
+}

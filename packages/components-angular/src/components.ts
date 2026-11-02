@@ -77,6 +77,7 @@ export * from './table/component';
 export * from './textarea/component';
 export * from './textbox/component';
 export * from './tooltip/component';
+export * from './top-nav/component';
 export * from './toptask-link/component';
 export * from './toptask-nav/component';
 export * from './unordered-list/component';

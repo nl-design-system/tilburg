@@ -83,6 +83,7 @@ import { TilburgTextarea } from './textarea/component';
 import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-directive';
 import { TilburgTextbox } from './textbox/component';
 import { TilburgTooltip } from './tooltip/component';
+import { TilburgTopNav } from './top-nav/component';
 import { TilburgToptaskLink } from './toptask-link/component';
 import { TilburgToptaskNav } from './toptask-nav/component';
 import { TilburgUnorderedList } from './unordered-list/component';
@@ -176,6 +177,7 @@ const components = [
   TilburgTextbox,
   TilburgRadioButton,
   TilburgTooltip,
+  TilburgTopNav,
   TilburgToptaskLink,
   TilburgToptaskNav,
   TilburgUnorderedList,

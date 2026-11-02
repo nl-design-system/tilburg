@@ -168,6 +168,8 @@ export { ToptaskLink } from './ToptaskLink';
 export type { ToptaskLinkProps } from './ToptaskLink';
 export { ToptaskNav } from './ToptaskNav';
 export type { ToptaskNavProps } from './ToptaskNav';
+export { TopNav } from './TopNav';
+export type { TopNavItem, TopNavProps } from './TopNav';
 export { UnorderedList, UnorderedListItem } from './UnorderedList';
 export type { UnorderedListItemProps, UnorderedListProps } from './UnorderedList';
 export { UrlData } from './UrlData';

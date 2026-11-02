@@ -1,0 +1,16 @@
+/* Top navigation: `.utrecht-topnav*` is styled by `@utrecht/component-library-css` and the `--utrecht-topnav-*` theme
+   tokens. utrecht keeps all items on one row (`flex: 1 0 auto`, no wrapping), so more or longer labels run off the
+   screen at 320px / 400% zoom (WCAG 1.4.10 Reflow). Let the items wrap onto a new row, and a single item that is still
+   too wide shrink and wrap its label. */
+.utrecht-topnav__list {
+  flex-wrap: wrap;
+}
+
+.utrecht-topnav__item {
+  flex-shrink: 1;
+  min-inline-size: 0;
+}
+
+.utrecht-topnav__link {
+  overflow-wrap: anywhere;
+}
