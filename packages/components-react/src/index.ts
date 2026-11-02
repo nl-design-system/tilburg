@@ -38,6 +38,8 @@ export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';
 export type { DataListItemProps, DataListKeyProps, DataListProps, DataListValueProps } from './DataList';
 export { DataPlaceholder } from './DataPlaceholder';
 export type { DataPlaceholderProps } from './DataPlaceholder';
+export { DatetimeValue } from './DatetimeValue';
+export type { DatetimeValueProps } from './DatetimeValue';
 export { Document } from './Document';
 export type { DocumentProps } from './Document';
 export { Emphasis } from './Emphasis';

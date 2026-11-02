@@ -17,6 +17,7 @@ export * from './currency-data/component';
 export * from './data-badge/component';
 export * from './data-list/component';
 export * from './data-placeholder/component';
+export * from './datetime-value/component';
 export * from './document/component';
 export * from './emphasis/component';
 export * from './figure/component';

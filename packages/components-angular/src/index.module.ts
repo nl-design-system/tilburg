@@ -21,6 +21,7 @@ import { TilburgCurrencyData } from './currency-data/component';
 import { TilburgDataBadge } from './data-badge/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
 import { TilburgDataPlaceholder } from './data-placeholder/component';
+import { TilburgDatetimeValue } from './datetime-value/component';
 import { TilburgDocument } from './document/component';
 import { TilburgEmphasis } from './emphasis/component';
 import { TilburgFigure } from './figure/component';
@@ -103,6 +104,7 @@ const components = [
   TilburgDataListKey,
   TilburgDataListValue,
   TilburgDataPlaceholder,
+  TilburgDatetimeValue,
   TilburgFigure,
   TilburgHeading1,
   TilburgHeading2,

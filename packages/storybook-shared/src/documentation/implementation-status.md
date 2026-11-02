@@ -42,6 +42,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Data Badge             | ✅       | ✅    | ✅      | ✅             |
 | Data List              | ✅       | ✅    | ✅      | ✅             |
 | Data Placeholder       | utrecht  | ✅    | ✅      | ✅             |
+| Datetime Value         | utrecht  | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
 | Emphasis               | utrecht  | ✅    | ✅      | ✅             |
 | Figure                 | utrecht  | ✅    | ✅      | ✅             |
