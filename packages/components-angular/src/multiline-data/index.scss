@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-multiline-data` is styled by
+   `@utrecht/component-library-css`, there is no components-css folder. */
+
+/* The custom-element host defaults to `display: inline`; force the block flow
+   of the `<pre>` in the HTML/CSS reference. */
+:host {
+  display: block;
+}

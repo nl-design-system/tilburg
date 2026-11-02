@@ -44,6 +44,7 @@ import { TilburgLink } from './link/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
 import { TilburgMark } from './mark/component';
 import { TilburgModal } from './modal/component';
+import { TilburgMultilineData } from './multiline-data/component';
 import { TilburgNumberData } from './number-data/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
@@ -115,6 +116,7 @@ const components = [
   TilburgLoadingSpinner,
   TilburgMark,
   TilburgModal,
+  TilburgMultilineData,
   TilburgNumberData,
   TilburgFormField,
   TilburgFormFieldDescription,
