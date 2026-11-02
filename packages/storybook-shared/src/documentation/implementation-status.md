@@ -81,6 +81,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Textbox                | ✅       | ✅    | ✅      | ✅             |
 | Tooltip                | ✅       | ✅    | ✅      | ✅             |
 | Unordered List         | ✅       | ✅    | ✅      | ✅             |
+| URL Data               | utrecht  | ✅    | ✅      | ✅             |
 | Validation Message     | ✅       | ✅    | ✅      | ✅             |
 
 ## Alleen HTML/CSS

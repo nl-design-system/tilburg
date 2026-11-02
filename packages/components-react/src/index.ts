@@ -144,5 +144,7 @@ export { Tooltip } from './Tooltip';
 export type { TooltipPlacement, TooltipProps } from './Tooltip';
 export { UnorderedList, UnorderedListItem } from './UnorderedList';
 export type { UnorderedListItemProps, UnorderedListProps } from './UnorderedList';
+export { UrlData } from './UrlData';
+export type { UrlDataProps } from './UrlData';
 export { ValidationMessage } from './ValidationMessage';
 export type { ValidationLiveRegion, ValidationMessageProps, ValidationMessageType } from './ValidationMessage';

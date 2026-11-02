@@ -73,6 +73,7 @@ import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-d
 import { TilburgTextbox } from './textbox/component';
 import { TilburgTooltip } from './tooltip/component';
 import { TilburgUnorderedList } from './unordered-list/component';
+import { TilburgUrlData } from './url-data/component';
 import { TilburgValidationMessage } from './validation-message/component';
 
 const components = [
@@ -151,6 +152,7 @@ const components = [
   TilburgRadioButton,
   TilburgTooltip,
   TilburgUnorderedList,
+  TilburgUrlData,
   TilburgValidationMessage,
 ];
 

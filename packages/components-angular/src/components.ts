@@ -67,6 +67,7 @@ export * from './textarea/component';
 export * from './textbox/component';
 export * from './tooltip/component';
 export * from './unordered-list/component';
+export * from './url-data/component';
 export * from './textarea/textarea-resize-directive';
 export * from './validation-message/component';
 export * from './modal/component';
