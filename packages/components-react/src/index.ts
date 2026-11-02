@@ -160,6 +160,8 @@ export { Tooltip } from './Tooltip';
 export type { TooltipPlacement, TooltipProps } from './Tooltip';
 export { ToptaskLink } from './ToptaskLink';
 export type { ToptaskLinkProps } from './ToptaskLink';
+export { ToptaskNav } from './ToptaskNav';
+export type { ToptaskNavProps } from './ToptaskNav';
 export { UnorderedList, UnorderedListItem } from './UnorderedList';
 export type { UnorderedListItemProps, UnorderedListProps } from './UnorderedList';
 export { UrlData } from './UrlData';

@@ -1,0 +1,14 @@
+{
+  "components/toptask-nav": {
+    "utrecht": {
+      "toptask-nav": {
+        "gap": { "$value": "{tilburg.space.column.rat}" },
+        "link": {
+          "grid": {
+            "max-inline-size": { "$value": "240px" }
+          }
+        }
+      }
+    }
+  }
+}

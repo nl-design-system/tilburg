@@ -89,6 +89,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Textbox                | ✅       | ✅    | ✅      | ✅             |
 | Tooltip                | ✅       | ✅    | ✅      | ✅             |
 | Toptask Link           | ✅       | ✅    | ✅      | ✅             |
+| Toptask Nav            | utrecht  | ✅    | ✅      | ✅             |
 | Unordered List         | ✅       | ✅    | ✅      | ✅             |
 | URL Data               | utrecht  | ✅    | ✅      | ✅             |
 | Validation Message     | ✅       | ✅    | ✅      | ✅             |

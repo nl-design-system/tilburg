@@ -1,0 +1,10 @@
+/* utrecht-only component: `.utrecht-toptask-nav` is styled by `@utrecht/component-library-css` with Tilburg
+   tokens; there is no components-css folder. */
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`,
+   which collapses the component into a text flow and prevents its block-level
+   layout (margins, padding, borders, stacking with siblings) from matching the
+   HTML/CSS reference. Force block flow on the host. */
+:host {
+  display: block;
+}

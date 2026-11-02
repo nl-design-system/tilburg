@@ -75,6 +75,7 @@ export * from './textarea/component';
 export * from './textbox/component';
 export * from './tooltip/component';
 export * from './toptask-link/component';
+export * from './toptask-nav/component';
 export * from './unordered-list/component';
 export * from './url-data/component';
 export * from './textarea/textarea-resize-directive';
