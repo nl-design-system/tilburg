@@ -90,6 +90,8 @@ export { Separator } from './Separator';
 export type { SeparatorProps } from './Separator';
 export { SkipLink } from './SkipLink';
 export type { SkipLinkProps, SkipLinkVisibility } from './SkipLink';
+export { Subscript } from './Subscript';
+export type { SubscriptProps } from './Subscript';
 export {
   Table,
   TableBody,

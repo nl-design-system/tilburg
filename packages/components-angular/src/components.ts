@@ -42,6 +42,7 @@ export * from './radio-button/component';
 export * from './select/component';
 export * from './separator/component';
 export * from './skip-link/component';
+export * from './subscript/component';
 export * from './table-body/component';
 export * from './table-caption/component';
 export * from './table-cell/component';

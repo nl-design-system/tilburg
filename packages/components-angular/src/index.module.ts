@@ -47,6 +47,7 @@ import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
 import { TilburgSkipLink } from './skip-link/component';
+import { TilburgSubscript } from './subscript/component';
 import { TilburgTable } from './table/component';
 import { TilburgTableBodyAttr } from './table-body/component';
 import { TilburgTableCaptionAttr } from './table-caption/component';
@@ -119,6 +120,7 @@ const components = [
   TilburgSelect,
   TilburgSeparator,
   TilburgSkipLink,
+  TilburgSubscript,
   TilburgTextareaAutoresizeDirective,
   TilburgTextarea,
   TilburgTextbox,

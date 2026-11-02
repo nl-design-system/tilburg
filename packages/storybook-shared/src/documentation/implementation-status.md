@@ -63,6 +63,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Select                 | ✅       | ✅    | ✅      | ✅             |
 | Separator              | ✅       | ✅    | ✅      | ✅             |
 | Skip Link              | ✅       | ✅    | ✅      | ✅             |
+| Subscript              | ✅       | ✅    | ✅      | ✅             |
 | Table                  | ✅       | ✅    | ✅      | ✅             |
 | Textarea               | ✅       | ✅    | ✅      | ✅             |
 | Textbox                | ✅       | ✅    | ✅      | ✅             |
