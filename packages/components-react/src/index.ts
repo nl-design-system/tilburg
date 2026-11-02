@@ -86,6 +86,8 @@ export { LinkButton } from './LinkButton';
 export type { LinkButtonProps } from './LinkButton';
 export { LinkList } from './LinkList';
 export type { LinkListLink, LinkListProps } from './LinkList';
+export { LinkSocial, ListSocial, ListSocialItem } from './LinkSocial';
+export type { LinkSocialProps, ListSocialItemProps, ListSocialProps } from './LinkSocial';
 export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
 export { Mark } from './Mark';

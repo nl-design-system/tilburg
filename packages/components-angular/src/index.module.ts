@@ -45,6 +45,7 @@ import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
 import { TilburgLinkButton } from './link-button/component';
 import { TilburgLinkList } from './link-list/component';
+import { TilburgLinkSocial, TilburgListSocial } from './link-social/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
 import { TilburgMark } from './mark/component';
 import { TilburgModal } from './modal/component';
@@ -121,6 +122,8 @@ const components = [
   TilburgLink,
   TilburgLinkButton,
   TilburgLinkList,
+  TilburgLinkSocial,
+  TilburgListSocial,
   TilburgLoadingSpinner,
   TilburgMark,
   TilburgModal,
