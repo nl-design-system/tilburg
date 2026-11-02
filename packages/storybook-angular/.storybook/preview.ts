@@ -14,6 +14,7 @@ import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
    `.utrecht-combobox[data-tilburg-combobox-enhance]` only — the Angular
    wrapper template doesn't emit that attribute. */
 import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
+import { enhanceListbox } from '@gemeente-tilburg/components-css/listbox';
 import { enhancePasswordInput } from '@gemeente-tilburg/components-css/password-input';
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
@@ -26,6 +27,7 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
   const reenhance = () => {
     enhanceAccordion(document);
     enhanceCombobox(document);
+    enhanceListbox(document);
     enhancePasswordInput(document);
     enhanceTooltip(document);
     resolveTokens(document);

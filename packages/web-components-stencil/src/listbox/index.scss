@@ -1,0 +1,8 @@
+/* The option look lives in the combobox file (it styles every `.utrecht-listbox__option`). */
+@use "../../../components-css/combobox/index" as combobox;
+@use "../../../components-css/listbox/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule as the Angular `:host`). */
+tilburg-wbc-listbox {
+  display: block;
+}

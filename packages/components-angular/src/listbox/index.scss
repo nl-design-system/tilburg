@@ -1,0 +1,8 @@
+/* The option look lives in the combobox file (it styles every `.utrecht-listbox__option`). */
+@import "../../../components-css/combobox/index";
+@import "../../../components-css/listbox/index";
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force block flow. */
+:host {
+  display: block;
+}

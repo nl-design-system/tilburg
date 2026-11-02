@@ -69,6 +69,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Link Button            | ✅       | ✅    | ✅      | ✅             |
 | Link List              | ✅       | ✅    | ✅      | ✅             |
 | Link Social            | utrecht  | ✅    | ✅      | ✅             |
+| Listbox                | ✅       | ✅    | ✅      | ✅             |
 | Loading Spinner        | ✅       | ✅    | ✅      | ✅             |
 | Mark                   | utrecht  | ✅    | ✅      | ✅             |
 | Modal                  | ✅       | ✅    | ✅      | ✅             |

@@ -1,0 +1,58 @@
+/* Tilburg layer over the standalone `utrecht-listbox` (@utrecht/component-library-css 5.2.0):
+   `div.utrecht-listbox.utrecht-listbox--html-div[role=listbox] > ul.utrecht-listbox__list > li.utrecht-listbox__option`.
+
+   The option rows (spacing, the pink active stripe on `[data-active="true"]`, the blue selected stripe on
+   `[aria-selected="true"]`) are the ones `combobox/index.scss` already sets on every `.utrecht-listbox__option`, so
+   load that file too (the React, Angular and Web Component layers do). This file adds the field around the options,
+   the look the combobox gives its popover with `.utrecht-combobox .utrecht-listbox`, plus the states a standalone
+   listbox has. The combobox popover has no `--html-div`, so none of this reaches it. */
+
+.utrecht-listbox--html-div {
+  background-color: var(--utrecht-textbox-background-color, var(--utrecht-form-control-background-color, canvas));
+  border-color: var(--utrecht-textbox-border-color, var(--utrecht-form-control-border-color));
+  border-radius: var(--utrecht-textbox-border-radius, var(--utrecht-form-control-border-radius, 0));
+  border-style: solid;
+  border-width: var(--utrecht-textbox-border-width, var(--utrecht-form-control-border-width, 1px));
+  color: var(--utrecht-textbox-color, var(--utrecht-form-control-color));
+  font-family: var(--utrecht-textbox-font-family, var(--utrecht-form-control-font-family));
+  font-size: var(--utrecht-textbox-font-size, var(--utrecht-form-control-font-size, inherit));
+  inline-size: 100%;
+  max-inline-size: var(--utrecht-textbox-max-inline-size, var(--utrecht-form-control-max-inline-size));
+  padding-block-end: 0;
+  padding-block-start: 0;
+
+  /* Same pointer cue the combobox popover gives (there scoped to `.utrecht-combobox`). */
+  &:not([aria-disabled="true"]) .utrecht-listbox__option:hover:not([aria-disabled="true"]) {
+    background-color: var(--tilburg-combobox-option-active-background-color, var(--tilburg-color-blue-50));
+    border-inline-start-color: var(--tilburg-combobox-option-active-border-color, var(--tilburg-color-pink-300));
+  }
+
+  &:not([aria-disabled="true"]) .utrecht-listbox__option:hover[aria-selected="true"]:not([aria-disabled="true"]) {
+    background-color: var(--tilburg-combobox-option-active-selected-background-color, var(--tilburg-color-blue-100));
+  }
+}
+
+.utrecht-listbox--html-div[aria-invalid="true"] {
+  border-color: var(--utrecht-form-control-invalid-border-color, var(--utrecht-form-control-border-color));
+  border-width: var(--utrecht-form-control-invalid-border-width, var(--utrecht-form-control-border-width, 1px));
+}
+
+.utrecht-listbox--html-div[aria-disabled="true"] {
+  background-color: var(--utrecht-form-control-disabled-background-color, var(--tilburg-color-gray-50));
+  border-color: var(--utrecht-form-control-disabled-border-color, var(--utrecht-form-control-border-color));
+  color: var(--utrecht-form-control-disabled-color, var(--utrecht-form-control-color));
+
+  /* stylelint-disable-next-line no-descending-specificity -- a disabled listbox has no hover cue to order against */
+  .utrecht-listbox__option {
+    cursor: not-allowed;
+  }
+}
+
+@media (forced-colors: active) {
+  /* combobox/index.scss scopes its hover cue to the combobox popover; give the standalone listbox the same one. */
+  .utrecht-listbox--html-div .utrecht-listbox__option:hover:not([aria-disabled="true"]) {
+    background-color: highlight;
+    color: highlighttext;
+    forced-color-adjust: none;
+  }
+}

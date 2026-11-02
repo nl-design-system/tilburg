@@ -34,6 +34,7 @@ import '@gemeente-tilburg/components-css/language-toggle/index.scss';
 import '@gemeente-tilburg/components-css/link/index.scss';
 import '@gemeente-tilburg/components-css/link-button/index.scss';
 import '@gemeente-tilburg/components-css/link-list/index.scss';
+import '@gemeente-tilburg/components-css/listbox/index.scss';
 import '@gemeente-tilburg/components-css/loading-spinner/index.scss';
 import '@gemeente-tilburg/components-css/modal/index.scss';
 import '@gemeente-tilburg/components-css/nav-bar/index.scss';
@@ -69,6 +70,8 @@ import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
    the HTML/CSS reference stories. Same idempotency rule — only enhances
    `.utrecht-combobox[data-tilburg-combobox-enhance]`. */
 import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
+/* Keyboard + click selection of the HTML/CSS listbox (`[data-tilburg-listbox-enhance]`). */
+import { enhanceListbox } from '@gemeente-tilburg/components-css/listbox';
 /* Show/hide toggle of the HTML/CSS password input (`[data-tilburg-password-input-enhance]`). */
 import { enhancePasswordInput } from '@gemeente-tilburg/components-css/password-input';
 /* Hover/focus/Escape behaviour of the HTML/CSS tooltip (`[data-tilburg-tooltip-enhance]`). */
@@ -91,6 +94,7 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
   const reenhance = () => {
     enhanceAccordion(document);
     enhanceCombobox(document);
+    enhanceListbox(document);
     enhancePasswordInput(document);
     enhanceTooltip(document);
     resolveTokens(document);

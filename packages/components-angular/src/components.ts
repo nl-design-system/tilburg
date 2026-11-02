@@ -49,6 +49,7 @@ export * from './link/component';
 export * from './link-button/component';
 export * from './link-list/component';
 export * from './link-social/component';
+export * from './listbox/component';
 export * from './loading-spinner/component';
 export * from './mark/component';
 export * from './multiline-data/component';
