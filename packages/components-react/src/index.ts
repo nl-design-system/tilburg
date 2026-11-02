@@ -30,6 +30,8 @@ export { Combobox } from './Combobox';
 export type { ComboboxItem, ComboboxProps, MultiComboboxProps, SingleComboboxProps } from './Combobox';
 export { DataList, DataListItem, DataListKey, DataListValue } from './DataList';
 export type { DataListItemProps, DataListKeyProps, DataListProps, DataListValueProps } from './DataList';
+export { DataPlaceholder } from './DataPlaceholder';
+export type { DataPlaceholderProps } from './DataPlaceholder';
 export { Document } from './Document';
 export type { DocumentProps } from './Document';
 export { Emphasis } from './Emphasis';

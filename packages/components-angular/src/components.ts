@@ -13,6 +13,7 @@ export * from './code/component';
 export * from './color-sample/component';
 export * from './combobox/component';
 export * from './data-list/component';
+export * from './data-placeholder/component';
 export * from './document/component';
 export * from './emphasis/component';
 export * from './figure/component';

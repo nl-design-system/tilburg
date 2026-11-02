@@ -38,6 +38,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Color Sample           | utrecht  | ✅    | ✅      | ✅             |
 | Combobox               | ✅       | ✅    | ✅      | ✅             |
 | Data List              | ✅       | ✅    | ✅      | ✅             |
+| Data Placeholder       | utrecht  | ✅    | ✅      | ✅             |
 | Document               | utrecht  | ✅    | ✅      | ✅             |
 | Emphasis               | utrecht  | ✅    | ✅      | ✅             |
 | Figure                 | utrecht  | ✅    | ✅      | ✅             |
