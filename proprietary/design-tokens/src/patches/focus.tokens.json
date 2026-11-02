@@ -1,0 +1,11 @@
+{
+  "common/focus": {
+    "utrecht": {
+      "focus": {
+        "outline-offset": {
+          "$value": "1px"
+        }
+      }
+    }
+  }
+}
