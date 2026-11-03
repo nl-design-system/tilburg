@@ -12,9 +12,9 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 ## Wat de kolommen betekenen
 
 - **HTML/CSS** — de leidende laag. ✅ betekent dat er een eigen `@gemeente-tilburg/components-css`-laag
-  bovenop utrecht ligt, of dat de CSS zelf in `components-css` staat omdat utrecht 5.2.0 hem nog niet heeft (56
+  bovenop utrecht ligt, of dat de CSS zelf in `components-css` staat omdat utrecht 5.2.0 hem nog niet heeft (57
   componenten). `utrecht` betekent dat de utrecht-basisstijl volstaat, hooguit met Tilburg-waarden voor de
-  `--utrecht-*`-tokens in `proprietary/design-tokens/src/patches/` (31 componenten) — dat is een bewuste keuze, geen
+  `--utrecht-*`-tokens in `proprietary/design-tokens/src/patches/` (30 componenten) — dat is een bewuste keuze, geen
   ontbrekend werk.
 - **React** — er is een component in `@gemeente-tilburg/components-react`.
 - **Angular** — er is een component in `@gemeente-tilburg/components-angular`.
