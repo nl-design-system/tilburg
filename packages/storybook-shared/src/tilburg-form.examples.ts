@@ -22,7 +22,9 @@ const usageAngular = `### Angular
 \`<tilburg-form>\` element: the native \`submit\` event of the inner form bubbles to it, so reactive forms work as usual.
 The \`id\` moves from the host to the inner \`<form>\` (so \`<button form="…">\` resolves to it).
 
-Inputs: \`id\`, \`ariaLabel\`, \`ariaLabelledBy\`, \`noValidate\` (default \`false\`; sets \`novalidate\` so the browser leaves validation to the app).`;
+Inputs: \`id\`, \`ariaLabel\`, \`ariaLabelledBy\`, \`noValidate\` (default \`false\`; sets \`novalidate\` so the browser leaves validation to the app).
+There are no \`action\` / \`method\` inputs: an Angular form submits through \`(ngSubmit)\`. For a native submit to a URL, use
+the plain HTML \`<form class="utrecht-form" action="…" method="…">\`.`;
 
 const usageReact = `### React
 
