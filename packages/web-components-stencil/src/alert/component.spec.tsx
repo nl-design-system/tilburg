@@ -1,10 +1,7 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { TilburgWbcAlert } from './component';
-import { TilburgWbcHeading2 } from '../heading-2/component';
-import { TilburgWbcHeading3 } from '../heading-3/component';
 
-const render = (html: string) =>
-  newSpecPage({ components: [TilburgWbcAlert, TilburgWbcHeading2, TilburgWbcHeading3], html });
+const render = (html: string) => newSpecPage({ components: [TilburgWbcAlert], html });
 
 describe('tilburg-wbc-alert', () => {
   it('renders the utrecht alert markup for the default info variant', async () => {
@@ -19,9 +16,11 @@ describe('tilburg-wbc-alert', () => {
 
   it('renders the heading at the requested level', async () => {
     const page = await render('<tilburg-wbc-alert heading="Titel" heading-level="2">Tekst</tilburg-wbc-alert>');
-    const title = page.root!.querySelector('tilburg-wbc-heading-2.tilburg-alert__title')!;
-    expect(title).not.toBeNull();
-    expect(title.querySelector('h2.utrecht-heading-2')!.textContent).toBe('Titel');
+    const title = page.root!.querySelector('utrecht-heading-2.tilburg-alert__title > h2.utrecht-heading-2')!;
+    expect(title.textContent).toBe('Titel');
+    expect(page.root!.querySelector('tilburg-wbc-heading-2')).toBeNull();
+    const level3 = await render('<tilburg-wbc-alert heading="Titel">Tekst</tilburg-wbc-alert>');
+    expect(level3.root!.querySelector('utrecht-heading-3.tilburg-alert__title > h3.utrecht-heading-3')).not.toBeNull();
   });
 
   it('omits the heading when no heading text is given', async () => {
@@ -73,7 +72,7 @@ describe('tilburg-wbc-alert', () => {
   it('renders a close button that emits tilburgClose', async () => {
     const page = await render('<tilburg-wbc-alert closable>Tekst</tilburg-wbc-alert>');
     const close = page.root!.querySelector<HTMLButtonElement>('button.tilburg-alert__close')!;
-    expect(close.getAttribute('aria-label')).toBe('sluit alert');
+    expect(close.getAttribute('aria-label')).toBe('Sluit alert');
     expect(close.querySelector('i[aria-hidden="true"] > svg')).not.toBeNull();
     const spy = jest.fn();
     page.root!.addEventListener('tilburgClose', spy);

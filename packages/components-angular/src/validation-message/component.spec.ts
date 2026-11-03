@@ -28,4 +28,13 @@ describe('TilburgValidationMessage', () => {
     expect(custom.querySelector('#custom')).not.toBeNull();
     expect(custom.querySelector('svg')).toBeNull();
   });
+
+  it('sets the live region through the role only, without a redundant aria-live (as the HTML reference)', () => {
+    TestBed.configureTestingModule({ declarations: [TilburgValidationMessage, HostComponent] });
+    const fixture = TestBed.createComponent(HostComponent);
+    fixture.detectChanges();
+    const message: HTMLElement = fixture.nativeElement.querySelector('.tilburg-validation-message');
+    expect(message.getAttribute('role')).toBe('alert');
+    expect(message.hasAttribute('aria-live')).toBe(false);
+  });
 });

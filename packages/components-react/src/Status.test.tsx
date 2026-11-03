@@ -66,7 +66,7 @@ describe('Alert', () => {
 
   it('renders the HTML reference markup: hidden icon container, titled heading, prefix before the paragraph', () => {
     const { container } = render(
-      <Alert title="Informatie" closable closeButtonAriaLabel="Sluit alert">
+      <Alert title="Informatie" closable>
         <Paragraph>De openingstijden zijn gewijzigd.</Paragraph>
       </Alert>,
     );
@@ -81,6 +81,7 @@ describe('Alert', () => {
     expect(message.children[0]).toHaveTextContent('Informatie:');
     expect(message.children[1]).toHaveClass('utrecht-paragraph');
     expect(alert.querySelector('button.tilburg-alert__close > i > svg')).not.toBeNull();
+    expect(alert.querySelector('button.tilburg-alert__close')).toHaveAttribute('aria-label', 'Sluit alert');
   });
 });
 

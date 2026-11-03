@@ -22,7 +22,7 @@ const usageAngular = `### Angular
 </tilburg-validation-message>
 \`\`\`
 
-Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none).`;
+Inputs: \`type\` (\`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none; no \`aria-live\` attribute is rendered, the role already implies it).`;
 
 const usageReact = `### React
 
@@ -47,7 +47,7 @@ React ships a default icon per type — a circled \`!\` for \`error\`, a triangl
 </ValidationMessage>
 \`\`\`
 
-Props: \`type\` (\`ValidationMessageType\` = \`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`ValidationLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none), \`icon\` (\`ReactNode\`), plus any \`<div>\` attribute (\`className\`, \`id\`, …) and a forwarded \`ref\`. \`ValidationMessageProps\`, \`ValidationMessageType\` and \`ValidationLiveRegion\` are exported as types. \`role="alert"\` is always set, so point the field's \`aria-describedby\` at this element's \`id\` to tie the message to its input.`;
+Props: \`type\` (\`ValidationMessageType\` = \`'error' | 'warning'\`, default \`'error'\`), \`ariaLive\` (\`ValidationLiveRegion\` = \`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none; no \`aria-live\` attribute is rendered, the role already implies it), \`icon\` (\`ReactNode\`), plus any \`<div>\` attribute (\`className\`, \`id\`, …) and a forwarded \`ref\`. \`ValidationMessageProps\`, \`ValidationMessageType\` and \`ValidationLiveRegion\` are exported as types. By default \`role="alert"\` is set, so point the field's \`aria-describedby\` at this element's \`id\` to tie the message to its input.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
@@ -94,7 +94,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 Leave the \`icon\` slot empty to get the default glyph per type (a circled \`!\` for \`error\`, a triangle for \`warning\`), or pass your own element.
 
-Attributes: \`type\` (\`'error' | 'warning'\`, default \`'error'\`; anything else renders as \`error\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none — Angular's \`ariaLive\`, renamed because \`aria-live\` is a global ARIA attribute). \`role="alert"\` is always set. Slots: default (message), \`icon\`.`;
+Attributes: \`type\` (\`'error' | 'warning'\`, default \`'error'\`; anything else renders as \`error\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none; no \`aria-live\` attribute is rendered, the role already implies it — Angular's \`ariaLive\`, renamed because \`aria-live\` is a global ARIA attribute). By default \`role="alert"\` is set. Slots: default (message), \`icon\`.`;
 
 export const descriptionWebComponents = `${intro}
 

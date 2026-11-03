@@ -120,11 +120,11 @@ describe('RadioButton', () => {
 });
 
 describe('ValidationMessage', () => {
-  it('is an assertive alert by default, and a polite status when ariaLive="polite"', () => {
+  it('is an alert by default and a status when ariaLive="polite", without a redundant aria-live (as the reference)', () => {
     const { rerender } = render(<ValidationMessage>Vul dit veld in.</ValidationMessage>);
-    expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'assertive');
+    expect(screen.getByRole('alert')).not.toHaveAttribute('aria-live');
     rerender(<ValidationMessage ariaLive="polite">Vul dit veld in.</ValidationMessage>);
-    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).not.toHaveAttribute('aria-live');
   });
 
   it('renders an error-styled message by default', () => {

@@ -26,13 +26,14 @@
     </ng-content>
   </div>
   <div class="utrecht-alert__content">
+    <!-- The utrecht heading directly, as in the HTML reference (no tilburg-heading-N wrapper). -->
     <ng-container *ngIf="title" [ngSwitch]="headingLevel">
-      <tilburg-heading-1 *ngSwitchCase="1" class="tilburg-alert__title">{{ title }}</tilburg-heading-1>
-      <tilburg-heading-2 *ngSwitchCase="2" class="tilburg-alert__title">{{ title }}</tilburg-heading-2>
-      <tilburg-heading-3 *ngSwitchCase="3" class="tilburg-alert__title">{{ title }}</tilburg-heading-3>
-      <tilburg-heading-4 *ngSwitchCase="4" class="tilburg-alert__title">{{ title }}</tilburg-heading-4>
-      <tilburg-heading-5 *ngSwitchCase="5" class="tilburg-alert__title">{{ title }}</tilburg-heading-5>
-      <tilburg-heading-6 *ngSwitchCase="6" class="tilburg-alert__title">{{ title }}</tilburg-heading-6>
+      <utrecht-heading-1 *ngSwitchCase="1" class="tilburg-alert__title">{{ title }}</utrecht-heading-1>
+      <utrecht-heading-2 *ngSwitchCase="2" class="tilburg-alert__title">{{ title }}</utrecht-heading-2>
+      <utrecht-heading-3 *ngSwitchCase="3" class="tilburg-alert__title">{{ title }}</utrecht-heading-3>
+      <utrecht-heading-4 *ngSwitchCase="4" class="tilburg-alert__title">{{ title }}</utrecht-heading-4>
+      <utrecht-heading-5 *ngSwitchCase="5" class="tilburg-alert__title">{{ title }}</utrecht-heading-5>
+      <utrecht-heading-6 *ngSwitchCase="6" class="tilburg-alert__title">{{ title }}</utrecht-heading-6>
     </ng-container>
     <div class="utrecht-alert__message">
       <span *ngIf="resolvedSrPrefix" class="utrecht-visually-hidden">{{ resolvedSrPrefix }} </span>

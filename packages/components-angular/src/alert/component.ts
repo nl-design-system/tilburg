@@ -60,7 +60,7 @@ export class TilburgAlert implements AfterViewChecked {
   @Input() closable: boolean | null | undefined = false;
   @Input() liveRegion: TilburgAlertLiveRegion = 'polite';
   @Input() ariaLabel?: string | null;
-  @Input() closeButtonAriaLabel = 'sluit alert';
+  @Input() closeButtonAriaLabel = 'Sluit alert';
   /** Visually hidden text prepended to the alert message for screen readers (e.g. "Fout:", "Waarschuwing:").
    *  Defaults per variant; pass `''` or `null` for none. */
   @Input() srPrefix?: string | null;

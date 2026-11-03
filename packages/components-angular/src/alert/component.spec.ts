@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgAlert } from './component';
 
 @Component({
@@ -22,6 +23,15 @@ class HostComponent {
 })
 class IconHostComponent {}
 
+@Component({
+  template: `
+    <tilburg-alert title="Informatie" [closable]="true">Tekst</tilburg-alert>
+    <tilburg-alert title="Titel" [headingLevel]="2">Tekst</tilburg-alert>
+  `,
+  standalone: false,
+})
+class TitleHostComponent {}
+
 describe('TilburgAlert', () => {
   let fixture: ComponentFixture<HostComponent>;
   const alert = () => fixture.nativeElement.querySelector('.utrecht-alert') as HTMLElement;
@@ -29,7 +39,8 @@ describe('TilburgAlert', () => {
   beforeEach(() => {
     document.getElementById('tilburg-announcer-assertive')?.remove();
     TestBed.configureTestingModule({
-      declarations: [TilburgAlert, HostComponent, IconHostComponent],
+      declarations: [TilburgAlert, HostComponent, IconHostComponent, TitleHostComponent],
+      imports: [UtrechtComponentsModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     });
   });
@@ -77,5 +88,22 @@ describe('TilburgAlert', () => {
     ).not.toBeNull();
     expect(withCustom.querySelector('.utrecht-alert__icon #custom')).not.toBeNull();
     expect(withCustom.querySelector('.utrecht-alert__icon svg')).toBeNull();
+  });
+
+  it('renders the title as the utrecht heading of the HTML reference, at the requested level', () => {
+    const titles = TestBed.createComponent(TitleHostComponent);
+    titles.detectChanges();
+    const [level3, level2] = Array.from<HTMLElement>(titles.nativeElement.querySelectorAll('.utrecht-alert'));
+    expect(
+      level3.querySelector('utrecht-heading-3.tilburg-alert__title > h3.utrecht-heading-3')!.textContent!.trim(),
+    ).toBe('Informatie');
+    expect(level2.querySelector('utrecht-heading-2.tilburg-alert__title > h2.utrecht-heading-2')).not.toBeNull();
+    expect(titles.nativeElement.querySelector('tilburg-heading-3, tilburg-heading-2')).toBeNull();
+  });
+
+  it('labels the close button "Sluit alert" by default, as the HTML reference', () => {
+    const titles = TestBed.createComponent(TitleHostComponent);
+    titles.detectChanges();
+    expect(titles.nativeElement.querySelector('.tilburg-alert__close').getAttribute('aria-label')).toBe('Sluit alert');
   });
 });

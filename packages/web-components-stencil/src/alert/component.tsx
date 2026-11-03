@@ -5,7 +5,7 @@
 
 import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 import { announce } from '../utils/announce';
-import { Heading, HeadingLevel } from '../utils/heading';
+import { HeadingLevel } from '../utils/heading';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { hasSlot } from '../utils/slots';
 
@@ -98,7 +98,7 @@ export class TilburgWbcAlert {
       announce(text, liveRegion);
     }
   }
-  @Prop() closeButtonAriaLabel = 'sluit alert';
+  @Prop() closeButtonAriaLabel = 'Sluit alert';
   /** Visually hidden text prepended to the message for screen readers (e.g. "Fout:"). Defaults per variant;
    *  `sr-prefix=""` for none. */
   @Prop() srPrefix?: string | null;
@@ -134,6 +134,9 @@ export class TilburgWbcAlert {
     const prefix = this.srPrefix === undefined ? DEFAULT_SR_PREFIX[this.variant] : this.srPrefix;
     const variant = VARIANT_TO_UTRECHT[this.variant] ? this.variant : 'info';
     const liveRegion = this.liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
+    const level = [1, 2, 3, 4, 5, 6].includes(Number(this.headingLevel)) ? Number(this.headingLevel) : 3;
+    const HeadingTag = `utrecht-heading-${level}`;
+    const InnerHeadingTag = `h${level}`;
     return (
       <div
         {...this.inherited}
@@ -147,9 +150,10 @@ export class TilburgWbcAlert {
         </div>
         <div class="utrecht-alert__content">
           {this.heading && (
-            <Heading level={this.headingLevel} class="tilburg-alert__title">
-              {this.heading}
-            </Heading>
+            /* The utrecht heading directly, as in the HTML reference (no tilburg-wbc-heading-N wrapper). */
+            <HeadingTag class="tilburg-alert__title">
+              <InnerHeadingTag class={`utrecht-heading-${level}`}>{this.heading}</InnerHeadingTag>
+            </HeadingTag>
           )}
           <div class="utrecht-alert__message">
             {prefix && <span class="utrecht-visually-hidden">{prefix} </span>}

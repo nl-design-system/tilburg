@@ -109,7 +109,7 @@ export const Alert = forwardRef(
       headingLevel = 3,
       closable = false,
       liveRegion,
-      closeButtonAriaLabel = 'sluit alert',
+      closeButtonAriaLabel = 'Sluit alert',
       srPrefix,
       announce = false,
       icon,

@@ -12,6 +12,10 @@
     var(--tilburg-box-shadow-lg-color, rgb(0 0 0 / 10%));
   color: currentColor;
   inline-size: min(90%, 32rem);
+
+  /* The UA caps a modal dialog (`showModal()`) at `calc(100% - 6px - 2em)`, but not a dialog shown with the `open`
+     attribute, as in the static HTML reference. Set the same cap ourselves so both are equally wide (282px at 320px). */
+  max-inline-size: calc(100% - 6px - 2em);
   opacity: 0%;
   padding-block: var(--tilburg-space-block-rabbit);
   padding-inline: var(--tilburg-space-block-rabbit);
