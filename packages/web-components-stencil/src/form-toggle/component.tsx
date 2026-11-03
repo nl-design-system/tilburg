@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, Element, h, Prop, State } from '@stencil/core';
+import { Component, Element, h, Listen, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 const INHERITED = ['id', 'title', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const;
@@ -36,6 +36,7 @@ export class TilburgWbcFormToggle {
   private inheritor?: AttributeInheritor;
   /* The track label points at the input with `for`, so an id is needed even when the consumer sets none. */
   private readonly fallbackId = `tilburg-wbc-form-toggle-${++toggleCount}`;
+  private input?: HTMLInputElement;
 
   connectedCallback() {
     this.inheritor = inheritAttributes(this.host, INHERITED, (attributes) => {
@@ -45,6 +46,13 @@ export class TilburgWbcFormToggle {
 
   disconnectedCallback() {
     this.inheritor?.disconnect();
+  }
+
+  /* `form.reset()` sets the input back without a `change` event; resync `checked` once the reset has run. */
+  @Listen('reset', { target: 'document' })
+  onFormReset(event: Event) {
+    const input = this.input;
+    if (input && (event.target as Node).contains(this.host)) setTimeout(() => (this.checked = input.checked));
   }
 
   private readonly onChange = (event: Event) => {
@@ -65,6 +73,7 @@ export class TilburgWbcFormToggle {
       >
         <input
           {...this.inherited}
+          ref={(el) => (this.input = el)}
           id={id}
           type="checkbox"
           role="switch"

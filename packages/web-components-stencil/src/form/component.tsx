@@ -6,7 +6,18 @@
 import { Component, Element, h, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
-const INHERITED = ['id', 'name', 'action', 'method', 'aria-label', 'aria-labelledby'] as const;
+const INHERITED = [
+  'id',
+  'name',
+  'action',
+  'method',
+  'enctype',
+  'target',
+  'autocomplete',
+  'accept-charset',
+  'aria-label',
+  'aria-labelledby',
+] as const;
 
 /**
  * A real `<form class="utrecht-form">` in light DOM with the content slotted inside, so the controls submit with it.

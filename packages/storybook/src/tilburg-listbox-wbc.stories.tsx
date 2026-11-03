@@ -1,6 +1,6 @@
 /* @license CC0-1.0 */
 
-import { TilburgWbcListbox } from '@gemeente-tilburg/web-components-react';
+import { TilburgWbcListbox, TilburgWbcValidationMessage } from '@gemeente-tilburg/web-components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { bugs, descriptionWebComponents } from '../../storybook-shared/src/tilburg-listbox.examples';
 
@@ -55,7 +55,14 @@ export const AllPermutations: Story = {
         <span className="utrecht-form-label" id="listbox-wbc-invalid-label">
           Stadsdeel (verplicht)
         </span>
-        <TilburgWbcListbox aria-labelledby="listbox-wbc-invalid-label" items={stadsdelen} invalid required />
+        <TilburgWbcListbox
+          aria-labelledby="listbox-wbc-invalid-label"
+          aria-describedby="listbox-wbc-invalid-error"
+          items={stadsdelen}
+          invalid
+          required
+        />
+        <TilburgWbcValidationMessage id="listbox-wbc-invalid-error">Kies een stadsdeel.</TilburgWbcValidationMessage>
       </div>
       <div>
         <span className="utrecht-form-label" id="listbox-wbc-disabled-label">

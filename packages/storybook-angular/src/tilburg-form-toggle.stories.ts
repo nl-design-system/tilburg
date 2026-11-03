@@ -42,7 +42,8 @@ export const Default: Story = {
       </tilburg-form-field>
       <tilburg-form-field>
         <tilburg-form-label for="toggle-ng-invalid">Ik wil meldingen ontvangen</tilburg-form-label>
-        <tilburg-form-toggle id="toggle-ng-invalid" [invalid]="true" [required]="true"></tilburg-form-toggle>
+        <tilburg-form-toggle id="toggle-ng-invalid" [invalid]="true" [required]="true" ariaDescribedBy="toggle-ng-invalid-error"></tilburg-form-toggle>
+        <tilburg-validation-message id="toggle-ng-invalid-error">Zet meldingen aan om verder te gaan.</tilburg-validation-message>
       </tilburg-form-field>
     `,
   }),

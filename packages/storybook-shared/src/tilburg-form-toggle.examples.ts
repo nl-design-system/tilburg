@@ -3,6 +3,8 @@
 /* Canonical HTML/CSS reference markup for the Tilburg form toggle (switch). Imported by both the React storybook
    (`packages/storybook`) and the Angular storybook (`packages/storybook-angular`). */
 
+import { circleIcon } from './tilburg-validation-message.examples';
+
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fform-toggle';
 
 const intro = `On/off switch for a setting that takes effect straight away ("E-mailmeldingen aan"). It is a native \`<input type="checkbox" role="switch">\`, visually hidden, with a track and thumb drawn by a \`<label>\` next to it: the browser keeps the checked state, Space toggles it, screen readers announce "switch, on/off", and it submits with its form like a checkbox. Give it a visible label with \`<label for>\`. For a choice that only applies after submitting a form, use a checkbox. Tilburg tokens set the size (48 × 24 px) and colours: blue outline and thumb when off, the form-control accent colour with a white thumb when on.`;
@@ -112,14 +114,18 @@ export interface Example {
   html: string;
 }
 
-const toggle = (id: string, label: string, { attrs = '', modifiers = '' } = {}) => `<div class="utrecht-form-field">
+const toggle = (
+  id: string,
+  label: string,
+  { attrs = '', modifiers = '', after = '' } = {},
+) => `<div class="utrecht-form-field">
   <label class="utrecht-form-label" for="${id}">${label}</label>
   <div class="utrecht-form-toggle utrecht-form-toggle--html-checkbox${modifiers}">
     <input id="${id}" name="${id}" type="checkbox" role="switch" class="utrecht-form-toggle__checkbox"${attrs} />
     <label for="${id}" class="utrecht-form-toggle__track utrecht-form-toggle__track--html-label">
       <span class="utrecht-form-toggle__thumb"></span>
     </label>
-  </div>
+  </div>${after}
 </div>`;
 
 export const examples = {
@@ -145,8 +151,13 @@ ${toggle('toggle-disabled-on', 'Berichtenbox (altijd aan)', {
   invalid: {
     name: 'Invalid',
     html: toggle('toggle-invalid', 'Ik wil meldingen ontvangen', {
-      attrs: ' required aria-required="true" aria-invalid="true"',
+      attrs: ' required aria-required="true" aria-invalid="true" aria-describedby="toggle-invalid-error"',
       modifiers: ' utrecht-form-toggle--invalid utrecht-form-toggle--required',
+      after: `
+  <div id="toggle-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert">
+    <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
+    <span>Zet meldingen aan om verder te gaan.</span>
+  </div>`,
     }),
   },
 } satisfies Record<string, Example>;

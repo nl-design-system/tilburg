@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Prop, State, Watch } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 export interface TilburgWbcListboxItem<V = unknown> {
@@ -46,6 +46,12 @@ export class TilburgWbcListbox {
   @State() inherited: InheritedAttributes = {};
   private inheritor?: AttributeInheritor;
   private readonly fallbackId = `tilburg-wbc-listbox-${++listboxCount}`;
+
+  /* Keep `aria-activedescendant` on an option that still exists when `items` shrinks. */
+  @Watch('items')
+  itemsChanged() {
+    this.activeIndex = Math.min(this.activeIndex, this.items.length - 1);
+  }
 
   connectedCallback() {
     this.inheritor = inheritAttributes(
@@ -171,7 +177,10 @@ export class TilburgWbcListbox {
           })}
         </ul>
       </div>,
-      this.name && selected.map((value) => <input type="hidden" name={this.name} value={String(value)} />),
+      this.name &&
+        selected.map((value) => (
+          <input type="hidden" name={this.name} value={String(value)} disabled={this.disabled} />
+        )),
     ];
   }
 }

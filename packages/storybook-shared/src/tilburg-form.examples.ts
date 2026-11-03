@@ -53,7 +53,7 @@ const usageWebComponents = `### Web Components (Stencil)
 </tilburg-wbc-form>
 \`\`\`
 
-Renders a real \`<form class="utrecht-form">\` in light DOM with the content slotted inside it, so the controls submit with it. The native \`submit\` and \`reset\` events bubble through the host. Attribute: \`no-validate\` (sets \`novalidate\`). \`id\`, \`name\`, \`action\`, \`method\`, \`aria-label\` and \`aria-labelledby\` are moved from the host onto the \`<form>\`.`;
+Renders a real \`<form class="utrecht-form">\` in light DOM with the content slotted inside it, so the controls submit with it. The native \`submit\` and \`reset\` events bubble through the host. Attribute: \`no-validate\` (sets \`novalidate\`). \`id\`, \`name\`, \`action\`, \`method\`, \`enctype\`, \`target\`, \`autocomplete\`, \`accept-charset\`, \`aria-label\` and \`aria-labelledby\` are moved from the host onto the \`<form>\`.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 

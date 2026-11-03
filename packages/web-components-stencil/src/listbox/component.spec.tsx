@@ -81,4 +81,21 @@ describe('tilburg-wbc-listbox', () => {
     expect(hidden.map((input) => input.getAttribute('value'))).toEqual(['noord', 'centrum']);
     expect(hidden.every((input) => input.getAttribute('name') === 'stadsdeel')).toBe(true);
   });
+
+  it('does not submit the hidden inputs when disabled', async () => {
+    const { page } = await setup('name="stadsdeel" disabled', { value: 'noord' });
+    const hidden = page.root!.querySelector<HTMLInputElement>('input[type="hidden"]')!;
+    expect(hidden.disabled).toBe(true);
+  });
+
+  it('clamps the active option when items shrink', async () => {
+    const { page, listbox, key } = await setup('id="cl"');
+    listbox.dispatchEvent(new Event('focus'));
+    await page.waitForChanges();
+    await key('End');
+    expect(listbox.getAttribute('aria-activedescendant')).toBe('cl-opt-2');
+    (page.root as unknown as TilburgWbcListbox).items = items.slice(0, 1);
+    await page.waitForChanges();
+    expect(listbox.getAttribute('aria-activedescendant')).toBe('cl-opt-0');
+  });
 });

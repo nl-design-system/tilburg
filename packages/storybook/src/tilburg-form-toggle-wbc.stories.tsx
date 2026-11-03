@@ -1,6 +1,6 @@
 /* @license CC0-1.0 */
 
-import { TilburgWbcFormToggle } from '@gemeente-tilburg/web-components-react';
+import { TilburgWbcFormToggle, TilburgWbcValidationMessage } from '@gemeente-tilburg/web-components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ComponentProps } from 'react';
 import { bugs, descriptionWebComponents } from '../../storybook-shared/src/tilburg-form-toggle.examples';
@@ -25,13 +25,15 @@ type Story = StoryObj<typeof meta>;
 const Field = ({
   id,
   label,
+  error,
   ...props
-}: { id: string; label: string } & ComponentProps<typeof TilburgWbcFormToggle>) => (
+}: { id: string; label: string; error?: string } & ComponentProps<typeof TilburgWbcFormToggle>) => (
   <div className="utrecht-form-field">
     <label className="utrecht-form-label" htmlFor={id}>
       {label}
     </label>
-    <TilburgWbcFormToggle id={id} {...props} />
+    <TilburgWbcFormToggle id={id} aria-describedby={error ? `${id}-error` : undefined} {...props} />
+    {error && <TilburgWbcValidationMessage id={`${id}-error`}>{error}</TilburgWbcValidationMessage>}
   </div>
 );
 
@@ -42,7 +44,13 @@ export const AllPermutations: Story = {
       <Field id="toggle-wbc-on" label="Herinnering per sms" checked />
       <Field id="toggle-wbc-disabled" label="Digitale post (niet beschikbaar)" disabled />
       <Field id="toggle-wbc-disabled-on" label="Berichtenbox (altijd aan)" checked disabled />
-      <Field id="toggle-wbc-invalid" label="Ik wil meldingen ontvangen" invalid required />
+      <Field
+        id="toggle-wbc-invalid"
+        label="Ik wil meldingen ontvangen"
+        invalid
+        required
+        error="Zet meldingen aan om verder te gaan."
+      />
     </>
   ),
 };

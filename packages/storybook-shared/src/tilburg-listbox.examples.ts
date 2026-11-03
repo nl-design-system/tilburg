@@ -3,6 +3,8 @@
 /* Canonical HTML/CSS reference markup for the Tilburg standalone listbox. Imported by both the React storybook
    (`packages/storybook`) and the Angular storybook (`packages/storybook-angular`). */
 
+import { circleIcon } from './tilburg-validation-message.examples';
+
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Flistbox';
 
 const intro = `Always-visible list of options to pick one or more from, following the WAI-ARIA listbox pattern. The options look exactly like the ones in the Tilburg combobox popover (pink stripe on the active option, blue stripe and tint on the selected ones); the list itself gets the form-control border. Prefer a radio group or checkboxes for a handful of options, a select or combobox when space is tight: a listbox fits a medium-long list that should stay in view.
@@ -133,7 +135,7 @@ const stadsdelen = ['Centrum', 'Noord', 'Oud-Zuid', 'Reeshof', 'West', 'Berkel-E
 const listbox = (
   id: string,
   label: string,
-  { selected = [] as number[], active = -1, attrs = '', modifiers = '' } = {},
+  { selected = [] as number[], active = -1, attrs = '', modifiers = '', after = '' } = {},
 ) => `<div style="max-inline-size:24rem">
   <span class="utrecht-form-label" id="${id}-label">${label}</span>
   <div id="${id}" class="utrecht-listbox utrecht-listbox--html-div${modifiers}" role="listbox" tabindex="0" aria-labelledby="${id}-label" data-tilburg-listbox-enhance${
@@ -151,7 +153,7 @@ ${stadsdelen
   })
   .join('\n')}
     </ul>
-  </div>
+  </div>${after}
 </div>`;
 
 export const examples = {
@@ -173,8 +175,13 @@ export const examples = {
   invalid: {
     name: 'Invalid',
     html: listbox('listbox-invalid', 'Stadsdeel', {
-      attrs: ' aria-required="true" aria-invalid="true"',
+      attrs: ' aria-required="true" aria-invalid="true" aria-describedby="listbox-invalid-error"',
       modifiers: ' utrecht-listbox--invalid',
+      after: `
+  <div id="listbox-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert">
+    <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
+    <span>Kies een stadsdeel.</span>
+  </div>`,
     }),
   },
   disabled: {

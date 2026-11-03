@@ -58,7 +58,8 @@ export const InvalidAndDisabled: Story = {
     template: `
       <div style="max-inline-size:24rem">
         <span class="utrecht-form-label" id="listbox-ng-invalid-label">Stadsdeel (verplicht)</span>
-        <tilburg-listbox ariaLabelledBy="listbox-ng-invalid-label" [items]="items" [invalid]="true" [required]="true"></tilburg-listbox>
+        <tilburg-listbox ariaLabelledBy="listbox-ng-invalid-label" [items]="items" [invalid]="true" [required]="true" ariaDescribedBy="listbox-ng-invalid-error"></tilburg-listbox>
+        <tilburg-validation-message id="listbox-ng-invalid-error">Kies een stadsdeel.</tilburg-validation-message>
         <span class="utrecht-form-label" id="listbox-ng-disabled-label">Stadsdeel (niet te wijzigen)</span>
         <tilburg-listbox ariaLabelledBy="listbox-ng-disabled-label" [items]="items" value="oud-zuid" [disabled]="true"></tilburg-listbox>
       </div>

@@ -49,8 +49,14 @@
 }
 
 @media (forced-colors: active) {
+  /* utrecht keeps every option out of forced colours and gives the selected one `highlighttext`, which combobox/index.scss
+     puts on the forced canvas (invisible). Use the field text colour; the active option keeps its highlight. */
+  .utrecht-listbox--html-div .utrecht-listbox__option {
+    color: fieldtext;
+  }
+
   /* combobox/index.scss scopes its hover cue to the combobox popover; give the standalone listbox the same one. */
-  .utrecht-listbox--html-div .utrecht-listbox__option:hover:not([aria-disabled="true"]) {
+  .utrecht-listbox--html-div:not([aria-disabled="true"]) .utrecht-listbox__option:hover:not([aria-disabled="true"]) {
     background-color: highlight;
     color: highlighttext;
     forced-color-adjust: none;

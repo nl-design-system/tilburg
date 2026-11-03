@@ -94,4 +94,14 @@ describe('Listbox', () => {
     expect(screen.getAllByRole('option')[2]).toHaveAttribute('aria-selected', 'true');
     expect(screen.getAllByRole('option')[1]).toHaveAttribute('aria-selected', 'false');
   });
+
+  it('clamps the active option when items shrink', () => {
+    const { rerender } = render(<Listbox id="cl" aria-label="x" items={items} />);
+    const listbox = screen.getByRole('listbox');
+    fireEvent.focus(listbox);
+    fireEvent.keyDown(listbox, { key: 'End' });
+    expect(listbox).toHaveAttribute('aria-activedescendant', `cl-opt-${items.length - 1}`);
+    rerender(<Listbox id="cl" aria-label="x" items={items.slice(0, 1)} />);
+    expect(listbox).toHaveAttribute('aria-activedescendant', 'cl-opt-0');
+  });
 });

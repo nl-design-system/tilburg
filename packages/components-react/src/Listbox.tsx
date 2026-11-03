@@ -72,7 +72,9 @@ function ListboxImpl<V>(props: ListboxProps<V>, ref: ForwardedRef<HTMLDivElement
 
   const [ownValue, setOwnValue] = useState(defaultValue);
   const selected = toArray<V>(value !== undefined ? value : ownValue);
-  const [activeIndex, setActiveIndex] = useState(-1);
+  const [rawActiveIndex, setActiveIndex] = useState(-1);
+  /* Clamped so `aria-activedescendant` never points at an option that `items` no longer has. */
+  const activeIndex = Math.min(rawActiveIndex, items.length - 1);
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {

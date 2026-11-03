@@ -17,6 +17,9 @@
         "border-radius": {
           "$value": "{tilburg.border-radius.round}"
         },
+        "track-border-radius": {
+          "$value": "{tilburg.border-radius.round}"
+        },
         "accent-color": {
           "$value": "{utrecht.form-control.background-color}"
         },

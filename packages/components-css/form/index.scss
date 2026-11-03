@@ -1,7 +1,8 @@
 /* Form: utrecht's form-field margins are multiplied by `--utrecht-space-around`, which the Tilburg theme leaves at 0, so
    fields in a form touched each other. Space the form's direct children (fields, fieldsets, the button row) instead.
-   `:not(:first-child)` (two classes' worth of specificity) so it also wins over utrecht's own `.utrecht-fieldset`
-   margin, which comes later in the cascade. */
-.utrecht-form > :not(:first-child) {
+   Only children after a visible one, so a leading `<input type="hidden">` (CSRF token) doesn't push the first field
+   down. The two `:not()`s give it three classes' worth of specificity, so it also wins over utrecht's own
+   `.utrecht-fieldset` margin, which comes later in the cascade. */
+.utrecht-form > :not([type="hidden"], [hidden]) ~ :not([type="hidden"], [hidden]) {
   margin-block-start: var(--tilburg-space-block-rabbit, 24px);
 }

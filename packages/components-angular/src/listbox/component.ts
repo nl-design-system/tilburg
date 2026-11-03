@@ -1,4 +1,14 @@
-import { Component, ElementRef, EventEmitter, HostBinding, Input, Output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 type LabelFn<T> = string | ((item: T) => string);
@@ -17,7 +27,7 @@ let nextUniqueId = 0;
   styleUrls: ['index.scss'],
   standalone: false,
 })
-export class TilburgListbox<T = unknown> {
+export class TilburgListbox<T = unknown> implements OnChanges {
   private readonly uniqueId = `tilburg-listbox-${++nextUniqueId}`;
 
   /** Goes on the `role="listbox"` element; the option ids derive from it. Generated when unset. */
@@ -51,6 +61,11 @@ export class TilburgListbox<T = unknown> {
   readonly optionId = (index: number) => `${this.internalId}-opt-${index}`;
 
   constructor(private readonly host: ElementRef<HTMLElement>) {}
+
+  /* Keep `aria-activedescendant` on an option that still exists when `items` shrinks. */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['items']) this.activeIndex.set(Math.min(this.activeIndex(), this.items.length - 1));
+  }
 
   getLabel(item: T): string {
     const b = this.bindLabel;

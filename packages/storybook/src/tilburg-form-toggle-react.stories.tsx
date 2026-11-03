@@ -1,6 +1,6 @@
 /* @license CC0-1.0 */
 
-import { FormField, FormLabel, FormToggle } from '@gemeente-tilburg/components-react';
+import { FormField, FormLabel, FormToggle, ValidationMessage } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-form-toggle.examples';
@@ -47,7 +47,8 @@ export const AllPermutations: Story = {
       </FormField>
       <FormField>
         <FormLabel htmlFor="toggle-react-invalid">Ik wil meldingen ontvangen</FormLabel>
-        <FormToggle id="toggle-react-invalid" invalid required />
+        <FormToggle id="toggle-react-invalid" invalid required aria-describedby="toggle-react-invalid-error" />
+        <ValidationMessage id="toggle-react-invalid-error">Zet meldingen aan om verder te gaan.</ValidationMessage>
       </FormField>
     </>
   ),

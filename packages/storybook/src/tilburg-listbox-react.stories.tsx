@@ -1,6 +1,6 @@
 /* @license CC0-1.0 */
 
-import { Listbox } from '@gemeente-tilburg/components-react';
+import { Listbox, ValidationMessage } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-listbox.examples';
@@ -56,7 +56,14 @@ export const AllPermutations: Story = {
         <span className="utrecht-form-label" id="listbox-react-invalid-label">
           Stadsdeel (verplicht)
         </span>
-        <Listbox aria-labelledby="listbox-react-invalid-label" items={stadsdelen} invalid required />
+        <Listbox
+          aria-labelledby="listbox-react-invalid-label"
+          aria-describedby="listbox-react-invalid-error"
+          items={stadsdelen}
+          invalid
+          required
+        />
+        <ValidationMessage id="listbox-react-invalid-error">Kies een stadsdeel.</ValidationMessage>
       </div>
       <div style={{ maxInlineSize: '24rem' }}>
         <span className="utrecht-form-label" id="listbox-react-disabled-label">

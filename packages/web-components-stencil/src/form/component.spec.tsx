@@ -27,6 +27,18 @@ describe('tilburg-wbc-form', () => {
     expect(form.hasAttribute('novalidate')).toBe(true);
   });
 
+  it('moves enctype, target, autocomplete and accept-charset onto the form', async () => {
+    const page = await render(
+      '<tilburg-wbc-form enctype="multipart/form-data" target="_blank" autocomplete="off" accept-charset="UTF-8"></tilburg-wbc-form>',
+    );
+    const form = page.root!.querySelector('form')!;
+    expect(form.getAttribute('enctype')).toBe('multipart/form-data');
+    expect(form.getAttribute('target')).toBe('_blank');
+    expect(form.getAttribute('autocomplete')).toBe('off');
+    expect(form.getAttribute('accept-charset')).toBe('UTF-8');
+    expect(page.root!.hasAttribute('enctype')).toBe(false);
+  });
+
   it('lets the native submit event bubble through the host', async () => {
     const page = await render('<tilburg-wbc-form></tilburg-wbc-form>');
     const spy = jest.fn();

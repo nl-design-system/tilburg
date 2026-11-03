@@ -127,4 +127,13 @@ describe('TilburgListbox', () => {
     expect(options('off')[0].getAttribute('aria-selected')).toBe('false');
     expect(listbox('off').hasAttribute('aria-activedescendant')).toBe(false);
   });
+
+  it('clamps the active option when items shrink', () => {
+    listbox('single').dispatchEvent(new Event('focus'));
+    key('single', 'End');
+    expect(listbox('single').getAttribute('aria-activedescendant')).toBe('single-opt-2');
+    host.items = host.items.slice(0, 1);
+    fixture.detectChanges();
+    expect(listbox('single').getAttribute('aria-activedescendant')).toBe('single-opt-0');
+  });
 });

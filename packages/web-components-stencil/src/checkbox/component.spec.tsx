@@ -59,4 +59,24 @@ describe('tilburg-wbc-checkbox', () => {
     expect(page.root!.hasAttribute('checked')).toBe(true);
     expect(spy).toHaveBeenCalledTimes(1);
   });
+
+  it('resyncs checked after its form is reset', async () => {
+    const page = await newSpecPage({
+      components: [TilburgWbcCheckbox],
+      html: '<form><tilburg-wbc-checkbox></tilburg-wbc-checkbox></form>',
+    });
+    const root = page.root as unknown as TilburgWbcCheckbox & HTMLElement;
+    const input = root.querySelector('input')!;
+    input.checked = true;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    await page.waitForChanges();
+    expect(root.checked).toBe(true);
+    /* What the browser's reset does after the (cancelable) `reset` event: back to `defaultChecked`. */
+    input.checked = false;
+    page.body.querySelector('form')!.dispatchEvent(new Event('reset', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve));
+    await page.waitForChanges();
+    expect(root.checked).toBe(false);
+    expect(root.hasAttribute('checked')).toBe(false);
+  });
 });
