@@ -1,5 +1,8 @@
 @import "../../../components-css/accordion/index";
 
+/* The section renders a `.utrecht-button--subtle` button; bring the Tilburg button layer (disabled colour, focus) along. */
+@import "../../../components-css/button/index";
+
 /* The custom-element host (`<tilburg-...>`) defaults to `display: inline`,
    which collapses the component into a text flow and prevents its block-level
    layout (margins, padding, borders, stacking with siblings) from matching the
