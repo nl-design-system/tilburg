@@ -139,7 +139,7 @@ test('a dry run lists the commits and pushes nothing', () => {
   const result = ship('--no-verify', '--dry-run');
   assert.equal(result.status, 0, result.all);
   assert.match(result.all, /1 commit to push \(origin\/main\.\.HEAD\)/);
-  assert.match(result.all, /would run: git push -u origin HEAD:refs\/heads\/feat\/x/);
+  assert.match(result.all, /would run: git push -u origin [0-9a-f]{40}:refs\/heads\/feat\/x/);
   assert.equal(git('ls-remote', '--heads', 'origin', 'feat/x'), '');
 });
 
@@ -160,6 +160,16 @@ test('a failing verify stops ship before the push', () => {
   const result = ship('--yes');
   assert.equal(result.status, 1, result.all);
   assert.match(result.all, /Verify failed — not pushing/);
+  assert.equal(git('ls-remote', '--heads', 'origin', 'feat/x'), '');
+});
+
+test('a commit made while verify runs (another terminal) stops ship before the push', () => {
+  const { git, ship } = sandbox('git commit -q --allow-empty -m moved');
+  git('switch', '-q', '-c', 'feat/x');
+  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const result = ship('--yes');
+  assert.equal(result.status, 1, result.all);
+  assert.match(result.all, /changed while verify ran/);
   assert.equal(git('ls-remote', '--heads', 'origin', 'feat/x'), '');
 });
 

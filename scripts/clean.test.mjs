@@ -32,7 +32,7 @@ function makeRepo({ built = true } = {}) {
     mkdirSync(dirname(resolve(root, path)), { recursive: true });
     writeFileSync(resolve(root, path), content);
   };
-  for (const name of ['clean.mjs', 'dev-config.mjs', 'lib/cli-utils.mjs', 'lib/lock.mjs']) {
+  for (const name of ['clean.mjs', 'dev-config.mjs', 'lib/cli-utils.mjs', 'lib/keys.mjs', 'lib/lock.mjs']) {
     mkdirSync(dirname(resolve(root, 'scripts', name)), { recursive: true });
     copyFileSync(resolve(SCRIPTS, name), resolve(root, 'scripts', name));
   }
@@ -106,7 +106,8 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
   const id = createHash('sha1').update(realpathSync(root)).digest('hex').slice(0, 10);
   writeFileSync(
-    resolve(sandbox, `tilburg-dev-${id}.json`),
+    /* …and the user (lock.mjs). */
+    resolve(sandbox, `tilburg-dev-${process.getuid ? `${process.getuid()}-` : ''}${id}.json`),
     JSON.stringify({ pid: process.pid, started: new Date().toISOString(), storybooks: [] }),
   );
   const result = run(root, '--yes');
@@ -115,20 +116,29 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
   assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
 });
 
-test('a folder it may not delete (read-only, or made with sudo) is a failure that says so, not a crash', () => {
-  const root = makeRepo();
-  mkdirSync(resolve(root, 'packages/a/dist/locked'));
-  writeFileSync(resolve(root, 'packages/a/dist/locked/x.js'), 'x');
-  chmodSync(resolve(root, 'packages/a/dist/locked'), 0o555);
-  try {
-    const result = run(root, '--yes');
-    assert.equal(result.status, 1, result.stdout + result.stderr);
-    assert.match(result.stdout + result.stderr, /packages\/a\/dist could not be deleted[\s\S]*read-only or not yours/);
-    assert.equal(existsSync(resolve(root, 'proprietary/c/.angular')), false, 'the other targets are still deleted');
-  } finally {
-    chmodSync(resolve(root, 'packages/a/dist/locked'), 0o755);
-  }
-});
+test(
+  'a folder it may not delete (read-only, or made with sudo) is a failure that says so, not a crash',
+  {
+    skip: process.getuid?.() === 0 && 'root ignores permissions',
+  },
+  () => {
+    const root = makeRepo();
+    mkdirSync(resolve(root, 'packages/a/dist/locked'));
+    writeFileSync(resolve(root, 'packages/a/dist/locked/x.js'), 'x');
+    chmodSync(resolve(root, 'packages/a/dist/locked'), 0o555);
+    try {
+      const result = run(root, '--yes');
+      assert.equal(result.status, 1, result.stdout + result.stderr);
+      assert.match(
+        result.stdout + result.stderr,
+        /packages\/a\/dist could not be deleted[\s\S]*read-only or not yours/,
+      );
+      assert.equal(existsSync(resolve(root, 'proprietary/c/.angular')), false, 'the other targets are still deleted');
+    } finally {
+      chmodSync(resolve(root, 'packages/a/dist/locked'), 0o755);
+    }
+  },
+);
 
 /* A terminal faked in a preload, 40 columns wide: no real pty in node:test. */
 const inTerminal = (root, input) =>
@@ -154,4 +164,21 @@ test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than
   const picker = result.stdout.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '');
   for (const line of picker.split('\n').filter((line) => line.includes('[')))
     assert.ok(line.length < 40, `${line.length}: ${line}`);
+});
+
+test('the tarballs are not ticked by default: hltsamen installs from them', () => {
+  const root = makeRepo();
+  writeFileSync(resolve(root, 'package.json'), '{}');
+  mkdirSync(resolve(root, '.tarballs'));
+  writeFileSync(resolve(root, '.tarballs/x.tgz'), '');
+  const result = run(root, '--yes');
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.ok(existsSync(resolve(root, '.tarballs/x.tgz')));
+});
+
+test('in the picker, a pasted line ending in Enter deletes nothing', () => {
+  const root = makeRepo();
+  const result = inTerminal(root, 'pnpm dev\r');
+  assert.notEqual(result.status, null, 'did not hang');
+  assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
 });

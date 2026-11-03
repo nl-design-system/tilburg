@@ -6,6 +6,8 @@ import { relative, resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
 
 export const STATUS_FILE = 'packages/storybook-shared/src/documentation/implementation-status.md';
+/** Why loadComponents() found nothing. */
+export const NO_TABLE = `${STATUS_FILE} has no component table, is missing, or has merge-conflict markers.`;
 /** A path under packages/. */
 export const P = (...parts) => resolve(ROOT, 'packages', ...parts);
 
@@ -59,8 +61,11 @@ function storyMeta(path) {
  * Every row of the implementation-status table, with its files. `layers` lists, per layer, whether the table
  * promises it (`promised`), the main file, its test, and the story (with its Storybook id) that shows it.
  */
-export function loadComponents() {
-  const table = existsSync(resolve(ROOT, STATUS_FILE)) ? readFileSync(resolve(ROOT, STATUS_FILE), 'utf8') : '';
+export function loadComponents(
+  table = existsSync(resolve(ROOT, STATUS_FILE)) ? readFileSync(resolve(ROOT, STATUS_FILE), 'utf8') : '',
+) {
+  /* Both sides of a merge conflict would load: every name then fits two components. */
+  if (/^<{7}/m.test(table)) return [];
   return table
     .split('\n')
     .filter((line) => /^\| [A-Z]/.test(line) && !line.startsWith('| Component'))
@@ -185,16 +190,16 @@ export async function requireComponent(query, command) {
   const { c, fail } = await import('./cli-utils.mjs');
   const components = loadComponents();
   if (!components.length) {
-    fail({ what: 'No components found', why: `${STATUS_FILE} has no component table (or is missing).` });
+    fail({ what: 'No components found', why: NO_TABLE });
     process.exit(1);
   }
   const { component, matches, suggestions } = findComponent(query, components);
   if (component) return component;
   if (matches) {
-    fail({
-      what: `"${query}" fits ${matches.length} components`,
-      fix: matches.map((match) => `${command} ${match.slug}`).join('   '),
-    });
+    /* Five fit on a line; "a" fits 25. */
+    const shown = matches.slice(0, 5).map((match) => `${command} ${match.slug}`);
+    if (matches.length > 5) shown.push(`… pnpm where --list shows all ${matches.length}`);
+    fail({ what: `"${query}" fits ${matches.length} components`, fix: shown.join('   ') });
   } else {
     fail({
       what: `No component called "${query}"`,

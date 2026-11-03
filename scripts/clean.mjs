@@ -1,6 +1,6 @@
-/* `pnpm run clean:pick`: choose what to delete, with sizes. Build output and caches are ticked; node_modules is not,
-   and asks again. Without a terminal it only lists the ticked defaults, unless `--yes` is passed. (`pnpm clean` still runs every package's own
-   clean script.) */
+/* `pnpm run clean:pick`: choose what to delete, with sizes. Build output and caches are ticked; the tarballs and
+   node_modules are not, and node_modules asks again. Without a terminal it only lists the ticked defaults, unless
+   `--yes` is passed. (`pnpm clean` still runs every package's own clean script.) */
 import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
@@ -10,6 +10,7 @@ import {
   c,
   confirm,
   installCrashHandler,
+  interactive,
   printBanner,
   printError,
   stepDone,
@@ -17,6 +18,7 @@ import {
   stepStart,
   stripAnsi,
 } from './lib/cli-utils.mjs';
+import { splitKeys } from './lib/keys.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm run clean:pick');
@@ -33,9 +35,10 @@ const TARGETS = [
   { label: 'Build output', what: "every package's dist/", paths: inPackages('dist'), checked: true },
   {
     label: 'Tarballs',
-    what: '.tarballs/ (pnpm run pack:local)',
+    what: '.tarballs/ (pack:local; hltsamen installs from it)',
     paths: [resolve(ROOT, '.tarballs')].filter(existsSync),
-    checked: true,
+    /* Not by default: hltsamen installs from these (file:../tilburg/.tarballs/…), and its next install would fail. */
+    checked: false,
   },
   {
     label: 'Angular caches',
@@ -45,8 +48,12 @@ const TARGETS = [
   },
   {
     label: 'Tool caches',
-    what: 'node_modules/.cache (Vite, Storybook, Babel)',
-    paths: [resolve(ROOT, 'node_modules/.cache'), ...inPackages('node_modules/.cache')].filter(existsSync),
+    what: 'node_modules/.cache (Vite, Storybook, Babel) and .stencil/',
+    paths: [
+      resolve(ROOT, 'node_modules/.cache'),
+      ...inPackages('node_modules/.cache'),
+      ...inPackages('.stencil'),
+    ].filter(existsSync),
     checked: true,
   },
   {
@@ -110,7 +117,7 @@ function pick(targets) {
         finish(null);
         console.log(`\n  ${c.gray}Nothing deleted.${c.reset}\n`);
         process.exit(130);
-      } else if (key === 'q') {
+      } else if (key === 'q' || key === 'Q' || key === '\x1b') {
         finish(null);
         return;
       } else if (key === '\x1b[A') {
@@ -125,10 +132,9 @@ function pick(targets) {
       }
       draw();
     };
-    /* Application-mode arrows (\x1bOA, some ssh and tmux setups) as normal ones, and several keys in one chunk one by one. */
     let finished = false;
     const onData = (chunk) => {
-      for (const key of chunk.replace(/\x1bO/g, '\x1b[').match(/\x1b\[[A-D]|./gs) ?? []) if (!finished) onKey(key);
+      for (const key of splitKeys(chunk)) if (!finished) onKey(key);
     };
     const finish = (result) => {
       finished = true;
@@ -142,8 +148,15 @@ function pick(targets) {
 }
 
 let selected;
-if (process.stdin.isTTY) {
+if (process.stdin.isTTY && interactive) {
   selected = await pick(TARGETS);
+} else if (process.stdin.isTTY) {
+  /* TERM=dumb: no cursor control for the picker, so one plain question about the defaults. */
+  const defaults = TARGETS.filter((target) => target.checked);
+  const ok =
+    defaults.length &&
+    (await confirm(`Delete ${defaults.map((target) => target.label).join(', ')}?`, { default: false }));
+  selected = ok ? defaults : [];
 } else {
   /* No one to ask: deleting without a question needs --yes, so a piped or scripted run cannot wipe dist/ by accident. */
   selected = TARGETS.filter((target) => target.checked);

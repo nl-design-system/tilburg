@@ -55,3 +55,15 @@ test('--list exits 1 when the component table is missing, instead of listing not
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('an empty name exits 1 instead of listing everything', () => {
+  const result = where(['']);
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /The component name is empty/);
+});
+
+test("a mistyped flag does not suggest Node's '--' form", () => {
+  const result = where(['--bogus']);
+  assert.equal(result.status, 1);
+  assert.doesNotMatch(result.stdout, /To specify a positional/);
+});

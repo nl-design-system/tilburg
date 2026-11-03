@@ -3,7 +3,8 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
@@ -17,10 +18,11 @@ after(() => dirs.forEach((dir) => rmSync(dir, { recursive: true, force: true }))
 const PNPM = `#!/bin/sh
 [ "$*" = "$FAIL" ] && { echo "\${OUTPUT:-boom}"; exit 1; }
 [ "$*" = "$KILL" ] && kill -TERM $$
+[ "$*" = "$TOUCH" ] && echo x > changed.txt
 exit 0
 `;
 
-function verify({ FAIL = '', KILL = '', PARITY_EXIT = '0', OUTPUT = '', setup } = {}) {
+function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = '', args = [], setup } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-verify-test-'));
   dirs.push(dir);
   const bin = join(dir, 'bin');
@@ -33,9 +35,9 @@ function verify({ FAIL = '', KILL = '', PARITY_EXIT = '0', OUTPUT = '', setup } 
   writeFileSync(join(dir, 'package.json'), '{}\n');
   writeFileSync(join(bin, 'pnpm'), PNPM);
   chmodSync(join(bin, 'pnpm'), 0o755);
-  const env = { ...process.env, CI: '', FAIL, KILL, PARITY_EXIT, OUTPUT, PATH: `${bin}:${process.env.PATH}` };
+  const env = { ...process.env, CI: '', FAIL, KILL, TOUCH, PARITY_EXIT, OUTPUT, PATH: `${bin}:${process.env.PATH}` };
   setup?.(dir, env);
-  const result = spawnSync(process.execPath, ['scripts/verify.mjs'], {
+  const result = spawnSync(process.execPath, ['scripts/verify.mjs', ...args], {
     cwd: dir,
     env,
     encoding: 'utf8',
@@ -172,4 +174,53 @@ test('a shallow clone without the merge base says so, not "no origin/main"', () 
   assert.equal(result.status, 0, result.all);
   assert.match(result.all, /no common history with origin\/main/);
   assert.match(result.all, /git fetch --unshallow origin/);
+});
+
+test('a lockfile out of date fails the Lockfile step: no pnpm install that would make it pass here only', () => {
+  const result = verify({
+    FAIL: 'install --frozen-lockfile --lockfile-only',
+    OUTPUT: 'ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile"',
+  });
+  assert.equal(result.status, 1, result.all);
+  assert.match(result.all, /Lockfile\s+failed/);
+  assert.match(result.all, /commit pnpm-lock\.yaml/);
+  assert.doesNotMatch(result.all, /attempt 2/);
+});
+
+test('--help prints the usage and runs nothing; an unknown argument is refused', () => {
+  const help = verify({ args: ['--help'] });
+  assert.equal(help.status, 0, help.all);
+  assert.match(help.all, /pnpm verify: runs what CI checks/);
+  assert.doesNotMatch(help.all, /Security audit/);
+  const typo = verify({ args: ['tooltip'] });
+  assert.equal(typo.status, 1, typo.all);
+  assert.match(typo.all, /Unexpected argument 'tooltip'/);
+});
+
+test('while pnpm sync (or pack:local) builds, verify stops before building', () => {
+  const result = verify({
+    setup: (dir) => {
+      const uid = process.getuid ? `${process.getuid()}-` : '';
+      const hash = createHash('sha1').update(realpathSync(dir)).digest('hex').slice(0, 10);
+      const lock = { pid: process.pid, started: new Date().toISOString(), what: 'pnpm sync' };
+      writeFileSync(join(tmpdir(), `tilburg-sync-${uid}${hash}.json`), JSON.stringify(lock));
+    },
+  });
+  assert.equal(result.status, 1, result.all);
+  assert.match(result.all, /pnpm sync is running/);
+  assert.doesNotMatch(result.all, /Security audit/);
+});
+
+test('a working tree that changes while verify runs gets a warning row', () => {
+  const result = verify({
+    TOUCH: 'run lint',
+    setup: (dir, env) => {
+      const git = (...args) =>
+        spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd: dir, env });
+      git('init', '-q', '-b', 'main');
+      git('add', '.');
+      git('commit', '-q', '--no-gpg-sign', '-m', 'initial');
+    },
+  });
+  assert.match(result.all, /Working tree\s+changed while this ran/);
 });

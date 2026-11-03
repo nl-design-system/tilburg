@@ -5,6 +5,7 @@
    (/dev/tty) instead. Without a terminal (CI, a pipe) there is nothing to open and nothing is shown. pnpm only runs
    the hook when the install changes something, unless optimisticRepeatInstall is off in pnpm-workspace.yaml. */
 import { closeSync, openSync, writeSync } from 'node:fs';
+import { WriteStream } from 'node:tty';
 
 let tty = null;
 try {
@@ -12,6 +13,10 @@ try {
     tty = openSync('/dev/tty', 'w');
     process.env.TILBURG_TTY = '1';
     console.log = (...parts) => writeSync(tty, `${parts.join(' ')}\n`);
+    /* stdout is pnpm's pipe, so printBanner would assume 80 columns: give it the terminal's own width. */
+    const size = new WriteStream(openSync('/dev/tty', 'w'));
+    process.stdout.columns = size.columns;
+    size.destroy();
     const { c, printBanner } = await import('./lib/cli-utils.mjs');
     printBanner('Ready');
     const rows = [

@@ -25,7 +25,7 @@ const here = import.meta.dirname;
 
 /* pack:dist writes a tarball per TARBALL: good (holds the build output), garbage (unreadable) or none. */
 const fakePnpm = `#!/bin/sh
-echo "pnpm $* @ $PWD" >> "$LOG"
+echo "pnpm $* @ $PWD\${TILBURG_REPO:+ repo=$TILBURG_REPO}" >> "$LOG"
 case "$*" in
   *design-tokens*pack:dist*) d="$REPO/proprietary/design-tokens/dist"; f=gemeente-tilburg-design-tokens-0.0.1.tgz; inner=package/dist/tilburg/theme.css;;
   *components-angular*pack:dist*) d="$REPO/packages/components-angular/dist"; f=gemeente-tilburg-components-angular-0.0.0.tgz; inner=package/dist/fesm2022/x.mjs;;
@@ -99,12 +99,14 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
 const bq = { scripts: { 'sync:tilburg-nlds': 'x' } };
 const hlt = { scripts: { 'sync-stories': 'x' } };
 const old = new Date(Date.now() - 3_600_000);
+/* The lock names carry the user (lock.mjs). */
+const uid = process.getuid ? `${process.getuid()}-` : '';
 
 test('an unknown --to stops with exit 1 and names the choices', () => {
   const run = sync(['--to', 'nope']);
   assert.equal(run.status, 1);
   assert.match(run.output, /Unknown consumer 'nope'/);
-  assert.match(run.output, /bq-tlb-frontend \| hltsamen/);
+  assert.match(run.output, /pnpm sync --to bq-tlb-frontend   or   pnpm sync --to hltsamen/);
 });
 
 test('no consumer folder next to the repository: exit 1, nothing packed', () => {
@@ -145,6 +147,9 @@ test('one consumer of two fails its sync: the other is still synced, the table s
   const run = sync([], { consumers: { 'bq-tlb-frontend': bq, hltsamen: hlt }, env: { NPM_EXIT: '1' } });
   assert.equal(run.status, 1);
   assert.match(run.output, /❌\s+bq-tlb-frontend\s+failed, see above/);
+  /* By hand it needs the tarball paths too, or it installs the hard-coded 0.0.0 names. */
+  assert.match(run.output, /TILBURG_NLDS_TARBALL=".*components-angular-0\.0\.0\.tgz"/);
+  assert.match(run.output, /TILBURG_NLDS_TOKENS_TARBALL=/);
   assert.match(run.output, /✅\s+hltsamen\s+up to date/);
 });
 
@@ -216,7 +221,7 @@ test('a second pnpm sync while one is running stops before packing anything', ()
     before: (repo) => {
       const hash = createHash('sha1').update(repo).digest('hex').slice(0, 10);
       const lock = { pid: process.pid, started: new Date().toISOString() };
-      writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${hash}.json`), JSON.stringify(lock));
+      writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${uid}${hash}.json`), JSON.stringify(lock));
     },
   });
   assert.equal(run.status, 1);
@@ -240,7 +245,10 @@ test('a consumer sync that fails half-way: the files it changed are listed with 
     run.output,
     /bq-tlb-frontend may be half-updated\. Changed by this sync: package-lock\.json, nlds\/new\.tgz/,
   );
-  assert.match(run.output, /To undo: git -C ".*bq-tlb-frontend" restore -- package-lock\.json && cd .* && npm install/);
+  assert.match(
+    run.output,
+    /To undo: git -C ".*bq-tlb-frontend" restore -- "package-lock\.json" && cd .* && npm install/,
+  );
   assert.match(run.output, /New files \(delete them to undo\): nlds\/new\.tgz/);
   assert.match(run.output, /Already changed before this sync, left alone: package\.json/);
 });
@@ -290,4 +298,79 @@ test('a checkout reached through a symlink finds the consumers next to the link'
   });
   assert.doesNotMatch(run.output, /No consumer repository found/);
   assert.match(run.calls, /pnpm run sync-stories @ <sandbox>\/code\/hltsamen/);
+});
+
+/** hltsamen with one `file:` dependency on `<tilburg>/.tarballs/<file>`, written relative to its storybook package. */
+const hltWith = (tilburg, file) => ({
+  ...hlt,
+  setup: (repo) => {
+    const dir = join(repo, '..', 'hltsamen', 'packages', 'storybook');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      join(dir, 'package.json'),
+      JSON.stringify({ dependencies: { x: `file:../../../${tilburg}/.tarballs/${file}` } }),
+    );
+  },
+});
+
+test("hltsamen installs from its tarballs only when they are this checkout's, and gets TILBURG_REPO", () => {
+  const ok = hltWith('tilburg', 'x-1.0.0.tgz');
+  const run = sync(['--to', 'hltsamen'], {
+    consumers: { hltsamen: hlt },
+    before: (repo) => {
+      ok.setup(repo);
+      mkdirSync(join(repo, '.tarballs'));
+      writeFileSync(join(repo, '.tarballs', 'x-1.0.0.tgz'), '');
+    },
+  });
+  assert.equal(run.status, 0, run.output);
+  assert.match(run.calls, /pnpm run sync-stories @ <sandbox>\/hltsamen repo=<sandbox>\/tilburg/);
+});
+
+test('hltsamen whose file: dependencies point at another checkout is not synced', () => {
+  const other = hltWith('tilburg-main', 'x-1.0.0.tgz');
+  const run = sync(['--to', 'hltsamen'], { consumers: { hltsamen: hlt }, before: other.setup });
+  assert.equal(run.status, 1);
+  assert.match(run.output, /hltsamen\s+installs from .*tilburg-main\/\.tarballs, not from this checkout/);
+  assert.equal(run.calls, '', 'nothing packed');
+});
+
+test('after a version bump, hltsamen naming a tarball .tarballs/ lacks is not synced, and the names are given', () => {
+  const run = sync(['--to', 'hltsamen'], {
+    consumers: { hltsamen: hlt },
+    before: (repo) => {
+      hltWith('tilburg', 'x-0.0.0.tgz').setup(repo);
+      mkdirSync(join(repo, '.tarballs'));
+      writeFileSync(join(repo, '.tarballs', 'x-0.1.0.tgz'), '');
+    },
+  });
+  assert.equal(run.status, 1);
+  assert.match(run.output, /name x-0\.0\.0\.tgz, which \.tarballs\/ does not have/);
+  assert.match(run.output, /\.tarballs\/ has x-0\.1\.0\.tgz/);
+  assert.doesNotMatch(run.calls, /sync-stories/);
+});
+
+test('a consumer in the middle of a bisect is not synced', () => {
+  const run = sync(['--to', 'hltsamen'], {
+    consumers: { hltsamen: hlt },
+    before: (repo) => gitInit(join(repo, '..', 'hltsamen'))('bisect', 'start'),
+  });
+  assert.equal(run.status, 1);
+  assert.match(run.output, /hltsamen\s+is in the middle of a bisect/);
+  assert.doesNotMatch(run.calls, /sync-stories/);
+});
+
+test('a consumer another checkout is syncing right now is left alone', () => {
+  const run = sync(['--to', 'hltsamen'], {
+    consumers: { hltsamen: hlt },
+    before: (repo) => {
+      const dir = realpathSync(join(repo, '..', 'hltsamen'));
+      const hash = createHash('sha1').update(dir).digest('hex').slice(0, 10);
+      const lock = { pid: process.pid, started: new Date().toISOString() };
+      writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${uid}to-${hash}.json`), JSON.stringify(lock));
+    },
+  });
+  assert.equal(run.status, 1);
+  assert.match(run.output, /Another pnpm sync is syncing hltsamen/);
+  assert.equal(run.calls, '');
 });

@@ -7,14 +7,13 @@
    retry's environment or command) run by themselves; fixes that change the machine (corepack, nvm, git's global
    config) ask first, and never run without a terminal. Every failure also keeps its manual fix. */
 import { spawnSync } from 'node:child_process';
-import { readdirSync, readFileSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { NODE_MAJOR, ROOT } from '../dev-config.mjs';
 import {
   c,
-  capture,
   confirm,
   fail,
   interactive,
@@ -70,6 +69,13 @@ export const FAILURES = [
     fix: 'git pull --rebase origin <branch>, then run it again (after a rebase of your own: git push --force-with-lease origin HEAD)',
   },
   {
+    /* Before git-auth: GitHub answers 403 here too, but the login worked; the account may only not write there. */
+    kind: 'git-no-access',
+    test: /Permission to \S+ denied to/i,
+    why: 'git logged in to origin, but this account may not push to that repository (a fork, or no write access).',
+    fix: 'push to your fork (git remote -v), or ask for write access to the repository',
+  },
+  {
     kind: 'git-auth',
     test: /Permission denied \(publickey\)|Authentication failed|could not read Username|terminal prompts disabled|The requested URL returned error: 40[13]/i,
     why: 'git could not log in to origin.',
@@ -100,6 +106,13 @@ export const FAILURES = [
     fix: 'git remote -v shows the remotes; git push -u origin HEAD sets the upstream for a new branch',
   },
   {
+    /* Steps run without a terminal: a passphrase, pinentry or password prompt fails instead of asking. */
+    kind: 'needs-terminal',
+    test: /\/dev\/tty|Device not configured|No such device or address|\bENXIO\b|Inappropriate ioctl for device/i,
+    why: 'The step wanted to ask for something (an ssh passphrase, a gpg pin, a password), and steps run without a terminal to ask in.',
+    fix: 'run that command yourself in a terminal once (or load the key first: ssh-add), then run this again',
+  },
+  {
     kind: 'tls',
     /* Before network: a corporate proxy that intercepts TLS fails every retry the same way. */
     test: /SELF_SIGNED_CERT|UNABLE_TO_GET_ISSUER_CERT|UNABLE_TO_VERIFY_LEAF_SIGNATURE|CERT_HAS_EXPIRED|ERR_TLS_CERT|unable to get local issuer certificate/i,
@@ -111,6 +124,13 @@ export const FAILURES = [
     test: /ERR_PNPM_FETCH_404|ERR_PNPM_NO_MATCHING_VERSION\b(?!_INSIDE)|\bE404\b/,
     why: 'The registry has no such package or version: a typo, a version that was never published, or a private scope you have no access to.',
     fix: 'check the name and version (pnpm view <package> versions); for a private scope, check the token in ~/.npmrc',
+  },
+  {
+    /* pnpm wants to remove node_modules (another layout or pnpm setting), and asks first: steps have no terminal. */
+    kind: 'modules-purge',
+    test: /ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY/,
+    why: 'pnpm has to remove node_modules and install it again (a pnpm setting or the node_modules layout changed), and it only does that after asking.',
+    fix: 'pnpm install in a terminal, and answer yes',
   },
   {
     kind: 'workspace-package',
@@ -326,7 +346,7 @@ export const FAILURES = [
     /* Native binaries installed for another CPU: a Rosetta (x64) terminal on Apple Silicon, or node_modules copied over. */
     test: /installed esbuild for another platform|Cannot find module\s+'?@rollup\/rollup-|@esbuild\/[\w-]+" package|sass-embedded-(darwin|linux|win32)-|lmdb-(darwin|linux|win32)-|was compiled against a different Node\.js version|NODE_MODULE_VERSION/i,
     why: 'node_modules holds native binaries for another CPU or Node version (a Rosetta terminal on an Apple Silicon Mac, a Node switch, or a copied node_modules).',
-    fix: 'node -p process.arch should say arm64 on Apple Silicon; then rm -rf node_modules and pnpm install',
+    fix: 'node -p process.arch should match this machine (uname -m; arm64 on Apple Silicon); then rm -rf node_modules and pnpm install',
   },
   {
     kind: 'missing-file',
@@ -357,10 +377,17 @@ export const FAILURES = [
   },
 ];
 
+/* `pnpm --recursive run` puts the package before every line ("packages/x test: …"), which breaks the rules that start
+   at ^. At least one slash, and no "(": "error TS2304: …" and "src/a.ts(3,4): error …" are not prefixes. */
+const PNPM_PREFIX = /^(?:[\w@.-]+\/)+[\w@.-]+ [\w:-]+: /gm;
+/* Passing tests: node:test (✔, TAP "ok 3 - …") and Jest (✓) print every test's name, and a name such as "recognises
+   node-version: ERR_UNKNOWN_BUILTIN_MODULE" must not decide the kind. */
+const PASSED_LINE = /^\s*(?:✔|✓|ok \d+ ).*$/gm;
+
 /** Diagnose a failed step from its output and the error runStep() rejected with. */
 export function classifyFailure(output = '', err = null) {
   /* Colour codes split tokens: stylelint prints `\x1b[31m✖\x1b[39m 2 problems` even with FORCE_COLOR=0. */
-  output = stripAnsi(output);
+  output = stripAnsi(output).replace(PNPM_PREFIX, '').replace(PASSED_LINE, '');
   /* Node sets syscall to `spawn <program>`. With shell: true the program is the shell, so then the cwd is missing. */
   const spawnFailed = err?.code === 'ENOENT' && /^spawn/.test(err?.syscall ?? '') && !output;
   if (spawnFailed && !/(^|[\\/])(sh|cmd\.exe)$/i.test(err.path ?? '')) {
@@ -381,11 +408,11 @@ export function classifyFailure(output = '', err = null) {
   if (['SIGINT', 'SIGTERM', 'SIGHUP'].includes(err?.signal)) {
     return { kind: 'stopped', why: `The step was stopped (${err.signal}).`, fix: 'run it again when you want to' };
   }
-  /* Once Jest's summary reports failures, a test's own name or message ("Authentication failed", "SIGSEGV handler",
-     "config file: not found") must not decide the kind; only a real worker crash still counts as one. */
+  /* Once Jest's or node:test's summary reports failures, a test's own name or message ("Authentication failed",
+     "SIGSEGV handler", "config file: not found") must not decide the kind; only a real worker crash still counts. */
   const tests = FAILURES.find((failure) => failure.kind === 'tests-failed');
   if (
-    /^(Tests|Test Suites):\s+\d+ failed/m.test(output) &&
+    /^(Tests|Test Suites):\s+\d+ failed|^(ℹ|#) fail [1-9]/m.test(output) &&
     !/terminated by another process|child process exceptions/i.test(output)
   ) {
     return { kind: tests.kind, why: tests.why, fix: tests.fix, auto: RECOVERIES[tests.kind]?.label };
@@ -394,6 +421,11 @@ export function classifyFailure(output = '', err = null) {
     if (failure.test.test(output)) {
       return { kind: failure.kind, why: failure.why, fix: failure.fix, auto: RECOVERIES[failure.kind]?.label };
     }
+  }
+  /* The shell's own "not found" (127; cmd.exe: 9009), also when it says so in another language. */
+  if (err?.exitCode === 127 || err?.exitCode === 9009) {
+    const notFound = FAILURES.find((failure) => failure.kind === 'command-not-found');
+    return { kind: notFound.kind, why: notFound.why, fix: notFound.fix };
   }
   if (err?.signal) {
     return {
@@ -424,16 +456,27 @@ export function classifyFailure(output = '', err = null) {
 function installSkip(cwd) {
   const dir = resolve(cwd ?? ROOT);
   if (dir !== ROOT && !dir.startsWith(`${ROOT}${sep}`)) return `it installs in tilburg, and this step ran in ${dir}`;
-  const dev = readDevLock();
+  /* own: called inside pnpm dev too (its first build), and then its own lock means its watchers are about to run. */
+  const dev = readDevLock(undefined, { own: true });
+  if (dev?.pid === process.pid)
+    return 'pnpm dev itself started this step: stop it with q, run pnpm install, then pnpm dev again';
   if (dev) return `pnpm dev is running (process ${dev.pid}): stop it with q first, then run this again`;
   return null;
 }
 
-/** Run a fix's command in the repository root; throws with its last line of output when it fails. */
-async function sh(command, timeoutMs = 600_000) {
-  const { code, stdout, stderr, timedOut } = await capture(command, { timeoutMs, cwd: ROOT });
-  if (timedOut) throw new Error(`${command} took longer than ${timeoutMs / 1000} s`);
-  if (code !== 0) throw new Error(`${command} failed: ${(stderr || stdout).trim().split('\n').pop()}`);
+/**
+ * Run a fix's command in the repository root as a step of its own: a spinner, a log, [v], and no time limit (an
+ * install killed halfway leaves node_modules half linked). Throws with its last line of output when it fails.
+ */
+async function sh(command) {
+  const step = stepStart(command);
+  try {
+    stepDone(step, await runStep(command, { cwd: ROOT, onVerbose: () => step.pause() }));
+  } catch (err) {
+    stepFail(step);
+    const last = (err.output ?? '').trim().split('\n').pop();
+    throw new Error(`${command} failed${last ? `: ${last}` : ''}${err.log ? ` (full output: ${err.log})` : ''}`);
+  }
 }
 
 const version = (text) => text.replace(/^v/, '').split('.').map(Number);
@@ -442,10 +485,27 @@ const older = (a, b) => {
   for (let i = 0; i < 3; i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) < (y[i] ?? 0);
   return false;
 };
+/**
+ * Does a git of ours run? true, false, or null when nobody can tell. Only our own user's: another user's git (or a
+ * shared box) cannot hold our index.lock. Only pgrep's "no match" (1) proves no git runs.
+ */
+function gitRunning() {
+  if (process.platform === 'win32') {
+    const list = spawnSync('tasklist', ['/fi', 'imagename eq git.exe', '/nh'], { encoding: 'utf8' });
+    return list.status === 0 ? /git\.exe/i.test(list.stdout) : null;
+  }
+  const status = spawnSync('pgrep', ['-U', String(process.getuid()), '-x', 'git']).status;
+  return status === 0 ? true : status === 1 ? false : null;
+}
 const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
 /** The lowest Node that package.json "engines" accepts, e.g. "24.15.0". */
 export function enginesMinimum() {
-  const range = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')).engines?.node ?? '';
+  let range = '';
+  try {
+    range = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')).engines?.node ?? '';
+  } catch {
+    /* a broken package.json is its own failure; here the .nvmrc major is enough */
+  }
   return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
 /** The newest Node of the .nvmrc major that nvm has installed, as a version without "v", or null. */
@@ -478,7 +538,7 @@ export const RECOVERIES = {
       nodeNeedsInstall() ? `Install Node ${NODE_MAJOR} (${enginesMinimum()} or newer) with nvm and use it?` : null,
     skip: () => (newestNvmNode() || process.env.NVM_DIR ? null : 'nvm is not installed'),
     run: async ({ env }) => {
-      if (nodeNeedsInstall()) await sh(`. "${NVM_DIR}/nvm.sh" && nvm install ${NODE_MAJOR}`, 900_000);
+      if (nodeNeedsInstall()) await sh(`. "${NVM_DIR}/nvm.sh" && nvm install ${NODE_MAJOR}`);
       const newest = newestNvmNode();
       if (!newest || older(newest, enginesMinimum())) throw new Error(`nvm has no Node ${enginesMinimum()} or newer`);
       return {
@@ -507,7 +567,8 @@ export const RECOVERIES = {
   'git-lock': {
     label: 'removing the stale .git/index.lock (only when no git process is running)',
     run: async ({ err }) => {
-      const lock = stripAnsi(err.output ?? '').match(/Unable to create '([^']+index\.lock)'/)?.[1];
+      /* Only the quoted path: the words around it are translated in a git that speaks another language. */
+      const lock = stripAnsi(err.output ?? '').match(/'([^']+index\.lock)'/)?.[1];
       /* <repo>/.git/index.lock, or one under the shared git dir (a worktree's .git/worktrees/x/, a submodule's
          .git/modules/x/). Resolved first: the path comes from tool output, and `…/.git/../../x/index.lock` contains /.git/. */
       const path = lock && resolve(lock);
@@ -517,14 +578,12 @@ export const RECOVERIES = {
         basename(dirname(path ?? '')) === '.git' || (commonDir && (path ?? '').startsWith(`${commonDir}${sep}`));
       if (!path || basename(path) !== 'index.lock' || !underGit)
         throw new Error('the message names no .git/index.lock');
-      /* Only pgrep's "no match" (1) proves no git runs; a missing pgrep (null) or an error (2, 3) proves nothing. */
-      const gitRunning = spawnSync('pgrep', ['-x', 'git']).status;
-      if (gitRunning !== 1)
-        throw new Error(
-          gitRunning === 0
-            ? 'a git process is still running (pgrep -x git)'
-            : 'cannot tell whether git is running (no pgrep)',
-        );
+      /* A git that is busy right now (it made the lock a moment ago) is not stale. */
+      const age = Date.now() - (statSync(path, { throwIfNoEntry: false })?.mtimeMs ?? 0);
+      if (age < 10_000) throw new Error('the index.lock is less than 10 s old: git may still be using it');
+      const running = gitRunning();
+      if (running !== false)
+        throw new Error(running ? 'a git process of yours is still running' : 'cannot tell whether git is running');
       rmSync(path, { force: true });
     },
   },
@@ -641,8 +700,11 @@ export async function runStepWithRecovery(
   let runEnv = env;
   let runCommand = command;
   for (let attempt = 1; ; attempt++) {
-    const step = stepStart(attempt > 1 ? `${label} (attempt ${attempt})` : label);
-    if (process.stdout.isTTY && !process.env.CI) process.stdout.write(`  ${c.gray}[v] show output${c.reset}`);
+    const stepLabel = attempt > 1 ? `${label} (attempt ${attempt})` : label;
+    const step = stepStart(stepLabel);
+    /* Not where the output streams anyway (TERM=dumb, CI), nor where the hint would wrap and the spinner then stack. */
+    if (interactive && (process.stdout.columns || 80) >= stepLabel.length + 30)
+      process.stdout.write(`  ${c.gray}[v] show output${c.reset}`);
     try {
       const wasVerbose = await runStep(runCommand, { onVerbose: () => step.pause(), env: runEnv, cwd, label });
       stepDone(step, wasVerbose);
@@ -652,8 +714,9 @@ export async function runStepWithRecovery(
       if (err.cwd === undefined || err.cwd === null) err.cwd = cwd;
       const diagnosis = classifyFailure(err.output ?? '', err);
       err.diagnosis = diagnosis;
-      /* The retry failed the same way: the report then says what was tried, not that it could be. */
+      /* The retry failed (the same way, or another): the report then says what was already tried. */
       if (tried.has(diagnosis.kind)) diagnosis.autoTried = tried.get(diagnosis.kind);
+      else if (tried.size) diagnosis.autoTried = [...tried.values()].join(', ');
       const fix = recoveries[diagnosis.kind];
       /* Each fix at most once: a fix that did not help the first time hides the real error the second time. */
       if (fix && !tried.has(diagnosis.kind) && attempt >= maxAttempts) {
@@ -668,7 +731,7 @@ export async function runStepWithRecovery(
       const question = typeof fix.ask === 'function' ? fix.ask() : fix.ask;
       if (question) {
         if (!interactive || !process.stdin.isTTY) {
-          diagnosis.autoSkipped = 'it changes your machine, so it asks first, and there is no terminal to ask in';
+          diagnosis.autoSkipped = `it changes your machine, so it asks first, and ${process.env.CI ? 'CI is set, so ' : ''}there is no terminal to ask in`;
           throw err;
         }
         console.log(`\n  ${c.yellow}↻${c.reset}  ${diagnosis.why}`);

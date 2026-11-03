@@ -84,6 +84,52 @@ test('the git-lock fix refuses an index.lock outside the git folder, also throug
   }
 });
 
+test('node:test output: passing test names do not decide the kind, its fail summary does', () => {
+  const output = [
+    '✔ recognises node-version: Error [ERR_UNKNOWN_BUILTIN_MODULE]: node:sqlite (0.1ms)',
+    'ok 3 - recognises git-auth: Authentication failed',
+    '✖ something else (2ms)',
+    'ℹ tests 3',
+    'ℹ pass 2',
+    'ℹ fail 1',
+  ].join('\n');
+  assert.equal(classifyFailure(output, { exitCode: 1 }).kind, 'tests-failed');
+  assert.equal(classifyFailure('# fail 2', { exitCode: 1 }).kind, 'tests-failed');
+  assert.notEqual(classifyFailure('ℹ fail 0', { exitCode: 1 }).kind, 'tests-failed');
+});
+
+test('pnpm --recursive line prefixes do not hide what the line says', () => {
+  const jest =
+    'packages/components-react test: ✕ says Authentication failed\npackages/components-react test: Tests:       1 failed, 3 passed';
+  assert.equal(classifyFailure(jest, { exitCode: 1 }).kind, 'tests-failed');
+  assert.equal(
+    classifyFailure('packages/x build: SyntaxError: Unexpected token', { exitCode: 1 }).kind,
+    'syntax-error',
+  );
+  assert.equal(classifyFailure('packages/x build: [ ERROR ]  TypeScript: bad', { exitCode: 1 }).kind, 'stencil-error');
+  /* Not a prefix: a type error keeps its "error TS…: " */
+  assert.equal(classifyFailure('error TS2304: Cannot find name x.', { exitCode: 1 }).kind, 'type-error');
+});
+
+test('a shell exit 127 or 9009 is a missing command, also in another language', () => {
+  assert.equal(classifyFailure('sh: chokidar: Kommando nicht gefunden.', { exitCode: 127 }).kind, 'command-not-found');
+  assert.equal(classifyFailure("'x' wordt niet herkend", { exitCode: 9009 }).kind, 'command-not-found');
+});
+
+test('no write access, a terminal prompt and a purge question each get their own diagnosis', () => {
+  const denied = 'remote: Permission to org/repo.git denied to someone.\nfatal: The requested URL returned error: 403';
+  assert.equal(classifyFailure(denied, { exitCode: 128 }).kind, 'git-no-access');
+  assert.equal(
+    classifyFailure('gpg: signing failed: Inappropriate ioctl for device', { exitCode: 1 }).kind,
+    'needs-terminal',
+  );
+  assert.equal(
+    classifyFailure('ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY  Aborted removal of modules directory', { exitCode: 1 })
+      .kind,
+    'modules-purge',
+  );
+});
+
 test('a step that fails without saying anything is called out as such, with the command to rerun', () => {
   const diagnosis = classifyFailure('', { exitCode: 3, command: 'exit 3' });
   assert.equal(diagnosis.kind, 'silent');

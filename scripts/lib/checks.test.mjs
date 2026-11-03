@@ -20,6 +20,7 @@ import {
   checkPnpm,
   identifyStorybook,
   libraryState,
+  mountType,
   newestMtime,
   runInherit,
 } from './checks.mjs';
@@ -275,4 +276,61 @@ test('a Storybook whose folder cannot be told is not taken for ours; one on ::1 
       server.close();
     }
   }
+});
+
+test('mountType picks the longest mount point that holds the path', () => {
+  const mounts = 'overlay / overlay rw 0 0\nC:\\ /c 9p rw 0 0\nsrv:/x /home/x/my\\040share nfs4 rw 0 0\n';
+  assert.equal(mountType('/c/Users/x/tilburg', mounts), '9p');
+  assert.equal(mountType('/home/x/my share/tilburg', mounts), 'nfs4');
+  assert.equal(mountType('/cx/tilburg', mounts), 'overlay');
+  assert.equal(mountType('/x', ''), undefined);
+});
+
+test('a Windows drive mounted anywhere under WSL and a network share are flagged', () => {
+  assert.match(checkFolder('/c/Users/x/tilburg', 'linux', '/home/x', false, '9p').detail, /Windows drive/);
+  assert.match(checkFolder('/home/x/share/tilburg', 'linux', '/home/x', false, 'nfs4').detail, /network/);
+  assert.equal(checkFolder('/home/x/tilburg', 'linux', '/home/x', false, 'ext4').warn, undefined);
+});
+
+test('the move-it-out fix creates ~/Developer first and names the sibling repos', () => {
+  const { note } = checkFolder('/Users/x/Dropbox/tilburg', 'darwin', '/Users/x', false);
+  assert.match(note, /mkdir -p ~\/Developer && mv "\/Users\/x\/Dropbox\/tilburg" ~\/Developer\//);
+  assert.match(note, /hltsamen/);
+  assert.match(checkFolder('C:\\Users\\x\\OneDrive\\tilburg', 'win32').note, /Move-Item/);
+});
+
+test('fix texts use PowerShell syntax on Windows', () => {
+  assert.match(checkEnvironment({ NODE_OPTIONS: '--inspect' }, 'win32').note, /Remove-Item Env:NODE_OPTIONS/);
+  assert.match(checkEnvironment({ NODE_ENV: 'production' }, 'linux').note, /unset NODE_ENV/);
+});
+
+test('checkPnpm warns when the Windows pnpm comes first on the PATH under WSL', async () => {
+  const row = await checkPnpm('/mnt/c/Program Files/nodejs/pnpm');
+  assert.equal(row.warn, true);
+  assert.match(row.detail, /Windows pnpm/);
+});
+
+test('newestMtime follows a symlink given as a path, not one below it', (t) => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  mkdirSync(resolve(dir, 'real'));
+  writeFileSync(resolve(dir, 'real', 'a.ts'), 'a');
+  utimesSync(resolve(dir, 'real', 'a.ts'), 5, 5);
+  utimesSync(resolve(dir, 'real'), 5, 5);
+  symlinkSync(resolve(dir, 'real'), resolve(dir, 'src'));
+  assert.equal(newestMtime([resolve(dir, 'src')]), 5000);
+});
+
+test('a build is fresh when any file in dist/ is newer than the source (Stencil skips unchanged files)', (t) => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  mkdirSync(resolve(dir, 'src'));
+  mkdirSync(resolve(dir, 'dist', 'esm'), { recursive: true });
+  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
+  writeFileSync(resolve(dir, 'dist', 'index.js'), 'a');
+  writeFileSync(resolve(dir, 'dist', 'esm', 'a.js'), 'a');
+  for (const path of ['src', 'src/a.ts']) utimesSync(resolve(dir, path), 20, 20);
+  for (const path of ['dist', 'dist/esm', 'dist/index.js']) utimesSync(resolve(dir, path), 10, 10);
+  utimesSync(resolve(dir, 'dist', 'esm', 'a.js'), 30, 30);
+  assert.equal(libraryState({ dir, src: ['src'], built: 'dist/index.js' }).state, 'fresh');
 });

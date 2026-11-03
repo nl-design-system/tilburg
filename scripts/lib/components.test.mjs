@@ -124,3 +124,16 @@ test('no command in pnpm commands / pnpm menu collides with a pnpm built-in (set
   );
   assert.deepEqual(clashes, []);
 });
+
+test('a table with merge-conflict markers loads no components, instead of both sides', () => {
+  const row = '| Tooltip | ✅ | ✅ | ✅ | ✅ |';
+  assert.equal(loadComponents(`${row}\n`).length, 1);
+  assert.deepEqual(loadComponents(`<<<<<<< HEAD\n${row}\n=======\n${row}\n>>>>>>> main\n`), []);
+});
+
+test('requireComponent shows at most five candidates and points at the list', () => {
+  const { status, stdout } = requireIn('a');
+  assert.equal(status, 1);
+  assert.equal(stdout.match(/pnpm where [a-z][a-z-]*/g).length, 5);
+  assert.match(stdout, /pnpm where --list shows all \d+/);
+});

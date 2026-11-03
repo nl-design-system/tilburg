@@ -9,11 +9,20 @@
 
    Components-css (SCSS) and storybook-shared are read from source by the Storybooks, so they need no watcher. */
 import { spawn } from 'node:child_process';
-import { watchFile } from 'node:fs';
+import { readFileSync, realpathSync, rmSync, watchFile } from 'node:fs';
 import { resolve } from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { parseArgs } from 'node:util';
 import { LIBRARIES, ROOT, STORYBOOKS } from './dev-config.mjs';
-import { checkInstalled, checkInstallFresh, checkNode, identifyStorybook, libraryState } from './lib/checks.mjs';
+import {
+  checkInstalled,
+  checkInstallFresh,
+  checkNode,
+  identifyStorybook,
+  isStorybookOn,
+  libraryState,
+  listenerDir,
+} from './lib/checks.mjs';
 import {
   c,
   confirm,
@@ -34,7 +43,7 @@ import {
 } from './lib/cli-utils.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 import { requireComponent, storyUrl } from './lib/components.mjs';
-import { processStart, readDevLock, SYNC_LOCK, updateDevLock, writeDevLock } from './lib/lock.mjs';
+import { LOCK_FILE, processStart, readDevLock, SYNC_LOCK, updateDevLock, writeDevLock } from './lib/lock.mjs';
 import { choosePort, printStorybookLinks, waitForStorybook } from './lib/storybook.mjs';
 
 /* With the shared signal handlers until dev's own take over below: a SIGTERM or a closed terminal during the first
@@ -50,10 +59,13 @@ try {
     options: { open: { type: 'boolean', short: 'o' }, verbose: { type: 'boolean' } },
   }));
 } catch (err) {
-  fail({ what: err.message, fix: USAGE });
+  /* Node's own message ends in "place it after '--'", which would make the flag a component name. */
+  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: USAGE });
   process.exit(1);
 }
 const NAMES = ['react', 'angular', 'all'];
+/* `pnpm dev React`: a Storybook name in any case, not a component called "React". */
+positionals = positionals.map((word) => (NAMES.includes(word.toLowerCase()) ? word.toLowerCase() : word));
 const targets = positionals.filter((word) => NAMES.includes(word));
 if (targets.length > 1) {
   fail({
@@ -103,6 +115,15 @@ printBanner(`Dev · ${storybookKeys.map((key) => STORYBOOKS[key].name).join(' + 
 
 // ─── 1. Can this work at all? ────────────────────────────────────────────────
 
+/* cmd.exe cannot work in a UNC folder (\\wsl.localhost\…, a network share): every command would run in C:\Windows. */
+if (process.platform === 'win32' && ROOT.startsWith('\\\\')) {
+  fail({
+    what: `pnpm dev cannot run from ${ROOT}`,
+    why: 'Windows commands do not run in a network (UNC) folder.',
+    fix: 'open the repository inside WSL, or map it to a drive letter',
+  });
+  process.exit(1);
+}
 const node = checkNode();
 if (!node.ok) {
   fail({ what: `Node ${process.versions.node} is not the Node this repo uses`, why: node.detail, fix: node.note });
@@ -129,10 +150,31 @@ function pointAtRunning(running) {
   );
   process.exit(0);
 }
+/** The process groups in the lock as it is now: readDevLock removes a stale lock, and with it this list. */
+function lockedGroups() {
+  try {
+    const { groups } = JSON.parse(readFileSync(LOCK_FILE, 'utf8'));
+    return Array.isArray(groups) ? groups.filter(({ pid } = {}) => Number.isInteger(pid) && pid > 1) : [];
+  } catch {
+    return [];
+  }
+}
+/** Does any process of that group still run? (Signal 0 sends nothing.) */
+function groupAlive(pid) {
+  try {
+    process.kill(-pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
 /* Before the install question: an install would swap node_modules under the running one's watchers. `reap`: a pnpm dev
    that was killed hard left its watchers running; stop those. */
+const orphans = process.platform === 'win32' ? [] : lockedGroups();
 const running = readDevLock(undefined, { reap: true });
 if (running) pointAtRunning(running);
+/* The reaped Storybook takes a moment to exit: choosing ports now would find it still answering and reuse it. */
+for (let waited = 0; waited < 3000 && orphans.some(({ pid }) => groupAlive(pid)); waited += 100) await sleep(100);
 /* pnpm sync packs (and so rebuilds) the same dist/ folders the watchers write. */
 const syncing = readDevLock(SYNC_LOCK);
 if (syncing) {
@@ -142,6 +184,15 @@ if (syncing) {
     fix: 'wait for it to finish, then pnpm dev again',
   });
   process.exit(1);
+}
+/* Taken now, not once the ports are known: a second pnpm dev, sync or verify started while the install question waits
+   or pnpm install runs must see this one. */
+if (!writeDevLock({ storybooks: [] })) {
+  const other = readDevLock();
+  if (other) pointAtRunning(other);
+  console.log(
+    `  ${c.yellow}⚠${c.reset}  The lock ${LOCK_FILE} could not be taken (another user's file?). Other scripts will not see this pnpm dev.`,
+  );
 }
 
 // ─── 2b. Dependencies ─────────────────────────────────────────────────────────
@@ -172,7 +223,10 @@ for (const key of storybookKeys) {
     fail({
       what: `No port for the ${STORYBOOKS[key].name}`,
       why: choice.error,
-      fix: `lsof -i :${STORYBOOKS[key].port}`,
+      fix:
+        process.platform === 'win32'
+          ? `netstat -ano | findstr :${STORYBOOKS[key].port}`
+          : `lsof -i :${STORYBOOKS[key].port}`,
     });
     process.exit(1);
   }
@@ -187,11 +241,7 @@ for (const key of storybookKeys) {
   }
   storybooks.push({ key, ...STORYBOOKS[key], port: choice.port, running: choice.running });
 }
-/* Another pnpm dev started in the seconds since the check above: it has the lock, so point at that one. */
-if (!writeDevLock({ storybooks: storybooks.map(({ name, port, note }) => ({ name, port, note })) })) {
-  const other = readDevLock();
-  if (other) pointAtRunning(other);
-}
+updateDevLock({ storybooks: storybooks.map(({ name, port, note }) => ({ name, port, note })) });
 
 // ─── 4. Processes ────────────────────────────────────────────────────────────
 
@@ -251,6 +301,7 @@ function start({ name, command, colour, onLine, onExit, storybook = false }) {
   const exit = (code, signal) => {
     if (entry.exited) return;
     entry.exited = true;
+    entry.exitedAt = Date.now();
     /* "stopped": pnpm dev stopped it (q, Ctrl-C), so pnpm logs --last does not show it as the last failure. */
     appendLog(log, `\n# exit ${stopping ? 'stopped' : (signal ?? code)}\n`);
     if (!stopping) onExit?.(code, signal, entry.tail, log);
@@ -276,17 +327,31 @@ function start({ name, command, colour, onLine, onExit, storybook = false }) {
   child.stderr.on('data', read);
   child.on('close', exit);
   processes.push(entry);
-  /* Each runs in its own process group: if this process is killed hard, the next pnpm dev stops them (lock.mjs). */
-  if (child.pid && process.platform !== 'win32') {
+  /* Each runs in its own process group: if this process is killed hard, the next pnpm dev stops them (lock.mjs). On
+     Windows the pid only (no start time there): a tree for taskkill, not a group. */
+  if (child.pid) {
     entry.group = { pid: child.pid, started: processStart(child.pid) };
     updateDevLock({ groups: processes.filter((running) => running.group).map((running) => running.group) });
   }
   return entry;
 }
 
+/* Set once the first build starts; stopAll clears its spinner. */
+let step;
 function stopAll(exitCode = 0) {
   if (stopping) return;
   stopping = true;
+  clearInterval(step?.interval);
+  /* Our lock goes now, not on exit 1.5 s later: a pnpm dev started right after q would say "already running". Marked
+     stale (pid 0) rather than removed, so that pnpm dev reaps and waits for these groups before choosing its ports. */
+  updateDevLock({ pid: 0 });
+  process.on('exit', () => {
+    try {
+      if (JSON.parse(readFileSync(LOCK_FILE, 'utf8')).pid === 0) rmSync(LOCK_FILE, { force: true });
+    } catch {
+      /* gone already: a new pnpm dev removed it */
+    }
+  });
   setFooter([]);
   try {
     if (process.stdin.isTTY) process.stdin.setRawMode(false);
@@ -297,10 +362,12 @@ function stopAll(exitCode = 0) {
   for (const { name, port } of storybooks.filter((storybook) => storybook.running)) {
     console.log(`  ${c.gray}The ${name} on ${port} was already running before pnpm dev and keeps running.${c.reset}`);
   }
-  /* The whole group, also when its shell has exited: a grandchild may still run in it (killTree ignores ESRCH). */
-  for (const { child } of processes) killTree(child, 'SIGTERM');
+  /* The whole group, also when its shell has exited: a grandchild may still run in it (killTree ignores ESRCH). Not
+     a group whose leader exited long ago: by now its number may belong to another job of yours. */
+  const live = processes.filter(({ exitedAt }) => !exitedAt || Date.now() - exitedAt < 30_000);
+  for (const { child } of live) killTree(child, 'SIGTERM');
   setTimeout(() => {
-    for (const { child } of processes) killTree(child, 'SIGKILL');
+    for (const { child } of live) killTree(child, 'SIGKILL');
     process.exit(exitCode);
   }, 1500).unref();
   setTimeout(() => process.exit(exitCode), 1600);
@@ -313,7 +380,8 @@ process.on('SIGTERM', () => stopAll(143));
    stopAll, leaving a watcher that ignores SIGTERM behind: write nowhere instead, and stop the normal way. */
 function hangUp() {
   for (const stream of [process.stdout, process.stderr]) stream.write = () => true;
-  stopAll(0);
+  /* 128 + SIGHUP, as a shell reports a hang-up; also when only the writes failed: the terminal is gone either way. */
+  stopAll(129);
 }
 process.on('SIGHUP', hangUp);
 for (const stream of [process.stdout, process.stderr]) stream.removeAllListeners('error').on('error', hangUp);
@@ -367,11 +435,17 @@ if (process.stdin.isTTY && process.stdout.isTTY) {
   } catch {
     /* no keys then; Ctrl-C still stops */
   }
+} else if (process.env.MSYSTEM && !process.stdin.isTTY) {
+  /* Git Bash's mintty without ConPTY hands us pipes, not a terminal. */
+  console.log(
+    `  ${c.gray}No keys here (q, v, o): run in Windows Terminal, or \`winpty pnpm dev\`. Ctrl-C stops.${c.reset}`,
+  );
 }
 
 const colours = [c.cyan, c.magenta, c.yellow, c.blue, c.green];
 const FIRST_BUILD_LIMIT_MS = 5 * 60_000;
 const STORYBOOK_SILENT_MS = 10 * 60_000;
+const firstBuildOf = {};
 const firstBuilds = libraries.map((library, index) => {
   const colour = colours[index % colours.length];
   let initial = true;
@@ -379,67 +453,73 @@ const firstBuilds = libraries.map((library, index) => {
   /* An error's first line rarely says where: also show the lines after it (file, line, message). */
   let errorLinesLeft = 0;
   let lastDone = 0;
-  return new Promise((resolveFirst) => {
+  return (firstBuildOf[library.key] = new Promise((resolveFirst) => {
     /* The token watcher has nothing to build until a file changes, and a watcher that leaves dist/ in place while it
        builds cannot break a Storybook that starts on an up-to-date build: ready at once. Its first build still runs. */
     if (library.key === 'tokens' || (library.keepsDist && libraryState(library).state === 'fresh'))
       resolveFirst({ library, ok: true });
-    start({
-      name: library.name,
-      command: library.watch,
-      colour,
-      onLine: (plain) => {
-        if (library.failed.test(plain) && !/Found 0 errors/.test(plain)) {
-          if (!verbose) console.log(`${c.red}[${library.name}]${c.reset} ${plain}`);
-          errorLinesLeft = 8;
+    /* `after`: its input is written by that library's build (wc-react compiles the proxies Stencil generates). */
+    const startWatcher = () => {
+      start({
+        name: library.name,
+        command: library.watch,
+        colour,
+        onLine: (plain) => {
+          if (library.failed.test(plain) && !/Found 0 errors/.test(plain)) {
+            if (!verbose) console.log(`${c.red}[${library.name}]${c.reset} ${plain}`);
+            errorLinesLeft = 8;
+            if (initial) {
+              initial = false;
+              resolveFirst({ library, ok: false });
+            }
+            broken = true;
+            return;
+          }
+          if (!library.done.test(plain)) {
+            if (errorLinesLeft > 0 && plain.trim() && !verbose) {
+              errorLinesLeft--;
+              console.log(`${c.red}[${library.name}]${c.reset} ${c.gray}${plain}${c.reset}`);
+            }
+            return;
+          }
+          errorLinesLeft = 0;
+          /* Some tools report one build twice (e.g. once per output format): count it once. */
+          if (Date.now() - lastDone < 3000) return;
+          lastDone = Date.now();
           if (initial) {
             initial = false;
-            resolveFirst({ library, ok: false });
+            resolveFirst({ library, ok: true });
+            return;
           }
-          broken = true;
-          return;
-        }
-        if (!library.done.test(plain)) {
-          if (errorLinesLeft > 0 && plain.trim() && !verbose) {
-            errorLinesLeft--;
-            console.log(`${c.red}[${library.name}]${c.reset} ${c.gray}${plain}${c.reset}`);
+          if (!verbose) {
+            const status = broken ? `${c.green}fixed and rebuilt${c.reset}` : 'rebuilt';
+            console.log(`  ${c.gray}${time()}${c.reset}  ${c.green}✓${c.reset}  ${library.name} ${status}`);
           }
-          return;
-        }
-        errorLinesLeft = 0;
-        /* Some tools report one build twice (e.g. once per output format): count it once. */
-        if (Date.now() - lastDone < 3000) return;
-        lastDone = Date.now();
-        if (initial) {
-          initial = false;
-          resolveFirst({ library, ok: true });
-          return;
-        }
-        if (!verbose) {
-          const status = broken ? `${c.green}fixed and rebuilt${c.reset}` : 'rebuilt';
-          console.log(`  ${c.gray}${time()}${c.reset}  ${c.green}✓${c.reset}  ${library.name} ${status}`);
-        }
-        broken = false;
-      },
-      onExit: (code, signal, tail, log) => {
-        if (initial) resolveFirst({ library, ok: false, exited: true });
-        reportExit(
-          library.name,
-          code,
-          signal,
-          tail,
-          log,
-          `Changes to ${library.dir} are no longer rebuilt. Stop (q) and start pnpm dev again.`,
-        );
-      },
-    });
-    /* A watcher that never says "done" (after a tool update changed its wording, say) must not hang pnpm dev. */
-    setTimeout(() => {
-      if (!initial) return;
-      initial = false;
-      resolveFirst({ library, ok: true, silent: true });
-    }, FIRST_BUILD_LIMIT_MS).unref();
-  });
+          broken = false;
+        },
+        onExit: (code, signal, tail, log) => {
+          if (initial) resolveFirst({ library, ok: false, exited: true });
+          reportExit(
+            library.name,
+            code,
+            signal,
+            tail,
+            log,
+            `Changes to ${library.dir} are no longer rebuilt. Stop (q) and start pnpm dev again.`,
+          );
+        },
+      });
+      /* A watcher that never says "done" (after a tool update changed its wording, say) must not hang pnpm dev. */
+      setTimeout(() => {
+        if (!initial) return;
+        initial = false;
+        resolveFirst({ library, ok: true, silent: true });
+      }, FIRST_BUILD_LIMIT_MS).unref();
+    };
+    const before = firstBuildOf[library.after];
+    if (before) before.then(() => !stopping && startWatcher());
+    else startWatcher();
+  }));
 });
 
 // ─── 6. Storybooks ───────────────────────────────────────────────────────────
@@ -476,20 +556,26 @@ const ready = toStart.map((storybook, index) =>
             stopAll(1);
           },
         });
-        /* A cold first build can take long: give up only after a long silence, not after a total time. */
+        /* A cold first build can take long: give up only after a long silence, not after a total time. But say so after
+           5 minutes without an answer, also while it keeps printing (an index error answers 500 for ever). */
+        const startedAt = performance.now();
         let warned = false;
         waitForStorybook(storybook.port, () => {
-          if (!warned && performance.now() - lastOutput > STORYBOOK_SILENT_MS / 2) {
+          if (!warned && performance.now() - startedAt > STORYBOOK_SILENT_MS / 2) {
             warned = true;
+            const silent = performance.now() - lastOutput > STORYBOOK_SILENT_MS / 2;
             console.log(
-              `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} and printed nothing for 5 minutes. [v] shows what it is doing.`,
+              `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} for 5 minutes${silent ? ' and printed nothing' : ''}. [v] shows what it is doing.`,
             );
           }
           return exited || stopping || performance.now() - lastOutput > STORYBOOK_SILENT_MS;
         })
           .then(async (up) => {
             /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. */
-            const found = up ? await identifyStorybook(storybook, storybook.port) : null;
+            /* A folder that cannot be told (Windows, no lsof) is ours here: we just started it on this port. */
+            const found = up
+              ? await identifyStorybook(storybook, storybook.port, (port) => listenerDir(port) ?? realpathSync(ROOT))
+              : null;
             if (!found || found.ours || stopping) return up;
             console.log(
               `\n  ${c.red}✗${c.reset}  ${c.bold}Port ${storybook.port} now serves ${found.what}, not the ${storybook.name}${c.reset}` +
@@ -503,7 +589,7 @@ const ready = toStart.map((storybook, index) =>
   ),
 );
 
-const step = stepStart(`Building ${libraries.length} libraries in watch mode`);
+step = stepStart(`Building ${libraries.length} libraries in watch mode`);
 if (interactive) process.stdout.write(`  ${c.gray}(the first build takes a minute)${c.reset}`);
 const results = await Promise.all(firstBuilds);
 for (const { library } of results.filter((result) => result.silent)) {
@@ -557,6 +643,18 @@ if (!stopping) {
     `  ${storybooks.map(({ name, port }) => `${c.cyan}${name.replace(' Storybook', '')}${c.reset} http://localhost:${port}/`).join('   ')}`,
     `  ${c.gray}[v] all output  [s] Storybook output  [o] open in browser  [q] stop${c.reset}`,
   ]);
+}
+
+/* A Storybook that was already running is not ours to watch: say once when it is gone, or its link stays up dead. */
+for (const storybook of stopping ? [] : storybooks.filter(({ running }) => running)) {
+  const timer = setInterval(async () => {
+    if (stopping || (await isStorybookOn(storybook.port))) return;
+    clearInterval(timer);
+    console.log(
+      `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} on ${storybook.port} (started before pnpm dev) has stopped. Stop (q) and start pnpm dev again.\n`,
+    );
+  }, 30_000);
+  timer.unref();
 }
 
 /* A `git checkout` or pull while this runs can change the dependencies under the running watchers and Storybooks. */

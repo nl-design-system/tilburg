@@ -77,3 +77,26 @@ test('application-mode arrows and several keys in one chunk are all read', () =>
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stdout.split('Enter run').length - 1, 3, 'drawn once, then once per arrow');
 });
+
+test('TERM=dumb (no cursor control) gets the list, not a menu drawn with escape codes', () => {
+  const result = spawnSync(process.execPath, ['--import', asTerminal(120), hub], {
+    input: '',
+    env: { ...process.env, CI: '', TILBURG_TTY: '', TERM: 'dumb' },
+    encoding: 'utf8',
+    timeout: 10_000,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /pnpm setup/);
+  assert.doesNotMatch(result.stdout, /Enter run/);
+});
+
+test('Home and F2 are neither help nor quit: the menu stays until q', () => {
+  const result = spawnSync(process.execPath, ['--import', asTerminal(80), hub], {
+    input: '\x1b[H\x1bOQ\x1b[Cq',
+    env: { ...process.env, CI: '', TILBURG_TTY: '' },
+    encoding: 'utf8',
+    timeout: 10_000,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.split('Enter run').length - 1, 2, 'drawn once, then once for the arrow');
+});

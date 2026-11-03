@@ -16,7 +16,7 @@ import {
 import http from 'node:http';
 import net from 'node:net';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { LIBRARIES, STORYBOOKS } from './dev-config.mjs';
@@ -209,7 +209,7 @@ http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process
   });
   let sent = false;
   /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
-  const { output } = await runDev(root, (text, child) => {
+  const { code, output } = await runDev(root, (text, child) => {
     if (!sent && /Watching\./.test(text)) {
       sent = true;
       child.stdout.destroy();
@@ -218,6 +218,7 @@ http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process
     }
   });
   assert.equal(sent, true, output);
+  assert.equal(code, 129, 'exit code 128 + SIGHUP');
   assert.ok(await watcherGone(root), 'the watcher was killed');
 });
 
@@ -276,6 +277,8 @@ test('unknown flags and a second Storybook name stop pnpm dev with a clear messa
   const flag = await runDev(root, () => {}, {}, root, ['--port', '7000']);
   assert.equal(flag.code, 1, flag.output);
   assert.match(flag.output, /Unknown option '--port'/);
+  /* Not Node's "place it after '--'": that would make the flag a component name. */
+  assert.doesNotMatch(flag.output, /after '--'/);
   const two = await runDev(root, () => {}, {}, root, ['react', 'angular']);
   assert.equal(two.code, 1, two.output);
   assert.match(two.output, /One Storybook at a time, not react and angular/);
@@ -315,4 +318,79 @@ test('a port taken by another Storybook while the libraries built is not taken f
     other?.closeAllConnections();
     other?.close();
   }
+});
+
+const ANSWERS = `import http from 'node:http';
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
+
+test('a Storybook name in capitals is that Storybook, not a component', async () => {
+  const root = await fakeRepo({ watcher: WATCHER, storybook: 'process.exit(1);' });
+  const { code, output } = await runDev(root, () => {}, {}, root, ['React']);
+  assert.equal(code, 1, output);
+  assert.doesNotMatch(output, /No component called/);
+  assert.match(output, /React Storybook stopped/);
+});
+
+test('without lsof (the folder on the port cannot be told), pnpm dev keeps the Storybook it started itself', async () => {
+  const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
+  let sent = false;
+  /* node, sh and ps, but no lsof (macOS keeps it in /usr/sbin; Linux finds ss in /bin and still tells the folder) */
+  const { code, output } = await runDev(
+    root,
+    (text, child) => {
+      if (!sent && /Watching\./.test(text)) {
+        sent = true;
+        child.kill('SIGINT');
+      }
+    },
+    { PATH: `${dirname(process.execPath)}:/bin` },
+  );
+  assert.equal(code, 0, output);
+  assert.doesNotMatch(output, /cannot be told/);
+});
+
+test('pnpm dev again right after q starts anew, not "already running" with the links that are stopping', async () => {
+  const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
+  let second;
+  let sent = false;
+  await runDev(root, (text, child) => {
+    if (!sent && /Watching\./.test(text)) {
+      sent = true;
+      child.kill('SIGINT');
+      let stopped = false;
+      second = runDev(root, (text2, child2) => {
+        if (!stopped && /Watching\./.test(text2)) {
+          stopped = true;
+          child2.kill('SIGINT');
+        }
+      });
+    }
+  });
+  const { code, output } = await second;
+  assert.equal(code, 0, output);
+  assert.doesNotMatch(output, /already running/);
+  assert.match(output, /Watching\./);
+});
+
+test('a library with `after` starts its watcher only once that library has built', async () => {
+  const root = await fakeRepo({
+    watcher: `console.log('built in 1s'); setInterval(() => {}, 1000);`,
+    storybook: ANSWERS,
+    libraries: `
+  { key: 'stencil', name: 'stencil', dir: 'st', src: ['src'], built: 'dist/x.js', for: ['react'],
+    watch: 'node -e "setTimeout(() => { require(\\'fs\\').writeFileSync(\\'generated.txt\\', \\'\\'); console.log(\\'build finished\\'); }, 500); setInterval(() => {}, 1000)"',
+    done: /build finished/, failed: /ERROR/ },
+  { key: 'wc-react', name: 'wc-react', dir: 'wc', src: ['src'], built: 'dist/x.js', for: ['react'], after: 'stencil',
+    watch: 'node -e "console.log(require(\\'fs\\').existsSync(\\'generated.txt\\') ? \\'Found 0 errors\\' : \\'Found 1 error\\'); setInterval(() => {}, 1000)"',
+    done: /Found 0 errors/, failed: /Found [1-9]/ },`,
+  });
+  let sent = false;
+  const { output } = await runDev(root, (text, child) => {
+    if (!sent && /Watching\./.test(text)) {
+      sent = true;
+      child.kill('SIGINT');
+    }
+  });
+  assert.equal(sent, true, output);
+  assert.doesNotMatch(output, /wc-react did not build/);
 });

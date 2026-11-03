@@ -3,7 +3,7 @@
    `pnpm dev` writes a small lock file (its pid and the Storybook ports) and removes it on exit. Other scripts read it:
    a second `pnpm dev` points at the first one instead of starting watchers that write the same dist/ folders twice;
    `verify`, `sync` and `setup` ask before building while it runs (that is what caused "EEXIST: mkdir dist/…"). A lock
-   whose process is gone (a crash, a closed terminal) is stale and ignored. */
+   whose process is gone (a crash, a closed terminal) is stale: any reader stops the watchers it left and removes it. */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { lstatSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
@@ -12,13 +12,17 @@ import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
 import { c, confirm } from './cli-utils.mjs';
 
-/* In the temp folder, not the repo: no stray files to commit, and a reboot clears it. One per working copy. */
+/* In the temp folder, not the repo: no stray files to commit. One per working copy and user: on a shared /tmp another
+   user's lock (or a root-owned one from an old sudo run) would otherwise block ours. Windows paths ignore case, and
+   the drive letter's case depends on how the terminal was opened (c:\ or C:\): the same checkout, one lock. */
+const uid = process.getuid ? `${process.getuid()}-` : '';
+const rootKey = process.platform === 'win32' ? ROOT.toLowerCase() : ROOT;
 export const LOCK_FILE = resolve(
   tmpdir(),
-  `tilburg-dev-${createHash('sha1').update(ROOT).digest('hex').slice(0, 10)}.json`,
+  `tilburg-dev-${uid}${createHash('sha1').update(rootKey).digest('hex').slice(0, 10)}.json`,
 );
 
-/** pnpm sync's lock: the same format, so readDevLock/writeDevLock work on it too. */
+/** The build lock pnpm sync, verify and pack:local share (one rebuild of dist/ at a time); the same format as the dev lock. */
 export const SYNC_LOCK = LOCK_FILE.replace('tilburg-dev-', 'tilburg-sync-');
 
 /** Is that process still running? `EPERM` means it is, but owned by someone else. */
@@ -32,11 +36,23 @@ export function isAlive(pid) {
 }
 
 /**
- * When that process started (ms), or null where ps cannot tell (Windows). A pid can be handed to a new process after
- * the old one died, so a pid alone does not say the lock's process is still the one that wrote it.
+ * When that process started, in ms, or null where nobody can tell (Windows). Only comparable with another
+ * processStart() on the same machine. A pid can be handed to a new process after the old one died, so a pid alone
+ * does not say the lock's process is still the one that wrote it.
  */
 export function processStart(pid) {
   if (process.platform === 'win32') return null;
+  if (process.platform === 'linux') {
+    /* Field 22 of /proc/<pid>/stat: clock ticks since boot. ps derives lstart from the wall clock, which moves with
+       an NTP step or a WSL2 resync, and BusyBox ps has no lstart at all. The name (field 2) may hold spaces and ")". */
+    try {
+      const ticks = Number(readFileSync(`/proc/${pid}/stat`, 'utf8').split(') ').pop().split(' ')[19]);
+      /* ponytail: assumes 100 ticks a second (every mainstream kernel); only the unit is off otherwise, not the match. */
+      if (Number.isFinite(ticks)) return ticks * 10;
+    } catch {
+      /* no /proc (or the process is gone): ask ps */
+    }
+  }
   const result = spawnSync('ps', ['-o', 'lstart=', '-p', String(pid)], {
     encoding: 'utf8',
     env: { ...process.env, LC_ALL: 'C' },
@@ -46,8 +62,19 @@ export function processStart(pid) {
   return Number.isNaN(started) ? null : started;
 }
 
+/* Windows has no start time: a pid there is only still pnpm dev's while it belongs to a node.exe. No tasklist
+   (or it fails) proves nothing, so the lock stays. */
+function windowsNode(pid) {
+  const result = spawnSync('tasklist', ['/fi', `PID eq ${pid}`, '/fo', 'csv', '/nh'], {
+    encoding: 'utf8',
+    timeout: 3000,
+  });
+  return result.status !== 0 || /^"node\.exe"/im.test(result.stdout ?? '');
+}
+
 /* lstart has whole seconds: allow a little for the rounding. */
 const sameProcess = (pid, started) => {
+  if (process.platform === 'win32') return windowsNode(pid);
   if (!Number.isFinite(started)) return true;
   const now = processStart(pid);
   return now === null || Math.abs(now - started) <= 2000;
@@ -56,9 +83,11 @@ const sameProcess = (pid, started) => {
 /** Stop the watcher process groups a pnpm dev that was killed hard (kill -9, a crash) left running. */
 function reapGroups(lock) {
   for (const { pid, started } of Array.isArray(lock?.groups) ? lock.groups : []) {
-    /* Only a group whose leader is still the process pnpm dev started, never one that got its number later. */
-    if (!Number.isInteger(pid) || pid <= 1 || !Number.isFinite(started) || !isAlive(pid)) continue;
-    if (processStart(pid) === null || !sameProcess(pid, started)) continue;
+    if (!Number.isInteger(pid) || pid <= 1 || !Number.isFinite(started)) continue;
+    /* A live leader must still be the process pnpm dev started, never one that got its number later. A dead leader's
+       group may still hold its children (a Storybook under a pnpm that exited): POSIX hands out no pid that is still
+       a group's id, so signalling the group then reaches only those children, or nobody (ESRCH). */
+    if (isAlive(pid) && (processStart(pid) === null || !sameProcess(pid, started))) continue;
     try {
       process.kill(-pid, 'SIGTERM');
     } catch {
@@ -77,10 +106,12 @@ function removeLock(file) {
 }
 
 /**
- * The running `pnpm dev` ({ pid, storybooks, started }), or null. Removes a stale lock; with `reap`, also stops the
- * watchers a pnpm dev that was killed hard left behind (only pnpm dev itself asks for that).
+ * The running `pnpm dev` ({ pid, storybooks, started }), or null. A stale lock is removed, after stopping the watchers
+ * a pnpm dev that was killed hard left behind: every reader does that, since removing the lock loses the record of
+ * them (`reap` is still accepted, and ignored). Our own lock is null without being touched, unless `own` asks for it
+ * (code inside pnpm dev that needs to know whether pnpm dev runs).
  */
-export function readDevLock(file = LOCK_FILE, { reap = false } = {}) {
+export function readDevLock(file = LOCK_FILE, { own = false } = {}) {
   let lock;
   try {
     /* Another user's lock (a shared box, or planted in /tmp) says nothing about our pnpm dev. */
@@ -92,6 +123,7 @@ export function readDevLock(file = LOCK_FILE, { reap = false } = {}) {
     removeLock(file);
     return null;
   }
+  if (lock?.pid === process.pid) return own ? lock : null;
   /* pid 0 and negatives would signal a process group, which always "exists" */
   if (
     !Number.isInteger(lock?.pid) ||
@@ -99,11 +131,10 @@ export function readDevLock(file = LOCK_FILE, { reap = false } = {}) {
     /* Another shape (an older script, a hand edit): the readers would crash on it or print "Invalid Date". */
     (lock.storybooks !== undefined && !Array.isArray(lock.storybooks)) ||
     Number.isNaN(Date.parse(lock.started)) ||
-    lock.pid === process.pid ||
     !isAlive(lock.pid) ||
     !sameProcess(lock.pid, lock.processStarted)
   ) {
-    if (reap) reapGroups(lock);
+    reapGroups(lock);
     removeLock(file);
     return null;
   }
@@ -131,15 +162,17 @@ export function writeDevLock(data, file = LOCK_FILE) {
   } catch (err) {
     if (err.code === 'EEXIST') written = false;
   }
-  process.on('exit', () => {
-    /* Only our own: a second pnpm dev that started at the same moment may have written its lock over this one. */
-    try {
-      if (JSON.parse(readFileSync(file, 'utf8')).pid === process.pid) rmSync(file, { force: true });
-    } catch {
-      /* gone already, or not ours to judge */
-    }
-  });
+  process.on('exit', () => releaseDevLock(file));
   return written;
+}
+
+/** Remove our own lock now (writeDevLock also does on exit). Only our own: another pnpm dev may have written over it. */
+export function releaseDevLock(file = LOCK_FILE) {
+  try {
+    if (JSON.parse(readFileSync(file, 'utf8')).pid === process.pid) rmSync(file, { force: true });
+  } catch {
+    /* gone already, or not ours to judge */
+  }
 }
 
 /** Add to our own lock (e.g. the watchers' process groups once they run). Never touches another process's lock. */
@@ -165,9 +198,12 @@ export async function confirmNoDevRunning(what) {
   const lock = readDevLock();
   if (!lock) return true;
   const ports = (lock.storybooks ?? []).map((storybook) => storybook.port).join(' and ');
+  /* An install does not build dist/: it swaps node_modules under the watchers that read it. */
+  const clash = /\binstall\b/.test(what)
+    ? 'replaces node_modules under its watchers, and they can crash or build from half-installed packages.'
+    : 'writes the same dist/ folders as its watchers, and two builds at once can fail with EEXIST or leave a half-written build.';
   console.log(
-    `  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${lock.pid}${ports ? `, Storybook on ${ports}` : ''}). ` +
-      `${what} writes the same dist/ folders as its watchers, and two builds at once can fail with EEXIST or leave a half-written build.`,
+    `  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${lock.pid}${ports ? `, Storybook on ${ports}` : ''}). ${what} ${clash}`,
   );
   const goOn = await confirm('Continue anyway? (or stop pnpm dev with q first)', { default: false, fallback: true });
   return goOn;

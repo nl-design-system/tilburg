@@ -13,7 +13,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { c, fail, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
-import { findComponent, loadComponents, P, STATUS_FILE } from './lib/components.mjs';
+import { findComponent, loadComponents, NO_TABLE, P, STATUS_FILE } from './lib/components.mjs';
 
 installCrashHandler('pnpm parity');
 printBanner('Parity: every component in every layer');
@@ -39,7 +39,8 @@ let positionals;
 try {
   ({ values: args, positionals } = parseArgs({ allowPositionals: true, options: { tests: { type: 'boolean' } } }));
 } catch (err) {
-  fail({ what: err.message, fix: 'pnpm parity [component] [--tests]' });
+  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
+  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm parity [component] [--tests]' });
   process.exit(1);
 }
 const listTests = Boolean(args.tests);
@@ -53,10 +54,11 @@ if (positionals.length && !filter) {
 const found = filter ? findComponent(filter) : null;
 const wanted = found?.component ? [found.component] : (found?.matches ?? []);
 if (found && !wanted.length) {
-  const close = found.suggestions.map((component) => component.name).join(', ');
+  const close = found.suggestions;
   fail({
     what: `No component matches "${filter}"`,
-    fix: close ? `did you mean: ${close}?` : 'pnpm where --list shows every component',
+    why: close.length ? `Did you mean ${close.map((component) => component.name).join(', ')}?` : undefined,
+    fix: close.length ? `pnpm parity ${close[0].slug}` : 'pnpm where --list shows every component',
   });
   process.exit(1);
 }
@@ -65,7 +67,7 @@ const selected = filter ? rows.filter((row) => wanted.some((component) => compon
 if (!selected.length) {
   fail({
     what: filter ? `No component matches "${filter}"` : 'No components found',
-    why: `${STATUS_FILE} has no row for it (or no component table at all).`,
+    why: filter ? `${STATUS_FILE} has no row for it.` : NO_TABLE,
     fix: 'pnpm where --list shows every component',
   });
   process.exit(1);
@@ -159,23 +161,37 @@ function checkRow(row) {
 /* The other way round: a component folder in a layer without a row in the table. */
 const known = new Set(rows.flatMap((row) => [row.slug, row.css, row.angular, row.wbc]));
 const helpers = new Set(['utils', 'announce', 'tokens', 'node_modules']);
-const orphan = (dir, label) =>
+/* Only a folder with its main file: a branch switch leaves a removed component's folder behind with a .DS_Store. */
+const orphan = (dir, label, main) =>
   existsSync(P(dir))
     ? readdirSync(P(dir), { withFileTypes: true })
         .filter(
           (entry) => entry.isDirectory() && !helpers.has(entry.name) && !/^(heading-[2-6]|table-.+)$/.test(entry.name),
         )
-        .filter((entry) => !known.has(entry.name))
+        .filter((entry) => !known.has(entry.name) && existsSync(P(dir, entry.name, main)))
         .map((entry) => ({
           row: { name: entry.name },
           text: `${label} has packages/${dir}/${entry.name}, but ${STATUS_FILE} has no row for it`,
         }))
     : [];
+/* A story file whose row is gone: Storybook would still show it. */
+const orphanStories = (dir) =>
+  existsSync(P(dir))
+    ? readdirSync(P(dir))
+        .map((file) => [file, file.match(/^tilburg-(.+?)(-react|-wbc|-html)?\.stories\.tsx?$/)?.[1]])
+        .filter(([, slug]) => slug && !slug.startsWith('tokens-') && !known.has(slug))
+        .map(([file, slug]) => ({
+          row: { name: slug },
+          text: `has packages/${dir}/${file}, but ${STATUS_FILE} has no row for it`,
+        }))
+    : [];
 if (!filter) {
   problems.push(
-    ...orphan('components-css', 'HTML/CSS'),
-    ...orphan('components-angular/src', 'Angular'),
-    ...orphan('web-components-stencil/src', 'Web Components'),
+    ...orphan('components-css', 'HTML/CSS', 'index.scss'),
+    ...orphan('components-angular/src', 'Angular', 'component.ts'),
+    ...orphan('web-components-stencil/src', 'Web Components', 'component.tsx'),
+    ...orphanStories('storybook/src'),
+    ...orphanStories('storybook-angular/src'),
   );
 }
 

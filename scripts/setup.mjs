@@ -12,7 +12,8 @@
    Node built-ins only, and nothing newer than Node 18, because it may be running on the Node it is about to replace. */
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { homedir } from 'node:os';
+import { delimiter, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT } from './dev-config.mjs';
 import { checkGitHooks, checkInstalled, checkInstallFresh, libraryState, runAllChecks } from './lib/checks.mjs';
@@ -56,9 +57,20 @@ if (!process.env.TILBURG_SETUP_REEXEC) printBanner('Setup');
 
 /* Under sudo it has already stopped: installCrashHandler refuses that for every script (cli-utils.mjs). */
 
+/* cmd.exe cannot use a UNC folder as its working folder: every step would run in C:\Windows and fail oddly. */
+if (process.platform === 'win32' && ROOT.startsWith('\\\\')) {
+  fail({
+    what: `The repository is on a network path (${ROOT})`,
+    why: 'Windows runs the commands of every step in C:\\Windows instead of a \\\\server\\… folder.',
+    fix: 'run it in a WSL terminal (for \\\\wsl.localhost\\…), or map a drive letter to the share and run setup there',
+  });
+  process.exit(1);
+}
+
 // ─── 1. Node ─────────────────────────────────────────────────────────────────
 
-const NVM_DIR = process.env.NVM_DIR ?? resolve(process.env.HOME ?? '', '.nvm');
+/* homedir(), not HOME: cron, env -i and docker --user have no HOME, and recovery.mjs looks there too. */
+const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
 const hasNvm = existsSync(resolve(NVM_DIR, 'nvm.sh'));
 
 /** The newest Node <NODE_MAJOR> that nvm has installed, as the path of its bin/ folder. */
@@ -92,8 +104,13 @@ if (major !== NODE_MAJOR) {
       fnm: `fnm install ${NODE_MAJOR} && fnm use ${NODE_MAJOR}`,
       volta: `volta install node@${NODE_MAJOR}`,
       mise: `mise use node@${NODE_MAJOR}`,
+      'nvm-windows': `nvm install ${NODE_MAJOR} && nvm use ${NODE_MAJOR}`,
     };
-    const manager = Object.keys(managers).find((name) => !spawnSync(name, ['--version'], { stdio: 'ignore' }).error);
+    /* nvm-windows is not nvm-sh (no nvm.sh to load), and its `nvm use` needs the version. */
+    const manager =
+      process.platform === 'win32' && process.env.NVM_HOME
+        ? 'nvm-windows'
+        : Object.keys(managers).find((name) => !spawnSync(name, ['--version'], { stdio: 'ignore' }).error);
     fail({
       what: `This is Node ${process.versions.node}; the repo needs Node ${NODE_MAJOR}`,
       why: manager
@@ -112,8 +129,8 @@ if (major !== NODE_MAJOR) {
       fail({ what: `Node ${NODE_MAJOR} is needed`, fix: `nvm install ${NODE_MAJOR}, then node scripts/setup.mjs` });
       process.exit(1);
     }
-    /* nvm is a shell function, not a program: load it in a shell and let it read .nvmrc. */
-    const result = spawnSync('bash', ['-c', `. "${NVM_DIR}/nvm.sh" && nvm install`], { cwd: ROOT, stdio: 'inherit' });
+    /* nvm is a shell function, not a program: load it in a shell and let it read .nvmrc. sh: minimal images lack bash. */
+    const result = spawnSync('sh', ['-c', `. "${NVM_DIR}/nvm.sh" && nvm install`], { cwd: ROOT, stdio: 'inherit' });
     bin = nvmNodeBin();
     if (result.status !== 0 || !bin) {
       fail({
@@ -130,7 +147,7 @@ if (major !== NODE_MAJOR) {
     stdio: 'inherit',
     env: {
       ...process.env,
-      PATH: `${bin}:${process.env.PATH}`,
+      PATH: `${bin}${delimiter}${process.env.PATH}`,
       TILBURG_SETUP_REEXEC: '1',
       TILBURG_SETUP_FROM_NODE: process.versions.node,
     },
@@ -169,7 +186,7 @@ if (hasNvm) {
         default: true,
       })
     ) {
-      await step(`nvm default → ${NODE_MAJOR}`, `bash -c '. "${NVM_DIR}/nvm.sh" && nvm alias default ${NODE_MAJOR}'`);
+      await step(`nvm default → ${NODE_MAJOR}`, `sh -c '. "${NVM_DIR}/nvm.sh" && nvm alias default ${NODE_MAJOR}'`);
     }
   } else {
     done('nvm default', `new terminals start with Node ${NODE_MAJOR}`);

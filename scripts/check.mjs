@@ -22,7 +22,8 @@ let wantsFix;
 try {
   wantsFix = Boolean(util.parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
 } catch (err) {
-  fail({ what: err.message, fix: 'pnpm check   or   pnpm check --fix' });
+  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
+  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm check   or   pnpm check --fix' });
   process.exit(1);
 }
 const groups = await runAllChecks();
@@ -66,7 +67,8 @@ async function offerFixes() {
     console.log(`  ${c.gray}Nothing to fix.${c.reset}\n`);
     return false;
   }
-  if (!process.stdin.isTTY) {
+  /* Both: with stdout redirected, confirm() answers without asking. */
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
     console.log(`  ${c.yellow}No terminal to ask in — nothing changed.${c.reset} --fix would offer:`);
     for (const fix of fixes)
       console.log(`    ${c.cyan}${fix.command}${c.reset}${fix.run ? '' : `  ${c.gray}(you run this one)${c.reset}`}`);
@@ -86,7 +88,10 @@ async function offerFixes() {
       console.log('');
       continue;
     }
-    if (/\bpnpm install\b/.test(fix.command) && !(await confirmNoDevRunning(fix.command))) {
+    if (
+      /\bpnpm install\b/.test(fix.command) &&
+      !(await confirmNoDevRunning(`${fix.command} replaces node_modules under its watchers, and`))
+    ) {
       console.log('');
       continue;
     }

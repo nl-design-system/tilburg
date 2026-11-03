@@ -1,9 +1,10 @@
 /* `pnpm menu`: every command in a menu, after bq-tlb-frontend's hub.mjs. ↑ ↓ ← → choose, Enter runs, H help, Q quits.
-   Sections sit side by side; without a terminal it prints the help list instead. */
+   Sections sit side by side; without a terminal (or one without cursor control, TERM=dumb) it prints the help list. */
 import { spawn } from 'node:child_process';
 import { checkInstalled, checkInstallFresh } from './lib/checks.mjs';
-import { c, installCrashHandler, printBanner, stripAnsi } from './lib/cli-utils.mjs';
+import { c, installCrashHandler, interactive, printBanner, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
+import { splitKeys } from './lib/keys.mjs';
 import { randomSaying } from './lib/sayings.mjs';
 
 const COLUMNS = 3;
@@ -17,7 +18,7 @@ installCrashHandler('pnpm menu', { signals: false });
    Too narrow for the columns: the list instead. */
 const width = () => process.stdout.columns || 80;
 const tooNarrow = () => width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;
-if (!process.stdin.isTTY || !process.stdout.isTTY || tooNarrow()) {
+if (!process.stdin.isTTY || !process.stdout.isTTY || !interactive || tooNarrow()) {
   await import('./help.mjs');
   process.exit(0);
 }
@@ -120,9 +121,8 @@ process.stdout.on('resize', async () => {
 process.stdin.setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
-/* Application-mode arrows (\x1bOA, some ssh and tmux setups) as normal ones, and several keys in one chunk one by one. */
 process.stdin.on('data', (chunk) => {
-  for (const key of chunk.replace(/\x1bO/g, '\x1b[').match(/\x1b\[[A-D]|./gs) ?? []) if (!running) onKey(key);
+  for (const key of splitKeys(chunk)) if (!running) onKey(key);
 });
 function onKey(key) {
   const items = () => SECTIONS[section].items;

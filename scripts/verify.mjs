@@ -6,13 +6,25 @@
    package comes with a changeset (only a warning: not every change needs a release). */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parseArgs } from 'node:util';
 import { ROOT } from './dev-config.mjs';
 import { checkInstallFresh } from './lib/checks.mjs';
-import { c, capture, installCrashHandler, printBanner, printCheckTable, stepSkip } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning } from './lib/lock.mjs';
+import { c, capture, fail, installCrashHandler, printBanner, printCheckTable, stepSkip } from './lib/cli-utils.mjs';
+import { confirmNoDevRunning, readDevLock, SYNC_LOCK, writeDevLock } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm verify');
+/* Strict: `pnpm verify tooltip` or a typo must not start the full CI-length run while you wait for something else. */
+try {
+  if (parseArgs({ options: { help: { type: 'boolean', short: 'h' } } }).values.help) {
+    console.log('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
+    process.exit(0);
+  }
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm verify' });
+  process.exit(1);
+}
 printBanner('Verify (what CI checks)');
 
 const STEPS = [
@@ -25,6 +37,8 @@ const STEPS = [
     label: 'Lockfile',
     command: 'pnpm install --frozen-lockfile --lockfile-only',
     why: 'CI installs with --frozen-lockfile: a package.json change without its pnpm-lock.yaml update fails there.',
+    /* No automatic pnpm install: it would update the lockfile, pass here, and leave CI failing on the uncommitted file. */
+    recoveries: {},
   },
   {
     label: 'Lint',
@@ -52,7 +66,22 @@ const STEPS = [
   },
 ];
 
-if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) process.exit(1);
+/* One build at a time: pnpm sync and pack:local build and pack the same dist/ folders (this lock is theirs too). */
+const building = readDevLock(SYNC_LOCK);
+if (building) {
+  fail({
+    what: `${building.what ?? 'pnpm sync'} is running (process ${building.pid}, since ${building.started})`,
+    why: 'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
+    fix: 'wait for it to finish, then pnpm verify again',
+  });
+  process.exit(1);
+}
+writeDevLock({ what: 'pnpm verify' }, SYNC_LOCK);
+if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) {
+  console.log('  Stopped: stop pnpm dev with q, then run this again.');
+  process.exit(1);
+}
+const treeAtStart = await treeState(ROOT);
 
 /* An install that lags the lockfile gives other results than CI's fresh one. */
 const fresh = checkInstallFresh();
@@ -68,7 +97,11 @@ for (const step of STEPS) {
   }
   try {
     /* cwd: run from the repository root also when started as node scripts/verify.mjs from another folder. */
-    await runStepWithRecovery(step.label, step.command, { cwd: ROOT, env: { ...process.env, TILBURG_QUIET: '1' } });
+    await runStepWithRecovery(step.label, step.command, {
+      cwd: ROOT,
+      env: { ...process.env, TILBURG_QUIET: '1' },
+      ...(step.recoveries && { recoveries: step.recoveries }),
+    });
     rows.push({ ok: true, label: step.label, detail: 'passed', note: step.why });
   } catch (err) {
     reportStepFailure(step.label, err);
@@ -104,6 +137,17 @@ rows.push(
     error,
   })),
 );
+
+/* A checkout, pull or stash meanwhile: the steps ran on a mix of two trees. */
+const treeAtEnd = await treeState(ROOT);
+if (treeAtStart && treeAtEnd && treeAtStart !== treeAtEnd)
+  rows.push({
+    ok: true,
+    warn: true,
+    label: 'Working tree',
+    detail: 'changed while this ran',
+    note: 'a checkout, pull or stash meanwhile: the steps saw a mix of two trees, so pnpm verify again',
+  });
 
 console.log('');
 const { failed, total } = printCheckTable([{ title: 'Result', rows }]);

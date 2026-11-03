@@ -197,4 +197,9 @@ test('localIp prefers Wi-Fi or Ethernet and skips VPN, Docker and carrier-grade 
   );
   assert.equal(localIp({ docker0: v4('172.17.0.1'), tailscale0: v4('100.101.1.2'), bridge0: v4('172.17.0.5') }), null);
   assert.equal(localIp({ bridge100: v4('192.168.64.1') }), '192.168.64.1');
+  /* Windows with WSL2, Linux with libvirt and WireGuard: the Wi-Fi, not the VM bridge or the tunnel */
+  assert.equal(localIp({ 'vEthernet (WSL)': v4('172.29.80.1'), 'Wi-Fi': v4('192.168.1.7') }), '192.168.1.7');
+  assert.equal(localIp({ 'vEthernet (WSL)': v4('172.29.80.1'), 'Ethernet 2': v4('10.0.0.4') }), '10.0.0.4');
+  assert.equal(localIp({ virbr0: v4('192.168.122.1'), wg0: v4('10.8.0.2'), wlp2s0: v4('192.168.1.9') }), '192.168.1.9');
+  assert.equal(localIp({ virbr0: v4('192.168.122.1'), lxcbr0: v4('10.0.3.1'), zt0: v4('10.147.1.2') }), null);
 });

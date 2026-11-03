@@ -5,6 +5,7 @@
    how many passed per layer, and for a failure the test's name and what it expected. Stencil cannot run a single spec
    file, so it runs all of them (about 20 s) and only this component's results are shown. */
 import { spawnSync } from 'node:child_process';
+import { constants } from 'node:os';
 import { parseArgs } from 'node:util';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -19,7 +20,11 @@ let positionals;
 try {
   ({ positionals } = parseArgs({ allowPositionals: true, options: {} }));
 } catch (err) {
-  fail({ what: err.message, fix: 'pnpm test   (everything, as CI does)   or   pnpm test <component>' });
+  /* Node's advice to put it after `--` would make it a component name. */
+  fail({
+    what: err.message.replace(/\. To specify.*$/, ''),
+    fix: 'pnpm test   (everything, as CI does)   or   pnpm test <component>',
+  });
   process.exit(1);
 }
 const query = positionals.join(' ').trim();
@@ -33,7 +38,9 @@ if (positionals.length && !query) {
 if (!query) {
   for (const command of ['pnpm --recursive run test', 'pnpm run test:scripts']) {
     const result = spawnSync(command, { cwd: ROOT, shell: true, stdio: 'inherit' });
-    if (result.status !== 0) process.exit(result.status ?? 1);
+    /* Killed by a signal: 128 + its number, as a shell reports it (143 for SIGTERM), so CI sees why. */
+    if (result.status !== 0)
+      process.exit(result.status ?? (result.signal ? 128 + constants.signals[result.signal] : 1));
   }
   process.exit(0);
 }
@@ -52,12 +59,15 @@ const LAYERS = [
     /* --ci: a new snapshot fails instead of being written. --forceExit: an open handle would keep Jest running forever. */
     command: (out) =>
       `jest --ci --forceExit --json --outputFile="${out}" ${rel(react.test).replace('packages/components-react/', '')}${react.suite ? ` -t "^${react.suite} "` : ''}`,
+    /* watch:test with the same file, so the watch reruns this component only. */
+    watch: () => rel(react.test).replace('packages/components-react/', ''),
   },
   {
     layer: angular,
     package: '@gemeente-tilburg/components-angular',
     dir: 'packages/components-angular',
     command: (out) => `jest --ci --forceExit --json --outputFile="${out}" src/${component.names.angular}/`,
+    watch: () => `src/${component.names.angular}/`,
   },
   {
     layer: wbc,
@@ -167,7 +177,7 @@ if (!rows.length) {
   );
 } else if (failed.length) {
   const watch = LAYERS.filter(({ layer }) => failed.some((row) => row.label === layer.label)).map(
-    ({ package: name }) => `pnpm --filter ${name} run watch:test`,
+    ({ package: name, watch: path }) => `pnpm --filter ${name} run watch:test${path ? ` ${path}` : ''}`,
   );
   console.log(`  ${c.red}Not green.${c.reset} ${c.gray}Rerun on every save while you fix it:${c.reset}`);
   for (const command of watch) console.log(`    ${c.cyan}${command}${c.reset}`);

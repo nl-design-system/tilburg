@@ -2,10 +2,20 @@
    Storybook pages that show it, local (pnpm dev) and online. `pnpm where --list` lists every component.
    Accepts any of its names: tooltip, Tooltip, "password input", PasswordInput, tilburg-wbc-tooltip. */
 import { existsSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { STORYBOOKS } from './dev-config.mjs';
 import { c, fail, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
-import { isTlb, loadComponents, rel, requireComponent, SITE, STATUS_FILE, storyUrl } from './lib/components.mjs';
+import {
+  isTlb,
+  loadComponents,
+  NO_TABLE,
+  rel,
+  requireComponent,
+  SITE,
+  STATUS_FILE,
+  storyUrl,
+} from './lib/components.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm where');
@@ -17,22 +27,29 @@ try {
     positionals,
   } = parseArgs({ allowPositionals: true, options: { list: { type: 'boolean' } } }));
 } catch (err) {
-  fail({ what: err.message, fix: 'pnpm where <component>   or   pnpm where --list' });
+  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
+  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm where <component>   or   pnpm where --list' });
   process.exit(1);
 }
 const query = positionals.join(' ').trim();
+/* A name that is given but empty (pnpm where "") is not "list everything", as in pnpm test and pnpm parity. */
+if (positionals.length && !query) {
+  fail({ what: 'The component name is empty', fix: 'pnpm where <component>   or   pnpm where --list' });
+  process.exit(1);
+}
 if (list && query) {
   fail({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
   process.exit(1);
 }
 
-const link = (path) => hyperlink(rel(path), `file://${path}`);
+/* pathToFileURL: encodes spaces, # and %, and gives file:///C:/… on Windows. */
+const link = (path) => hyperlink(rel(path), pathToFileURL(path).href);
 
 if (list || !query) {
   printBanner('Components');
   const components = loadComponents();
   if (!components.length) {
-    fail({ what: 'No components found', why: `${STATUS_FILE} has no component table (or is missing).` });
+    fail({ what: 'No components found', why: NO_TABLE });
     process.exit(1);
   }
   const width = Math.max(...components.map((component) => component.name.length)) + 2;

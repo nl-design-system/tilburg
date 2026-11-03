@@ -10,7 +10,8 @@ import { join, resolve } from 'node:path';
 import { after, test } from 'node:test';
 import { loadComponents } from './lib/components.mjs';
 
-const dir = mkdtempSync(join(tmpdir(), 'tilburg-test-runner-'));
+/* With a space: test.mjs quotes the report path, and must keep doing so. */
+const dir = mkdtempSync(join(tmpdir(), 'tilburg test-runner-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
 
 const calls = join(dir, 'calls.txt');
@@ -22,7 +23,8 @@ const args = process.argv.slice(2).join(' ');
 appendFileSync(${JSON.stringify(calls)}, args + '\\n');
 const plan = JSON.parse(process.env.FAKE_PNPM);
 const { exit = 0, signal, report } = plan[Object.keys(plan).find((key) => args.includes(key))] ?? {};
-const out = /--outputFile=(\\S+)/.exec(args)?.[1];
+/* One argument after the shell: a temp folder with a space in it ("Jan de Vries") stays whole. */
+const out = process.argv.find((arg) => arg.startsWith('--outputFile='))?.slice('--outputFile='.length);
 if (out && report !== undefined) writeFileSync(out, typeof report === 'string' ? report : JSON.stringify(report));
 if (signal) process.kill(process.pid, signal);
 else process.exit(exit);
@@ -50,7 +52,8 @@ test('everything: a failing package run stops there and exits with its code', ()
 
 test('everything: a run killed by a signal is a failure, not a pass', () => {
   const result = run([], { '--recursive': { signal: 'SIGTERM' } });
-  assert.notEqual(result.status, 0);
+  /* 128 + 15, as a shell reports it */
+  assert.equal(result.status, 143);
   assert.doesNotMatch(result.calls, /test:scripts/);
 });
 

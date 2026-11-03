@@ -1,12 +1,12 @@
 /* `node --test scripts/`: the pnpm dev lock file — stale, corrupt and overwritten locks. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { after, test } from 'node:test';
-import { isAlive, processStart, readDevLock, updateDevLock, writeDevLock } from './lock.mjs';
+import { isAlive, LOCK_FILE, processStart, readDevLock, releaseDevLock, updateDevLock, writeDevLock } from './lock.mjs';
 
 const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
@@ -38,7 +38,8 @@ for (const content of ['null', '[]', '{"pid":"123"}', '{"pid":1.5}', '']) {
 
 test(
   'a lock whose pid now belongs to another process (started later) is stale',
-  { skip: process.platform === 'win32' },
+  /* BusyBox ps (Alpine) has no lstart; Linux reads /proc instead, so only a box with neither skips. */
+  { skip: process.platform === 'win32' || !processStart(process.pid) },
   () => {
     const started = processStart(process.ppid);
     assert.ok(started, 'ps tells when a process started');
@@ -86,6 +87,47 @@ test('a lock in a folder we may not delete from is ignored, not a crash', { skip
     chmodSync(sticky, 0o755);
   }
 });
+
+test('our own lock reads as null and stays; with own it is returned (installSkip inside pnpm dev)', () => {
+  const file = resolve(dir, `lock-${count++}.json`);
+  writeDevLock({ storybooks: [] }, file);
+  assert.equal(readDevLock(file), null);
+  assert.equal(existsSync(file), true, 'not removed');
+  assert.equal(readDevLock(file, { own: true })?.pid, process.pid);
+  releaseDevLock(file);
+  assert.equal(existsSync(file), false);
+});
+
+test('the lock name is per user', { skip: !process.getuid }, () => {
+  assert.match(LOCK_FILE, new RegExp(`tilburg-dev-${process.getuid()}-[0-9a-f]{10}\\.json$`));
+});
+
+test(
+  'every reader stops the groups of a stale lock, also one whose leader is gone',
+  { skip: process.platform === 'win32' },
+  async () => {
+    /* A group whose leader (sh) exits at once, leaving its child (sleep) in the group: what a pnpm that died leaves. */
+    const group = spawn('sh', ['-c', 'sleep 30 & exit 0'], { detached: true, stdio: 'ignore' });
+    await new Promise((done) => group.on('exit', done));
+    const alive = () => {
+      try {
+        process.kill(-group.pid, 0);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    assert.equal(alive(), true, 'the sleep still runs in the group');
+    const file = lockWith({
+      pid: 2 ** 22 + 17,
+      started: new Date().toISOString(),
+      groups: [{ pid: group.pid, started: 1 }],
+    });
+    assert.equal(readDevLock(file), null);
+    for (let waited = 0; waited < 3000 && alive(); waited += 50) await new Promise((done) => setTimeout(done, 50));
+    assert.equal(alive(), false, 'the orphan was stopped');
+  },
+);
 
 test('a missing lock file means nothing is running', () => {
   assert.equal(readDevLock(resolve(dir, 'missing.json')), null);

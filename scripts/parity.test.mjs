@@ -75,3 +75,26 @@ test('a promised layer without its files is a problem (exit 1), not parity', () 
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('a near miss suggests a runnable command', () => {
+  const { status, stdout } = parity(['tooltp']);
+  assert.equal(status, 1);
+  assert.match(stdout, /pnpm parity tooltip/);
+});
+
+test('a leftover folder without its main file is no orphan; a story without a row is', () => {
+  const root = fakeRepo(
+    '| Component | HTML/CSS | React | Angular | Web Components |\n| Real | utrecht | — | — | — |\n',
+  );
+  try {
+    mkdirSync(resolve(root, 'packages/components-css/ghost'), { recursive: true });
+    writeFileSync(resolve(root, 'packages/components-css/ghost/.DS_Store'), '');
+    mkdirSync(resolve(root, 'packages/storybook/src'), { recursive: true });
+    writeFileSync(resolve(root, 'packages/storybook/src/tilburg-ghost-react.stories.tsx'), '');
+    const { stdout } = parity([], root, resolve(root, 'scripts/parity.mjs'));
+    assert.doesNotMatch(stdout, /components-css\/ghost/);
+    assert.match(stdout, /tilburg-ghost-react\.stories\.tsx, but/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

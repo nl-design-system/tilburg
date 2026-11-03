@@ -10,14 +10,30 @@ import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { confirmNoDevRunning } from './lib/lock.mjs';
+import { parseArgs } from 'node:util';
+import { fail, installCrashHandler } from './lib/cli-utils.mjs';
+import { confirmNoDevRunning, readDevLock, SYNC_LOCK, writeDevLock } from './lib/lock.mjs';
+
+/* The sudo guard. signals: false, so Ctrl-C still stops the synchronous builds below at once. */
+installCrashHandler('pnpm pack:local', { signals: false });
+
+/* Strict: `--dry-run` or a typo must not start a full build and pack. */
+try {
+  if (parseArgs({ options: { help: { type: 'boolean', short: 'h' } } }).values.help) {
+    console.log('pnpm pack:local: builds every package and packs it into .tarballs/ (no options).');
+    process.exit(0);
+  }
+} catch (err) {
+  fail({ what: err.message, fix: 'pnpm pack:local' });
+  process.exit(1);
+}
 
 /* Not import.meta.dirname: Node before 20.11 has none. */
 const root = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const out = resolve(root, '.tarballs');
 /* Packed here first and moved up at the end: a run stopped half-way (Ctrl-C, a kill) leaves no half set in
    .tarballs/ for a consumer to install. */
-const partial = resolve(out, '.partial');
+const partial = resolve(out, `.partial-${process.pid}`);
 
 const packages = [
   { name: '@gemeente-tilburg/design-tokens', dir: 'proprietary/design-tokens', build: 'build' },
@@ -35,15 +51,36 @@ const packages = [
 
 const run = (command, cwd = root) => execSync(command, { cwd, stdio: 'inherit' });
 
-if (!(await confirmNoDevRunning('pack:local builds every package, and'))) process.exit(1);
+/* One build at a time (sync, verify, pack:local share this lock): a second run would wipe the first one's dist/ and
+   tarballs. pnpm sync starts this one itself, holding the lock: TILBURG_SYNC_PID says so. */
+const other = readDevLock(SYNC_LOCK);
+if (other && String(other.pid) !== process.env.TILBURG_SYNC_PID) {
+  fail({
+    what: `${other.what ?? 'pnpm sync'} is running (process ${other.pid}, since ${other.started})`,
+    why: 'it builds the same dist/ folders and tarballs.',
+    fix: 'wait for it to finish, then pnpm pack:local again',
+  });
+  process.exit(1);
+}
+if (!other) writeDevLock({ what: 'pnpm pack:local' }, SYNC_LOCK);
+if (!(await confirmNoDevRunning('pack:local builds every package, and'))) {
+  console.log('  Stopped: stop pnpm dev with q, then run this again.');
+  process.exit(1);
+}
 
-/* The previous set stays in .tarballs/ until this one is complete: a failed build leaves a consumer something to install. */
-rmSync(partial, { recursive: true, force: true });
+/* The previous set stays in .tarballs/ until this one is complete: a failed build leaves a consumer something to install.
+   Under the lock nobody else packs, so any .partial-* left is from a run that was killed. */
+mkdirSync(out, { recursive: true });
+for (const file of readdirSync(out))
+  if (file.startsWith('.partial')) rmSync(resolve(out, file), { recursive: true, force: true });
 mkdirSync(partial, { recursive: true });
 
 for (const pkg of packages) {
   try {
     if (pkg.build) {
+      /* Not every build cleans first (tsc, style-dictionary): output of another branch would be packed too. Not the
+         package's clean script: web-components-react's deletes the sources Stencil generated just before. */
+      rmSync(resolve(root, pkg.dir, 'dist'), { recursive: true, force: true });
       console.log(`\n▶ build ${pkg.name}`);
       run(`pnpm --filter ${pkg.name} run ${pkg.build}`);
     }
@@ -60,7 +97,7 @@ for (const pkg of packages) {
 
 for (const file of readdirSync(out)) if (file.endsWith('.tgz')) rmSync(resolve(out, file));
 for (const file of readdirSync(partial)) renameSync(resolve(partial, file), resolve(out, file));
-rmSync(partial, { recursive: true });
+rmSync(partial, { recursive: true, force: true });
 
 console.log(`\nTarballs in ${out}:`);
 for (const file of readdirSync(out).sort()) console.log(`  ${file}`);

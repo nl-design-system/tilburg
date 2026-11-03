@@ -88,7 +88,8 @@ export const LIBRARIES = [
     key: 'react',
     name: 'components-react',
     dir: 'packages/components-react',
-    src: ['src'],
+    /* Its build config and the SCSS it imports from components-css change the build too (a branch switch, say). */
+    src: ['src', '../components-css', 'package.json', 'vite.config.ts', 'tsconfig.json', 'tsconfig.build.json'],
     built: 'dist/index.esm.js',
     build: 'pnpm --filter @gemeente-tilburg/components-react run build',
     /* `--emptyOutDir false`, or every rebuild deletes the type declarations `build:types` wrote. */
@@ -104,6 +105,8 @@ export const LIBRARIES = [
     name: 'web-components-stencil',
     dir: 'packages/web-components-stencil',
     src: ['src'],
+    /* ponytail: Stencil rewrites only files whose content changed, and this one never does, so after a dev-time
+       rebuild it reads as stale until a full build. Needs libraryState to take the newest file below dist/. */
     built: 'dist/index.js',
     build: 'pnpm --filter @gemeente-tilburg/web-components-stencil run build',
     /* Not the package's `watch`: that one also starts the tests in watch mode. */
@@ -121,6 +124,8 @@ export const LIBRARIES = [
        Their freshness is Stencil's row. */
     src: ['src/index.ts'],
     built: 'dist/index.js',
+    /* pnpm dev starts its watcher after Stencil's first build: before it, src/components.ts may not exist yet. */
+    after: 'stencil',
     build: 'pnpm --filter @gemeente-tilburg/web-components-react run build',
     watch: 'pnpm --filter @gemeente-tilburg/web-components-react exec tsc -p . --watch --preserveWatchOutput',
     keepsDist: true,
@@ -132,7 +137,15 @@ export const LIBRARIES = [
     key: 'angular',
     name: 'components-angular',
     dir: 'packages/components-angular',
-    src: ['src'],
+    src: [
+      'src',
+      '../components-css',
+      'package.json',
+      'angular.json',
+      'ng-package.json',
+      'tsconfig.json',
+      'tsconfig.prod.json',
+    ],
     built: 'dist/fesm2022/gemeente-tilburg-components-angular.mjs',
     build: 'pnpm --filter @gemeente-tilburg/components-angular run build:components',
     watch: 'pnpm --filter @gemeente-tilburg/components-angular run watch:build',

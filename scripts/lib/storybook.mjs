@@ -16,12 +16,15 @@ export function localIp(interfaces = networkInterfaces()) {
         (address) =>
           address.family === 'IPv4' &&
           !address.internal &&
-          !/^(docker|br-|veth|utun|tun|tap|vboxnet|vmnet)/.test(name) &&
+          /* vEthernet: WSL2/Hyper-V; virbr, lxc, cni, podman: Linux VMs and containers; wg, zt: WireGuard, ZeroTier. */
+          !/^(docker|br-|veth|utun|tun|tap|vboxnet|vmnet|vethernet|virbr|lxc|wg|zt|cni|podman)/i.test(name) &&
           !/^(172\.17|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7]))\./.test(address.address),
       )
       .map((address) => ({ name, address: address.address })),
   );
-  return (candidates.find(({ name }) => /^(en|eth|wlan)/.test(name)) ?? candidates[0])?.address ?? null;
+  /* en0 (macOS), eth0/enp3s0/wlp2s0 (Linux), "Wi-Fi" and "Ethernet 2" (Windows). */
+  const preferred = candidates.find(({ name }) => /^(en|eth|wl|wi-?fi|ethernet)/i.test(name));
+  return (preferred ?? candidates[0])?.address ?? null;
 }
 
 /**

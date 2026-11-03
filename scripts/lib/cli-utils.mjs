@@ -13,8 +13,9 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { constants, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { inspect } from 'node:util';
 
 /**
@@ -46,16 +47,17 @@ const colours = {
 /** Colour codes, or empty strings when the output is not a terminal or colour is turned off. */
 export const c = colour ? colours : Object.fromEntries(Object.keys(colours).map((key) => [key, '']));
 
+/* The Linux console, and screen or an old tmux, print OSC 8 as garbage instead of ignoring it. */
+const links = interactive && !/^(linux|screen)/.test(process.env.TERM ?? '');
+
 /** OSC 8 hyperlink: clickable in iTerm2, the VS Code and JetBrains terminals, Warp and Windows Terminal. */
 export function hyperlink(text, url) {
-  return interactive ? `\x1b]8;;${url}\x07${text}\x1b]8;;\x07` : text;
+  return links ? `\x1b]8;;${url}\x07${text}\x1b]8;;\x07` : text;
 }
 
-/** Remove colour codes and hyperlink markers, to measure or store the visible text. */
+/** Remove colour codes, cursor control, charset switches and OSC sequences (hyperlinks, titles), to measure or store the visible text. */
 export function stripAnsi(text) {
-  return String(text)
-    .replace(/\x1b\[[0-9;]*[A-Za-z]/g, '')
-    .replace(/\x1b\]8;;[^\x07]*\x07/g, '');
+  return String(text).replace(/\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[()][0-9A-B]/g, '');
 }
 
 /** "3 min ago", "2 h ago", "5 days ago". */
@@ -263,9 +265,11 @@ export function killTree(child, signal = 'SIGTERM') {
 }
 
 /* `pnpm check | head` closes the pipe early; writing to it then throws EPIPE. That is the reader's choice, not a crash. */
+/* 141 (128 + SIGPIPE) is what a shell reports for that, so `set -o pipefail` still sees it; an exit code already set
+   (a failure before the pipe closed) wins. */
 for (const stream of [process.stdout, process.stderr]) {
   stream.on('error', (err) => {
-    if (err.code === 'EPIPE') process.exit(0);
+    if (err.code === 'EPIPE') process.exit(process.exitCode ?? 141);
     throw err;
   });
 }
@@ -346,7 +350,7 @@ export function appendLog(path, text) {
 }
 
 /** The path as a clickable file link. */
-export const logLink = (path) => (path ? hyperlink(path, `file://${path}`) : '(no log could be written)');
+export const logLink = (path) => (path ? hyperlink(path, pathToFileURL(path).href) : '(no log could be written)');
 
 // ─── What did the tool say? ──────────────────────────────────────────────────
 
@@ -455,11 +459,9 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
           cwd,
           detached: process.platform !== 'win32',
           stdio: ['ignore', 'pipe', 'pipe'],
-          /* Tools print colour into a pipe only when forced; not when the user asked for plain text. */
-          env: {
-            ...(process.env.NO_COLOR || process.env.FORCE_COLOR === '0' ? {} : { FORCE_COLOR: '1' }),
-            ...(env ?? process.env),
-          },
+          /* Tools print colour into a pipe only when forced: only when it reaches a terminal (not a file, CI or
+             NO_COLOR). LANGUAGE: git, the shell and strerror in English, which classifyFailure reads. */
+          env: { ...(colour ? { FORCE_COLOR: '1' } : {}), ...(env ?? process.env), LANGUAGE: 'en' },
         }),
       );
     } catch (err) {
@@ -565,7 +567,13 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
     let child;
     try {
       child = track(
-        spawn(command, { shell: true, cwd, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] }),
+        spawn(command, {
+          shell: true,
+          cwd,
+          detached: process.platform !== 'win32',
+          stdio: ['ignore', 'pipe', 'pipe'],
+          env: { ...process.env, LANGUAGE: 'en' },
+        }),
       );
     } catch (err) {
       resolvePromise({ code: 1, stdout: '', stderr: String(err.message ?? err), timedOut: false });
@@ -596,7 +604,18 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
 
 // ─── Questions ───────────────────────────────────────────────────────────────
 
-/** One-key [Y/n] question. Without a terminal it answers `fallback` instead of waiting for nobody. */
+/**
+ * What a key (one 'data' chunk in raw mode) answers: Enter takes the default, y and n answer, Esc and Ctrl-D answer
+ * no. null for anything else (Tab, Backspace, an arrow or F-key sequence, another letter): ignored, keep waiting. A
+ * paste counts by its first character.
+ */
+export function confirmAnswer(chunk, dflt) {
+  if (chunk[0] === '\r' || chunk[0] === '\n') return dflt;
+  if (chunk === '\x1b' || chunk[0] === '\x04' || /^n/i.test(chunk)) return false;
+  return /^y/i.test(chunk) ? true : null;
+}
+
+/** One-key [Y/n] question (see confirmAnswer). Without a terminal it answers `fallback` instead of waiting for nobody. */
 export function confirm(question, { default: dflt = true, fallback = false } = {}) {
   return new Promise((resolve) => {
     /* stdout too: with the output redirected (`pnpm verify > out.txt`) nobody sees the question it waits for. */
@@ -604,23 +623,32 @@ export function confirm(question, { default: dflt = true, fallback = false } = {
       resolve(fallback);
       return;
     }
-    process.stdout.write(`  ${c.bold}${question}${c.reset} ${c.cyan}${dflt ? '[Y/n]' : '[y/N]'}${c.reset}  `);
     process.stdin.setRawMode(true);
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
-    process.stdin.once('data', (chunk) => {
-      process.stdin.setRawMode(false);
-      process.stdin.pause();
-      if (chunk.includes('\u0003')) {
-        process.stdout.write('\n');
-        process.exit(130);
-      }
-      /* One 'data' event can hold several bytes (a paste, an arrow key): look at the first printable one. */
-      const printable = [...chunk].filter((ch) => ch >= ' ' && ch !== '\u007f');
-      const yes = printable.length === 0 ? dflt : /^y$/i.test(printable[0]);
-      process.stdout.write(`\r\x1b[2K  ${c.bold}${question}${c.reset}  ${c.gray}${yes ? 'yes' : 'no'}${c.reset}\n`);
-      resolve(yes);
-    });
+    const onCtrlC = (chunk) => {
+      if (!chunk.includes('\u0003')) return false;
+      process.stdout.write('\n');
+      process.exit(130);
+    };
+    /* Keys typed before the question (an Enter pressed while a step ran waits in the terminal) must not answer it:
+       what arrives in the first moment after resume() was typed earlier, and is dropped. */
+    process.stdin.on('data', onCtrlC);
+    setTimeout(() => {
+      process.stdin.removeListener('data', onCtrlC);
+      process.stdout.write(`  ${c.bold}${question}${c.reset} ${c.cyan}${dflt ? '[Y/n]' : '[y/N]'}${c.reset}  `);
+      const onKey = (chunk) => {
+        onCtrlC(chunk);
+        const yes = confirmAnswer(chunk, dflt);
+        if (yes === null) return;
+        process.stdin.removeListener('data', onKey);
+        process.stdin.setRawMode(false);
+        process.stdin.pause();
+        process.stdout.write(`\r\x1b[2K  ${c.bold}${question}${c.reset}  ${c.gray}${yes ? 'yes' : 'no'}${c.reset}\n`);
+        resolve(yes);
+      };
+      process.stdin.on('data', onKey);
+    }, 30);
   });
 }
 
@@ -712,13 +740,14 @@ function restoreTerminal() {
  * sudo fails with EACCES. SUDO_USER alone is not enough: `sudo -iu dev` sets it too, and then the files belong to the
  * right user.
  */
-export const underSudo = (env = process.env, uid = process.getuid?.()) => Boolean(env.SUDO_USER) && uid === 0;
+export const underSudo = (env = process.env, uid = process.getuid?.()) =>
+  Boolean(env.SUDO_USER || env.DOAS_USER) && uid === 0;
 
 export function installCrashHandler(script, { signals = true } = {}) {
   if (underSudo()) {
     fail({
       what: `${script} is running under sudo`,
-      why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER}; the next run without sudo then fails with EACCES.`,
+      why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER || process.env.DOAS_USER}; the next run without sudo then fails with EACCES.`,
       fix: `${script} without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)`,
     });
     process.exit(1);
@@ -740,7 +769,8 @@ export function installCrashHandler(script, { signals = true } = {}) {
       restoreTerminal();
       stopChildren(signal);
       console.log(`\n  ${c.gray}Stopped (${signal === 'SIGINT' ? 'Ctrl-C' : signal}).${c.reset}\n`);
-      process.exit(130);
+      /* The shell's convention, 128 + the signal: 130 for Ctrl-C, 143 for SIGTERM, 129 for SIGHUP. */
+      process.exit(128 + constants.signals[signal]);
     };
     process.on('SIGINT', onSignal);
     process.on('SIGTERM', onSignal);
@@ -748,19 +778,22 @@ export function installCrashHandler(script, { signals = true } = {}) {
   }
 }
 
-/** Open a URL in the default browser. Never throws: not opening a browser is cosmetic. */
-export function openUrl(url) {
+/**
+ * Open a URL (or a folder) in the default browser (or file manager: `what`). Never throws: not opening it is
+ * cosmetic. On Linux $BROWSER first: Codespaces, devcontainers and WSL (wslview) set it, often without xdg-open.
+ */
+export function openUrl(url, what = 'a browser') {
   const [command, args] =
     process.platform === 'darwin'
       ? ['open', [url]]
       : process.platform === 'win32'
         ? ['cmd', ['/c', 'start', '', url]]
-        : ['xdg-open', [url]];
+        : [(/^https?:/.test(url) && process.env.BROWSER?.split(':')[0]) || 'xdg-open', [url]];
   try {
     const child = spawn(command, args, { stdio: 'ignore', detached: true });
-    child.on('error', () => console.log(`  Could not open a browser; go to ${url}`));
+    child.on('error', () => console.log(`  Could not open ${what}; go to ${url}`));
     child.unref();
   } catch {
-    console.log(`  Could not open a browser; go to ${url}`);
+    console.log(`  Could not open ${what}; go to ${url}`);
   }
 }

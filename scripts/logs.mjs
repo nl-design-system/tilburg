@@ -11,8 +11,13 @@ const TAIL_LINES = 80;
 let args;
 try {
   ({ values: args } = parseArgs({ options: { last: { type: 'boolean' }, open: { type: 'boolean' } } }));
+  if (args.last && args.open) throw new Error('--last and --open do not go together');
 } catch (err) {
-  fail({ what: err.message, fix: 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open' });
+  /* Node's advice to put it after `--` would make it a positional, which pnpm logs does not take either. */
+  fail({
+    what: err.message.replace(/\. To specify.*$/, ''),
+    fix: 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open',
+  });
   process.exit(1);
 }
 
@@ -31,8 +36,8 @@ if (!logs.length) {
   console.log(`\n  No step logs yet ${c.gray}(${LOG_DIR})${c.reset}.`);
   console.log('  They appear once pnpm setup, verify, test or dev has run a step.\n');
 } else if (args.open) {
-  openUrl(LOG_DIR);
-  console.log(`\n  Opened ${logLink(LOG_DIR)}\n`);
+  console.log(`\n  Opening ${logLink(LOG_DIR)}\n`);
+  openUrl(LOG_DIR, 'the folder');
 } else if (args.last) {
   const log = pickLast(logs);
   console.log(`\n  ${log.step}  ${status(log.exit)}  ${c.gray}${log.time.toLocaleString()}${c.reset}`);

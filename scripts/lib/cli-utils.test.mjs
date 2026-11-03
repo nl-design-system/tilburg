@@ -18,6 +18,7 @@ import { test } from 'node:test';
 import {
   appendLog,
   capture,
+  confirmAnswer,
   excerpt,
   LOG_DIR,
   newLogFile,
@@ -54,6 +55,22 @@ test('excerpt caps a flood of errors and says how many more there are', () => {
 
 test('stripAnsi removes colours and hyperlinks', () => {
   assert.equal(stripAnsi('\x1b[1m\x1b]8;;https://x\x07link\x1b]8;;\x07\x1b[0m'), 'link');
+  /* cursor hide/show, an OSC title ended by ST, a charset switch */
+  assert.equal(stripAnsi('\x1b[?25la\x1b]0;title\x1b\\b\x1b(Bc\x1b[?25h'), 'abc');
+});
+
+test('confirm keys: Enter takes the default, y/n answer, Esc and Ctrl-D say no, anything else waits', () => {
+  for (const dflt of [true, false]) {
+    assert.equal(confirmAnswer('\r', dflt), dflt);
+    assert.equal(confirmAnswer('\n', dflt), dflt);
+  }
+  assert.equal(confirmAnswer('Y', false), true);
+  assert.equal(confirmAnswer('yes\r', false), true);
+  assert.equal(confirmAnswer('n', true), false);
+  assert.equal(confirmAnswer('\x1b', true), false);
+  assert.equal(confirmAnswer('\x04', true), false);
+  for (const key of ['\t', '\x7f', '\b', '\x1b[A', '\x1bOQ', 'q'])
+    assert.equal(confirmAnswer(key, true), null, JSON.stringify(key));
 });
 
 test('runStep resolves on exit 0 and logs the output', async () => {
@@ -175,6 +192,7 @@ test('pruning skips an idle pnpm dev log for a week, not only an hour', () => {
 
 test('underSudo: only root with SUDO_USER, not `sudo -iu dev` or a plain root shell', () => {
   assert.equal(underSudo({ SUDO_USER: 'roel' }, 0), true);
+  assert.equal(underSudo({ DOAS_USER: 'roel' }, 0), true);
   assert.equal(underSudo({ SUDO_USER: 'roel' }, 501), false);
   assert.equal(underSudo({}, 0), false);
   assert.equal(underSudo({ SUDO_USER: 'roel' }, undefined), false);
