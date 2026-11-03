@@ -70,6 +70,8 @@ describe('tilburg-wbc-calendar', () => {
     const selected = day(root, 'donderdag 12 november 2026');
     expect(selected).toHaveClass('utrecht-calendar__table-days-item-day--selected');
     expect(selected.parentElement!.getAttribute('aria-selected')).toBe('true');
+    expect(selected.getAttribute('aria-pressed')).toBe('true');
+    expect(day(root, 'vrijdag 13 november 2026').hasAttribute('aria-pressed')).toBe(false);
     expect(day(root, 'zondag 8 november 2026').hasAttribute('disabled')).toBe(true);
     expect(day(root, 'zaterdag 28 november 2026').hasAttribute('disabled')).toBe(true);
 
@@ -87,6 +89,27 @@ describe('tilburg-wbc-calendar', () => {
     root.setAttribute('min', '2026-11-16');
     await page.waitForChanges();
     expect(day(root, 'maandag 16 november 2026').getAttribute('tabindex')).toBe('0');
+  });
+
+  it('keeps the selection when min or max changes', async () => {
+    const page = await render('<tilburg-wbc-calendar min="2026-11-09"></tilburg-wbc-calendar>');
+    const root = page.root!;
+    day(root, 'vrijdag 20 november 2026').click();
+    await page.waitForChanges();
+    root.setAttribute('min', '2026-11-16');
+    await page.waitForChanges();
+    expect(day(root, 'vrijdag 20 november 2026')).toHaveClass('utrecht-calendar__table-days-item-day--selected');
+  });
+
+  it('moves the focus to the new tab stop when a day outside the shown month is clicked', async () => {
+    const page = await render('<tilburg-wbc-calendar></tilburg-wbc-calendar>');
+    const root = page.root!;
+    /* The mock document has no activeElement: check which button focus() was called on. */
+    const focus = jest.spyOn(Object.getPrototypeOf(day(root, 'dinsdag 1 december 2026')), 'focus');
+    day(root, 'dinsdag 1 december 2026').click();
+    await page.waitForChanges();
+    expect(label(root).textContent).toBe('december 2026');
+    expect((focus.mock.contexts.at(-1) as HTMLElement).getAttribute('aria-label')).toBe('dinsdag 1 december 2026');
   });
 
   it('navigates months and years', async () => {

@@ -8,6 +8,10 @@
   --utrecht-button-margin-block-end: 0;
   --utrecht-button-line-height: 1;
 
+  /* Buttons default to a 44px minimum; 7 × 44px days overflow a 320px viewport (WCAG 1.4.10). Match the day size. */
+  --utrecht-button-min-block-size: var(--utrecht-calendar-table-days-item-day-size);
+  --utrecht-button-min-inline-size: var(--utrecht-calendar-table-days-item-day-size);
+
   font-family: var(--utrecht-document-font-family, inherit);
 }
 
@@ -22,7 +26,9 @@
 }
 
 .utrecht-calendar__navigation-label {
+  /* Let a long month name wrap instead of widening the navigation row past a 320px viewport. */
   font-weight: var(--tilburg-document-strong-font-weight, bold);
+  min-inline-size: 0;
 }
 
 /* Utrecht sets no focus / hover / active colours for the selected day, so Tilburg's subtle-button states (white or

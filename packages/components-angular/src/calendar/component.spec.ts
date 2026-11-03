@@ -48,6 +48,8 @@ describe('TilburgCalendar', () => {
     const selected = day('donderdag 12 november 2026');
     expect(selected.classList).toContain('utrecht-calendar__table-days-item-day--selected');
     expect(selected.parentElement!.getAttribute('aria-selected')).toBe('true');
+    expect(selected.getAttribute('aria-pressed')).toBe('true');
+    expect(day('vrijdag 13 november 2026').hasAttribute('aria-pressed')).toBe(false);
     expect(selected.getAttribute('tabindex')).toBe('0');
     expect(day('maandag 2 november 2026').getAttribute('aria-current')).toBe('date');
     expect(day('maandag 26 oktober 2026').classList).toContain(

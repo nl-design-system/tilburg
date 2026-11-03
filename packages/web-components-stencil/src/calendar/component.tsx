@@ -95,12 +95,16 @@ export class TilburgWbcCalendar {
     this.onValue();
   }
 
-  /* min/max too: the tab stop must stay on an enabled day (like the Angular `ngOnChanges`). */
   @Watch('value')
-  @Watch('min')
-  @Watch('max')
   onValue() {
     this.selected = parseIsoDate(this.value);
+    this.onRange();
+  }
+
+  /* Only the tab stop follows min/max, so it stays on an enabled day; the user's selection is kept (like Angular). */
+  @Watch('min')
+  @Watch('max')
+  onRange() {
     this.focused = clampDate(this.selected ?? this.focused, this.minDate, this.maxDate);
   }
 
@@ -115,6 +119,8 @@ export class TilburgWbcCalendar {
   }
 
   private select(day: Date) {
+    /* A day outside the shown month switches the month and re-renders the rows; put focus back on the new tab stop. */
+    this.moveFocus = !isSameMonth(day, this.focused);
     this.selected = day;
     this.focused = day;
     this.tilburgDateSelect.emit(toIsoDate(day));
@@ -183,6 +189,7 @@ export class TilburgWbcCalendar {
                         }}
                         tabIndex={isSameDay(day, this.focused) ? 0 : -1}
                         aria-label={dayLabel(day, this.locale)}
+                        aria-pressed={isSelected ? 'true' : undefined}
                         aria-current={isToday ? 'date' : undefined}
                         disabled={isOutOfRange(day, this.minDate, this.maxDate)}
                         onClick={() => this.select(day)}

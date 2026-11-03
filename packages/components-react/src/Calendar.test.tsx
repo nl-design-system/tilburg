@@ -81,6 +81,8 @@ describe('Calendar', () => {
     const selected = day('zaterdag 12 december 2026');
     expect(selected).toHaveClass('utrecht-calendar__table-days-item-day--selected');
     expect(selected.parentElement).toHaveAttribute('aria-selected', 'true');
+    expect(selected).toHaveAttribute('aria-pressed', 'true');
+    expect(day('vrijdag 11 december 2026')).not.toHaveAttribute('aria-pressed');
     fireEvent.click(day('vrijdag 18 december 2026'));
     expect(onDateSelect).toHaveBeenCalledWith('2026-12-18');
     expect(day('vrijdag 18 december 2026')).toHaveClass('utrecht-calendar__table-days-item-day--selected');
@@ -98,6 +100,21 @@ describe('Calendar', () => {
     const { rerender } = render(<Calendar min="2026-11-09" />);
     rerender(<Calendar min="2026-11-16" />);
     expect(day('maandag 16 november 2026')).toHaveAttribute('tabindex', '0');
+  });
+
+  it('keeps the selection when min or max changes', () => {
+    const { rerender } = render(<Calendar min="2026-11-09" />);
+    fireEvent.click(day('vrijdag 20 november 2026'));
+    rerender(<Calendar min="2026-11-16" />);
+    expect(day('vrijdag 20 november 2026')).toHaveClass('utrecht-calendar__table-days-item-day--selected');
+  });
+
+  it('keeps the focus when a day outside the shown month is clicked', () => {
+    render(<Calendar />);
+    const next = day('dinsdag 1 december 2026');
+    next.focus();
+    fireEvent.click(next);
+    expect(day('dinsdag 1 december 2026')).toHaveFocus();
   });
 
   it('navigates months and years with the buttons', () => {

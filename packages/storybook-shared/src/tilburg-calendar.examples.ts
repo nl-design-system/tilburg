@@ -85,7 +85,7 @@ const usagePlainHtml = `### Plain HTML / CSS
         </td>
         <!-- … -->
         <td aria-selected="true">
-          <button type="button" class="… utrecht-calendar__table-days-item-day--selected" tabindex="0" aria-label="donderdag 12 november 2026">12</button>
+          <button type="button" class="… utrecht-calendar__table-days-item-day--selected" tabindex="0" aria-label="donderdag 12 november 2026" aria-pressed="true">12</button>
         </td>
       </tr>
       <!-- six weeks in total -->
@@ -94,7 +94,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 </div>
 \`\`\`
 
-Modifiers on a day button: \`--out-of-the-month\`, \`--is-today\` (with \`aria-current="date"\`) and \`--selected\` (with \`aria-selected="true"\` on its \`<td>\`). Days outside \`min\` / \`max\` get \`disabled\`. Exactly one day button has \`tabindex="0"\`: the selected day, otherwise today, clamped into \`min\` / \`max\`. The behaviour above needs script, and there is no HTML/CSS enhancer for it: the markup alone is a static month. The buttons do nothing, and with only one day button in the tab order a keyboard user cannot reach the other days. So with plain HTML either write the script yourself (selection, month/year navigation re-rendering the grid, and the keyboard handling above, as the components do), or drop \`role="grid"\` and the \`tabindex="-1"\`s so every day is a normal tab stop. For a plain HTML form, a Textbox with \`type="date"\` is usually the better choice.`;
+Modifiers on a day button: \`--out-of-the-month\`, \`--is-today\` (with \`aria-current="date"\`) and \`--selected\` (with \`aria-pressed="true"\` on the button and \`aria-selected="true"\` on its \`<td>\`). Focus lands on the button, not the cell, so \`aria-pressed\` is what a screen reader announces ("pressed"); \`aria-selected\` stays on the \`<td>\` because a cell in a \`role="grid"\` table is a \`gridcell\`, which supports it. Only the selected day gets \`aria-pressed\`: \`"false"\` on every other day would add "not pressed" to all of them. Days outside \`min\` / \`max\` get \`disabled\`. Exactly one day button has \`tabindex="0"\`: the selected day, otherwise today, clamped into \`min\` / \`max\`. The behaviour above needs script, and there is no HTML/CSS enhancer for it: the markup alone is a static month. The buttons do nothing, and with only one day button in the tab order a keyboard user cannot reach the other days. So with plain HTML either write the script yourself (selection, month/year navigation re-rendering the grid, and the keyboard handling above, as the components do), or drop \`role="grid"\` and the \`tabindex="-1"\`s so every day is a normal tab stop. For a plain HTML form, a Textbox with \`type="date"\` is usually the better choice.`;
 
 export const description = `${intro}
 
@@ -199,7 +199,7 @@ const calendarHtml = ({ id, month, today, selected, min, max }: CalendarHtmlOpti
       .join(' ');
     const disabled = (min && value < min) || (max && value > max);
     const label = fmt(d, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    return `<td${value === selected ? ' aria-selected="true"' : ''}><button type="button" class="${classes}" tabindex="${value === tabStop ? 0 : -1}" aria-label="${label}"${value === today ? ' aria-current="date"' : ''}${disabled ? ' disabled' : ''}>${d.getDate()}</button></td>`;
+    return `<td${value === selected ? ' aria-selected="true"' : ''}><button type="button" class="${classes}" tabindex="${value === tabStop ? 0 : -1}" aria-label="${label}"${value === selected ? ' aria-pressed="true"' : ''}${value === today ? ' aria-current="date"' : ''}${disabled ? ' disabled' : ''}>${d.getDate()}</button></td>`;
   };
   const rows = Array.from(
     { length: 6 },

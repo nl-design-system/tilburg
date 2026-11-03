@@ -86,11 +86,14 @@ export const Calendar = forwardRef(
     const tableRef = useRef<HTMLTableElement>(null);
     const labelId = useId();
 
-    /* Keep the tab stop on an enabled day when `value`, `min` or `max` change (like the Angular `ngOnChanges`). */
+    /* Like the Angular `ngOnChanges`: only `value` resets the selection; `min` / `max` keep the user's selection and
+       only move the tab stop onto an enabled day. */
     useEffect(() => {
-      const date = parseIsoDate(value);
-      setSelected(date);
-      setFocused((current) => clampDate(date ?? current, parseIsoDate(min), parseIsoDate(max)));
+      setSelected(parseIsoDate(value));
+    }, [value]);
+
+    useEffect(() => {
+      setFocused((current) => clampDate(parseIsoDate(value) ?? current, parseIsoDate(min), parseIsoDate(max)));
     }, [value, min, max]);
 
     useEffect(() => {
@@ -183,6 +186,7 @@ export const Calendar = forwardRef(
                         )}
                         tabIndex={isSameDay(day, focused) ? 0 : -1}
                         aria-label={dayLabel(day, locale)}
+                        aria-pressed={isSelected ? 'true' : undefined}
                         aria-current={isToday ? 'date' : undefined}
                         disabled={isOutOfRange(day, minDate, maxDate)}
                         onClick={() => select(day)}

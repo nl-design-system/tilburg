@@ -46,6 +46,7 @@
             [ngClass]="dayClass(day)"
             [attr.tabindex]="isFocused(day) ? 0 : -1"
             [attr.aria-label]="dayLabel(day)"
+            [attr.aria-pressed]="isSelected(day) ? 'true' : null"
             [attr.aria-current]="isToday(day) ? 'date' : null"
             [disabled]="isDisabled(day)"
             (click)="select(day)"
