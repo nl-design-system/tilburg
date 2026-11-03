@@ -8,7 +8,7 @@
             "$type": "fontFamilies"
           },
           "secondary": {
-            "$value": "DIN2014Light",
+            "$value": "DIN2014Light, \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", sans-serif",
             "$type": "fontFamilies"
           },
           "code": {

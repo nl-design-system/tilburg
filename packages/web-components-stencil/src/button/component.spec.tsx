@@ -57,4 +57,11 @@ describe('tilburg-wbc-button', () => {
     const page = await render('<tilburg-wbc-button title="Tip" aria-label="Sluiten">×</tilburg-wbc-button>');
     expect(page.root!.querySelector('button')!.getAttribute('aria-label')).toBe('Sluiten');
   });
+
+  it('removes aria-label from the inner button when the consumer removes it from the host', async () => {
+    const page = await render('<tilburg-wbc-button aria-label="Sluiten">×</tilburg-wbc-button>');
+    page.root!.removeAttribute('aria-label');
+    await page.waitForChanges();
+    expect(page.root!.querySelector('button')!.hasAttribute('aria-label')).toBe(false);
+  });
 });

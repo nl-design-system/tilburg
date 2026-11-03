@@ -21,8 +21,12 @@ export interface AttributeInheritor {
  * layer while consumers keep writing plain HTML attributes.
  *
  * Changes after the first render are picked up by a MutationObserver. Because
- * the host attribute is removed after every read, removing it later is not
- * observable — set a new value instead.
+ * the host attribute is already gone after every read, a later
+ * `removeAttribute()` by the consumer changes nothing in the DOM and fires no
+ * mutation; the host's own `removeAttribute` is wrapped to catch it and drop
+ * the inherited value. The util removes attributes through the native method.
+ * ponytail: `removeAttributeNS()` and `attributes.removeNamedItem()` are not
+ * wrapped (frameworks use `removeAttribute()`); wrap them too if a consumer needs them.
  */
 export function inheritAttributes(
   host: HTMLElement,
@@ -30,6 +34,7 @@ export function inheritAttributes(
   onChange: (attributes: InheritedAttributes) => void,
 ): AttributeInheritor {
   let current: InheritedAttributes = {};
+  const nativeRemove = host.removeAttribute;
 
   const sync = () => {
     let changed = false;
@@ -37,7 +42,7 @@ export function inheritAttributes(
     for (const name of names) {
       const value = host.getAttribute(name);
       if (value !== null) {
-        host.removeAttribute(name);
+        nativeRemove.call(host, name);
         if (next[name] !== value) {
           next[name] = value;
           changed = true;
@@ -50,12 +55,26 @@ export function inheritAttributes(
     }
   };
 
+  host.removeAttribute = (qualifiedName: string) => {
+    nativeRemove.call(host, qualifiedName);
+    const name = qualifiedName.toLowerCase();
+    if (names.includes(name) && name in current) {
+      current = { ...current };
+      delete current[name];
+      onChange(current);
+    }
+  };
+
   sync();
 
   const observer = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(sync);
   observer?.observe(host, { attributes: true, attributeFilter: [...names] });
 
   return {
-    disconnect: () => observer?.disconnect(),
+    disconnect: () => {
+      observer?.disconnect();
+      // Drop the own-property wrapper so the prototype's removeAttribute applies again.
+      delete (host as { removeAttribute?: unknown }).removeAttribute;
+    },
   };
 }

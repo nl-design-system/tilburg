@@ -6,3 +6,11 @@
 :host {
   display: inline-block;
 }
+
+/* `@utrecht/component-library-angular` injects its older button CSS unencapsulated at runtime, after the
+   global stylesheet: `.utrecht-button { line-height: var(--utrecht-button-line-height) }` beats the
+   appearance chain (primary-action 150%) and makes the button 44px instead of 48px. The emulated
+   selector here is more specific, so the current Utrecht chain wins again. */
+.utrecht-button {
+  line-height: var(--_utrecht-button-line-height);
+}
