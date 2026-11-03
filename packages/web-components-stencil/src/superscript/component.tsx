@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h } from '@stencil/core';
 
 /**
  * @slot - The superscript text.
@@ -14,12 +14,9 @@ import { Component, h, Prop } from '@stencil/core';
   shadow: false,
 })
 export class TilburgWbcSuperscript {
-  /** Uses the font's OpenType superscript glyphs (`utrecht-superscript--open-type`). */
-  @Prop() openType = false;
-
   render() {
     return (
-      <sup class={{ 'utrecht-superscript': true, 'utrecht-superscript--open-type': this.openType }}>
+      <sup class="utrecht-superscript">
         <slot />
       </sup>
     );

@@ -24,12 +24,3 @@ describe('Superscript', () => {
     expect(ref.current).toHaveAttribute('lang', 'en');
   });
 });
-
-describe('Superscript openType', () => {
-  it('adds the open-type modifier only when set', () => {
-    const { container, rerender } = render(<Superscript>2</Superscript>);
-    expect(container.firstElementChild).not.toHaveClass('utrecht-superscript--open-type');
-    rerender(<Superscript openType>2</Superscript>);
-    expect(container.firstElementChild).toHaveClass('utrecht-superscript', 'utrecht-superscript--open-type');
-  });
-});

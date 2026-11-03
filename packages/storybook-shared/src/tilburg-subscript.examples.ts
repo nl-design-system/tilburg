@@ -2,13 +2,12 @@
 
 /* Canonical HTML/CSS reference markup for the Tilburg subscript. Imported by
    both the React storybook (`packages/storybook`) and the Angular storybook
-   (`packages/storybook-angular`). The CSS is ported from Utrecht in
-   `packages/components-css/subscript` (not in `@utrecht/component-library-css`
-   5.2.0). */
+   (`packages/storybook-angular`). `.utrecht-subscript` is unstyled upstream (the UA styles of
+   `<sub>` apply), so there is no components-css folder. */
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fsubscript';
 
-const intro = `Text set below the baseline for typographic conventions such as chemical formulas (CO₂), rendered as \`<sub class="utrecht-subscript">\`. Inline: it flows with the surrounding text. Use it only where the position carries meaning, not for visual effect. \`openType\` uses the font's own OpenType subscript glyphs instead of a shrunk, lowered character; only use it when you know the font has them for every character.`;
+const intro = `Text set below the baseline for typographic conventions such as chemical formulas (CO₂), rendered as \`<sub class="utrecht-subscript">\`. Inline: it flows with the surrounding text. Use it only where the position carries meaning, not for visual effect. Utrecht's \`utrecht-subscript--open-type\` variant (the font's own OpenType subscript glyphs) is not offered: Tilburg's fonts have no such glyphs, so "CO₂" would render as "CO2".`;
 
 const usageAngular = `### Angular
 
@@ -16,7 +15,7 @@ const usageAngular = `### Angular
 <tilburg-paragraph>Uitstoot van CO<tilburg-subscript>2</tilburg-subscript> per inwoner</tilburg-paragraph>
 \`\`\`
 
-Inputs: \`openType\` (\`boolean\`, default \`false\`; adds \`utrecht-subscript--open-type\`). The host stays \`display: inline\`.`;
+No inputs. The host stays \`display: inline\`.`;
 
 const usageReact = `### React
 
@@ -32,7 +31,7 @@ export function Uitstoot() {
 }
 \`\`\`
 
-Props: \`openType\` (\`boolean\`, default \`false\`; adds \`utrecht-subscript--open-type\`), plus any standard HTML attribute (\`className\` is merged after the utrecht classes). \`SubscriptProps\` is exported as a type. The \`ref\` is forwarded to the \`<sub>\`.`;
+Props: any standard HTML attribute (\`className\` is merged after the utrecht classes). \`SubscriptProps\` is exported as a type. The \`ref\` is forwarded to the \`<sub>\`.`;
 
 const usageWebComponents = `### Web Components (Stencil)
 
@@ -40,13 +39,12 @@ const usageWebComponents = `### Web Components (Stencil)
 <p class="utrecht-paragraph">Uitstoot van CO<tilburg-wbc-subscript>2</tilburg-wbc-subscript> per inwoner</p>
 \`\`\`
 
-Attribute: \`open-type\` (boolean, default \`false\`; adds \`utrecht-subscript--open-type\`). The host stays inline. No events or named slots.`;
+No attributes. The host stays inline. No events or named slots.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <sub class="utrecht-subscript">2</sub>
-<sub class="utrecht-subscript utrecht-subscript--open-type">2</sub>
 \`\`\``;
 
 export const description = `${intro}
@@ -92,9 +90,5 @@ export const examples = {
   default: {
     name: 'Default',
     html: `<p class="utrecht-paragraph">Tilburg wil de uitstoot van CO<sub class="utrecht-subscript">2</sub> in 2030 met de helft verminderen.</p>`,
-  },
-  openType: {
-    name: 'OpenType glyphs',
-    html: `<p class="utrecht-paragraph">Tilburg wil de uitstoot van CO<sub class="utrecht-subscript utrecht-subscript--open-type">2</sub> in 2030 met de helft verminderen.</p>`,
   },
 } satisfies Record<string, Example>;

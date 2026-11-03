@@ -103,7 +103,7 @@ export const examples = {
   codeSample: {
     name: 'Code sample',
     html: `<figure class="utrecht-figure">
-  <pre class="utrecht-code-block"><code class="utrecht-code-block__content">&lt;tilburg-figure caption="…"&gt;&lt;/tilburg-figure&gt;</code></pre>
+  <pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">&lt;tilburg-figure caption="…"&gt;&lt;/tilburg-figure&gt;</code></pre>
   <figcaption class="utrecht-figure__caption">Een figuur met een bijschrift in Angular.</figcaption>
 </figure>`,
   },

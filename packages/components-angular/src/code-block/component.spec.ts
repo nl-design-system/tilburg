@@ -24,5 +24,6 @@ describe('TilburgCodeBlock', () => {
       'tilburg-code-block > pre.utrecht-code-block > code.utrecht-code-block__content',
     ) as HTMLElement;
     expect(code.textContent).toBe('regel 1\n  regel 2');
+    expect(code.parentElement!.getAttribute('tabindex')).toBe('0'); // Safari: keyboard users can scroll a long line
   });
 });

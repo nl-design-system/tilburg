@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'tilburg-subscript',
@@ -6,7 +6,4 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['index.scss'],
   standalone: false,
 })
-export class TilburgSubscript {
-  /** Uses the font's OpenType subscript glyphs (`utrecht-subscript--open-type`). */
-  @Input() openType: boolean = false;
-}
+export class TilburgSubscript {}

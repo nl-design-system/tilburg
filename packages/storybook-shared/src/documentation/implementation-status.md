@@ -65,7 +65,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | HTML Content           | ✅       | ✅    | ✅      | ✅             |
 | IBAN Data              | ✅       | ✅    | ✅      | ✅             |
 | Icon                   | utrecht  | ✅    | ✅      | ✅             |
-| Image                  | utrecht  | ✅    | ✅      | ✅             |
+| Image                  | ✅       | ✅    | ✅      | ✅             |
 | Index Char Nav         | ✅       | ✅    | ✅      | ✅             |
 | Language Toggle        | ✅       | ✅    | ✅      | ✅             |
 | Link                   | ✅       | ✅    | ✅      | ✅             |
@@ -99,8 +99,8 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Side Nav               | ✅       | ✅    | ✅      | ✅             |
 | Skip Link              | ✅       | ✅    | ✅      | ✅             |
 | Spotlight Section      | utrecht  | ✅    | ✅      | ✅             |
-| Subscript              | ✅       | ✅    | ✅      | ✅             |
-| Superscript            | ✅       | ✅    | ✅      | ✅             |
+| Subscript              | utrecht  | ✅    | ✅      | ✅             |
+| Superscript            | utrecht  | ✅    | ✅      | ✅             |
 | Table                  | ✅       | ✅    | ✅      | ✅             |
 | Textarea               | ✅       | ✅    | ✅      | ✅             |
 | Textbox                | ✅       | ✅    | ✅      | ✅             |

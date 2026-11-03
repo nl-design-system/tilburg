@@ -36,7 +36,7 @@ export const CustomSize: Story = {
   name: 'Custom size and colour',
   render: () => ({
     template: `
-      <div style="--utrecht-icon-size:var(--tilburg-size-icon-4xl);--utrecht-icon-color:var(--tilburg-color-pink-300)">
+      <div style="--utrecht-icon-size:var(--tilburg-size-icon-4xl);--utrecht-icon-color:var(--tilburg-interaction-color)">
         <tilburg-icon>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z" /></svg>
         </tilburg-icon>

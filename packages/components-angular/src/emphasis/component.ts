@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { booleanAttribute, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'tilburg-emphasis',
@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgEmphasis {
   /** Renders `<strong>` (importance) instead of `<em>` (stress emphasis). */
-  @Input() strong: boolean = false;
+  @Input({ transform: booleanAttribute }) strong = false;
 }

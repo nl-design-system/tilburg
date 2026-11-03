@@ -9,5 +9,6 @@ describe('tilburg-wbc-code-block', () => {
     const element = page.root!.querySelector('pre.utrecht-code-block > code.utrecht-code-block__content')!;
     expect(element).not.toBeNull();
     expect(element.textContent).toBe('npm install');
+    expect(page.root!.querySelector('pre')!.getAttribute('tabindex')).toBe('0'); // Safari: keyboard users can scroll a long line
   });
 });

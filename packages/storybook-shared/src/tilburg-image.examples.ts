@@ -2,11 +2,11 @@
 
 /* Canonical HTML/CSS reference markup for the Tilburg image. Imported by
    both the React storybook (`packages/storybook`) and the Angular storybook
-   (`packages/storybook-angular`). */
+   (`packages/storybook-angular`). The CSS is in `packages/components-css/image`. */
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fimage';
 
-const intro = `Image rendered as \`<img class="utrecht-img">\`. Always describe the image in \`alt\`; use \`alt=""\` only for purely decorative images. Don't use \`title\`: browsers show it as a tooltip over the image. \`photo\` adds \`utrecht-img--photo\`, which scales the image down to fit its container.`;
+const intro = `Image rendered as \`<img class="utrecht-img">\`. Always describe the image in \`alt\`; use \`alt=""\` only for purely decorative images. Don't use \`title\`: browsers show it as a tooltip over the image. \`photo\` adds \`utrecht-img--photo\`, which scales the image down to fit its container. \`width\` and \`height\` set the rendered size (Tilburg CSS undoes Utrecht's \`width: auto; height: auto\`, which made the image render at its intrinsic size); the image never grows wider than its container, and with only \`width\` set the height follows the aspect ratio.`;
 
 const usageAngular = `### Angular
 

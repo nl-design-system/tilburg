@@ -28,15 +28,3 @@ export const Default: Story = {
     `,
   }),
 };
-
-export const OpenType: Story = {
-  name: 'OpenType glyphs',
-  render: () => ({
-    template: `
-      <tilburg-paragraph>
-        Een dakkapel aan de achterkant tot 4 m<tilburg-superscript [openType]="true">2</tilburg-superscript> is meestal
-        vergunningvrij.
-      </tilburg-paragraph>
-    `,
-  }),
-};

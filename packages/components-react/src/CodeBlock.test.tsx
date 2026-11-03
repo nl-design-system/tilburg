@@ -9,6 +9,7 @@ describe('CodeBlock', () => {
     const pre = container.firstElementChild!;
     expect(pre.tagName).toBe('PRE');
     expect(pre).toHaveClass('utrecht-code-block', 'extra');
+    expect(pre).toHaveAttribute('tabindex', '0'); // Safari: keyboard users can scroll a long line
     const code = pre.querySelector(':scope > code.utrecht-code-block__content')!;
     expect(code.textContent).toBe('regel 1\n  regel 2');
   });

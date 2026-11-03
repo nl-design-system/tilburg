@@ -34,4 +34,13 @@ describe('TilburgEmphasis', () => {
     expect(strong.className).toBe('utrecht-emphasis utrecht-emphasis--strong');
     expect(strong.textContent).toBe('niet');
   });
+
+  it('renders <strong> for a bare strong attribute', () => {
+    TestBed.configureTestingModule({ declarations: [TilburgEmphasis] });
+    const fixture = TestBed.createComponent(TilburgEmphasis);
+    fixture.componentRef.setInput('strong', ''); // bare attribute: `<tilburg-emphasis strong>`
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('strong')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('em')).toBeNull();
+  });
 });

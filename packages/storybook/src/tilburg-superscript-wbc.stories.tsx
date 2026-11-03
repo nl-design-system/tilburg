@@ -29,13 +29,3 @@ export const Default: Story = {
     </p>
   ),
 };
-
-export const OpenType: Story = {
-  name: 'OpenType glyphs',
-  render: () => (
-    <p className="utrecht-paragraph">
-      Een dakkapel aan de achterkant tot 4 m<TilburgWbcSuperscript openType>2</TilburgWbcSuperscript> is meestal
-      vergunningvrij.
-    </p>
-  ),
-};

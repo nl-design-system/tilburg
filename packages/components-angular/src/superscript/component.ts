@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'tilburg-superscript',
@@ -6,7 +6,4 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['index.scss'],
   standalone: false,
 })
-export class TilburgSuperscript {
-  /** Uses the font's OpenType superscript glyphs (`utrecht-superscript--open-type`). */
-  @Input() openType: boolean = false;
-}
+export class TilburgSuperscript {}

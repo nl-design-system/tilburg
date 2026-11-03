@@ -1,21 +1,11 @@
-import '@gemeente-tilburg/components-css/subscript/index.scss';
 import clsx from 'clsx';
 import { ForwardedRef, forwardRef, HTMLAttributes, PropsWithChildren } from 'react';
 
-export interface SubscriptProps extends HTMLAttributes<HTMLElement> {
-  openType?: boolean;
-}
+export type SubscriptProps = HTMLAttributes<HTMLElement>;
 
 export const Subscript = forwardRef(
-  (
-    { openType, className, children, ...restProps }: PropsWithChildren<SubscriptProps>,
-    ref: ForwardedRef<HTMLElement>,
-  ) => (
-    <sub
-      ref={ref}
-      className={clsx('utrecht-subscript', openType && 'utrecht-subscript--open-type', className)}
-      {...restProps}
-    >
+  ({ className, children, ...restProps }: PropsWithChildren<SubscriptProps>, ref: ForwardedRef<HTMLElement>) => (
+    <sub ref={ref} className={clsx('utrecht-subscript', className)} {...restProps}>
       {children}
     </sub>
   ),

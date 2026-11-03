@@ -25,12 +25,3 @@ export const Default: Story = {
     </Paragraph>
   ),
 };
-
-export const OpenType: Story = {
-  name: 'OpenType glyphs',
-  render: () => (
-    <Paragraph>
-      Een dakkapel aan de achterkant tot 4 m<Superscript openType>2</Superscript> is meestal vergunningvrij.
-    </Paragraph>
-  ),
-};

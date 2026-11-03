@@ -26,8 +26,3 @@ export const Default: Story = {
   name: examples.default.name,
   render: () => <HtmlExample html={examples.default.html} />,
 };
-
-export const OpenType: Story = {
-  name: examples.openType.name,
-  render: () => <HtmlExample html={examples.openType.html} />,
-};

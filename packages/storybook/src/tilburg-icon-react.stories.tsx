@@ -38,7 +38,7 @@ export const AllPermutations: Story = {
         style={
           {
             '--utrecht-icon-size': 'var(--tilburg-size-icon-4xl)',
-            '--utrecht-icon-color': 'var(--tilburg-color-pink-300)',
+            '--utrecht-icon-color': 'var(--tilburg-interaction-color)',
           } as CSSProperties
         }
       >

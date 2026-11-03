@@ -1,6 +1,13 @@
 /* Utrecht sets `white-space: pre` but no overflow: a long line pushed the whole page sideways at 320px wide / 400% zoom
    (WCAG 1.4.10). Scroll inside the block instead. Chrome and Firefox make such a scroll container keyboard-focusable;
-   Safari does not. */
+   Safari does not, so the `<pre>` gets `tabindex="0"` and needs a visible focus outline. */
 .utrecht-code-block {
   overflow-x: auto;
+}
+
+.utrecht-code-block:focus-visible {
+  outline-color: var(--utrecht-focus-outline-color, revert);
+  outline-offset: var(--utrecht-focus-outline-offset, 2px);
+  outline-style: var(--utrecht-focus-outline-style, revert);
+  outline-width: var(--utrecht-focus-outline-width, revert);
 }

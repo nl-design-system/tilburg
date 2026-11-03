@@ -6,7 +6,7 @@ export type CodeBlockProps = HTMLAttributes<HTMLPreElement>;
 
 export const CodeBlock = forwardRef(
   ({ className, children, ...restProps }: PropsWithChildren<CodeBlockProps>, ref: ForwardedRef<HTMLPreElement>) => (
-    <pre ref={ref} className={clsx('utrecht-code-block', className)} {...restProps}>
+    <pre ref={ref} className={clsx('utrecht-code-block', className)} tabIndex={0} {...restProps}>
       <code className="utrecht-code-block__content">{children}</code>
     </pre>
   ),

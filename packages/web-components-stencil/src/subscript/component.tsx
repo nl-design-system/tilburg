@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h } from '@stencil/core';
 
 /**
  * @slot - The subscript text.
@@ -14,12 +14,9 @@ import { Component, h, Prop } from '@stencil/core';
   shadow: false,
 })
 export class TilburgWbcSubscript {
-  /** Uses the font's OpenType subscript glyphs (`utrecht-subscript--open-type`). */
-  @Prop() openType = false;
-
   render() {
     return (
-      <sub class={{ 'utrecht-subscript': true, 'utrecht-subscript--open-type': this.openType }}>
+      <sub class="utrecht-subscript">
         <slot />
       </sub>
     );

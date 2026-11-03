@@ -24,8 +24,3 @@ export const Default: Story = {
   name: examples.default.name,
   render: () => ({ template: examples.default.html }),
 };
-
-export const OpenType: Story = {
-  name: examples.openType.name,
-  render: () => ({ template: examples.openType.html }),
-};

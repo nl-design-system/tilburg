@@ -8,7 +8,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fcode-block';
 
-const intro = `Multi-line code or preformatted text on a grey background, rendered as \`<pre class="utrecht-code-block"><code class="utrecht-code-block__content">\`. Whitespace and line breaks are kept as written; long lines do not wrap but scroll horizontally inside the block, so the page itself never scrolls sideways.`;
+const intro = `Multi-line code or preformatted text on a grey background, rendered as \`<pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">\`. Whitespace and line breaks are kept as written; long lines do not wrap but scroll horizontally inside the block, so the page itself never scrolls sideways. The \`<pre>\` has \`tabindex="0"\` so keyboard users can focus and scroll it: Chrome and Firefox make a scroll container focusable by themselves, Safari does not.`;
 
 const usageAngular = `### Angular
 
@@ -38,12 +38,12 @@ const usageWebComponents = `### Web Components (Stencil)
 <tilburg-wbc-code-block>npm install @gemeente-tilburg/components-css</tilburg-wbc-code-block>
 \`\`\`
 
-Renders \`<pre class="utrecht-code-block"><code class="utrecht-code-block__content">\` around the default slot. No attributes, events or named slots.`;
+Renders \`<pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">\` around the default slot. No attributes, events or named slots.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
-<pre class="utrecht-code-block"><code class="utrecht-code-block__content">…</code></pre>
+<pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">…</code></pre>
 \`\`\``;
 
 export const description = `${intro}
@@ -88,11 +88,11 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<pre class="utrecht-code-block"><code class="utrecht-code-block__content">npm install @gemeente-tilburg/components-css</code></pre>`,
+    html: `<pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">npm install @gemeente-tilburg/components-css</code></pre>`,
   },
   multiline: {
     name: 'Multiple lines',
-    html: `<pre class="utrecht-code-block"><code class="utrecht-code-block__content">&lt;html lang="nl" class="tilburg-theme"&gt;
+    html: `<pre class="utrecht-code-block" tabindex="0"><code class="utrecht-code-block__content">&lt;html lang="nl" class="tilburg-theme"&gt;
   &lt;body class="utrecht-document"&gt;
     &lt;h1 class="utrecht-heading-1"&gt;Afvalkalender&lt;/h1&gt;
   &lt;/body&gt;

@@ -16,7 +16,7 @@ import { Component, h } from '@stencil/core';
 export class TilburgWbcCodeBlock {
   render() {
     return (
-      <pre class="utrecht-code-block">
+      <pre class="utrecht-code-block" tabindex="0">
         <code class="utrecht-code-block__content">
           <slot />
         </code>

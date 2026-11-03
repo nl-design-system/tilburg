@@ -24,12 +24,3 @@ describe('Subscript', () => {
     expect(ref.current).toHaveAttribute('lang', 'en');
   });
 });
-
-describe('Subscript openType', () => {
-  it('adds the open-type modifier only when set', () => {
-    const { container, rerender } = render(<Subscript>2</Subscript>);
-    expect(container.firstElementChild).not.toHaveClass('utrecht-subscript--open-type');
-    rerender(<Subscript openType>2</Subscript>);
-    expect(container.firstElementChild).toHaveClass('utrecht-subscript', 'utrecht-subscript--open-type');
-  });
-});

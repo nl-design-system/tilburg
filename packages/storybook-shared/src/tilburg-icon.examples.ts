@@ -110,14 +110,14 @@ export const examples = {
   },
   customSize: {
     name: 'Custom size and colour',
-    html: `<p class="utrecht-paragraph" style="--utrecht-icon-size:var(--tilburg-size-icon-4xl);--utrecht-icon-color:var(--tilburg-color-pink-300)">
+    html: `<p class="utrecht-paragraph" style="--utrecht-icon-size:var(--tilburg-size-icon-4xl);--utrecht-icon-color:var(--tilburg-interaction-color)">
   <span class="utrecht-icon" aria-hidden="true">${svg}</span>
   Let op
 </p>`,
   },
   inheritColor: {
     name: 'Inherits the text colour',
-    html: `<p class="utrecht-paragraph" style="color:var(--tilburg-color-blue-400)">
+    html: `<p class="utrecht-paragraph" style="color:var(--tilburg-feedback-informative-color)">
   <span class="utrecht-icon" aria-hidden="true">${svg}</span>
   Uw aanvraag is in behandeling
 </p>`,

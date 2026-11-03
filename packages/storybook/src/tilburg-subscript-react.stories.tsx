@@ -25,12 +25,3 @@ export const Default: Story = {
     </Paragraph>
   ),
 };
-
-export const OpenType: Story = {
-  name: 'OpenType glyphs',
-  render: () => (
-    <Paragraph>
-      Tilburg wil de uitstoot van CO<Subscript openType>2</Subscript> in 2030 met de helft verminderen.
-    </Paragraph>
-  ),
-};
