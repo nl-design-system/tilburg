@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fcurrency-data';
 
-const intro = `Shows an amount of money, formatted for the locale with \`Intl.NumberFormat\` exactly like Utrecht's React \`CurrencyData\` (default locale \`nl-NL\`, currency \`EUR\`). The text uses grouping, two decimals, non-breaking spaces and a real minus sign (U+2212) placed before the currency in Dutch ("− € 85,00"); \`value\` holds currency and amount for software ("EUR -85"). Positive and negative amounts get the \`utrecht-currency-data--positive\` / \`--negative\` modifier classes (Utrecht has no styling for them yet). Tabular figures align amounts in a column; the amount never wraps. Unlike Utrecht there is no compact \`aria-label\`: ARIA does not allow it on \`<data>\` (role generic), and screen readers read the visible amount well when the page has the right \`lang\`.`;
+const intro = `Shows an amount of money, formatted for the locale with \`Intl.NumberFormat\` exactly like Utrecht's React \`CurrencyData\` (default locale \`nl-NL\`, currency \`EUR\`). The text uses grouping, two decimals, non-breaking spaces and a real minus sign (U+2212) placed before the currency in Dutch ("− € 85,00"); \`value\` holds currency and amount for software ("EUR -85"). An amount that rounds to zero shows "€ 0,00", without a minus. Positive and negative amounts (after rounding to the shown decimals) get the \`utrecht-currency-data--positive\` / \`--negative\` modifier classes (Utrecht has no styling for them yet). Tabular figures align amounts in a column; the amount never wraps. Unlike Utrecht there is no compact \`aria-label\`: ARIA does not allow it on \`<data>\` (role generic), and screen readers read the visible amount well when the page has the right \`lang\`: put \`lang="nl"\` on the page or an ancestor for the default \`nl-NL\` text. With another \`locale\` the components set \`lang\` on the \`<data>\` to the locale's language (\`locale="en-US"\` gives \`lang="en"\`), so the text is not read as Dutch.
+
+A string \`amount\` must be a plain number with a dot for decimals (\`"1234.5"\`, \`"-85"\`); Dutch notation such as \`"1.234,50"\` is not converted. When the amount is not a number, or the currency or locale is invalid (\`"EURO"\`, \`"nl_NL"\`), the components do not throw: they show the input as plain text ("EURO 85") and add no modifier.`;
 
 const usageAngular = `### Angular
 
@@ -46,6 +48,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
 <data class="utrecht-currency-data utrecht-currency-data--positive" value="EUR 1234.5">€&nbsp;1.234,50</data>
+<data class="utrecht-currency-data utrecht-currency-data--negative" value="USD -3" lang="en">&#x2212;$3.00</data>
 \`\`\``;
 
 export const description = `${intro}
@@ -90,14 +93,14 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<p class="utrecht-paragraph">Te betalen: <data class="utrecht-currency-data utrecht-currency-data--positive" value="EUR 1234.5">€&nbsp;1.234,50</data></p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Te betalen: <data class="utrecht-currency-data utrecht-currency-data--positive" value="EUR 1234.5">€&nbsp;1.234,50</data></p>`,
   },
   negative: {
     name: 'Negative amount',
-    html: `<p class="utrecht-paragraph">Terug te ontvangen: <data class="utrecht-currency-data utrecht-currency-data--negative" value="EUR -85">&#x2212;&nbsp;€&nbsp;85,00</data></p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Terug te ontvangen: <data class="utrecht-currency-data utrecht-currency-data--negative" value="EUR -85">&#x2212;&nbsp;€&nbsp;85,00</data></p>`,
   },
   zero: {
     name: 'Zero',
-    html: `<p class="utrecht-paragraph">Openstaand saldo: <data class="utrecht-currency-data" value="EUR 0">€&nbsp;0,00</data></p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Openstaand saldo: <data class="utrecht-currency-data" value="EUR 0">€&nbsp;0,00</data></p>`,
   },
 } satisfies Record<string, Example>;

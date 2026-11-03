@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
-    <>
+    <div lang="nl">
       <Paragraph>
         Maak het bedrag over naar <IbanData value="NL91ABNA0417164300" /> onder vermelding van uw aanslagnummer.
       </Paragraph>
@@ -31,6 +31,6 @@ export const AllPermutations: Story = {
       <Paragraph>
         <IbanData value="MU43BOMM0101123456789101000MUR" />
       </Paragraph>
-    </>
+    </div>
   ),
 };

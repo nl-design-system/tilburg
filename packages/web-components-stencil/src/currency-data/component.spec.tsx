@@ -29,5 +29,21 @@ describe('tilburg-wbc-currency-data', () => {
     expect((await render('amount="0"')).className).toBe('utrecht-currency-data');
     const data = await render('amount="-3" currency="USD" locale="en-US"');
     expect(data.textContent).toBe('−$3.00');
+    expect(data.getAttribute('lang')).toBe('en');
+  });
+
+  it('does not throw for an invalid currency or a Dutch-notation amount, and shows the input as text', async () => {
+    const data = await render('amount="85" currency="EURO"');
+    expect(data.className).toBe('utrecht-currency-data');
+    expect(data.textContent).toBe('EURO 85');
+    const dutch = await render('amount="1.234,50"');
+    expect(dutch.textContent).toBe('EUR 1.234,50');
+    expect(dutch.hasAttribute('value')).toBe(false);
+  });
+
+  it('shows no minus and no negative modifier for an amount that rounds to zero', async () => {
+    const data = await render('amount="-0.001"');
+    expect(data.className).toBe('utrecht-currency-data');
+    expect(data.textContent).toBe('€ 0,00');
   });
 });

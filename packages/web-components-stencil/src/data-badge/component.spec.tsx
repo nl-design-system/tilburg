@@ -25,6 +25,16 @@ describe('tilburg-wbc-data-badge', () => {
     expect(badge.hasAttribute('value')).toBe(false);
   });
 
+  it('falls back to a span when value and date-time are removed (props become null)', async () => {
+    const page = await render('<tilburg-wbc-data-badge value="1" date-time="2026-12-24">x</tilburg-wbc-data-badge>');
+    page.root!.removeAttribute('date-time');
+    await page.waitForChanges();
+    expect(page.root!.querySelector('.utrecht-data-badge')!.tagName).toBe('DATA');
+    page.root!.removeAttribute('value');
+    await page.waitForChanges();
+    expect(page.root!.querySelector('.utrecht-data-badge')!.tagName).toBe('SPAN');
+  });
+
   it('moves id from the host to the badge', async () => {
     const page = await render('<tilburg-wbc-data-badge id="b">x</tilburg-wbc-data-badge>');
     expect(page.root!.hasAttribute('id')).toBe(false);

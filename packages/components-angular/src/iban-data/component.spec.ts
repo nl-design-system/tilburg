@@ -24,5 +24,7 @@ describe('TilburgIbanData', () => {
     fixture.componentInstance.value = 'MU43BOMM0101123456789101000MUR';
     fixture.detectChanges();
     expect(data.textContent).toBe('MU43 BOMM 0101 1234 5678 9101 000M UR');
+    const groups = Array.from(data.querySelectorAll(':scope > span.tilburg-iban-data__group'), (s) => s.textContent);
+    expect(groups).toEqual(['MU43', 'BOMM', '0101', '1234', '5678', '9101', '000M', 'UR']);
   });
 });

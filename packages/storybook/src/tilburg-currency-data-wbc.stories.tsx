@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
-    <>
+    <div lang="nl">
       <p className="utrecht-paragraph">
         Te betalen: <TilburgWbcCurrencyData amount={1234.5} />
       </p>
@@ -38,6 +38,6 @@ export const AllPermutations: Story = {
       <p className="utrecht-paragraph">
         In dollars (en-US): <TilburgWbcCurrencyData amount={-3} currency="USD" locale="en-US" />
       </p>
-    </>
+    </div>
   ),
 };

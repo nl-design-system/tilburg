@@ -1,3 +1,4 @@
-/* utrecht-only component: styled by `@utrecht/component-library-css`, there
-   is no components-css folder. The host stays `display: inline` (the default),
-   like the inline element it wraps, so it can sit inside a sentence. */
+@import "../../../components-css/iban-data/index";
+
+/* The host stays `display: inline` (the default), like the inline element it
+   wraps, so it can sit inside a sentence. */

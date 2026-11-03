@@ -38,14 +38,14 @@ export class TilburgWbcDataBadge {
   }
 
   render() {
-    if (this.dateTime !== undefined) {
+    if (this.dateTime !== undefined && this.dateTime !== null) {
       return (
         <time {...this.inherited} class="utrecht-data-badge" dateTime={this.dateTime}>
           <slot />
         </time>
       );
     }
-    if (this.value !== undefined) {
+    if (this.value !== undefined && this.value !== null) {
       return (
         <data {...this.inherited} class="utrecht-data-badge" {...dataValue(this.value)}>
           <slot />

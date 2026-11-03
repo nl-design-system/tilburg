@@ -20,6 +20,7 @@ export const CurrencyData = forwardRef(
       <data
         ref={ref}
         value={formatted.value}
+        lang={formatted.lang}
         className={clsx(
           'utrecht-currency-data',
           formatted.amount < 0 && 'utrecht-currency-data--negative',

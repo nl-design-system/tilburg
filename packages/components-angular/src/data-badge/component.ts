@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgDataBadge {
   /** Renders a `<time datetime>` (date, time or duration). Wins over `value`. */
-  @Input() dateTime?: string;
+  @Input() dateTime?: string | null;
   /** Renders a `<data value>` with a machine-readable value. */
-  @Input() value?: string;
+  @Input() value?: string | null;
 }

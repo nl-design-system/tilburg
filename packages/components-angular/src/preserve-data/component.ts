@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 })
 export class TilburgPreserveData {
   /** Renders a `<data value>` around the text. */
-  @Input() value?: string;
+  @Input() value?: string | null;
   /** Renders a `<time datetime>` around the text; wins over `value`. */
-  @Input() dateTime?: string;
+  @Input() dateTime?: string | null;
 }

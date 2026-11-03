@@ -29,3 +29,8 @@ export const Wrapping: Story = {
   name: examples.wrapping.name,
   render: () => ({ template: examples.wrapping.html }),
 };
+
+export const WithoutList: Story = {
+  name: examples.div.name,
+  render: () => ({ template: examples.div.html }),
+};

@@ -30,4 +30,15 @@ describe('tilburg-wbc-preserve-data', () => {
     expect(el.hasAttribute('value')).toBe(false);
     expect(el.querySelector('bdi')).not.toBeNull();
   });
+
+  it('falls back to a bdi when date-time and value are removed (props become null)', async () => {
+    const page = await newSpecPage({
+      components: [TilburgWbcPreserveData],
+      html: '<tilburg-wbc-preserve-data date-time="2026-05-19" value="x">19 mei</tilburg-wbc-preserve-data>',
+    });
+    page.root!.removeAttribute('date-time');
+    page.root!.removeAttribute('value');
+    await page.waitForChanges();
+    expect(page.root!.querySelector('.utrecht-preserve-data')!.tagName).toBe('BDI');
+  });
 });

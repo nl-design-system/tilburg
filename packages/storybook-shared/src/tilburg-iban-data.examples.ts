@@ -6,7 +6,9 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fiban-data';
 
-const intro = `Shows a bank account number (IBAN) the way people read it over: in groups of four, never broken over two lines, with a slashed zero and tabular figures. The \`value\` attribute holds the normalized IBAN (no spaces or dashes, upper case) for software; \`translate="no"\` stops translation tools from changing it. The components normalize and format the IBAN for you, exactly like Utrecht's React \`IBANData\`: \`" nl91 abna-0417 1643 00 "\` becomes \`value="NL91ABNA0417164300"\` and the text "NL91 ABNA 0417 1643 00". They do not validate the IBAN.`;
+const intro = `Shows a bank account number (IBAN) the way people read it over: in groups of four, with a slashed zero and tabular figures. The \`value\` attribute holds the normalized IBAN (no spaces or dashes, upper case) for software; \`translate="no"\` stops translation tools from changing it. The components normalize and format the IBAN for you, exactly like Utrecht's React \`IBANData\`: \`" nl91 abna-0417 1643 00 "\` becomes \`value="NL91ABNA0417164300"\` and the text "NL91 ABNA 0417 1643 00". They do not validate the IBAN.
+
+Each group of four sits in a \`<span class="tilburg-iban-data__group">\` that never wraps, with a normal space between the groups, so a long IBAN (up to 34 characters) breaks between groups only and still fits a 320px screen (WCAG 1.4.10); screen readers read the same text as without the spans. Utrecht's own \`.utrecht-iban-data\` never wraps; \`components-css/iban-data\` lets it wrap when it contains these groups.`;
 
 const usageAngular = `### Angular
 
@@ -43,7 +45,11 @@ Attribute: \`value\`, as in Angular. \`id\` and \`title\` move from the host to 
 const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
-<data class="utrecht-iban-data" value="NL91ABNA0417164300" translate="no">NL91 ABNA 0417 1643 00</data>
+<data class="utrecht-iban-data" value="NL91ABNA0417164300" translate="no"
+  ><span class="tilburg-iban-data__group">NL91</span> <span class="tilburg-iban-data__group">ABNA</span>
+  <span class="tilburg-iban-data__group">0417</span> <span class="tilburg-iban-data__group">1643</span>
+  <span class="tilburg-iban-data__group">00</span></data
+>
 \`\`\``;
 
 export const description = `${intro}
@@ -88,10 +94,10 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<p class="utrecht-paragraph">Maak het bedrag over naar <data class="utrecht-iban-data" value="NL91ABNA0417164300" translate="no">NL91 ABNA 0417 1643 00</data> onder vermelding van uw aanslagnummer.</p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Maak het bedrag over naar <data class="utrecht-iban-data" value="NL91ABNA0417164300" translate="no"><span class="tilburg-iban-data__group">NL91</span> <span class="tilburg-iban-data__group">ABNA</span> <span class="tilburg-iban-data__group">0417</span> <span class="tilburg-iban-data__group">1643</span> <span class="tilburg-iban-data__group">00</span></data> onder vermelding van uw aanslagnummer.</p>`,
   },
   long: {
     name: 'Long IBAN (Mauritius, 30 characters)',
-    html: `<p class="utrecht-paragraph"><data class="utrecht-iban-data" value="MU43BOMM0101123456789101000MUR" translate="no">MU43 BOMM 0101 1234 5678 9101 000M UR</data></p>`,
+    html: `<p class="utrecht-paragraph" lang="nl"><data class="utrecht-iban-data" value="MU43BOMM0101123456789101000MUR" translate="no"><span class="tilburg-iban-data__group">MU43</span> <span class="tilburg-iban-data__group">BOMM</span> <span class="tilburg-iban-data__group">0101</span> <span class="tilburg-iban-data__group">1234</span> <span class="tilburg-iban-data__group">5678</span> <span class="tilburg-iban-data__group">9101</span> <span class="tilburg-iban-data__group">000M</span> <span class="tilburg-iban-data__group">UR</span></data></p>`,
   },
 } satisfies Record<string, Example>;

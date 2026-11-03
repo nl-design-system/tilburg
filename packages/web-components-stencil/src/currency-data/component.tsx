@@ -47,6 +47,7 @@ export class TilburgWbcCurrencyData {
           'utrecht-currency-data--positive': formatted.amount > 0,
         }}
         {...dataValue(formatted.value)}
+        lang={formatted.lang}
       >
         {formatted.text}
       </data>

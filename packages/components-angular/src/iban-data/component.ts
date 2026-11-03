@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { formatIban, normalizeIban } from '../utils/data-format';
+import { ibanGroups, normalizeIban } from '../utils/data-format';
 
 @Component({
   selector: 'tilburg-iban-data',
@@ -15,7 +15,7 @@ export class TilburgIbanData {
     return normalizeIban(this.value ?? '');
   }
 
-  get formatted(): string {
-    return formatIban(this.normalized);
+  get groups(): string[] {
+    return ibanGroups(this.normalized);
   }
 }

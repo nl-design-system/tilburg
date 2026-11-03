@@ -27,8 +27,18 @@ describe('CurrencyData', () => {
   it('adds no modifier for zero, and honours currency and locale', () => {
     const { container, rerender } = render(<CurrencyData amount={0} />);
     expect(container.firstElementChild!.className).toBe('utrecht-currency-data');
+    expect(container.firstElementChild).not.toHaveAttribute('lang');
     rerender(<CurrencyData amount={-3} currency="USD" locale="en-US" />);
     expect(container.firstElementChild!.textContent).toBe('−$3.00');
+    expect(container.firstElementChild).toHaveAttribute('lang', 'en');
+  });
+
+  it('does not throw for an invalid currency or locale, and shows the input as text', () => {
+    const { container, rerender } = render(<CurrencyData amount={85} currency="EURO" />);
+    expect(container.firstElementChild!.textContent).toBe('EURO 85');
+    expect(container.firstElementChild!.className).toBe('utrecht-currency-data');
+    rerender(<CurrencyData amount={85} locale="nl_NL" />);
+    expect(container.firstElementChild!.textContent).toBe('EUR 85');
   });
 });
 
@@ -45,8 +55,33 @@ describe('currency formatting (utils/data-format)', () => {
     expect(formatCurrency(1, 'USD', 'en-US').text).toBe('$1.00');
   });
 
-  it('renders a minus sign for negative zero', () => {
-    expect(formatCurrency(-0, 'USD', 'en-US').text).toBe('−$0.00');
+  it('shows no minus and no negative amount for zero or an amount that rounds to zero', () => {
+    expect(formatCurrency(-0, 'USD', 'en-US').text).toBe('$0.00');
+    expect(formatCurrency(-0.001, 'EUR', 'nl-NL')).toMatchObject({ text: '€ 0,00', amount: -0 });
+    expect(formatCurrency(-0.001, 'EUR', 'nl-NL').amount < 0).toBe(false);
+    expect(formatCurrency(-85, 'EUR', 'nl-NL').text).toBe('− € 85,00');
+  });
+
+  it('parses strings strictly and falls back to the input text', () => {
+    expect(formatCurrency('1234.5', 'EUR', 'nl-NL')).toMatchObject({ value: 'EUR 1234.5', text: '€ 1.234,50' });
+    expect(formatCurrency(' 85 ', 'EUR', 'nl-NL').value).toBe('EUR 85');
+    for (const amount of ['1.234,50', '1,5', '85abc', '', 'NaN']) {
+      expect(formatCurrency(amount, 'EUR', 'nl-NL')).toEqual({ amount: 0, text: `EUR ${amount}` });
+    }
+    expect(formatCurrency(Infinity, 'EUR', 'nl-NL')).toEqual({ amount: 0, text: 'EUR Infinity' });
+    expect(formatCurrency(85, '', 'nl-NL')).toEqual({ amount: 0, value: ' 85', text: ' 85' });
+    expect(formatCurrency(85, 'EUR', '').text).toBe('EUR 85');
+  });
+
+  it('puts the minus before the currency for every Dutch locale', () => {
+    expect(formatCurrency(-85, 'EUR', 'nl-BE').text).toBe('− € 85,00');
+    expect(formatCurrency(-85, 'EUR', 'nl-nl').text).toBe('− € 85,00');
+  });
+
+  it('gives the language of a non-default locale', () => {
+    expect(formatCurrency(1, 'EUR', 'nl-NL').lang).toBeUndefined();
+    expect(formatCurrency(1, 'USD', 'en-US').lang).toBe('en');
+    expect(formatCurrency(1, 'EUR', 'de-DE').lang).toBe('de');
   });
 });
 

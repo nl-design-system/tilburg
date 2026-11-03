@@ -22,7 +22,7 @@ export class TilburgWbcPreserveData {
   @Prop() dateTime?: string;
 
   render() {
-    if (this.dateTime !== undefined)
+    if (this.dateTime !== undefined && this.dateTime !== null)
       return (
         <time class="utrecht-preserve-data" dateTime={this.dateTime}>
           <bdi {...noTranslate}>
@@ -30,7 +30,7 @@ export class TilburgWbcPreserveData {
           </bdi>
         </time>
       );
-    if (this.value !== undefined)
+    if (this.value !== undefined && this.value !== null)
       return (
         <data class="utrecht-preserve-data" {...dataValue(this.value)}>
           <bdi {...noTranslate}>

@@ -1,1 +1,4 @@
-<data class="utrecht-iban-data" [attr.value]="normalized" translate="no">{{ formatted }}</data>
+<data class="utrecht-iban-data" [attr.value]="normalized" translate="no"
+  >@for (group of groups; track $index) {<ng-container>{{ $first ? '' : ' ' }}</ng-container
+  ><span class="tilburg-iban-data__group">{{ group }}</span>}</data
+>

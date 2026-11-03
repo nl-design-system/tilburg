@@ -21,9 +21,11 @@ type Story = StoryObj<TilburgDatetimeValue>;
 export const AllPermutations: Story = {
   render: () => ({
     template: `
-      <tilburg-paragraph>Uw afspraak is op <tilburg-datetime-value dateTime="2026-11-02T09:30">2 november 2026 om 09:30</tilburg-datetime-value>.</tilburg-paragraph>
-      <tilburg-paragraph>Ingediend op <tilburg-datetime-value dateTime="2026-10-12">12 oktober 2026</tilburg-datetime-value></tilburg-paragraph>
-      <tilburg-paragraph>Het Stadswinkel-loket sluit om <tilburg-datetime-value dateTime="17:00">17:00 uur</tilburg-datetime-value>.</tilburg-paragraph>
+      <div lang="nl">
+        <tilburg-paragraph>Uw afspraak is op <tilburg-datetime-value dateTime="2026-11-02T09:30">2 november 2026 om 09:30</tilburg-datetime-value>.</tilburg-paragraph>
+        <tilburg-paragraph>Ingediend op <tilburg-datetime-value dateTime="2026-10-12">12 oktober 2026</tilburg-datetime-value></tilburg-paragraph>
+        <tilburg-paragraph>Het Stadswinkel-loket sluit om <tilburg-datetime-value dateTime="17:00">17:00 uur</tilburg-datetime-value>.</tilburg-paragraph>
+      </div>
     `,
   }),
 };

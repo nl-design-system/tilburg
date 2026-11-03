@@ -8,8 +8,8 @@ import { TilburgDataBadge } from './component';
   standalone: false,
 })
 class HostComponent {
-  dateTime?: string;
-  value?: string;
+  dateTime?: string | null;
+  value?: string | null;
 }
 
 describe('TilburgDataBadge', () => {
@@ -32,6 +32,10 @@ describe('TilburgDataBadge', () => {
     expect(badge.tagName).toBe('DATA');
     expect(badge.getAttribute('value')).toBe('259');
     expect(badge.textContent).toBe('Inhoud');
+  });
+
+  it('renders a span when value and dateTime are null', () => {
+    expect(setup({ dateTime: null, value: null }).tagName).toBe('SPAN');
   });
 
   it('renders <time datetime> for a dateTime, which wins over value', () => {

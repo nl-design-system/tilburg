@@ -88,14 +88,14 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Date and time',
-    html: `<p class="utrecht-paragraph">Uw afspraak is op <time class="utrecht-value-datetime" datetime="2026-11-02T09:30">2 november 2026 om 09:30</time>.</p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Uw afspraak is op <time class="utrecht-value-datetime" datetime="2026-11-02T09:30">2 november 2026 om 09:30</time>.</p>`,
   },
   date: {
     name: 'Date',
-    html: `<p class="utrecht-paragraph">Ingediend op <time class="utrecht-value-datetime" datetime="2026-10-12">12 oktober 2026</time></p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Ingediend op <time class="utrecht-value-datetime" datetime="2026-10-12">12 oktober 2026</time></p>`,
   },
   time: {
     name: 'Time',
-    html: `<p class="utrecht-paragraph">Het Stadswinkel-loket sluit om <time class="utrecht-value-datetime" datetime="17:00">17:00 uur</time>.</p>`,
+    html: `<p class="utrecht-paragraph" lang="nl">Het Stadswinkel-loket sluit om <time class="utrecht-value-datetime" datetime="17:00">17:00 uur</time>.</p>`,
   },
 } satisfies Record<string, Example>;

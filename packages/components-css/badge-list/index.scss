@@ -1,0 +1,8 @@
+/* Badge list as a list: Utrecht styles `.utrecht-badge-list` for a `<div>` only,
+   so a `<ul>`/`<ol>` keeps its bullets and 40px indent. Pair with `role="list"`:
+   Safari drops the list role when the markers are gone. */
+:is(ul, ol).utrecht-badge-list {
+  list-style: none;
+  margin-block: 0;
+  padding-inline-start: 0;
+}

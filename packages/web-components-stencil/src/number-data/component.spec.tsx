@@ -18,4 +18,11 @@ describe('tilburg-wbc-number-data', () => {
     expect(data.classList.contains('utrecht-number-data--negative')).toBe(true);
     expect(data.hasAttribute('value')).toBe(false);
   });
+
+  it('drops value when the attribute is removed (prop becomes null)', async () => {
+    const page = await render('<tilburg-wbc-number-data value="1">1</tilburg-wbc-number-data>');
+    page.root!.removeAttribute('value');
+    await page.waitForChanges();
+    expect(page.root!.querySelector('data')!.hasAttribute('value')).toBe(false);
+  });
 });

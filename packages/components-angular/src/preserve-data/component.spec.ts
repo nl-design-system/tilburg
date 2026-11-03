@@ -8,8 +8,8 @@ import { TilburgPreserveData } from './component';
   standalone: false,
 })
 class HostComponent {
-  value?: string;
-  dateTime?: string;
+  value?: string | null;
+  dateTime?: string | null;
   text = 'J.  de  Vries';
 }
 
@@ -36,6 +36,10 @@ describe('TilburgPreserveData', () => {
     expect(el.getAttribute('value')).toBe('5038 AB');
     expect(el.querySelector('bdi')!.getAttribute('translate')).toBe('no');
     expect(el.querySelector('bdi')!.textContent).toBe('J.  de  Vries');
+  });
+
+  it('renders a bdi when value and dateTime are null', () => {
+    expect(render({ value: null, dateTime: null }).tagName).toBe('BDI');
   });
 
   it('renders a time element when dateTime is set, also with a value', () => {

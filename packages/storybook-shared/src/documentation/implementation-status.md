@@ -30,7 +30,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Article                | utrecht  | ✅    | ✅      | ✅             |
 | Backdrop               | utrecht  | ✅    | ✅      | ✅             |
 | Badge Counter          | ✅       | —     | —       | —              |
-| Badge List             | utrecht  | ✅    | ✅      | ✅             |
+| Badge List             | ✅       | ✅    | ✅      | ✅             |
 | Badge Status           | ✅       | ✅    | ✅      | ✅             |
 | Blockquote             | utrecht  | ✅    | ✅      | ✅             |
 | Breadcrumb             | ✅       | ✅    | ✅      | ✅             |
@@ -63,7 +63,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Heading                | ✅       | ✅    | ✅      | ✅             |
 | Heading Group          | utrecht  | ✅    | ✅      | ✅             |
 | HTML Content           | ✅       | ✅    | ✅      | ✅             |
-| IBAN Data              | utrecht  | ✅    | ✅      | ✅             |
+| IBAN Data              | ✅       | ✅    | ✅      | ✅             |
 | Icon                   | utrecht  | ✅    | ✅      | ✅             |
 | Image                  | utrecht  | ✅    | ✅      | ✅             |
 | Index Char Nav         | ✅       | ✅    | ✅      | ✅             |

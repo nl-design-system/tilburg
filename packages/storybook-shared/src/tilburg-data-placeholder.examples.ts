@@ -6,7 +6,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fdata-placeholder';
 
-const intro = `Grey bar shown in place of short data (a name, an address, an amount) while it is still loading: \`<span class="utrecht-data-placeholder">\`. Only for short, single-line text. The placeholder itself is empty, so tell assistive technology what is going on: mark the region that is loading with \`aria-busy="true"\` and remove it once the data is there. \`loading\` adds \`utrecht-data-placeholder--loading\`, which shows the busy cursor. Colour: \`--utrecht-data-placeholder-background-color\` (Tilburg \`--tilburg-color-gray-400\`, 6.2:1 against white, so the bar meets the 3:1 contrast for non-text UI).`;
+const intro = `Grey bar shown in place of short data (a name, an address, an amount) while it is still loading: \`<span class="utrecht-data-placeholder">\`. Only for short, single-line text. The placeholder itself is empty, so tell assistive technology what is going on: mark the region that is loading with \`aria-busy="true"\` and remove it once the data is there. \`loading\` adds \`utrecht-data-placeholder--loading\`, which shows the busy cursor (\`--utrecht-action-busy-cursor\`, Tilburg \`progress\`). Colour: \`--utrecht-data-placeholder-background-color\` (Tilburg \`--tilburg-color-gray-400\`, 6.2:1 against white, so the bar meets the 3:1 contrast for non-text UI).`;
 
 const usageAngular = `### Angular
 

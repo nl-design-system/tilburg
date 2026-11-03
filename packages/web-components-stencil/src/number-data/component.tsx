@@ -47,7 +47,7 @@ export class TilburgWbcNumberData {
           'utrecht-number-data': true,
           [`utrecht-number-data--${this.variant}`]: Boolean(this.variant),
         }}
-        {...dataValue(this.value === undefined ? undefined : String(this.value))}
+        {...dataValue(this.value?.toString())}
       >
         <slot />
       </data>

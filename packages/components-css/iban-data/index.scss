@@ -1,0 +1,12 @@
+/* IBAN data: Utrecht's `.utrecht-iban-data` never wraps (`white-space: nowrap`),
+   so a 30-character IBAN overflows a 320px screen (WCAG 1.4.10). Each group of
+   four is a `nowrap` span and the root may wrap, so the IBAN breaks between
+   groups only. `:has()` limits this to the grouped markup and outranks
+   Utrecht's rule whatever the stylesheet order. */
+.utrecht-iban-data:has(> .tilburg-iban-data__group) {
+  white-space: normal;
+}
+
+.tilburg-iban-data__group {
+  white-space: nowrap;
+}

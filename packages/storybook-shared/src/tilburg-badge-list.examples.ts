@@ -6,7 +6,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Fbadge-list';
 
-const intro = `Wrapping row of badges with even spacing between them. The gaps come from \`--utrecht-badge-list-column-gap\` and \`--utrecht-badge-list-row-gap\`, which the Tilburg theme sets to \`--tilburg-space-column-snail\` / \`--tilburg-space-row-snail\`. It is a plain \`<div>\` without a role; use a list (\`<ul>\`) instead when the number of items matters to the reader.`;
+const intro = `Wrapping row of badges with even spacing between them. The gaps come from \`--utrecht-badge-list-column-gap\` and \`--utrecht-badge-list-row-gap\`, which the Tilburg theme sets to \`--tilburg-space-column-snail\` / \`--tilburg-space-row-snail\`. Make it a list, so screen readers announce the badges as separate items and how many there are: \`<ul class="utrecht-badge-list" role="list">\` with each badge in an \`<li>\`. \`components-css/badge-list\` removes the bullets, margin and padding of the list (Utrecht only styles the \`<div>\`); \`role="list"\` keeps the list role in Safari, which drops it when the bullets are gone. Without a list the badges run together into one phrase. The React, Angular and Web Components wrappers render the \`<div>\` variant.`;
 
 const usageAngular = `### Angular
 
@@ -48,6 +48,25 @@ const usageWebComponents = `### Web Components (Stencil)
 No attributes; \`id\` and \`title\` move from the host to the inner \`<div>\`. The default slot holds the badges.`;
 
 const usagePlainHtml = `### Plain HTML / CSS
+
+\`\`\`html
+<ul class="utrecht-badge-list" role="list">
+  <li><span class="utrecht-data-badge">Parkeren</span></li>
+  <li><span class="utrecht-data-badge">Afval</span></li>
+</ul>
+\`\`\`
+
+Needs this CSS (in \`components-css/badge-list\`) on top of Utrecht:
+
+\`\`\`css
+:is(ul, ol).utrecht-badge-list {
+  list-style: none;
+  margin-block: 0;
+  padding-inline-start: 0;
+}
+\`\`\`
+
+Without a list, as the wrappers render it:
 
 \`\`\`html
 <div class="utrecht-badge-list">
@@ -98,23 +117,30 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<div class="utrecht-badge-list">
-  <span class="utrecht-data-badge">Parkeren</span>
-  <span class="utrecht-data-badge">Afval</span>
-  <span class="utrecht-data-badge">Paspoort en ID-kaart</span>
-  <span class="utrecht-data-badge">Verhuizen</span>
-</div>`,
+    html: `<ul class="utrecht-badge-list" role="list">
+  <li><span class="utrecht-data-badge">Parkeren</span></li>
+  <li><span class="utrecht-data-badge">Afval</span></li>
+  <li><span class="utrecht-data-badge">Paspoort en ID-kaart</span></li>
+  <li><span class="utrecht-data-badge">Verhuizen</span></li>
+</ul>`,
   },
   wrapping: {
     name: 'Wrapping',
     html: `<div style="max-inline-size:16rem">
-  <div class="utrecht-badge-list">
-    <span class="utrecht-data-badge">Bouwen en verbouwen</span>
-    <span class="utrecht-data-badge">Subsidies</span>
-    <span class="utrecht-data-badge">Evenementen</span>
-    <span class="utrecht-data-badge">Werk en inkomen</span>
-    <span class="utrecht-data-badge">Zorg</span>
-  </div>
+  <ul class="utrecht-badge-list" role="list">
+    <li><span class="utrecht-data-badge">Bouwen en verbouwen</span></li>
+    <li><span class="utrecht-data-badge">Subsidies</span></li>
+    <li><span class="utrecht-data-badge">Evenementen</span></li>
+    <li><span class="utrecht-data-badge">Werk en inkomen</span></li>
+    <li><span class="utrecht-data-badge">Zorg</span></li>
+  </ul>
+</div>`,
+  },
+  div: {
+    name: 'Without list',
+    html: `<div class="utrecht-badge-list">
+  <span class="utrecht-data-badge">Parkeren</span>
+  <span class="utrecht-data-badge">Afval</span>
 </div>`,
   },
 } satisfies Record<string, Example>;

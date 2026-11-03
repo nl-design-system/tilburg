@@ -16,5 +16,10 @@ describe('tilburg-wbc-iban-data', () => {
     page.root!.setAttribute('value', 'MU43BOMM0101123456789101000MUR');
     await page.waitForChanges();
     expect(page.root!.querySelector('data')!.textContent).toBe('MU43 BOMM 0101 1234 5678 9101 000M UR');
+    const groups = Array.from(
+      page.root!.querySelectorAll('data > span.tilburg-iban-data__group'),
+      (s) => s.textContent,
+    );
+    expect(groups).toEqual(['MU43', 'BOMM', '0101', '1234', '5678', '9101', '000M', 'UR']);
   });
 });

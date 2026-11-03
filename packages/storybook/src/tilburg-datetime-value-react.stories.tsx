@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
-    <>
+    <div lang="nl">
       <Paragraph>
         Uw afspraak is op <DatetimeValue dateTime="2026-11-02T09:30">2 november 2026 om 09:30</DatetimeValue>.
       </Paragraph>
@@ -30,6 +30,6 @@ export const AllPermutations: Story = {
       <Paragraph>
         Het Stadswinkel-loket sluit om <DatetimeValue dateTime="17:00">17:00 uur</DatetimeValue>.
       </Paragraph>
-    </>
+    </div>
   ),
 };

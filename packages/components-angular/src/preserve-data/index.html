@@ -1,10 +1,10 @@
 <!-- One <ng-content> only: Angular projects content once, so the branches share this template. -->
 <ng-template #content><ng-content></ng-content></ng-template>
-@if (dateTime !== undefined) {
+@if (dateTime != null) {
 <time class="utrecht-preserve-data" [attr.datetime]="dateTime"
   ><bdi translate="no"><ng-container *ngTemplateOutlet="content"></ng-container></bdi
 ></time>
-} @else if (value !== undefined) {
+} @else if (value != null) {
 <data class="utrecht-preserve-data" [attr.value]="value"
   ><bdi translate="no"><ng-container *ngTemplateOutlet="content"></ng-container></bdi
 ></data>

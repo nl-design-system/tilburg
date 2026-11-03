@@ -4,7 +4,7 @@
  */
 
 import { Component, Element, h, Prop, State } from '@stencil/core';
-import { formatIban, normalizeIban } from '../utils/data-format';
+import { ibanGroups, normalizeIban } from '../utils/data-format';
 import { dataValue } from '../utils/data-value';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { noTranslate } from '../utils/no-translate';
@@ -38,7 +38,10 @@ export class TilburgWbcIbanData {
     const normalized = normalizeIban(this.value ?? '');
     return (
       <data {...this.inherited} class="utrecht-iban-data" {...dataValue(normalized)} {...noTranslate}>
-        {formatIban(normalized)}
+        {ibanGroups(normalized).map((group, index) => [
+          index > 0 && ' ',
+          <span class="tilburg-iban-data__group">{group}</span>,
+        ])}
       </data>
     );
   }

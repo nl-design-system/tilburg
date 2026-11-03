@@ -41,5 +41,22 @@ describe('TilburgCurrencyData', () => {
     TestBed.resetTestingModule();
     const data = setup({ amount: -3, currency: 'USD', locale: 'en-US' });
     expect(data.textContent).toBe('−$3.00');
+    expect(data.getAttribute('lang')).toBe('en');
+  });
+
+  it('does not throw for an invalid locale or a Dutch-notation amount, and shows the input as text', () => {
+    const data = setup({ amount: 85, locale: 'nl_NL' });
+    expect(data.className).toBe('utrecht-currency-data');
+    expect(data.textContent).toBe('EUR 85');
+    TestBed.resetTestingModule();
+    const dutch = setup({ amount: '1.234,50' });
+    expect(dutch.textContent).toBe('EUR 1.234,50');
+    expect(dutch.hasAttribute('value')).toBe(false);
+  });
+
+  it('shows no minus and no negative modifier for an amount that rounds to zero', () => {
+    const data = setup({ amount: -0.001 });
+    expect(data.className).toBe('utrecht-currency-data');
+    expect(data.textContent).toBe('€ 0,00');
   });
 });
