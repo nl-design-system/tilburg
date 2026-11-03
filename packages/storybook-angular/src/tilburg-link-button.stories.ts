@@ -39,7 +39,7 @@ export const Pressed: Story = {
     props: { open: false },
     template: `
       <tilburg-link-button [inline]="true" [pressed]="open" (click)="open = !open">
-        {{ open ? 'Verberg details' : 'Toon details' }}
+        Details tonen
       </tilburg-link-button>
     `,
   }),

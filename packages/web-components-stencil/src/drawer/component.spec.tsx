@@ -4,8 +4,13 @@ import { TilburgWbcDrawer } from './component';
 const render = (html: string) => newSpecPage({ components: [TilburgWbcDrawer], html });
 
 /* The spec DOM lays nothing out: the dialog's box is 0×0 at the origin, so any positive point is "outside" it. */
-const click = (target: Element, offset: number) =>
-  target.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: offset, clientY: offset }));
+const pointer = (type: string, target: Element, offset: number) =>
+  target.dispatchEvent(new MouseEvent(type, { bubbles: true, clientX: offset, clientY: offset }));
+/* A real click: pointerdown, then click, both at the same point. */
+const click = (target: Element, offset: number) => {
+  pointer('pointerdown', target, offset);
+  pointer('click', target, offset);
+};
 
 describe('tilburg-wbc-drawer', () => {
   it('renders the HTML/CSS reference markup and moves the accessible name onto the dialog', async () => {
@@ -50,5 +55,14 @@ describe('tilburg-wbc-drawer', () => {
     const locked = await render('<tilburg-wbc-drawer open close-on-backdrop-click="false">x</tilburg-wbc-drawer>');
     click(locked.root!.querySelector('dialog')!, 500);
     expect(locked.root!.querySelector('dialog')!.hasAttribute('open')).toBe(true);
+  });
+
+  it('stays open when a text selection starts in the drawer and ends on the backdrop', async () => {
+    const page = await render('<tilburg-wbc-drawer open><p>Inhoud</p></tilburg-wbc-drawer>');
+    const dialog = page.root!.querySelector('dialog')!;
+    pointer('pointerdown', dialog.querySelector('p')!, 500);
+    pointer('click', dialog, 500);
+    await page.waitForChanges();
+    expect(dialog.hasAttribute('open')).toBe(true);
   });
 });

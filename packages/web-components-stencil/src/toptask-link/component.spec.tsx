@@ -1,3 +1,4 @@
+/* global globalThis -- the spec swaps the MutationObserver the component reads as a global. */
 import { newSpecPage } from '@stencil/core/testing';
 import { TilburgWbcToptaskLink } from './component';
 
@@ -27,5 +28,34 @@ describe('tilburg-wbc-toptask-link', () => {
     );
     expect(page.root!.hasAttribute('aria-describedby')).toBe(false);
     expect(page.root!.querySelector('a')!.getAttribute('aria-describedby')).toBe('hint');
+  });
+});
+
+describe('tilburg-wbc-toptask-link icon added later', () => {
+  const original = globalThis.MutationObserver;
+  let notify: () => void = () => {};
+  beforeEach(() => {
+    globalThis.MutationObserver = class {
+      constructor(callback: () => void) {
+        notify = callback;
+      }
+      observe() {}
+      disconnect() {}
+    } as unknown as typeof MutationObserver;
+  });
+  afterEach(() => {
+    globalThis.MutationObserver = original;
+  });
+
+  it('renders the icon slot inside the <a> when an icon is added after the first render', async () => {
+    const page = await render('<tilburg-wbc-toptask-link href="/afval">Afval</tilburg-wbc-toptask-link>');
+    const svg = page.doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('slot', 'icon');
+    page.root!.appendChild(svg);
+    notify();
+    await page.waitForChanges();
+    const a = page.root!.querySelector('a')!;
+    expect(a.querySelector('.utrecht-toptask-link__icon svg')).not.toBeNull();
+    expect(page.root!.querySelector('.utrecht-toptask-link__title')!.textContent).toBe('Afval');
   });
 });

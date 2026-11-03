@@ -36,8 +36,13 @@ class HostComponent {
 }
 
 /* jsdom lays nothing out: the dialog's box is 0×0 at the origin, so any positive point is "outside" it. */
-const click = (target: Element, offset: number) =>
-  target.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: offset, clientY: offset }));
+const pointer = (type: string, target: Element, offset: number) =>
+  target.dispatchEvent(new MouseEvent(type, { bubbles: true, clientX: offset, clientY: offset }));
+/* A real click: pointerdown, then click, both at the same point. */
+const click = (target: Element, offset: number) => {
+  pointer('pointerdown', target, offset);
+  pointer('click', target, offset);
+};
 
 describe('TilburgDrawer', () => {
   let fixture: ComponentFixture<HostComponent>;
@@ -91,6 +96,14 @@ describe('TilburgDrawer', () => {
     host.open = true;
     fixture.detectChanges();
     click(dialog(), 500);
+    expect(dialog().hasAttribute('open')).toBe(true);
+  });
+
+  it('stays open when a text selection starts in the drawer and ends on the backdrop', () => {
+    host.open = true;
+    fixture.detectChanges();
+    pointer('pointerdown', dialog().querySelector('h2')!, 500);
+    pointer('click', dialog(), 500);
     expect(dialog().hasAttribute('open')).toBe(true);
   });
 });

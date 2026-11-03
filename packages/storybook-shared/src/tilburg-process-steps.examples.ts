@@ -106,7 +106,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 </ol>
 \`\`\`
 
-Each step except the last gets a connector line in its body: \`--main-to-main\`, or \`--main-to-nested\` when it has sub-steps. A sub-step's connector is \`--nested-to-nested\`, or \`--nested-to-main\` for the last sub-step when another step follows. The line is \`--not-checked\` (dashed) when the step it leads to is not checked yet, otherwise it takes the status of the step it starts from (solid).`;
+Each step that is followed by another step or has sub-steps gets a connector line in its body: \`--main-to-main\`, or \`--main-to-nested\` when it has sub-steps (also on the last step). A sub-step's connector is \`--nested-to-nested\`, or \`--nested-to-main\` for the last sub-step when another step follows. The line is \`--not-checked\` (dashed) when the step it leads to is not checked yet, otherwise it takes the status of the step it starts from (solid).`;
 
 export const description = `${intro}
 
@@ -180,9 +180,9 @@ const processStepsHtml = (steps: Step[]): string => {
     const next = steps[index + 1];
     const subSteps = step.steps ?? [];
     const body = [
-      next &&
+      (next || subSteps.length > 0) &&
         connector(
-          line(status, subSteps[0]?.status ?? next.status ?? 'not-checked'),
+          line(status, subSteps.length ? (subSteps[0].status ?? 'not-checked') : (next?.status ?? 'not-checked')),
           'main',
           subSteps.length ? 'nested' : 'main',
         ),

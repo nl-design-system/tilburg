@@ -2,6 +2,19 @@
    `--utrecht-index-char-nav-*` theme tokens; the characters are Tilburg button links (components-css/button-link).
    Forced colours drop the fill that marks the current character, so give it the system highlight instead (the
    same pattern as the language toggle). */
+
+/* The current character is a primary-action button link, but a theme may style primary and secondary the same
+   (BAT: both white with a red border), which hid the current character. Give it its own fill, independent of
+   the theme's primary button. */
+.utrecht-index-char-nav__link--current {
+  --utrecht-button-primary-action-background-color: var(--tilburg-interaction-color);
+  --utrecht-button-primary-action-border-color: var(--tilburg-interaction-color);
+  --utrecht-button-primary-action-color: var(--tilburg-color-white);
+  --utrecht-button-primary-action-hover-background-color: var(--tilburg-interaction-hover-color);
+  --utrecht-button-primary-action-hover-border-color: var(--tilburg-interaction-hover-color);
+  --utrecht-button-primary-action-hover-color: var(--tilburg-color-white);
+}
+
 @media (forced-colors: active) {
   .utrecht-index-char-nav__link--current {
     background-color: Highlight;

@@ -16,7 +16,7 @@ describe('LinkButton', () => {
   it('maps inline, pressed and disabled', () => {
     render(
       <LinkButton inline pressed disabled type="submit">
-        Verberg details
+        Details tonen
       </LinkButton>,
     );
     const button = screen.getByRole('button');
@@ -31,7 +31,7 @@ describe('LinkButton', () => {
   });
 
   it('renders aria-pressed="false" for pressed={false}', () => {
-    render(<LinkButton pressed={false}>Toon details</LinkButton>);
+    render(<LinkButton pressed={false}>Details tonen</LinkButton>);
     const button = screen.getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'false');
     expect(button).not.toHaveClass('utrecht-link-button--pressed');

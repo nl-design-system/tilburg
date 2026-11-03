@@ -18,6 +18,11 @@ beforeAll(() => {
 const getDialog = (container: HTMLElement) => container.querySelector('dialog') as HTMLDialogElement;
 /* jsdom lays nothing out: the dialog's box is 0×0 at the origin, so any positive point is "outside" it. */
 const backdropClick = { clientX: 500, clientY: 10 };
+/* A real click: pointerdown, then click, both at the same point. */
+const press = (target: Element, point: { clientX: number; clientY: number }) => {
+  target.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, ...point }));
+  fireEvent.click(target, point);
+};
 
 describe('Drawer', () => {
   it('renders the HTML/CSS reference markup', () => {
@@ -64,10 +69,10 @@ describe('Drawer', () => {
       </Drawer>,
     );
     const dialog = getDialog(container);
-    fireEvent.click(dialog.querySelector('p')!, backdropClick);
-    fireEvent.click(dialog, { clientX: 0, clientY: 0 });
+    press(dialog.querySelector('p')!, backdropClick);
+    press(dialog, { clientX: 0, clientY: 0 });
     expect(dialog).toHaveAttribute('open');
-    fireEvent.click(dialog, backdropClick);
+    press(dialog, backdropClick);
     expect(dialog).not.toHaveAttribute('open');
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -78,8 +83,20 @@ describe('Drawer', () => {
         x
       </Drawer>,
     );
-    fireEvent.click(getDialog(container), backdropClick);
+    press(getDialog(container), backdropClick);
     expect(getDialog(container)).toHaveAttribute('open');
+  });
+
+  it('stays open when a text selection starts in the drawer and ends on the backdrop', () => {
+    const { container } = render(
+      <Drawer open>
+        <p>Inhoud</p>
+      </Drawer>,
+    );
+    const dialog = getDialog(container);
+    dialog.querySelector('p')!.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, ...backdropClick }));
+    fireEvent.click(dialog, backdropClick);
+    expect(dialog).toHaveAttribute('open');
   });
 
   it('forwards the ref to the <dialog>', () => {

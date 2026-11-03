@@ -10,6 +10,8 @@ export type TilburgActionGroupDirection = 'row' | 'column' | 'column-stretch';
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   encapsulation: ViewEncapsulation.None,
+  // A static `role="…"` on the tag is also written onto the host; drop it so only the inner <p> has the role.
+  host: { '[attr.role]': 'null' },
   standalone: false,
 })
 export class TilburgActionGroup {

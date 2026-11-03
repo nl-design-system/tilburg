@@ -6,13 +6,13 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Flink-button';
 
-const intro = `A \`<button>\` that looks like a link (Tilburg link colours, underline and typography). Use it in forms and applications where a button belongs but the action reads as navigation, for example "Vorige stap" in a multi-step form that saves the current step. On ordinary information pages use a Link; for a link that looks like a button use Button Link. \`inline\` removes the button padding and minimum size so it flows inside running text. \`pressed\` makes it a toggle (\`aria-pressed\`).`;
+const intro = `A \`<button>\` that looks like a link (Tilburg link colours, underline and typography). Use it in forms and applications where a button belongs but the action reads as navigation, for example "Vorige stap" in a multi-step form that saves the current step. On ordinary information pages use a Link; for a link that looks like a button use Button Link. \`inline\` removes the button padding and minimum size so it flows inside running text. \`pressed\` makes it a toggle (\`aria-pressed\`): keep the label the same in both states, \`aria-pressed\` tells whether it is on.`;
 
 const usageAngular = `### Angular
 
 \`\`\`html
 <tilburg-link-button (click)="vorigeStap()">Vorige stap</tilburg-link-button>
-<tilburg-link-button [inline]="true" [pressed]="toonDetails" (click)="toonDetails = !toonDetails">Toon details</tilburg-link-button>
+<tilburg-link-button [inline]="true" [pressed]="detailsTonen" (click)="detailsTonen = !detailsTonen">Details tonen</tilburg-link-button>
 \`\`\`
 
 Inputs: \`type\` (default \`'button'\`), \`disabled\` (default \`false\`), \`inline\` (default \`false\`), \`pressed\` (\`boolean | undefined\`; when set it renders \`aria-pressed\`), \`ariaLabel\`, \`ariaDescribedBy\`. The native \`click\` of the inner \`<button>\` bubbles through the host.`;
@@ -33,7 +33,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
 <tilburg-wbc-link-button>Vorige stap</tilburg-wbc-link-button>
-<tilburg-wbc-link-button inline pressed="false">Toon details</tilburg-wbc-link-button>
+<tilburg-wbc-link-button inline pressed="false">Details tonen</tilburg-wbc-link-button>
 \`\`\`
 
 Attributes: \`type\` (default \`'button'\`), \`disabled\`, \`inline\`, \`pressed\` (\`true\` / \`false\`; leave it off for a plain button), and \`aria-label\` / \`aria-describedby\` / \`title\` / \`lang\` (moved onto the inner \`<button>\`). Slot: default (the label). The native \`click\` bubbles through the host; no custom events.`;
@@ -45,7 +45,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 <!-- inline, as a toggle -->
 <button type="button" class="utrecht-link-button utrecht-link-button--html-button utrecht-link-button--inline utrecht-link-button--pressed" aria-pressed="true">
-  Verberg details
+  Details tonen
 </button>
 \`\`\`
 
@@ -107,8 +107,8 @@ export const examples = {
   },
   pressed: {
     name: 'Toggle (pressed)',
-    html: `<button type="button" class="${base} utrecht-link-button--inline" aria-pressed="false">Toon details</button>
-<button type="button" class="${base} utrecht-link-button--inline utrecht-link-button--pressed" aria-pressed="true">Verberg details</button>`,
+    html: `<button type="button" class="${base} utrecht-link-button--inline" aria-pressed="false">Details tonen</button>
+<button type="button" class="${base} utrecht-link-button--inline utrecht-link-button--pressed" aria-pressed="true">Details tonen</button>`,
   },
   disabled: {
     name: 'Disabled',

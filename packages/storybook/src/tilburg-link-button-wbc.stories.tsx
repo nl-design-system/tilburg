@@ -33,10 +33,10 @@ export const AllPermutations: Story = {
       </p>
       <p className="utrecht-paragraph">
         <TilburgWbcLinkButton inline pressed={false}>
-          Toon details
+          Details tonen
         </TilburgWbcLinkButton>{' '}
         <TilburgWbcLinkButton inline pressed>
-          Verberg details
+          Details tonen
         </TilburgWbcLinkButton>
       </p>
       <p className="utrecht-paragraph">

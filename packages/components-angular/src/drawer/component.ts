@@ -76,16 +76,31 @@ export class TilburgDrawer implements AfterViewInit, OnChanges {
     this.closed.emit();
   }
 
+  /* Where the press started: a text-selection drag from inside the drawer that ends on the backdrop also fires a
+     click on the dialog at an outside point, and must not close it. */
+  private pressedOnBackdrop = false;
+
+  onDialogPointerDown(event: MouseEvent): void {
+    this.pressedOnBackdrop = this.onBackdrop(event);
+  }
+
   onDialogClick(event: MouseEvent): void {
-    /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click
-       on the drawer's own padding targets the dialog too, and must not close it.) */
-    const dialog = this.dialog.nativeElement;
-    const box = dialog.getBoundingClientRect();
-    const outside =
-      event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
-    if (this.closeOnBackdropClick && event.target === dialog && outside) {
+    const pressedOnBackdrop = this.pressedOnBackdrop;
+    this.pressedOnBackdrop = false;
+    if (this.closeOnBackdropClick && pressedOnBackdrop && this.onBackdrop(event)) {
       this.close();
     }
+  }
+
+  /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click on
+     the drawer's own padding targets the dialog too, and must not close it.) */
+  private onBackdrop(event: MouseEvent): boolean {
+    const dialog = this.dialog.nativeElement;
+    const box = dialog.getBoundingClientRect();
+    return (
+      event.target === dialog &&
+      (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)
+    );
   }
 
   private sync(): void {

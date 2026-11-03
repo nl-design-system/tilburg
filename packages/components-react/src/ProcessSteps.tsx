@@ -95,9 +95,12 @@ export const ProcessSteps = forwardRef(
                 </p>
               </div>
               <div className="denhaag-process-steps__step-body">
-                {next && (
+                {(next || subSteps.length > 0) && (
                   <Connector
-                    appearance={line(status, subSteps[0]?.status ?? next.status ?? 'not-checked')}
+                    appearance={line(
+                      status,
+                      subSteps.length ? (subSteps[0].status ?? 'not-checked') : (next?.status ?? 'not-checked'),
+                    )}
                     from="main"
                     to={subSteps.length ? 'nested' : 'main'}
                   />

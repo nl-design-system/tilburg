@@ -38,15 +38,15 @@ export class TilburgProcessSteps {
     return step.status ?? 'not-checked';
   }
 
-  /** Connector classes below step `index`, or `null` for the last step. */
+  /** Connector classes below step `index`, or `null` for the last step without sub-steps. */
   stepConnector(index: number): string | null {
     const steps = this.steps ?? [];
     const step = steps[index];
     const next = steps[index + 1];
-    if (!next) return null;
     const subSteps = step.steps ?? [];
+    if (!next && !subSteps.length) return null;
     return this.connector(
-      line(this.status(step), subSteps[0]?.status ?? next.status ?? 'not-checked'),
+      line(this.status(step), subSteps.length ? this.status(subSteps[0]) : this.status(next)),
       'main',
       subSteps.length ? 'nested' : 'main',
     );

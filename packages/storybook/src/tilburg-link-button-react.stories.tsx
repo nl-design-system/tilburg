@@ -36,10 +36,10 @@ export const Pressed: Story = {
   render: () => (
     <>
       <LinkButton inline pressed={false}>
-        Toon details
+        Details tonen
       </LinkButton>{' '}
       <LinkButton inline pressed>
-        Verberg details
+        Details tonen
       </LinkButton>
     </>
   ),

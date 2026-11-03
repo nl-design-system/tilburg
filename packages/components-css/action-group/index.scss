@@ -39,3 +39,8 @@
   flex-direction: column;
   inline-size: fit-content;
 }
+
+/* In Angular and Web Components the flex items are the host elements, not the buttons: stretch the buttons too. */
+.utrecht-action-group--column-stretch :is(.utrecht-button, .utrecht-link-button, .utrecht-button-link) {
+  inline-size: 100%;
+}

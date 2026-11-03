@@ -34,4 +34,20 @@ describe('TilburgActionGroup', () => {
     fixture.detectChanges();
     expect(group().className).toBe(`utrecht-action-group utrecht-action-group--${direction}`);
   });
+
+  it('puts a static role only on the inner <p>, not on the host', () => {
+    @Component({
+      template: `<tilburg-action-group role="toolbar" ariaLabel="Opmaak"
+        ><button type="button">Vet</button></tilburg-action-group
+      >`,
+      standalone: false,
+    })
+    class ToolbarHost {}
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ declarations: [TilburgActionGroup, ToolbarHost] });
+    const toolbar = TestBed.createComponent(ToolbarHost);
+    toolbar.detectChanges();
+    expect(toolbar.nativeElement.querySelector('tilburg-action-group').hasAttribute('role')).toBe(false);
+    expect(toolbar.nativeElement.querySelectorAll('[role="toolbar"]')).toHaveLength(1);
+  });
 });

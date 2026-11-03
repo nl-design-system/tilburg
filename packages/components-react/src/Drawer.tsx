@@ -4,6 +4,7 @@ import {
   ForwardedRef,
   forwardRef,
   MouseEvent,
+  PointerEvent,
   PropsWithChildren,
   SyntheticEvent,
   useEffect,
@@ -35,6 +36,7 @@ export const Drawer = forwardRef(
       closeOnBackdropClick = true,
       onClose,
       onClick,
+      onPointerDown,
       className,
       children,
       ...restProps
@@ -51,14 +53,30 @@ export const Drawer = forwardRef(
       if (!open && dialog.open) dialog.close();
     }, [open]);
 
+    /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click
+       on the drawer's own padding targets the dialog too, and must not close it.) */
+    const onBackdrop = (event: MouseEvent<HTMLDialogElement>) => {
+      const box = event.currentTarget.getBoundingClientRect();
+      return (
+        event.target === event.currentTarget &&
+        (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)
+      );
+    };
+
+    /* Where the press started: a text-selection drag from inside the drawer that ends on the backdrop also fires a
+       click on the dialog at an outside point, and must not close it. */
+    const pressedOnBackdrop = useRef(false);
+
+    const handlePointerDown = (event: PointerEvent<HTMLDialogElement>) => {
+      onPointerDown?.(event);
+      pressedOnBackdrop.current = onBackdrop(event);
+    };
+
     const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
       onClick?.(event);
-      /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click
-         on the drawer's own padding targets the dialog too, and must not close it.) */
-      const box = event.currentTarget.getBoundingClientRect();
-      const outside =
-        event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
-      if (closeOnBackdropClick && event.target === event.currentTarget && outside) event.currentTarget.close();
+      const pressed = pressedOnBackdrop.current;
+      pressedOnBackdrop.current = false;
+      if (closeOnBackdropClick && pressed && onBackdrop(event)) event.currentTarget.close();
     };
 
     const handleClose = (event: SyntheticEvent<HTMLDialogElement>) => {
@@ -71,6 +89,7 @@ export const Drawer = forwardRef(
         ref={dialogRef}
         className={clsx('utrecht-drawer', `utrecht-drawer--${align}`, className)}
         onClick={handleClick}
+        onPointerDown={handlePointerDown}
         onClose={handleClose}
       >
         {children}

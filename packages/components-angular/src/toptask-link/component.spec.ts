@@ -33,4 +33,36 @@ describe('TilburgToptaskLink', () => {
     expect(link.getAttribute('aria-describedby')).toBe('hint');
     expect(link.hasAttribute('aria-label')).toBe(false);
   });
+
+  it('shows the icon wrapper only while a conditional icon is projected', async () => {
+    @Component({
+      template: `<tilburg-toptask-link href="/afval">
+        @if (icon) {
+          <svg slot="icon" aria-hidden="true"></svg>
+        }
+        Afval</tilburg-toptask-link
+      >`,
+      standalone: false,
+    })
+    class ConditionalHost {
+      icon = false;
+    }
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ declarations: [TilburgToptaskLink, ConditionalHost] });
+    const host = TestBed.createComponent(ConditionalHost);
+    host.detectChanges();
+    const wrapper = () => host.nativeElement.querySelector('.utrecht-toptask-link__icon');
+    expect(wrapper()).toBeNull();
+
+    host.componentInstance.icon = true;
+    host.detectChanges();
+    await Promise.resolve();
+    expect(wrapper()!.querySelector('svg')).not.toBeNull();
+    expect(wrapper()!.nextElementSibling!.className).toBe('utrecht-toptask-link__title');
+
+    host.componentInstance.icon = false;
+    host.detectChanges();
+    await Promise.resolve();
+    expect(wrapper()).toBeNull();
+  });
 });

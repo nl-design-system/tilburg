@@ -4,7 +4,7 @@
 
 export const bugs = 'https://github.com/nl-design-system/tilburg/labels/component%2Findex-char-nav';
 
-const intro = `A–Z navigation for an alphabetical index (for example "Producten en diensten van A tot Z"), built on utrecht's \`.utrecht-index-char-nav\`. Every character is a Tilburg [Button Link](?path=/docs/tilburg-button-link--docs): secondary by default, primary for the current character (\`aria-current="page"\`). A character without entries is disabled: a placeholder link without \`href\`, with \`aria-disabled="true"\`, so it stays in the row and is still read out. A \`<nav>\` landmark, named with \`aria-label\` (default \`Alfabetische index\`). utrecht's base CSS plus the \`--utrecht-index-char-nav-*\` tokens of the Tilburg theme and the Tilburg button-link CSS.`;
+const intro = `A–Z navigation for an alphabetical index (for example "Producten en diensten van A tot Z"), built on utrecht's \`.utrecht-index-char-nav\`. Every character is a Tilburg [Button Link](?path=/docs/tilburg-button-link--docs): secondary by default, primary for the current character (\`aria-current="page"\`), filled with the interaction colour in every theme, also where the theme styles primary and secondary alike (BAT). A character without entries is disabled: a placeholder link without \`href\`, with \`aria-disabled="true"\`, so it stays in the row and is still read out. A \`<nav>\` landmark, named with \`aria-label\` (default \`Alfabetische index\`). utrecht's base CSS plus the \`--utrecht-index-char-nav-*\` tokens of the Tilburg theme and the Tilburg button-link CSS.`;
 
 const usageAngular = `### Angular
 

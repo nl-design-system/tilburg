@@ -90,4 +90,25 @@ describe('ProcessSteps', () => {
       'Nog niet gestart: Kenteken gecontroleerd',
     );
   });
+
+  it('leads to an unchecked sub-step with a dashed line, also below the last step', () => {
+    const edge: ProcessStep[] = [
+      { title: 'Aanvraag', status: 'checked', steps: [{ title: 'Gegevens' }] },
+      { title: 'Controle', status: 'checked' },
+      { title: 'Besluit', status: 'current', steps: [{ title: 'Brief', status: 'checked' }] },
+    ];
+    const { container } = render(<ProcessSteps steps={edge} />);
+    const connectors = Array.from(container.querySelectorAll('.denhaag-step-marker__connector')).map((c) =>
+      c.className
+        .replace(/denhaag-step-marker__connector(--)?/g, '')
+        .trim()
+        .replace(/\s+/g, ' '),
+    );
+    expect(connectors).toEqual([
+      'not-checked main-to-nested',
+      'not-checked nested-to-main',
+      'checked main-to-main',
+      'current main-to-nested',
+    ]);
+  });
 });

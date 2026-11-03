@@ -4,6 +4,8 @@ import { Component, Input } from '@angular/core';
   selector: 'tilburg-button-group',
   templateUrl: 'index.html',
   styles: [':host { display: block; }'],
+  // A static `role="…"` on the tag is also written onto the host; drop it so only the inner div has the role.
+  host: { '[attr.role]': 'null' },
   standalone: false,
 })
 export class TilburgButtonGroup {

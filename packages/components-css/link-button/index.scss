@@ -9,3 +9,10 @@
 
   line-height: var(--utrecht-link-line-height);
 }
+
+/* Focus is white text on the focus background (Tilburg: pink), but Utrecht's `:active` rule then sets the text to
+   the active colour, which in Tilburg is that same pink: while pressed the label disappeared. Keep the focus text
+   colour while a focused link button is pressed (as `.utrecht-link` does). */
+.utrecht-link-button--html-button:not(:disabled):focus:active {
+  color: var(--utrecht-link-focus-color);
+}

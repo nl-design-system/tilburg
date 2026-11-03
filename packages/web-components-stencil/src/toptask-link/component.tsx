@@ -24,19 +24,28 @@ export class TilburgWbcToptaskLink {
 
   @Prop() href?: string;
 
-  private hasIcon = false;
+  @State() hasIcon = false;
 
   @State() inherited: InheritedAttributes = {};
   private inheritor?: AttributeInheritor;
+  private observer?: MutationObserver;
 
   connectedCallback() {
     this.inheritor = inheritAttributes(this.host, ATTRS, (attributes) => {
       this.inherited = attributes;
     });
+    if (typeof MutationObserver !== 'undefined') {
+      /* An icon added after the first render needs the icon slot, or it ends up outside the `<a>`. */
+      this.observer = new MutationObserver(() => {
+        if (!this.hasIcon) this.hasIcon = hasSlot(this.host, 'icon');
+      });
+      this.observer.observe(this.host, { childList: true });
+    }
   }
 
   disconnectedCallback() {
     this.inheritor?.disconnect();
+    this.observer?.disconnect();
   }
 
   componentWillLoad() {

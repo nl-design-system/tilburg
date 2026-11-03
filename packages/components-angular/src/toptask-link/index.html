@@ -4,7 +4,7 @@
   [attr.aria-label]="ariaLabel || null"
   [attr.aria-describedby]="ariaDescribedBy || null"
 >
-  <!-- No whitespace inside the icon wrapper: the component removes it when no icon is projected. -->
+  <!-- The component removes the icon wrapper while no icon element is projected. -->
   <span #icon class="utrecht-toptask-link__icon"><ng-content select="[slot=icon]"></ng-content></span>
-  <span class="utrecht-toptask-link__title"><ng-content></ng-content></span>
+  <span #title class="utrecht-toptask-link__title"><ng-content></ng-content></span>
 </a>

@@ -99,20 +99,29 @@ export class TilburgWbcDrawer {
     this.tilburgClose.emit();
   };
 
-  private readonly onDialogClick = (event: MouseEvent) => {
-    /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click
-       on the drawer's own padding targets the dialog too, and must not close it.) */
+  /* The backdrop belongs to the <dialog>: a click on it targets the dialog, but lands outside its box. (A click on
+     the drawer's own padding targets the dialog too, and must not close it.) */
+  private onBackdrop(event: MouseEvent): boolean {
     const dialog = this.dialog;
-    if (!this.closeOnBackdropClick || !dialog || event.target !== dialog) return;
+    if (!dialog || event.target !== dialog) return false;
     const box = dialog.getBoundingClientRect();
-    if (
-      event.clientX < box.left ||
-      event.clientX > box.right ||
-      event.clientY < box.top ||
-      event.clientY > box.bottom
-    ) {
-      this.closeDialog();
-    }
+    return (
+      event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom
+    );
+  }
+
+  /* Where the press started: a text-selection drag from inside the drawer that ends on the backdrop also fires a
+     click on the dialog at an outside point, and must not close it. */
+  private pressedOnBackdrop = false;
+
+  private readonly onDialogPointerDown = (event: MouseEvent) => {
+    this.pressedOnBackdrop = this.onBackdrop(event);
+  };
+
+  private readonly onDialogClick = (event: MouseEvent) => {
+    const pressedOnBackdrop = this.pressedOnBackdrop;
+    this.pressedOnBackdrop = false;
+    if (this.closeOnBackdropClick && pressedOnBackdrop && this.onBackdrop(event)) this.closeDialog();
   };
 
   render() {
@@ -123,6 +132,7 @@ export class TilburgWbcDrawer {
         class={`utrecht-drawer utrecht-drawer--${this.align}`}
         onClose={this.onDialogClose}
         onClick={this.onDialogClick}
+        onPointerDown={this.onDialogPointerDown}
       >
         <slot />
       </dialog>
