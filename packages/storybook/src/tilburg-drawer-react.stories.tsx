@@ -1,14 +1,6 @@
 /* @license CC0-1.0 */
 
-import {
-  Button,
-  Drawer,
-  type DrawerAlign,
-  Heading2,
-  Link,
-  UnorderedList,
-  UnorderedListItem,
-} from '@gemeente-tilburg/components-react';
+import { Button, Drawer, type DrawerAlign, Heading2, Link } from '@gemeente-tilburg/components-react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { bugs, descriptionReact } from '../../storybook-shared/src/tilburg-drawer.examples';
@@ -39,17 +31,18 @@ const DrawerDemo = ({ align }: { align?: DrawerAlign }) => {
       </Button>
       <Drawer align={align} aria-labelledby={titleId} open={open} onClose={() => setOpen(false)}>
         <Heading2 id={titleId}>Menu</Heading2>
-        <UnorderedList>
-          <UnorderedListItem>
+        {/* Bare list like the HTML reference: the UnorderedList component adds block margins. */}
+        <ul className="utrecht-unordered-list">
+          <li className="utrecht-unordered-list__item">
             <Link href="#">Afval</Link>
-          </UnorderedListItem>
-          <UnorderedListItem>
+          </li>
+          <li className="utrecht-unordered-list__item">
             <Link href="#">Parkeren</Link>
-          </UnorderedListItem>
-          <UnorderedListItem>
+          </li>
+          <li className="utrecht-unordered-list__item">
             <Link href="#">Paspoort en ID-kaart</Link>
-          </UnorderedListItem>
-        </UnorderedList>
+          </li>
+        </ul>
         <Button appearance="secondary-action-button" onClick={() => setOpen(false)}>
           Sluiten
         </Button>

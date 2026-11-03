@@ -11,6 +11,9 @@
   --utrecht-space-inline-lg: var(--tilburg-space-inline-rabbit);
   --utrecht-typography-weight-scale-bold-font-weight: 700;
   --utrecht-sidenav-marker-current-color: var(--tilburg-interaction-color);
+
+  /* utrecht fixes the width at 19rem (304px), wider than a 320px screen's content box (WCAG 1.4.10). */
+  max-inline-size: 100%;
 }
 
 .utrecht-sidenav__link--current,

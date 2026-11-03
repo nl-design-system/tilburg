@@ -144,7 +144,11 @@
     padding-inline: var(--tilburg-space-block-snail);
   }
 
+  /* Full-width actions; the custom properties inherit into the inner `<button>` of host-wrapped layers. */
   .tilburg-modal__footer {
+    --utrecht-button-inline-size: 100%;
+    --utrecht-button-max-inline-size: none;
+
     align-items: stretch;
     flex-direction: column;
   }

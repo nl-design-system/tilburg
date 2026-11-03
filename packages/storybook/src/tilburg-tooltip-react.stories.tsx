@@ -50,7 +50,10 @@ const PencilIcon = () => (
 );
 
 export const Default: Story = {
-  args: { content: 'U kunt de aanvraag later afmaken.', children: <Button>Opslaan als concept</Button> },
+  args: {
+    content: 'U kunt de aanvraag later afmaken.',
+    children: <Button appearance="secondary-action-button">Opslaan als concept</Button>,
+  },
   render: (args) => (
     <div style={frame}>
       <Tooltip {...args} />
@@ -102,7 +105,7 @@ const edgeStyle = {
    shifts right instead. */
 export const Edge: Story = {
   name: 'Kept in view at the edge',
-  args: { content: edgeText, children: <Button>Kwijtschelding</Button> },
+  args: { content: edgeText, children: <Button appearance="secondary-action-button">Kwijtschelding</Button> },
   render: (args) => (
     <div style={edgeStyle}>
       <Tooltip {...args} />

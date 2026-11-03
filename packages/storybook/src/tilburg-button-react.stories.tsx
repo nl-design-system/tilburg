@@ -32,7 +32,7 @@ const appearances = ['primary-action-button', 'secondary-action-button', 'subtle
 export const AllPermutations: Story = {
   render: () => (
     <div>
-      <h4>Default (no appearance)</h4>
+      <h4>Default (primary-action)</h4>
       <Row label="default">
         {sizes.map((s) => (
           <Button key={s} size={s}>

@@ -100,7 +100,7 @@ export interface Example {
 }
 
 const primary = (label: string, type = 'button') =>
-  `<button type="${type}" class="utrecht-button utrecht-button--primary-action tilburg-medium">${label}</button>`;
+  `<button type="${type}" class="utrecht-button utrecht-button--primary-action tilburg-medium${type === 'submit' ? ' utrecht-button--submit' : ''}">${label}</button>`;
 const linkButton = (label: string, inline = false) =>
   `<button type="button" class="utrecht-link-button utrecht-link-button--html-button${inline ? ' utrecht-link-button--inline' : ''}">${label}</button>`;
 

@@ -4,4 +4,7 @@
    HTML/CSS reference (same rule as the Angular `:host`). */
 tilburg-wbc-side-nav {
   display: block;
+
+  /* As a flex item the host would keep the nav's 19rem min-content width and overflow narrow screens. */
+  min-inline-size: 0;
 }
