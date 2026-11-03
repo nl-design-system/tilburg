@@ -99,7 +99,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 The real \`<textarea>\` is rendered in light DOM, so it takes part in the surrounding \`<form>\` and \`<label for>\` natively. Set the initial text with the \`value\` attribute, not as child content. Listen to the native \`input\` / \`change\` events, they bubble through the host.
 
-Attributes: \`name\`, \`value\` (kept in sync with user input), \`placeholder\`, \`rows\`, \`cols\`, \`autocomplete\`, \`disabled\`, \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-textarea--invalid\`), \`required\` (also \`aria-required="true"\`), \`readonly\`, \`auto-resize\` (default \`true\`: grows with its content between 4 and 8 lines, like Angular's always-on auto-resize directive; set \`auto-resize="false"\` to keep \`rows\`). \`id\`, \`title\`, \`dir\` (defaults to \`auto\`), \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<textarea>\`.`;
+Attributes: \`name\`, \`value\` (kept in sync with user input), \`placeholder\`, \`rows\`, \`cols\`, \`autocomplete\`, \`disabled\`, \`invalid\` (adds \`aria-invalid="true"\` and \`utrecht-textarea--invalid\`), \`required\` (also \`aria-required="true"\`), \`readonly\`, \`auto-resize\` (default \`true\`: starts at the CSS / \`rows\` height and grows with its content up to 8 lines (or \`rows\`, if larger), like Angular's always-on auto-resize directive; set \`auto-resize="false"\` to keep \`rows\`). \`id\`, \`title\`, \`dir\` (defaults to \`auto\`), \`aria-label\`, \`aria-labelledby\` and \`aria-describedby\` are moved from the host onto the inner \`<textarea>\`.`;
 
 export const descriptionWebComponents = `${intro}
 

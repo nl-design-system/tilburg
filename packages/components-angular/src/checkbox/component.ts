@@ -7,6 +7,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ViewEncapsulation,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
@@ -14,6 +15,9 @@ import { FormControl } from '@angular/forms';
   selector: 'tilburg-checkbox',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
+  /* `encapsulation: None`: the components-css rule that lays out a label wrapping this host sits on that label, outside
+     this component's template, so emulated encapsulation would scope it away. */
+  encapsulation: ViewEncapsulation.None,
   standalone: false,
 })
 export class TilburgCheckbox implements OnChanges {

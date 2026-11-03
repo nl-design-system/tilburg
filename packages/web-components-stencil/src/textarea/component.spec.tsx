@@ -55,4 +55,28 @@ describe('tilburg-wbc-textarea', () => {
     await page.waitForChanges();
     expect((page.root as unknown as TilburgWbcTextarea).value).toBe('Hallo wereld');
   });
+
+  it('auto-resize starts at the CSS / rows height, only grows, and honours rows above 8 as the maximum', async () => {
+    const page = await render('<tilburg-wbc-textarea rows="10"></tilburg-wbc-textarea>');
+    const textarea = page.root!.querySelector('textarea')!;
+    let content = 100;
+    /* mock-doc has no layout: fake a 258px field (10 lines of 24px + 8px padding + 1px borders). */
+    Object.defineProperty(textarea, 'offsetHeight', {
+      get: () => (textarea.style.height ? parseFloat(textarea.style.height) : 258),
+    });
+    Object.defineProperty(textarea, 'scrollHeight', { get: () => content });
+    const style = jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      lineHeight: '24px',
+      paddingTop: '8px',
+      paddingBottom: '8px',
+      borderTopWidth: '1px',
+      borderBottomWidth: '1px',
+    } as CSSStyleDeclaration);
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(textarea.style.height).toBe('');
+    content = 1000;
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(textarea.style.height).toBe(`${24 * 10 + 16 + 2}px`);
+    style.mockRestore();
+  });
 });

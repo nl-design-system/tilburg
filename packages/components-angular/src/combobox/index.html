@@ -4,18 +4,15 @@
        own click from bubbling here, so they don't double-toggle. -->
   <div class="tilburg-combobox__value-container" (click)="toggle()">
     <ng-container *ngIf="multiple">
-      <span *ngFor="let item of selectedItems" class="tilburg-combobox__chip">
-        {{ getLabel(item) }}
-        <button
+      <!-- No whitespace around the label and "×": the HTML reference has none, and it would widen the chip. -->
+      <!-- prettier-ignore -->
+      <span *ngFor="let item of selectedItems" class="tilburg-combobox__chip">{{ getLabel(item) }}<button
           type="button"
           class="tilburg-combobox__chip-remove"
           [attr.aria-label]="'Verwijder ' + getLabel(item)"
           [disabled]="disabled || control?.disabled"
           (click)="removeChip(getValue(item), $event)"
-        >
-          ×
-        </button>
-      </span>
+        >×</button></span>
     </ng-container>
     <input
       #inputEl

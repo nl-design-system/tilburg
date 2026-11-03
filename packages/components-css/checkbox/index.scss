@@ -86,8 +86,11 @@
    a flex row supplied by the consumer), so the wrapping form gets no gap at all
    and the box sits flush against the text. Give it the same row layout and the
    same `--utrecht-checkbox-margin-inline-end` spacing utrecht uses elsewhere, so
-   the gap comes from this layer instead of from per-consumer inline styles. */
-.utrecht-form-label--checkbox:has(> .utrecht-checkbox) {
+   the gap comes from this layer instead of from per-consumer inline styles.
+
+   The Angular (`tilburg-checkbox`) and Web Component (`tilburg-wbc-checkbox`) hosts sit between the label and the
+   input, so they count as the wrapped control too. */
+.utrecht-form-label--checkbox:has(> :is(.utrecht-checkbox, tilburg-checkbox, tilburg-wbc-checkbox)) {
   align-items: center;
   display: flex;
   gap: var(--utrecht-checkbox-margin-inline-end, 12px);
@@ -98,6 +101,13 @@
   &:not(:last-child) {
     margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
   }
+}
+
+/* Same rhythm when the label is the only child of a `<tilburg-form-label>` / `<tilburg-wbc-form-label>` host: count
+   the hosts. */
+:is(tilburg-form-label, tilburg-wbc-form-label):not(:last-child)
+  > .utrecht-form-label--checkbox:has(> :is(.utrecht-checkbox, tilburg-checkbox, tilburg-wbc-checkbox)) {
+  margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
 }
 
 /* Windows high contrast (forced colours): the custom box and its dark SVG check mark do not survive the system palette

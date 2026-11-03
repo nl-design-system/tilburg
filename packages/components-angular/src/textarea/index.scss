@@ -7,3 +7,9 @@
 :host {
   display: block;
 }
+
+/* A `<textarea>` is inline-block, so inside the block host it sits on a line box and picks up the font's descender
+   space below it (~7px extra height). Make it a block, as the Web Component does. */
+.utrecht-textarea {
+  display: block;
+}

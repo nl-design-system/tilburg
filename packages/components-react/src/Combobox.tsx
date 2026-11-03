@@ -115,8 +115,13 @@ function ComboboxImpl<V>(props: ComboboxProps<V>, ref: ForwardedRef<HTMLInputEle
   }, []);
 
   const toggle = useCallback(() => {
-    if (isOpen) close();
-    else open();
+    if (isOpen) {
+      close();
+    } else {
+      open();
+      /* A mouse open (chevron, empty space) must not leave focus on the `tabindex=-1` chevron. */
+      inputRef.current?.focus();
+    }
   }, [isOpen, close, open]);
 
   const selectAt = useCallback(

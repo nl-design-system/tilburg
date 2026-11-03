@@ -33,7 +33,8 @@ export class TilburgTextarea implements AfterViewChecked {
   @Input() control?: FormControl;
   @Input() name?: string;
   @Input() placeholder?: string;
-  /** Minimum height in lines (default 4); the field grows to 8 lines (or `rows`, if larger) before it scrolls. */
+  /** Starting height in lines (default: the CSS minimum, as the HTML reference); the field grows to 8 lines (or `rows`,
+   *  if larger) before it scrolls. */
   @Input() rows?: number;
   @Input() cols?: number;
   @Input() ariaLabel?: string = '';

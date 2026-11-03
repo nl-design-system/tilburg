@@ -1,7 +1,8 @@
 import { Directive, DoCheck, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 
-/** Grows a textarea with its content: at least `minRows` lines (the `rows` attribute, default 4), at most 8 or
- *  `minRows` if that is larger; beyond that it scrolls. */
+/** Grows a textarea with its content. It starts at the height the CSS and `rows` give it (as the HTML reference, without
+ *  `rows` the components-css minimum), only grows from there, and stops at 8 lines (or `rows`, if larger); beyond that
+ *  it scrolls. The Web Component does the same. */
 @Directive({ selector: '[tilburgTextAreaAutoResize]', standalone: false })
 export class TilburgTextareaAutoresizeDirective implements OnInit, DoCheck {
   @Input() rows?: number;
@@ -31,17 +32,17 @@ export class TilburgTextareaAutoresizeDirective implements OnInit, DoCheck {
 
   resize() {
     const element = this.elementRef.nativeElement;
-    element.style.height = '0';
+    element.style.height = '';
     const style = window.getComputedStyle(element);
-    const paddingTop = parseFloat(style.paddingTop) || 0;
-    const paddingBottom = parseFloat(style.paddingBottom) || 0;
+    // The textarea is `box-sizing: border-box`; `scrollHeight` includes the padding but not the border.
+    const border = (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
+    const padding = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
     // `line-height: normal` has no pixel value; browsers render it at roughly 1.2 × the font size.
     const lineHeight = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) || 16) * 1.2;
-    const minRows = this.rows && this.rows > 0 ? this.rows : 4;
-    const maxRows = Math.max(8, minRows);
-    const minSize = lineHeight * minRows + paddingTop + paddingBottom;
-    const maxSize = Math.min(lineHeight * maxRows + paddingTop + paddingBottom, element.scrollHeight);
-    element.style.minHeight = `${minSize}px`;
-    element.style.height = `${Math.max(minSize, maxSize)}px`;
+    const maxSize = lineHeight * Math.max(8, this.rows ?? 0) + padding + border;
+    const contentSize = element.scrollHeight + border;
+    if (contentSize > element.offsetHeight) {
+      element.style.height = `${Math.max(element.offsetHeight, Math.min(contentSize, maxSize))}px`;
+    }
   }
 }

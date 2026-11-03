@@ -1,6 +1,7 @@
 @import "../../../components-css/form/index";
 
-/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force block flow like the `<form>`. */
-:host {
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force block flow like the `<form>`. An element
+   selector, not `:host`: the component uses `ViewEncapsulation.None`, where `:host` never matches. */
+tilburg-form {
   display: block;
 }

@@ -96,17 +96,27 @@
 }
 
 /* Mirror of the checkbox rule: a label that wraps its own radio input gets the
-   row layout and gap from this layer rather than from consumer inline styles. */
-.utrecht-form-label--radio:has(> .utrecht-radio-button) {
+   row layout and gap from this layer rather than from consumer inline styles.
+   The Angular (`tilburg-radio-button`) and Web Component (`tilburg-wbc-radio-button`) hosts sit between the label and the
+   input, so they count as the wrapped control too. */
+.utrecht-form-label--radio:has(> :is(.utrecht-radio-button, tilburg-radio-button, tilburg-wbc-radio-button)) {
   align-items: center;
   display: flex;
   gap: var(--utrecht-radio-button-margin-inline-end, 12px);
 
   /* Vertical rhythm between consecutive options, matching the spacing the
-     canonical reference rows carry. */
+     canonical reference rows carry. Without it, wrapping labels are inline
+     boxes with no block margins and the options collapse onto each other. */
   &:not(:last-child) {
     margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
   }
+}
+
+/* Same rhythm when the label is the only child of a `<tilburg-form-label>` / `<tilburg-wbc-form-label>` host: count
+   the hosts. */
+:is(tilburg-form-label, tilburg-wbc-form-label):not(:last-child)
+  > .utrecht-form-label--radio:has(> :is(.utrecht-radio-button, tilburg-radio-button, tilburg-wbc-radio-button)) {
+  margin-block-end: var(--tilburg-space-block-beetle, 0.5rem);
 }
 
 /* Not red before the user has had a go (WCAG 3.3.1 / bq-tlb-frontend TIL-69). A required field is `:invalid` from the

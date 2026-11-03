@@ -160,8 +160,13 @@ export class TilburgCombobox<T = unknown> {
   }
 
   toggle(): void {
-    if (this.isOpen()) this.close();
-    else this.open();
+    if (this.isOpen()) {
+      this.close();
+    } else {
+      this.open();
+      /* A mouse open (chevron, empty space) must not leave focus on the `tabindex=-1` chevron. */
+      this.inputEl.nativeElement.focus();
+    }
   }
 
   /** Select the option at the given index. In multi-mode, toggles; in

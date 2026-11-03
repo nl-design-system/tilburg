@@ -1,10 +1,13 @@
-<utrecht-form-field-description
-  [valid]="valid"
-  [invalid]="invalid"
-  [warning]="warning"
+<!-- Own `<div>` rather than `<utrecht-form-field-description>`: `id`, `class` and `role` must sit on the description
+     element itself (as in the HTML reference), and the utrecht wrapper only exposes its host for them. -->
+<div
+  class="utrecht-form-field-description"
   [class]="class"
+  [class.utrecht-form-field-description--invalid]="invalid"
+  [class.utrecht-form-field-description--valid]="valid"
+  [class.utrecht-form-field-description--warning]="warning"
   [attr.id]="id || null"
   [attr.role]="invalid ? 'alert' : null"
 >
   <ng-content></ng-content>
-</utrecht-form-field-description>
+</div>
