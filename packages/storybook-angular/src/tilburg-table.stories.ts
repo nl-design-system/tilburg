@@ -22,7 +22,7 @@ export const Default: Story = {
   name: 'Default — striped body',
   render: () => ({
     template: `
-      <tilburg-table style="min-width:32rem;display:table">
+      <tilburg-table>
         <thead tilburg-table-header>
           <tr tilburg-table-row>
             <th tilburg-table-header-cell scope="col">Zaaknummer</th>
@@ -66,7 +66,7 @@ export const WithCaptionAndFooter: Story = {
   name: 'With caption + footer (totals row)',
   render: () => ({
     template: `
-      <tilburg-table caption="Aanvragen per maand" style="min-width:32rem;display:table">
+      <tilburg-table caption="Aanvragen per maand">
         <thead tilburg-table-header>
           <tr tilburg-table-row>
             <th tilburg-table-header-cell scope="col">Maand</th>

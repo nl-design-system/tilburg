@@ -18,6 +18,7 @@ const usageAngular = `### Angular
   title="Bezig met laden"
   message="Een momentje alstublieft..."
   [delayMs]="1000"
+  ariaLabel="Bezig met laden"
 />
 \`\`\`
 

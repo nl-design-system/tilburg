@@ -22,8 +22,8 @@ export class TilburgWbcDataList {
   @Element() host!: HTMLElement;
 
   /**
-   * Lays each row out as a three-column grid. Angular binds the modifier on
-   * its host; here it goes on the `<dl>` like the HTML reference and React.
+   * Lays each row out as a three-column grid. The modifier goes on the `<dl>`,
+   * as in the HTML reference, React and Angular.
    */
   @Prop() large = false;
 

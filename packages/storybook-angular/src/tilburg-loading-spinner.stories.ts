@@ -19,20 +19,27 @@ const meta: Meta<TilburgLoadingSpinner> = {
 export default meta;
 type Story = StoryObj<TilburgLoadingSpinner>;
 
+/* Every story passes `ariaLabel`, like the canonical HTML reference markup and the React/Web Components stories. */
 export const Visible: Story = {
   name: 'Visible overlay (title + message)',
-  args: { visible: true, delayMs: 0, title: 'Bezig met laden', message: 'Een momentje alstublieft...' },
+  args: {
+    visible: true,
+    delayMs: 0,
+    title: 'Bezig met laden',
+    message: 'Een momentje alstublieft...',
+    ariaLabel: 'Bezig met laden',
+  },
   render: (args) => ({
     props: args,
-    template: `<tilburg-loading-spinner [visible]="visible" [delayMs]="delayMs" [title]="title" [message]="message"></tilburg-loading-spinner>`,
+    template: `<tilburg-loading-spinner [visible]="visible" [delayMs]="delayMs" [title]="title" [message]="message" [ariaLabel]="ariaLabel"></tilburg-loading-spinner>`,
   }),
 };
 
 export const Immediate: Story = {
-  args: { visible: true, delayMs: 0, title: 'Aan het laden', message: 'Even geduld...' },
+  args: { visible: true, delayMs: 0, title: 'Aan het laden', message: 'Even geduld...', ariaLabel: 'Aan het laden' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-loading-spinner [visible]="visible" [delayMs]="delayMs" [title]="title" [message]="message"></tilburg-loading-spinner>`,
+    template: `<tilburg-loading-spinner [visible]="visible" [delayMs]="delayMs" [title]="title" [message]="message" [ariaLabel]="ariaLabel"></tilburg-loading-spinner>`,
   }),
 };
 

@@ -1,18 +1,16 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'tilburg-data-list',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   standalone: false,
+  /* Not emulated: `.tilburg-data-list--large .tilburg-data-list__item` spans the `<dl>` and the row `<div>`, which live
+     in different component templates, so emulated encapsulation would scope the rule away. */
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgDataList {
   @Input() large = false;
-
-  @HostBinding('class.tilburg-data-list--large')
-  get largeClass(): boolean {
-    return this.large;
-  }
 }
 
 @Component({
@@ -20,6 +18,7 @@ export class TilburgDataList {
   template: '<div class="tilburg-data-list__item"><ng-content></ng-content></div>',
   styleUrls: ['index.scss'],
   standalone: false,
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgDataListItem {}
 
@@ -28,6 +27,7 @@ export class TilburgDataListItem {}
   template: '<dt class="tilburg-data-list__key" [attr.id]="id || null"><ng-content></ng-content></dt>',
   styleUrls: ['index.scss'],
   standalone: false,
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgDataListKey {
   @Input() id?: string;
@@ -38,5 +38,6 @@ export class TilburgDataListKey {
   template: '<dd class="tilburg-data-list__value"><ng-content></ng-content></dd>',
   styleUrls: ['index.scss'],
   standalone: false,
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgDataListValue {}
