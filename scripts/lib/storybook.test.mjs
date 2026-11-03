@@ -125,7 +125,8 @@ test('choosePort: the other Tilburg Storybook on the usual port is not reused', 
 
 test(
   'choosePort: a Storybook with our stories but from another folder (clone, worktree) is not reused',
-  { skip: process.platform === 'win32' && 'no lsof' },
+  /* timeout: a helper that dies before printing its port would otherwise leave the test waiting forever. */
+  { skip: process.platform === 'win32' && 'no lsof', timeout: 15_000 },
   async () => {
     const child = spawn(
       process.execPath,
@@ -133,10 +134,14 @@ test(
         '-e',
         `const s=require('http').createServer((q,r)=>r.end(${JSON.stringify(STORIES.react)})).listen(0,'0.0.0.0',()=>console.log(s.address().port))`,
       ],
-      { cwd: tmpdir(), stdio: ['ignore', 'pipe', 'inherit'] },
+      /* No NODE_OPTIONS: a --require or --inspect from the user's shell can print before the port does. */
+      { cwd: tmpdir(), stdio: ['ignore', 'pipe', 'inherit'], env: { ...process.env, NODE_OPTIONS: '' } },
     );
     try {
-      const port = Number((await once(child.stdout, 'data'))[0]);
+      /* The first line that is only a number: anything else the process prints is not the port. */
+      let printed = '';
+      let port;
+      while (!(port = Number(printed.match(/^(\d+)$/m)?.[1]))) printed += (await once(child.stdout, 'data'))[0];
       const choice = await choosePort({ ...REACT, port });
       assert.equal(choice.running, false);
       assert.notEqual(choice.port, port);
