@@ -69,6 +69,13 @@ HTML/CSS layer (`packages/storybook-shared/src/*.examples.ts` + `packages/compon
   content (`<ng-content select>` fallback, e.g. the alert icons) or `components-css` paints a default with `:empty`,
   render the named slot only when used, else the default: `hasSlot()` from `src/utils/slots.ts` in
   `componentWillLoad`.
+- Light-DOM slots rely on `extras.experimentalSlotFixes`. Stencil 4.45's patched host `textContent` setter and
+  `insertAdjacentText` parse the value as HTML, so a React string child (`<TilburgWbcCode>{userInput}</TilburgWbcCode>`)
+  was an XSS hole. The patched property is non-configurable, so the `safeTextContent` rollup plugin
+  (`src/utils/safe-text-content.ts`, wired in `stencil.config.ts`) rewrites those calls in the bundled runtime to insert
+  a text node through Stencil's slot-aware `append`/`prepend`. `dist-custom-elements` sets `externalRuntime: false` so
+  its runtime is bundled (and patched) too. Keep both when touching the config; the build fails if a Stencil upgrade
+  changes the patched code, then re-check the hole before adjusting the plugin.
 - State the component owns (Accordion `autoToggle`) → `@Prop({ mutable: true, reflect: true })`.
 - Form controls render a real `<input>` / `<textarea>` / `<select>` in light DOM, so they take part in the surrounding
   `<form>` and `<label for>` without form-associated custom element plumbing.
