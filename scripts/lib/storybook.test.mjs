@@ -127,17 +127,20 @@ test(
   'choosePort: a Storybook with our stories but from another folder (clone, worktree) is not reused',
   /* timeout: a helper that dies before printing its port would otherwise leave the test waiting forever. */
   { skip: process.platform === 'win32' && 'no lsof', timeout: 15_000 },
-  async () => {
+  async (t) => {
     const child = spawn(
       process.execPath,
       [
         '-e',
-        `const s=require('http').createServer((q,r)=>r.end(${JSON.stringify(STORIES.react)})).listen(0,'0.0.0.0',()=>console.log(s.address().port))`,
+        `const s=require('http').createServer((q,r)=>r.end(${JSON.stringify(STORIES.react)})).listen(0,'0.0.0.0',()=>process.stdout.write(s.address().port+'\\n'))`,
       ],
-      /* No NODE_OPTIONS: a --require or --inspect from the user's shell can print before the port does. */
+      /* No NODE_OPTIONS: a --require or --inspect from the user's shell can print before the port does. A plain
+         write, not console.log: under FORCE_COLOR (pnpm test from the menu) console.log colours a number. */
       { cwd: tmpdir(), stdio: ['ignore', 'pipe', 'inherit'], env: { ...process.env, NODE_OPTIONS: '' } },
     );
-    try {
+    /* t.after, not finally: it also runs when the test times out, so the helper never keeps the run alive. */
+    t.after(() => child.kill());
+    {
       /* The first line that is only a number: anything else the process prints is not the port. */
       let printed = '';
       let port;
@@ -146,8 +149,6 @@ test(
       assert.equal(choice.running, false);
       assert.notEqual(choice.port, port);
       assert.match(choice.taken, /^a Storybook from /);
-    } finally {
-      child.kill();
     }
   },
 );
