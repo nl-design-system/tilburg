@@ -25,10 +25,18 @@ type Story = StoryObj<typeof meta>;
 export const AllPermutations: Story = {
   render: () => (
     <TilburgWbcBadgeList>
-      <TilburgWbcDataBadge>Parkeren</TilburgWbcDataBadge>
-      <TilburgWbcDataBadge>Afval</TilburgWbcDataBadge>
-      <TilburgWbcDataBadge>Paspoort en ID-kaart</TilburgWbcDataBadge>
-      <TilburgWbcDataBadge>Verhuizen</TilburgWbcDataBadge>
+      <li>
+        <TilburgWbcDataBadge>Parkeren</TilburgWbcDataBadge>
+      </li>
+      <li>
+        <TilburgWbcDataBadge>Afval</TilburgWbcDataBadge>
+      </li>
+      <li>
+        <TilburgWbcDataBadge>Paspoort en ID-kaart</TilburgWbcDataBadge>
+      </li>
+      <li>
+        <TilburgWbcDataBadge>Verhuizen</TilburgWbcDataBadge>
+      </li>
     </TilburgWbcBadgeList>
   ),
 };

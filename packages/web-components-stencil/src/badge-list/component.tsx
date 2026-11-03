@@ -7,7 +7,8 @@ import { Component, Element, h, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 /**
- * @slot - The badges.
+ * @slot - The `<li>` items, each holding one badge. They end up as direct
+ *   children of the `<ul>`, like the HTML/CSS reference.
  */
 @Component({
   tag: 'tilburg-wbc-badge-list',
@@ -33,9 +34,9 @@ export class TilburgWbcBadgeList {
 
   render() {
     return (
-      <div {...this.inherited} class="utrecht-badge-list">
+      <ul {...this.inherited} class="utrecht-badge-list" role="list">
         <slot />
-      </div>
+      </ul>
     );
   }
 }

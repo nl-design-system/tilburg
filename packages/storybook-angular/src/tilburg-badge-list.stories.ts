@@ -22,10 +22,10 @@ export const AllPermutations: Story = {
   render: () => ({
     template: `
       <tilburg-badge-list>
-        <tilburg-data-badge>Parkeren</tilburg-data-badge>
-        <tilburg-data-badge>Afval</tilburg-data-badge>
-        <tilburg-data-badge>Paspoort en ID-kaart</tilburg-data-badge>
-        <tilburg-data-badge>Verhuizen</tilburg-data-badge>
+        <li><tilburg-data-badge>Parkeren</tilburg-data-badge></li>
+        <li><tilburg-data-badge>Afval</tilburg-data-badge></li>
+        <li><tilburg-data-badge>Paspoort en ID-kaart</tilburg-data-badge></li>
+        <li><tilburg-data-badge>Verhuizen</tilburg-data-badge></li>
       </tilburg-badge-list>
     `,
   }),

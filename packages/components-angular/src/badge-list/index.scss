@@ -1,6 +1,4 @@
-/* utrecht-only component: `.utrecht-badge-list` is styled by
-   `@utrecht/component-library-css` (gaps from the Tilburg theme tokens), there
-   is no components-css folder. */
+@import "../../../components-css/badge-list/index";
 
 /* The custom-element host defaults to `display: inline`; force the block flow
    of the HTML/CSS reference. */
