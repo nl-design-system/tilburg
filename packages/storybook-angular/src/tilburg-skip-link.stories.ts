@@ -30,20 +30,22 @@ export const VisibleOnFocus: Story = {
   }),
 };
 
+/* `visibility="focus"` renders `--focus --visible`, the classes of the HTML reference. */
 export const ForceVisible: Story = {
   name: 'Force visible (demo)',
-  args: { href: '#main', visibility: 'visible' },
+  args: { href: '#main', visibility: 'focus' },
   render: (args) => ({
     props: args,
     template: `<tilburg-skip-link [href]="href" [visibility]="visibility">Sla over en ga naar de hoofdinhoud</tilburg-skip-link>`,
   }),
 };
 
-export const ForceFocusAppearance: Story = {
-  name: 'Force focused appearance (storybook screenshot)',
-  args: { href: '#main', visibility: 'focus' },
+/* `--visible` on its own: always shown, but *not* in the focused appearance. */
+export const AlwaysVisible: Story = {
+  name: 'Always visible (--visible modifier, no focus ring)',
+  args: { href: '#main', visibility: 'visible' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-skip-link [href]="href" [visibility]="visibility" class="utrecht-skip-link--visible">Sla over en ga naar de hoofdinhoud</tilburg-skip-link>`,
+    template: `<tilburg-skip-link [href]="href" [visibility]="visibility">Sla over en ga naar de hoofdinhoud</tilburg-skip-link>`,
   }),
 };

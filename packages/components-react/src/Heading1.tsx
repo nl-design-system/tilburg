@@ -12,7 +12,7 @@ export const Heading1 = forwardRef(
   ({ className, children, ...restProps }: PropsWithChildren<Heading1Props>, ref: ForwardedRef<HTMLHeadingElement>) =>
     createElement(
       'utrecht-heading-1',
-      { className },
+      { class: className },
       <h1 ref={ref} className="utrecht-heading-1" {...restProps}>
         {children}
       </h1>,

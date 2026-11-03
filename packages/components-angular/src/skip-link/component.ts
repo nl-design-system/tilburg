@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
  *    link receives keyboard focus, then slides into the top-left of the viewport.
  *  - `visible` — always rendered in place (useful for demos / non-standard layouts).
  *  - `hidden` — never rendered (kept off-screen unconditionally).
- *  - `focus` — force the focused appearance regardless of `:focus`; intended for
- *    storybook screenshots.
+ *  - `focus` — force the focused appearance regardless of `:focus`, shown where a
+ *    focused link appears (renders `--focus` and `--visible`); for demos and storybook screenshots.
  */
 export type SkipLinkVisibility = 'visible-on-focus' | 'visible' | 'hidden' | 'focus';
 

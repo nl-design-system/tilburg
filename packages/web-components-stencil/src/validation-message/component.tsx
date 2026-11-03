@@ -9,9 +9,15 @@ import { hasSlot } from '../utils/slots';
 export type TilburgWbcValidationMessageType = 'error' | 'warning';
 export type TilburgWbcValidationLiveRegion = 'polite' | 'assertive' | 'off';
 
+/* Default glyph per type, the same `<svg>` as the HTML reference. */
+const GLYPH: Record<TilburgWbcValidationMessageType, string> = {
+  error: 'M10 1a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm1 13H9v-2h2v2Zm0-4H9V5h2v5Z',
+  warning: 'M10 1 1 19h18L10 1Zm0 5 1 7h-2l1-7Zm0 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z',
+};
+
 /**
  * @slot - The message.
- * @slot icon - Replaces the default per-type icon (painted by CSS when empty).
+ * @slot icon - Replaces the default per-type icon.
  */
 @Component({
   tag: 'tilburg-wbc-validation-message',
@@ -52,7 +58,13 @@ export class TilburgWbcValidationMessage {
         aria-live={this.liveRegion}
       >
         <span class="tilburg-validation-message__icon" aria-hidden="true">
-          {this.hasIcon && <slot name="icon" />}
+          {this.hasIcon ? (
+            <slot name="icon" />
+          ) : (
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d={GLYPH[isWarning ? 'warning' : 'error']} />
+            </svg>
+          )}
         </span>
         <span>
           <slot />

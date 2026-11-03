@@ -63,3 +63,19 @@ describe('Heading6', () => {
     expect(container.querySelector('strong')).toBeInTheDocument();
   });
 });
+
+describe('Heading wrapper class', () => {
+  it.each([
+    [1, Heading1],
+    [2, Heading2],
+    [3, Heading3],
+    [4, Heading4],
+    [5, Heading5],
+    [6, Heading6],
+  ] as const)('puts className on the utrecht-heading-%i element as a class', (level, Heading) => {
+    const { container } = render(<Heading className="tilburg-alert__title">x</Heading>);
+    const wrapper = container.querySelector(`utrecht-heading-${level}`);
+    expect(wrapper).toHaveClass('tilburg-alert__title');
+    expect(wrapper).not.toHaveAttribute('classname');
+  });
+});

@@ -18,10 +18,8 @@
   color: var(--utrecht-feedback-warning-color);
 }
 
-/* Default icon painted into `.tilburg-validation-message__icon` when the
-   consumer leaves it empty. Works the same for raw HTML/CSS and for the
-   React + Angular wrappers (which both render the icon span with an empty
-   projection unless the consumer fills it). */
+/* Fallback icon for raw HTML that leaves `.tilburg-validation-message__icon` empty. The reference markup and the
+   React/Angular/Web Components render the `<svg>` glyph themselves. */
 .tilburg-validation-message__icon:empty::before {
   background-color: currentColor;
   block-size: 20px;

@@ -7,7 +7,7 @@ export const Heading6 = forwardRef(
   ({ className, children, ...restProps }: PropsWithChildren<Heading6Props>, ref: ForwardedRef<HTMLHeadingElement>) =>
     createElement(
       'utrecht-heading-6',
-      { className },
+      { class: className },
       <h6 ref={ref} className="utrecht-heading-6" {...restProps}>
         {children}
       </h6>,

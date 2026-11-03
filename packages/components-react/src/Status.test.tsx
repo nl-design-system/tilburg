@@ -3,6 +3,7 @@ import { Alert } from './Alert';
 import { BadgeStatus } from './BadgeStatus';
 import { Breadcrumb } from './Breadcrumb';
 import { Pagination } from './Pagination';
+import { Paragraph } from './Paragraph';
 import { ProgressBar } from './ProgressBar';
 import '@testing-library/jest-dom';
 
@@ -61,6 +62,25 @@ describe('Alert', () => {
     render(<Alert closable onClose={onClose} closeButtonAriaLabel="dismiss" />);
     fireEvent.click(screen.getByRole('button', { name: 'dismiss' }));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('renders the HTML reference markup: hidden icon container, titled heading, prefix before the paragraph', () => {
+    const { container } = render(
+      <Alert title="Informatie" closable closeButtonAriaLabel="Sluit alert">
+        <Paragraph>De openingstijden zijn gewijzigd.</Paragraph>
+      </Alert>,
+    );
+    const alert = container.querySelector('.utrecht-alert.tilburg-alert.utrecht-alert--info')!;
+    expect(alert.querySelector('.utrecht-alert__icon')).toHaveAttribute('aria-hidden', 'true');
+    expect(alert.querySelector('.utrecht-alert__icon > i > svg')).not.toBeNull();
+    expect(alert.querySelector('utrecht-heading-3.tilburg-alert__title > h3.utrecht-heading-3')).toHaveTextContent(
+      'Informatie',
+    );
+    const message = alert.querySelector('.utrecht-alert__message')!;
+    expect(message.children[0]).toHaveClass('utrecht-visually-hidden');
+    expect(message.children[0]).toHaveTextContent('Informatie:');
+    expect(message.children[1]).toHaveClass('utrecht-paragraph');
+    expect(alert.querySelector('button.tilburg-alert__close > i > svg')).not.toBeNull();
   });
 });
 

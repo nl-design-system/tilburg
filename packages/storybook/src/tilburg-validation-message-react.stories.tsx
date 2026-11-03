@@ -34,3 +34,12 @@ export const AllPermutations: Story = {
     </div>
   ),
 };
+
+/* Same content as the HTML/CSS reference examples, without a wrapper. */
+export const Error: Story = {
+  render: () => <ValidationMessage type="error">Vul een geldig e-mailadres in.</ValidationMessage>,
+};
+
+export const Warning: Story = {
+  render: () => <ValidationMessage type="warning">De aanvraagperiode sluit binnenkort.</ValidationMessage>,
+};

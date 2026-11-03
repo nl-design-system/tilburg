@@ -65,9 +65,10 @@ HTML/CSS layer (`packages/storybook-shared/src/*.examples.ts` + `packages/compon
 - Angular `@Output() foo` / React `onFoo` → `@Event() tilburgFoo: EventEmitter<T>` (React proxy: `onTilburgFoo`).
   Native events from inner light-DOM controls (`input`, `change`, `click`, `submit`) bubble through the host as-is —
   don't re-emit them.
-- `<ng-content>` → `<slot />`; `<ng-content select="[slot=x]">` → `<slot name="x" />`. When `components-css` paints a
-  default with `:empty` (alert icons), render the named slot only when used: `hasSlot()` from `src/utils/slots.ts`
-  in `componentWillLoad`.
+- `<ng-content>` → `<slot />`; `<ng-content select="[slot=x]">` → `<slot name="x" />`. When a named slot has default
+  content (`<ng-content select>` fallback, e.g. the alert icons) or `components-css` paints a default with `:empty`,
+  render the named slot only when used, else the default: `hasSlot()` from `src/utils/slots.ts` in
+  `componentWillLoad`.
 - State the component owns (Accordion `autoToggle`) → `@Prop({ mutable: true, reflect: true })`.
 - Form controls render a real `<input>` / `<textarea>` / `<select>` in light DOM, so they take part in the surrounding
   `<form>` and `<label for>` without form-associated custom element plumbing.

@@ -92,7 +92,7 @@ const usageWebComponents = `### Web Components (Stencil)
 </tilburg-wbc-validation-message>
 \`\`\`
 
-Leave the \`icon\` slot empty to get the CSS default glyph per type (a circled \`!\` for \`error\`, a triangle for \`warning\`), or pass your own element.
+Leave the \`icon\` slot empty to get the default glyph per type (a circled \`!\` for \`error\`, a triangle for \`warning\`), or pass your own element.
 
 Attributes: \`type\` (\`'error' | 'warning'\`, default \`'error'\`; anything else renders as \`error\`), \`live-region\` (\`'polite' | 'assertive' | 'off'\`, default \`'assertive'\`; the role follows it: \`assertive\` = \`alert\`, \`polite\` = \`status\`, \`off\` = none — Angular's \`ariaLive\`, renamed because \`aria-live\` is a global ARIA attribute). \`role="alert"\` is always set. Slots: default (message), \`icon\`.`;
 

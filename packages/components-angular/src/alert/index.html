@@ -7,7 +7,23 @@
   [attr.aria-atomic]="announce ? null : 'true'"
 >
   <div class="utrecht-alert__icon" aria-hidden="true">
-    <ng-content select="[slot=icon]"></ng-content>
+    <!-- Default glyph (ng-content fallback): the same <i><svg> as the HTML reference. -->
+    <ng-content select="[slot=icon]">
+      <i
+        aria-hidden="true"
+        style="
+          align-items: center;
+          display: inline-flex;
+          font-size: var(--utrecht-alert-icon-size, 1.5rem);
+          font-style: normal;
+          justify-content: center;
+        "
+      >
+        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path [attr.d]="iconPath" />
+        </svg>
+      </i>
+    </ng-content>
   </div>
   <div class="utrecht-alert__content">
     <ng-container *ngIf="title" [ngSwitch]="headingLevel">
@@ -30,6 +46,23 @@
     [attr.aria-label]="closeButtonAriaLabel"
     (click)="onClose()"
   >
-    <ng-content select="[slot=close-icon]"></ng-content>
+    <ng-content select="[slot=close-icon]">
+      <i
+        aria-hidden="true"
+        style="
+          align-items: center;
+          display: inline-flex;
+          font-size: var(--utrecht-alert-icon-size, 1.5rem);
+          font-style: normal;
+          justify-content: center;
+        "
+      >
+        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="m18.3 5.71-1.42-1.42L12 9.17 7.12 4.29 5.71 5.71 10.59 10.59 5.71 15.46l1.41 1.42L12 12l4.88 4.88 1.42-1.42-4.88-4.87 4.87-4.88Z"
+          />
+        </svg>
+      </i>
+    </ng-content>
   </button>
 </div>

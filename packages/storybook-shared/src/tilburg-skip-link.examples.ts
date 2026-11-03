@@ -53,6 +53,8 @@ The four \`.utrecht-skip-link--*\` modifier classes select the visibility behavi
 | \`--hidden\` | When you want the link in the DOM but never visible (e.g. screen-reader-only labelled regions). | Kept off-screen unconditionally. |
 | \`--focus\` | Storybook screenshots, internal previews. | Forces the focused appearance so the link is visible without an actual \`:focus\`. |
 
+Combine \`--focus\` with \`--visible\` to show the link as it looks when focused (the "Force visible" example). The React, Angular and Web Components \`visibility\` prop takes the modifier names; \`visibility="focus"\` renders both classes.
+
 ## Theming
 
 Theming runs entirely through utrecht tokens that Tilburg's design-tokens package already wires:

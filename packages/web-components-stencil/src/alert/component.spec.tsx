@@ -47,14 +47,20 @@ describe('tilburg-wbc-alert', () => {
     expect(page.root!.querySelector('.utrecht-alert')!.getAttribute('aria-live')).toBe('off');
   });
 
-  it('keeps the icon container empty so the CSS default icon is painted', async () => {
-    const page = await render('<tilburg-wbc-alert>Tekst</tilburg-wbc-alert>');
-    expect(page.root!.querySelector('.utrecht-alert__icon')!.childNodes.length).toBe(0);
+  it('renders the default icon markup of the HTML reference, per variant', async () => {
+    const info = await render('<tilburg-wbc-alert>Tekst</tilburg-wbc-alert>');
+    const icon = info.root!.querySelector(
+      '.utrecht-alert__icon > i[aria-hidden="true"] > svg[aria-hidden="true"] path',
+    )!;
+    expect(icon.getAttribute('d')).toMatch(/^M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Z/);
+    const danger = await render('<tilburg-wbc-alert variant="danger">Tekst</tilburg-wbc-alert>');
+    expect(danger.root!.querySelector('.utrecht-alert__icon path')!.getAttribute('d')).toContain('Zm5 13.6L15.6 17');
   });
 
   it('projects a custom icon into the icon slot', async () => {
     const page = await render('<tilburg-wbc-alert><span slot="icon" id="i">!</span>Tekst</tilburg-wbc-alert>');
     expect(page.root!.querySelector('.utrecht-alert__icon #i')).not.toBeNull();
+    expect(page.root!.querySelector('.utrecht-alert__icon svg')).toBeNull();
   });
 
   it('renders the screen-reader prefix', async () => {
@@ -68,7 +74,7 @@ describe('tilburg-wbc-alert', () => {
     const page = await render('<tilburg-wbc-alert closable>Tekst</tilburg-wbc-alert>');
     const close = page.root!.querySelector<HTMLButtonElement>('button.tilburg-alert__close')!;
     expect(close.getAttribute('aria-label')).toBe('sluit alert');
-    expect(close.childNodes.length).toBe(0);
+    expect(close.querySelector('i[aria-hidden="true"] > svg')).not.toBeNull();
     const spy = jest.fn();
     page.root!.addEventListener('tilburgClose', spy);
     close.click();

@@ -26,6 +26,15 @@ const VARIANT_TO_UTRECHT: Record<TilburgAlertVariant, string> = {
 // `ViewEncapsulation.None` lets the SCSS rule for the icon's inner `<i>` reach
 // projected `<app-icon>` content (was previously `::ng-deep`, which the repo
 // stylelint config disallows). Selectors stay scoped under `.tilburg-alert`.
+/* Default glyph per variant, the same path as the HTML reference's `<svg>`. */
+const VARIANT_GLYPH: Record<TilburgAlertVariant, string> = {
+  info: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z',
+  success: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.4 14.6L6 12l1.4-1.4 3.2 3.2 6-6L18 9.2l-7.4 7.4Z',
+  warning: 'M1 21h22L12 2 1 21Zm12-3h-2v-2h2v2Zm0-4h-2v-4h2v4Z',
+  danger:
+    'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6Z',
+};
+
 /* The alert type, read out before the message (bq-tlb-frontend TIL-51): the colour and icon show it visually only. */
 const DEFAULT_SR_PREFIX: Record<string, string> = {
   info: 'Informatie:',
@@ -71,6 +80,10 @@ export class TilburgAlert implements AfterViewChecked {
 
   get resolvedVariant(): TilburgAlertVariant {
     return this.variant ?? 'info';
+  }
+
+  get iconPath(): string {
+    return VARIANT_GLYPH[this.resolvedVariant];
   }
 
   get variantClass(): string {

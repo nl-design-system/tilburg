@@ -13,13 +13,25 @@ class HostComponent {
   message = 'Probeer het opnieuw.';
 }
 
+@Component({
+  template: `
+    <tilburg-alert variant="success" [closable]="true"><p class="utrecht-paragraph">Tekst</p></tilburg-alert>
+    <tilburg-alert><span slot="icon" id="custom">!</span>Tekst</tilburg-alert>
+  `,
+  standalone: false,
+})
+class IconHostComponent {}
+
 describe('TilburgAlert', () => {
   let fixture: ComponentFixture<HostComponent>;
   const alert = () => fixture.nativeElement.querySelector('.utrecht-alert') as HTMLElement;
 
   beforeEach(() => {
     document.getElementById('tilburg-announcer-assertive')?.remove();
-    TestBed.configureTestingModule({ declarations: [TilburgAlert, HostComponent], schemas: [CUSTOM_ELEMENTS_SCHEMA] });
+    TestBed.configureTestingModule({
+      declarations: [TilburgAlert, HostComponent, IconHostComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    });
   });
 
   it('reads the type before the message by default', () => {
@@ -50,4 +62,20 @@ describe('TilburgAlert', () => {
     tick(200);
     expect(region.textContent).toBe('Er ging iets mis Fout: Het bestand is te groot.');
   }));
+
+  it('renders the default icons of the HTML reference, unless an icon is projected', () => {
+    const icons = TestBed.createComponent(IconHostComponent);
+    icons.detectChanges();
+    const [withDefault, withCustom] = Array.from<HTMLElement>(icons.nativeElement.querySelectorAll('.utrecht-alert'));
+    const path = withDefault.querySelector(
+      '.utrecht-alert__icon > i[aria-hidden="true"] > svg[aria-hidden="true"] > path',
+    );
+    expect(path!.getAttribute('d')).toContain('Zm-1.4 14.6L6 12');
+    expect(withDefault.querySelector('button.tilburg-alert__close > i > svg')).not.toBeNull();
+    expect(
+      withDefault.querySelector('.utrecht-alert__message > .utrecht-visually-hidden + p.utrecht-paragraph'),
+    ).not.toBeNull();
+    expect(withCustom.querySelector('.utrecht-alert__icon #custom')).not.toBeNull();
+    expect(withCustom.querySelector('.utrecht-alert__icon svg')).toBeNull();
+  });
 });

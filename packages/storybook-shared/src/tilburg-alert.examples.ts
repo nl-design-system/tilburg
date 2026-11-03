@@ -21,7 +21,7 @@ const usageAngular = `### Angular
   (closed)="onAlertClosed()"
 >
   <svg slot="icon" aria-hidden="true"><!-- eigen icoon; laat weg voor het standaardicoon --></svg>
-  De openingstijden zijn gewijzigd.
+  <p class="utrecht-paragraph">De openingstijden zijn gewijzigd.</p>
 </tilburg-alert>
 \`\`\`
 
@@ -30,7 +30,7 @@ Inputs: \`variant\` (\`'info' | 'success' | 'warning' | 'danger'\`, default \`'i
 const usageReact = `### React
 
 \`\`\`tsx
-import { Alert } from '@gemeente-tilburg/components-react';
+import { Alert, Paragraph } from '@gemeente-tilburg/components-react';
 import { useState } from 'react';
 
 export function OpeningHoursAlert() {
@@ -38,7 +38,7 @@ export function OpeningHoursAlert() {
   if (!visible) return null;
   return (
     <Alert variant="info" title="Informatie" closable liveRegion="polite" onClose={() => setVisible(false)}>
-      De openingstijden zijn gewijzigd.
+      <Paragraph>De openingstijden zijn gewijzigd.</Paragraph>
     </Alert>
   );
 }
@@ -48,7 +48,7 @@ Both icons are plain \`ReactNode\` props — \`icon\` for the severity glyph, \`
 
 \`\`\`tsx
 <Alert variant="danger" title="Er ging iets mis" icon={<ErrorIcon />} closable closeIcon={<CrossIcon />}>
-  Probeer het opnieuw of neem contact op met de gemeente.
+  <Paragraph>Probeer het opnieuw of neem contact op met de gemeente.</Paragraph>
 </Alert>
 \`\`\`
 
@@ -67,7 +67,7 @@ const usagePlainHtml = `### Plain HTML / CSS
       <h3 class="utrecht-heading-3">Informatie</h3>
     </utrecht-heading-3>
     <div class="utrecht-alert__message">
-      <span class="utrecht-visually-hidden">Informatie:</span>
+      <span class="utrecht-visually-hidden">Informatie: </span>
       <p class="utrecht-paragraph">De openingstijden zijn gewijzigd.</p>
     </div>
   </div>
@@ -80,7 +80,7 @@ const usagePlainHtml = `### Plain HTML / CSS
   </div>
   <div class="utrecht-alert__content">
     <div class="utrecht-alert__message">
-      <span class="utrecht-visually-hidden">Fout:</span>
+      <span class="utrecht-visually-hidden">Fout: </span>
       <p class="utrecht-paragraph">Er is een fout opgetreden.</p>
     </div>
   </div>
@@ -89,7 +89,9 @@ const usagePlainHtml = `### Plain HTML / CSS
 
 Variant modifiers map: \`success\` → \`.utrecht-alert--ok\`, \`danger\` → \`.utrecht-alert--error\`; \`info\` and \`warning\` keep their names.`;
 
-const intro = `Tilburg alert built on \`.utrecht-alert\` + \`.tilburg-alert\` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.`;
+const intro = `Tilburg alert built on \`.utrecht-alert\` + \`.tilburg-alert\` BEM. The icon vertically centers with the first line of the title via the heading line-height trick; the close button is pushed to the right edge of the row.
+
+**Message content.** The components put the message content as-is into \`.utrecht-alert__message\`, after the visually hidden type (\`Informatie:\`, \`Succes:\`, \`Waarschuwing:\`, \`Fout:\`). They do not wrap it: pass block content yourself, a paragraph (\`<p class="utrecht-paragraph">\` / React \`<Paragraph>\`) for text, as in the HTML reference. Wrapping projected content in a \`<p>\` would nest a \`<p>\` in a \`<p>\` (invalid HTML) as soon as you pass a paragraph or a list, and Angular and Web Components cannot tell text from block content when they render. Bare text still works, it only lacks the paragraph styling.`;
 
 export const description = `${intro}
 
@@ -113,7 +115,7 @@ const usageWebComponents = `### Web Components (Stencil)
 
 \`\`\`html
 <tilburg-wbc-alert variant="info" heading="Informatie" closable>
-  De openingstijden zijn gewijzigd.
+  <p class="utrecht-paragraph">De openingstijden zijn gewijzigd.</p>
 </tilburg-wbc-alert>
 
 <script type="module">
@@ -123,12 +125,12 @@ const usageWebComponents = `### Web Components (Stencil)
 </script>
 \`\`\`
 
-Leave the \`icon\` / \`close-icon\` slots empty to get the CSS default glyphs, or pass your own element:
+Leave the \`icon\` / \`close-icon\` slots empty to get the default glyphs, or pass your own element:
 
 \`\`\`html
 <tilburg-wbc-alert variant="danger" heading="Er ging iets mis">
   <svg slot="icon" aria-hidden="true"><!-- … --></svg>
-  Probeer het opnieuw of neem contact op met de gemeente.
+  <p class="utrecht-paragraph">Probeer het opnieuw of neem contact op met de gemeente.</p>
 </tilburg-wbc-alert>
 \`\`\`
 
@@ -176,6 +178,7 @@ export const examples = {
   <div class="utrecht-alert__content">
     ${title('Informatie')}
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Informatie: </span>
       <p class="utrecht-paragraph">De openingstijden zijn gewijzigd. Bekijk de actuele tijden op deze pagina.</p>
     </div>
   </div>
@@ -188,6 +191,7 @@ export const examples = {
   <div class="utrecht-alert__content">
     ${title('Aanvraag verstuurd')}
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Succes: </span>
       <p class="utrecht-paragraph">Je ontvangt binnen 8 weken een beslissing per e-mail.</p>
     </div>
   </div>
@@ -200,6 +204,7 @@ export const examples = {
   <div class="utrecht-alert__content">
     ${title('Let op')}
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Waarschuwing: </span>
       <p class="utrecht-paragraph">De aanvraagperiode sluit over twee weken.</p>
     </div>
   </div>
@@ -212,7 +217,7 @@ export const examples = {
   <div class="utrecht-alert__content">
     ${title('Er ging iets mis')}
     <div class="utrecht-alert__message">
-      <span class="utrecht-visually-hidden">Fout:</span>
+      <span class="utrecht-visually-hidden">Fout: </span>
       <p class="utrecht-paragraph">Probeer het opnieuw of neem contact op met de gemeente.</p>
     </div>
   </div>
@@ -225,6 +230,7 @@ export const examples = {
   <div class="utrecht-alert__content">
     ${title('Informatie')}
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Informatie: </span>
       <p class="utrecht-paragraph">Klik op het kruisje om dit bericht te sluiten.</p>
     </div>
   </div>
@@ -237,6 +243,7 @@ export const examples = {
   <div class="utrecht-alert__icon" aria-hidden="true">${icon(infoGlyph)}</div>
   <div class="utrecht-alert__content">
     <div class="utrecht-alert__message">
+      <span class="utrecht-visually-hidden">Informatie: </span>
       <p class="utrecht-paragraph">Deze melding heeft geen titel — alleen een korte tekst.</p>
     </div>
   </div>

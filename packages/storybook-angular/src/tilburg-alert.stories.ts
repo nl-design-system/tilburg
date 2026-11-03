@@ -27,7 +27,7 @@ export const Info: Story = {
   args: { variant: 'info', title: 'Informatie' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant" [title]="title">De openingstijden zijn gewijzigd. Bekijk de actuele tijden op deze pagina.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant" [title]="title"><p class="utrecht-paragraph">De openingstijden zijn gewijzigd. Bekijk de actuele tijden op deze pagina.</p></tilburg-alert>`,
   }),
 };
 
@@ -36,7 +36,7 @@ export const Success: Story = {
   args: { variant: 'success', title: 'Aanvraag verstuurd' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant" [title]="title">Je ontvangt binnen 8 weken een beslissing per e-mail.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant" [title]="title"><p class="utrecht-paragraph">Je ontvangt binnen 8 weken een beslissing per e-mail.</p></tilburg-alert>`,
   }),
 };
 
@@ -45,7 +45,7 @@ export const Warning: Story = {
   args: { variant: 'warning', title: 'Let op' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant" [title]="title">De aanvraagperiode sluit over twee weken.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant" [title]="title"><p class="utrecht-paragraph">De aanvraagperiode sluit over twee weken.</p></tilburg-alert>`,
   }),
 };
 
@@ -54,7 +54,7 @@ export const Danger: Story = {
   args: { variant: 'danger', title: 'Er ging iets mis' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant" [title]="title">Probeer het opnieuw of neem contact op met de gemeente.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant" [title]="title"><p class="utrecht-paragraph">Probeer het opnieuw of neem contact op met de gemeente.</p></tilburg-alert>`,
   }),
 };
 
@@ -63,7 +63,7 @@ export const Closable: Story = {
   args: { variant: 'info', title: 'Informatie', closable: true },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant" [title]="title" [closable]="closable">Klik op het kruisje om dit bericht te sluiten.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant" [title]="title" [closable]="closable" closeButtonAriaLabel="Sluit alert"><p class="utrecht-paragraph">Klik op het kruisje om dit bericht te sluiten.</p></tilburg-alert>`,
   }),
 };
 
@@ -72,6 +72,6 @@ export const MessageOnly: Story = {
   args: { variant: 'info' },
   render: (args) => ({
     props: args,
-    template: `<tilburg-alert [variant]="variant">Deze melding heeft geen titel — alleen een korte tekst.</tilburg-alert>`,
+    template: `<tilburg-alert [variant]="variant"><p class="utrecht-paragraph">Deze melding heeft geen titel — alleen een korte tekst.</p></tilburg-alert>`,
   }),
 };

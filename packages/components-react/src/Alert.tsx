@@ -158,7 +158,9 @@ export const Alert = forwardRef(
         className={clsx('utrecht-alert', 'tilburg-alert', `utrecht-alert--${VARIANT_TO_UTRECHT[variant]}`, className)}
         {...restProps}
       >
-        <div className="utrecht-alert__icon">{renderedIcon && <IconWrap>{renderedIcon}</IconWrap>}</div>
+        <div className="utrecht-alert__icon" aria-hidden="true">
+          {renderedIcon && <IconWrap>{renderedIcon}</IconWrap>}
+        </div>
         <div className="utrecht-alert__content">
           {title && <HeadingTag className="tilburg-alert__title">{title}</HeadingTag>}
           <div className="utrecht-alert__message">
