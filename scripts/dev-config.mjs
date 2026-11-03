@@ -8,7 +8,14 @@ import { fileURLToPath } from 'node:url';
 /* Not import.meta.dirname: `node scripts/setup.mjs` has to work on the old Node it is about to replace. */
 export const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 
-const rootPackage = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
+/* A package.json that does not parse (merge conflict markers, a half-saved edit) must not crash every script before
+   it can say so: `pnpm check` reports it (checkPackageJson). */
+let rootPackage = {};
+try {
+  rootPackage = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
+} catch {
+  /* reported by pnpm check (checkPackageJson) */
+}
 
 /**
  * `.nvmrc` pins the major version; `engines` and pnpm's `engineStrict` refuse anything else at install time. "24",
@@ -36,6 +43,8 @@ export const STORYBOOKS = {
     command: (port) =>
       `pnpm --filter @gemeente-tilburg/storybook exec storybook dev --config-dir config/ --port ${port} --ci --exact-port --host 0.0.0.0`,
     note: 'HTML, React and Web Components',
+    /* A story only this Storybook has: tells it apart from the Angular one (and from other Storybooks) on a port. */
+    storyId: /^tilburg-.+-react--/,
   },
   angular: {
     name: 'Angular Storybook',
@@ -46,6 +55,7 @@ export const STORYBOOKS = {
     command: (port) =>
       `pnpm --filter @gemeente-tilburg/storybook-angular exec ng run storybook-angular:storybook --port ${port} --host 0.0.0.0 --ci`,
     note: 'Angular and HTML',
+    storyId: /^tilburg-.+-angular--/,
   },
 };
 
@@ -68,7 +78,8 @@ export const LIBRARIES = [
     /* Without `--initial`: dev.mjs has just built it. Also watches figma/ and high-contrast/, which the package's own
        `watch` script misses. */
     watch:
-      "pnpm --filter @gemeente-tilburg/design-tokens exec chokidar --follow-symlinks --command 'pnpm run build' 'src/**/*.json' 'figma/**/*.json' 'high-contrast/**/*'",
+      /* Double quotes: cmd.exe on Windows does not know single ones (and they keep the globs from the shell too). */
+      'pnpm --filter @gemeente-tilburg/design-tokens exec chokidar --follow-symlinks --command "pnpm run build" "src/**/*.json" "figma/**/*.json" "high-contrast/**/*"',
     done: /Build process finished/,
     failed: /Error:|ERR!|\[error\]/i,
     for: ['react', 'angular'],
@@ -84,7 +95,8 @@ export const LIBRARIES = [
     watch: 'pnpm --filter @gemeente-tilburg/components-react exec vite build --watch --emptyOutDir false',
     keepsDist: true,
     done: /built in \d/,
-    failed: /Build failed|error during build|Transform failed|\[vite:[\w-]+\]|RollupError/i,
+    /* `[vite:css] …` is how a watch-mode error starts (no "error" in it); a line that says "warn" is not one. */
+    failed: /Build failed|error during build|Transform failed|\[vite:[\w-]+\](?!.*warn)|RollupError/i,
     for: ['react'],
   },
   {
@@ -146,6 +158,8 @@ export const CONSUMERS = [
     sync: 'npm run sync:tilburg-nlds',
     /* Checked before running, so an older checkout gets "pull it" instead of npm's missing-script error. */
     requires: ['sync:tilburg-nlds'],
+    /* Its sync looks for the 0.0.0 / 0.0.1 file names unless told where the tarballs are. */
+    tarballEnv: { 'components-angular': 'TILBURG_NLDS_TARBALL', 'design-tokens': 'TILBURG_NLDS_TOKENS_TARBALL' },
   },
   {
     key: 'hltsamen',

@@ -1,6 +1,7 @@
 /* `node --test scripts/`: the wiring between the scripts and everything that calls them, checked without running them.
    Each script has its own tests; these catch what falls between them: a renamed file, an export that moved, a package
    that was renamed, or a dependency in a script that has to run before `pnpm install`. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';

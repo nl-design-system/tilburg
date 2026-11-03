@@ -1,6 +1,7 @@
 /* `pnpm run test:scripts`: `pnpm test` (scripts/test.mjs) is what CI runs, so every failed sub-run has to end in a
    non-zero exit. A fake `pnpm` on PATH stands in for Jest and Stencil: it exits as told and writes fixture JSON to the
    --outputFile, so nothing real runs and nothing in the repository is touched. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';

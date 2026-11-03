@@ -1,4 +1,5 @@
 /* `node --test scripts/`: the failure messages people actually hit, and what the scripts should make of them. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -64,6 +65,24 @@ for (const [kind, output] of cases) {
     assert.ok(diagnosis.why, 'says why');
   });
 }
+
+test('a truncated JSON file is only the Angular cache when .angular is named too', () => {
+  assert.notEqual(
+    classifyFailure('Error: package.json: Unexpected end of JSON input', { exitCode: 1 }).kind,
+    'angular-cache',
+  );
+  assert.equal(
+    classifyFailure('Error: Unexpected end of JSON input\n  at read (/r/.angular/x.json)', { exitCode: 1 }).kind,
+    'angular-cache',
+  );
+});
+
+test('the git-lock fix refuses an index.lock outside the git folder, also through ..', async () => {
+  for (const path of ['/tmp/x/index.lock', `${process.cwd()}/.git/../../x/index.lock`]) {
+    const err = { output: `fatal: Unable to create '${path}': File exists.` };
+    await assert.rejects(RECOVERIES['git-lock'].run({ err }), /names no \.git\/index\.lock/);
+  }
+});
 
 test('a step that fails without saying anything is called out as such, with the command to rerun', () => {
   const diagnosis = classifyFailure('', { exitCode: 3, command: 'exit 3' });
@@ -136,7 +155,7 @@ function runInChild(dir, { label = 'step', command, cwd = dir, env = process.env
   const file = join(dir, 'child.mjs');
   writeFileSync(
     file,
-    `${answer === undefined ? '' : 'process.stdin.isTTY = true; process.stdin.setRawMode = () => process.stdin;\n'}const { RECOVERIES, runStepWithRecovery } = await import(${JSON.stringify(RECOVERY)});
+    `${answer === undefined ? '' : 'process.stdin.isTTY = true; process.stdout.isTTY = true; process.stdin.setRawMode = () => process.stdin;\n'}const { RECOVERIES, runStepWithRecovery } = await import(${JSON.stringify(RECOVERY)});
 const recoveries = { ...RECOVERIES, ${recoveries} };
 try {
   await runStepWithRecovery(${JSON.stringify(label)}, ${JSON.stringify(command)}, { cwd: ${JSON.stringify(cwd)}, recoveries });

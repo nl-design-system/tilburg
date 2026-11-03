@@ -27,7 +27,7 @@ import {
   stepSkip,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning } from './lib/lock.mjs';
-import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { enginesMinimum, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm setup');
 
@@ -54,16 +54,7 @@ const done = (label, why) => stepSkip(label, why);
 
 if (!process.env.TILBURG_SETUP_REEXEC) printBanner('Setup');
 
-/* Running as root through sudo: node_modules and dist/ would then belong to root, and every later pnpm install fails.
-   SUDO_USER alone is not enough: `sudo -iu dev` sets it too, and then the files belong to the right user. */
-if (process.env.SUDO_USER && process.getuid?.() === 0) {
-  fail({
-    what: 'setup is running under sudo',
-    why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER}; pnpm install without sudo then fails with EACCES.`,
-    fix: 'node scripts/setup.mjs without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)',
-  });
-  process.exit(1);
-}
+/* Under sudo it has already stopped: installCrashHandler refuses that for every script (cli-utils.mjs). */
 
 // ─── 1. Node ─────────────────────────────────────────────────────────────────
 
@@ -74,8 +65,11 @@ const hasNvm = existsSync(resolve(NVM_DIR, 'nvm.sh'));
 function nvmNodeBin() {
   const versions = resolve(NVM_DIR, 'versions/node');
   if (!existsSync(versions)) return null;
+  /* Not one below the engines minimum (24.13 when engines says >=24.15): pnpm install would refuse it. */
+  const minimum = enginesMinimum();
   const matching = readdirSync(versions)
     .filter((name) => name.startsWith(`v${NODE_MAJOR}.`))
+    .filter((name) => name.slice(1).localeCompare(minimum, undefined, { numeric: true }) >= 0)
     .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
   return matching.length ? resolve(versions, matching[0], 'bin') : null;
 }
@@ -93,10 +87,21 @@ if (!Number.isInteger(NODE_MAJOR)) {
 const major = Number(process.versions.node.split('.')[0]);
 if (major !== NODE_MAJOR) {
   if (!hasNvm) {
+    /* Another version manager: setup only drives nvm, but can say what to type in this one. */
+    const managers = {
+      fnm: `fnm install ${NODE_MAJOR} && fnm use ${NODE_MAJOR}`,
+      volta: `volta install node@${NODE_MAJOR}`,
+      mise: `mise use node@${NODE_MAJOR}`,
+    };
+    const manager = Object.keys(managers).find((name) => !spawnSync(name, ['--version'], { stdio: 'ignore' }).error);
     fail({
       what: `This is Node ${process.versions.node}; the repo needs Node ${NODE_MAJOR}`,
-      why: 'nvm (the Node version manager) was not found, so setup cannot switch for you.',
-      fix: `install nvm (https://github.com/nvm-sh/nvm), then run node scripts/setup.mjs again. Or install Node ${NODE_MAJOR} from https://nodejs.org/`,
+      why: manager
+        ? `nvm was not found, and setup does not drive ${manager}.`
+        : 'nvm (the Node version manager) was not found, so setup cannot switch for you.',
+      fix: manager
+        ? `${managers[manager]}, then node scripts/setup.mjs again`
+        : `install nvm (https://github.com/nvm-sh/nvm), then run node scripts/setup.mjs again. Or install Node ${NODE_MAJOR} from https://nodejs.org/`,
     });
     process.exit(1);
   }
@@ -204,6 +209,10 @@ if ((await pnpmVersion()) === PNPM_VERSION) {
 
 // ─── 3. Dependencies ─────────────────────────────────────────────────────────
 
+/* Swapping node_modules under pnpm dev's running watchers and Storybooks breaks them half-way. */
+const needsInstall = reset || !checkInstalled().ok || checkInstallFresh().warn;
+if (needsInstall && !(await confirmNoDevRunning('pnpm install'))) process.exit(1);
+
 if (reset) {
   if (await ask('Delete every node_modules folder and install from scratch?', { default: true })) {
     const folders = [resolve(ROOT, 'node_modules')];
@@ -275,7 +284,7 @@ if (await ask('Start pnpm dev now (both Storybooks, rebuilt as you save)?', { de
   /* pnpm dev owns the terminal now: Ctrl-C is for it (it stops its watchers itself), not for setup. */
   process.removeAllListeners('SIGINT');
   process.on('SIGINT', () => {});
-  spawn('pnpm', ['run', 'dev', '--', '--open'], { cwd: ROOT, stdio: 'inherit' })
+  spawn('pnpm', ['run', 'dev', '--', '--open'], { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' })
     .on('error', (err) => {
       fail({ what: 'Could not start pnpm dev', why: err.message, fix: 'pnpm dev' });
       process.exit(1);

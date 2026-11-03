@@ -1,10 +1,12 @@
 /* `pnpm run test:scripts`: pnpm logs reads runStep's log folder; pnpm ship's pull request link. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { after, test } from 'node:test';
+import { LOG_DIR } from './cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './logs.mjs';
 import { pullRequestUrl } from './ship.mjs';
 
@@ -56,6 +58,14 @@ test('--last picks the newest failure, else the newest log', () => {
     'a',
   );
   assert.equal(pickLast([]), null);
+  /* A watcher pnpm dev stopped (q) is not a failure. */
+  assert.equal(
+    pickLast([
+      { step: 'dev-tokens', exit: 'stopped' },
+      { step: 'tests', exit: '1' },
+    ]).step,
+    'tests',
+  );
 });
 
 test('the tail keeps the last lines', () => {
@@ -83,8 +93,9 @@ test('pull request URL from every remote form', () => {
 function logsCli(args, logs = {}) {
   const tmp = mkdtempSync(join(tmpdir(), 'tilburg-logs-cli-'));
   try {
-    mkdirSync(join(tmp, 'tilburg-logs'));
-    for (const [name, body] of Object.entries(logs)) writeFileSync(join(tmp, 'tilburg-logs', name), body);
+    const folder = join(tmp, basename(LOG_DIR));
+    mkdirSync(folder);
+    for (const [name, body] of Object.entries(logs)) writeFileSync(join(folder, name), body);
     const result = spawnSync(process.execPath, [resolve(import.meta.dirname, '..', 'logs.mjs'), ...args], {
       encoding: 'utf8',
       timeout: 10_000,

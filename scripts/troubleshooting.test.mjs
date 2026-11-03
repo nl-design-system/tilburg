@@ -1,4 +1,5 @@
 /* `node --test scripts/`: the generated troubleshooting table, and what happens when CONTRIBUTING.md lacks its markers. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { FAILURES } from './lib/recovery.mjs';

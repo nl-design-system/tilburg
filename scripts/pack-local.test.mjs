@@ -1,5 +1,6 @@
 /* `node --test scripts/`: pack-local.mjs in a sandbox repository (a path with spaces) with a fake `pnpm` on PATH,
    so nothing is built or packed for real. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import {
@@ -19,13 +20,24 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 /** Runs pack-local.mjs; the fake pnpm logs its arguments, creates the tarball, and exits 1 when FAIL_ON matches. */
-function packLocal({ failOn = '' } = {}) {
+function packLocal({ failOn = '', previous = [] } = {}) {
   const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'pack-local ')));
   const repo = join(sandbox, 'my repo');
   const bin = join(sandbox, 'bin');
   mkdirSync(join(repo, 'scripts'), { recursive: true });
   mkdirSync(bin);
   copyFileSync(join(import.meta.dirname, 'pack-local.mjs'), join(repo, 'scripts', 'pack-local.mjs'));
+  /* It asks lock.mjs whether pnpm dev is running (in this sandbox it is not). */
+  copyFileSync(join(import.meta.dirname, 'dev-config.mjs'), join(repo, 'scripts', 'dev-config.mjs'));
+  mkdirSync(join(repo, 'scripts', 'lib'));
+  for (const file of readdirSync(join(import.meta.dirname, 'lib')).filter(
+    (name) => name.endsWith('.mjs') && !name.endsWith('.test.mjs'),
+  ))
+    copyFileSync(join(import.meta.dirname, 'lib', file), join(repo, 'scripts', 'lib', file));
+  for (const file of previous) {
+    mkdirSync(join(repo, '.tarballs'), { recursive: true });
+    writeFileSync(join(repo, '.tarballs', file), 'previous');
+  }
   for (const dir of [
     'proprietary/design-tokens',
     'packages/components-css',
@@ -101,12 +113,15 @@ test('a run stopped half-way (Ctrl-C) leaves no tarball in .tarballs/ for a cons
   );
 });
 
-test('a failed build stops with exit 1 and leaves no half-filled .tarballs/', (t) => {
-  const run = packLocal({ failOn: 'components-react run build' });
+const tarballs = (out) => (existsSync(out) ? readdirSync(out).filter((file) => file.endsWith('.tgz')) : []);
+
+test('a failed build stops with exit 1, adds no half set, and keeps the previous set for the consumers', (t) => {
+  const run = packLocal({ failOn: 'components-react run build', previous: ['old.tgz'] });
   t.after(run.cleanup);
   assert.equal(run.status, 1);
   assert.match(run.stderr, /@gemeente-tilburg\/components-react failed/);
-  assert.equal(existsSync(run.out), false);
+  assert.deepEqual(tarballs(run.out), ['old.tgz']);
+  assert.equal(existsSync(join(run.out, '.partial')), false);
   assert.ok(!run.calls.some((call) => call.includes('web-components-stencil')), 'stopped at the first failure');
 });
 
@@ -115,5 +130,13 @@ test('a failed pack stops with exit 1 and removes the tarballs packed before it'
   t.after(run.cleanup);
   assert.equal(run.status, 1);
   assert.match(run.stderr, /storybook-shared failed/);
-  assert.equal(existsSync(run.out), false);
+  assert.deepEqual(tarballs(run.out), []);
+});
+
+test('a complete run replaces the previous set', (t) => {
+  const run = packLocal({ previous: ['gone.tgz'] });
+  t.after(run.cleanup);
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(tarballs(run.out).includes('gone.tgz'), false);
+  assert.equal(tarballs(run.out).length, 7);
 });

@@ -51,7 +51,8 @@ export function readLogs(dir = LOG_DIR) {
 }
 
 /** The log `pnpm logs --last` shows: the newest failure, else the newest log. */
-export const pickLast = (logs) => logs.find((log) => log.exit !== null && log.exit !== '0') ?? logs[0] ?? null;
+export const pickLast = (logs) =>
+  logs.find((log) => log.exit !== null && log.exit !== '0' && log.exit !== 'stopped') ?? logs[0] ?? null;
 
 /** The last `count` lines of a log (256 KB holds far more than that of any tool's output). */
 export function tailLines(path, count = 80) {

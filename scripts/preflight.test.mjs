@@ -1,5 +1,6 @@
 /* `node --test scripts/`: the install hooks, run on a copy of the scripts against a fake repo. preflight may only stop
    `pnpm install` for a wrong Node; welcome may never stop it. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';

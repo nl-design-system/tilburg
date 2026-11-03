@@ -16,7 +16,8 @@ installCrashHandler('pnpm menu', { signals: false });
 /* Redrawing moves the cursor up by the lines it wrote: a line that wraps would leave the menu drifting down the screen.
    Too narrow for the columns: the list instead. */
 const width = () => process.stdout.columns || 80;
-if (!process.stdin.isTTY || !process.stdout.isTTY || width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP) {
+const tooNarrow = () => width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;
+if (!process.stdin.isTTY || !process.stdout.isTTY || tooNarrow()) {
   await import('./help.mjs');
   process.exit(0);
 }
@@ -82,7 +83,9 @@ function leave() {
   process.stdin.pause();
 }
 
+let running = false;
 function run(script) {
+  running = true;
   leave();
   process.stdout.write('\x1b[2J\x1b[H');
   /* The command owns the terminal now: Ctrl-C is for it (it stops itself), not for the menu that started it. */
@@ -104,10 +107,24 @@ console.log(`      ${c.magenta}${c.bold}“${saying}”${c.reset}  ${c.gray}${me
 if (install) console.log(`  ${c.yellow}⚠  ${install}${c.reset} Press Enter to run ${c.cyan}pnpm setup${c.reset}.\n`);
 render();
 
+/* Made narrower while open: the list instead, as at the start. */
+process.stdout.on('resize', async () => {
+  if (running || !tooNarrow()) return;
+  running = true;
+  leave();
+  process.stdout.write('\x1b[2J\x1b[H');
+  await import('./help.mjs');
+  process.exit(0);
+});
+
 process.stdin.setRawMode(true);
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', (key) => {
+/* Application-mode arrows (\x1bOA, some ssh and tmux setups) as normal ones, and several keys in one chunk one by one. */
+process.stdin.on('data', (chunk) => {
+  for (const key of chunk.replace(/\x1bO/g, '\x1b[').match(/\x1b\[[A-D]|./gs) ?? []) if (!running) onKey(key);
+});
+function onKey(key) {
   const items = () => SECTIONS[section].items;
   if (key === '\u0003' || key === 'q' || key === 'Q') {
     leave();
@@ -136,4 +153,4 @@ process.stdin.on('data', (key) => {
     item = Math.min(item, items().length - 1);
     render();
   }
-});
+}

@@ -7,10 +7,10 @@ _Aan de slag_ in de Storybook.
 
 ## Vereisten
 
-| Tool    | Versie                                    | Hoe                                                         |
-| ------- | ----------------------------------------- | ----------------------------------------------------------- |
-| Node.js | 24 (zie `.nvmrc`; `engines`: `>=24 <=25`) | `nvm use`                                                   |
-| pnpm    | 11 (`packageManager` in `package.json`)   | `corepack enable`, dan kiest corepack de juiste versie zelf |
+| Tool    | Versie                                      | Hoe                                                         |
+| ------- | ------------------------------------------- | ----------------------------------------------------------- |
+| Node.js | 24 (zie `.nvmrc`; `engines`: `>=24.15 <25`) | `nvm use`                                                   |
+| pnpm    | 11 (`packageManager` in `package.json`)     | `corepack enable`, dan kiest corepack de juiste versie zelf |
 
 `pnpm install` controleert eerst je Node-versie (`scripts/preflight.mjs`) en stopt met uitleg als het niet Node 24 is;
 daarnaast weigert pnpm zelf een andere versie (`engineStrict`). Zie je `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` of
@@ -88,10 +88,12 @@ Poorten, libraries en afnemende repo's staan op één plek: `scripts/dev-config.
 ze de bekende oorzaken (verkeerde Node, de 24-uursregel, `allowBuilds`, een Jest-crash op Node 24, een library die niet
 gebouwd is, een bezette poort) en zeggen wat je moet doen.
 
+Sta je in een pakketmap (`packages/x`), typ dan `pnpm -w dev` (enz.): zonder `-w` zoekt pnpm het script in dat pakket.
+
 Gaat een stap mis, dan zie je niet de hele uitvoer van de tool maar wat ertoe doet: waarom (als de oorzaak bekend is),
 wat je moet doen, de foutregels van de tool zelf en een link naar de volledige log (in de temp-map, onder
-`tilburg-logs/`; de laatste 40 blijven bewaard). Een tool die iets vraagt, krijgt geen invoer en stopt meteen in plaats
-van eindeloos te wachten. Ctrl-C stopt ook alles wat het script gestart heeft. Draait `pnpm dev`, dan vragen `verify`,
+`tilburg-logs-<uid>/`, alleen voor jou leesbaar; de laatste 40 blijven bewaard). Een tool die iets vraagt, krijgt geen
+invoer en stopt meteen in plaats van eindeloos te wachten. Ctrl-C stopt ook alles wat het script gestart heeft. Draait `pnpm dev`, dan vragen `verify`,
 `sync` en `setup` eerst of ze mogen bouwen: twee builds tegelijk in dezelfde `dist/` mislukken. De scripts hebben zelf
 ook tests (`pnpm run test:scripts`, onderdeel van `pnpm test`).
 

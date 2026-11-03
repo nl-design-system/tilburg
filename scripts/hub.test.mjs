@@ -1,4 +1,5 @@
 /* `node --test scripts/`: the menu without a terminal (CI, a pipe, closed stdin) prints the list and never waits. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
@@ -63,4 +64,16 @@ test('no menu line is wider than an 80-column terminal, or a redraw drifts down 
   assert.match(result.stdout, /❯ where/);
   const menu = stripAnsi(result.stdout.slice(result.stdout.indexOf('START'))).replace(/\x1b\[\?25[hl]/g, '');
   for (const line of menu.split('\n')) assert.ok(line.length < 80, `${line.length}: ${line}`);
+});
+
+test('application-mode arrows and several keys in one chunk are all read', () => {
+  /* →→ in application mode, then q. */
+  const result = spawnSync(process.execPath, ['--import', asTerminal(80), hub], {
+    input: '\x1bOC\x1bOCq',
+    env: { ...process.env, CI: '', TILBURG_TTY: '' },
+    encoding: 'utf8',
+    timeout: 10_000,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.split('Enter run').length - 1, 3, 'drawn once, then once per arrow');
 });

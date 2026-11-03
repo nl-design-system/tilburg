@@ -1,7 +1,17 @@
 /* `node --test scripts/`: running tools, reading their output, and never hanging on them. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import {
+  appendFileSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -9,11 +19,13 @@ import {
   appendLog,
   capture,
   excerpt,
+  LOG_DIR,
   newLogFile,
   printError,
   printFullOutput,
   runStep,
   stripAnsi,
+  underSudo,
 } from './cli-utils.mjs';
 
 test('excerpt keeps the error lines, in order and once, and leaves passing lines out', () => {
@@ -126,6 +138,46 @@ test('newLogFile twice in the same second does not truncate the first log', () =
   const second = newLogFile('test same label');
   assert.notEqual(first, second);
   assert.equal(readFileSync(first, 'utf8'), 'first attempt');
+});
+
+test('the log folder is per user and private, also when it already existed with an open mode', () => {
+  if (!process.getuid) return;
+  assert.match(LOG_DIR, new RegExp(`tilburg-logs-${process.getuid()}$`));
+  newLogFile('test mode');
+  assert.equal(statSync(LOG_DIR).mode & 0o777, 0o700);
+});
+
+test('a log past 20 MB gets one truncated line, and still its exit line', () => {
+  const log = newLogFile('test big');
+  appendLog(log, 'x'.repeat(20 * 1024 * 1024 - 10));
+  appendLog(log, 'y'.repeat(100));
+  appendLog(log, 'z'.repeat(100));
+  appendLog(log, '\n# exit 1\n');
+  const tail = readFileSync(log, 'utf8').slice(-200);
+  assert.equal(tail.match(/# truncated/g).length, 1);
+  assert.doesNotMatch(tail, /[yz]/);
+  assert.match(tail, /# exit 1\n$/);
+  rmSync(log);
+});
+
+test('pruning skips an idle pnpm dev log for a week, not only an hour', () => {
+  const twoHours = (Date.now() - 2 * 60 * 60 * 1000) / 1000;
+  const dev = join(LOG_DIR, '2000-01-01T00-00-00-dev-react.log');
+  const step = join(LOG_DIR, '2000-01-01T00-00-01-lint.log');
+  for (const path of [dev, step]) {
+    writeFileSync(path, '');
+    utimesSync(path, twoHours, twoHours);
+  }
+  for (let n = 0; n < 41; n++) newLogFile(`test prune ${n}`);
+  assert.ok(existsSync(dev), 'the dev log stays');
+  assert.ok(!existsSync(step), 'an old step log goes');
+});
+
+test('underSudo: only root with SUDO_USER, not `sudo -iu dev` or a plain root shell', () => {
+  assert.equal(underSudo({ SUDO_USER: 'roel' }, 0), true);
+  assert.equal(underSudo({ SUDO_USER: 'roel' }, 501), false);
+  assert.equal(underSudo({}, 0), false);
+  assert.equal(underSudo({ SUDO_USER: 'roel' }, undefined), false);
 });
 
 test('printError prints a circular object instead of throwing', (t) => {

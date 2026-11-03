@@ -82,8 +82,8 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
     });
     continue;
   }
-  const out = resolve(LOG_DIR, `test-${component.slug}-${layer.label.replace(/\W/g, '')}.json`);
-  rmSync(out, { force: true });
+  /* The pid: two `pnpm test tooltip` at once must not read each other's report. */
+  const out = resolve(LOG_DIR, `test-${component.slug}-${layer.label.replace(/\W/g, '')}-${process.pid}.json`);
   let runError = null;
   try {
     await runStepWithRecovery(`${layer.label} tests`, `pnpm --filter ${name} exec ${command(out)}`, { cwd: ROOT });
@@ -96,6 +96,9 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
     report = JSON.parse(readFileSync(out, 'utf8'));
   } catch {
     /* no report: a crash or a compile error before the tests ran */
+  } finally {
+    /* Read once; the step log keeps the output. */
+    rmSync(out, { force: true });
   }
   const file = report?.testResults?.find(
     (result) =>

@@ -9,8 +9,11 @@
 import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { confirmNoDevRunning } from './lib/lock.mjs';
 
-const root = resolve(import.meta.dirname, '..');
+/* Not import.meta.dirname: Node before 20.11 has none. */
+const root = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 const out = resolve(root, '.tarballs');
 /* Packed here first and moved up at the end: a run stopped half-way (Ctrl-C, a kill) leaves no half set in
    .tarballs/ for a consumer to install. */
@@ -32,7 +35,10 @@ const packages = [
 
 const run = (command, cwd = root) => execSync(command, { cwd, stdio: 'inherit' });
 
-rmSync(out, { recursive: true, force: true });
+if (!(await confirmNoDevRunning('pack:local builds every package, and'))) process.exit(1);
+
+/* The previous set stays in .tarballs/ until this one is complete: a failed build leaves a consumer something to install. */
+rmSync(partial, { recursive: true, force: true });
 mkdirSync(partial, { recursive: true });
 
 for (const pkg of packages) {
@@ -44,15 +50,15 @@ for (const pkg of packages) {
     console.log(`\n▶ pack ${pkg.name}`);
     run(`pnpm pack --pack-destination "${partial}"`, resolve(root, pkg.dir));
   } catch (err) {
-    // A half-filled .tarballs/ would install an incomplete set, so leave none.
-    rmSync(out, { recursive: true, force: true });
+    rmSync(partial, { recursive: true, force: true });
     console.error(
-      `\n✗ ${pkg.name} failed (${err.message.split('\n')[0]}); see the output above. .tarballs/ was removed.`,
+      `\n✗ ${pkg.name} failed (${err.message.split('\n')[0]}); see the output above. .tarballs/ still has the previous set.`,
     );
     process.exit(1);
   }
 }
 
+for (const file of readdirSync(out)) if (file.endsWith('.tgz')) rmSync(resolve(out, file));
 for (const file of readdirSync(partial)) renameSync(resolve(partial, file), resolve(out, file));
 rmSync(partial, { recursive: true });
 

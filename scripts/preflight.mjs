@@ -5,11 +5,15 @@
 
    Only a wrong Node stops the install. If this check itself breaks (a bad .nvmrc, a bug here), it says so and lets
    the install carry on: a guard must never be the thing that blocks you. */
+import { readFileSync } from 'node:fs';
+
 let verdict = 'ok';
 let message = null;
 try {
   const { NODE_MAJOR, PNPM_VERSION } = await import('./dev-config.mjs');
   const { c, fail } = await import('./lib/cli-utils.mjs');
+  /* dev-config reads past a broken package.json (so pnpm check can report it): say it here, where it is read first. */
+  JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
   if (!Number.isInteger(NODE_MAJOR)) throw new Error(`.nvmrc does not hold a Node major version (read: ${NODE_MAJOR})`);
   const major = Number(process.versions.node.split('.')[0]);

@@ -1,4 +1,5 @@
 /* `pnpm run test:scripts`: the component lookup behind pnpm where, dev <name>, test <name> and parity. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';

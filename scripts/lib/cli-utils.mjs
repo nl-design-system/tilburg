@@ -2,7 +2,17 @@
    Node built-ins only, so they work before `pnpm install` — which is exactly when `pnpm check` is most useful.
    Ported from the nvwa-angular and bq-tlb-frontend tooling. */
 import { spawn } from 'node:child_process';
-import { appendFileSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  appendFileSync,
+  chmodSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { inspect } from 'node:util';
@@ -13,6 +23,8 @@ import { inspect } from 'node:util';
  */
 export const interactive =
   (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI && process.env.TERM !== 'dumb';
+/* Read once and dropped: the tools and scripts this process starts must not inherit a terminal they do not have. */
+delete process.env.TILBURG_TTY;
 /* NO_COLOR (no-color.org) and FORCE_COLOR=0 ask for plain text, also on a terminal. */
 const colour = interactive && !process.env.NO_COLOR && process.env.FORCE_COLOR !== '0';
 /* 0 or undefined when nobody knows (TILBURG_TTY, some ptys): assume the usual 80. */
@@ -260,8 +272,11 @@ for (const stream of [process.stdout, process.stderr]) {
 
 // ─── Logs: the full output of every step, kept on disk ───────────────────────
 
-export const LOG_DIR = resolve(tmpdir(), 'tilburg-logs');
+/* One per user: on a temp folder shared between users (Linux /tmp), someone else's folder would leave us without logs. */
+export const LOG_DIR = resolve(tmpdir(), process.getuid ? `tilburg-logs-${process.getuid()}` : 'tilburg-logs');
 const KEEP_LOGS = 40;
+const MAX_LOG_BYTES = 20 * 1024 * 1024;
+const truncatedLogs = new Set();
 
 /** A new log file for `label` (oldest ones are pruned). Returns its path, or null when the disk will not have it. */
 export function newLogFile(label) {
@@ -271,15 +286,20 @@ export function newLogFile(label) {
     mkdirSync(LOG_DIR, { recursive: true, mode: 0o700 });
     const folder = lstatSync(LOG_DIR);
     if (folder.isSymbolicLink() || (process.getuid && folder.uid !== process.getuid())) return null;
+    /* mode above applies only on create: a folder from an older version may still be readable by everyone. */
+    chmodSync(LOG_DIR, 0o700);
     const old = readdirSync(LOG_DIR)
       .filter((name) => name.endsWith('.log'))
       .sort();
     /* Never a log still being written: pnpm dev opens its watcher logs at the start, so they are the oldest names, and
        a verify in another terminal would otherwise prune them (and their early errors) away. */
     const busy = Date.now() - 60 * 60 * 1000;
+    /* A pnpm dev watcher can stay silent for hours while it runs, so its logs get a week. */
+    const busyDev = Date.now() - 7 * 24 * 60 * 60 * 1000;
     for (const name of old.slice(0, Math.max(0, old.length - KEEP_LOGS + 1))) {
       const path = resolve(LOG_DIR, name);
-      if (lstatSync(path, { throwIfNoEntry: false })?.mtimeMs < busy) rmSync(path, { force: true });
+      const since = /^[\dT-]{19}-dev-/.test(name) ? busyDev : busy;
+      if (lstatSync(path, { throwIfNoEntry: false })?.mtimeMs < since) rmSync(path, { force: true });
     }
     const slug =
       label
@@ -304,11 +324,22 @@ export function newLogFile(label) {
   }
 }
 
-/** Append to a log without ever throwing: losing a log line is better than losing the step. */
+/**
+ * Append to a log without ever throwing: losing a log line is better than losing the step. Past 20 MB (a watcher that
+ * loops for days) only one "truncated" line and the closing "# exit" line are still written.
+ */
 export function appendLog(path, text) {
   if (!path) return;
   try {
-    appendFileSync(path, text);
+    if (!text.startsWith('\n# exit')) {
+      if (truncatedLogs.has(path)) return;
+      if ((statSync(path, { throwIfNoEntry: false })?.size ?? 0) + text.length > MAX_LOG_BYTES) {
+        truncatedLogs.add(path);
+        text = `\n# truncated: this log passed ${MAX_LOG_BYTES / 1024 / 1024} MB, the rest was not kept\n`;
+      }
+    }
+    /* mode: a log pruned meanwhile is created again, and must be as private as newLogFile makes it. */
+    appendFileSync(path, text, { mode: 0o600 });
   } catch {
     /* disk full or folder gone: carry on without */
   }
@@ -568,7 +599,8 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
 /** One-key [Y/n] question. Without a terminal it answers `fallback` instead of waiting for nobody. */
 export function confirm(question, { default: dflt = true, fallback = false } = {}) {
   return new Promise((resolve) => {
-    if (!process.stdin.isTTY) {
+    /* stdout too: with the output redirected (`pnpm verify > out.txt`) nobody sees the question it waits for. */
+    if (!process.stdin.isTTY || !process.stdout.isTTY) {
       resolve(fallback);
       return;
     }
@@ -675,7 +707,22 @@ function restoreTerminal() {
  * a kill stops every child process before exiting, so nothing keeps running in the background. A script with its own
  * shutdown (pnpm dev) passes `signals: false`.
  */
+/**
+ * Running as root through sudo: node_modules, dist/ and the logs would then belong to root, and every later run without
+ * sudo fails with EACCES. SUDO_USER alone is not enough: `sudo -iu dev` sets it too, and then the files belong to the
+ * right user.
+ */
+export const underSudo = (env = process.env, uid = process.getuid?.()) => Boolean(env.SUDO_USER) && uid === 0;
+
 export function installCrashHandler(script, { signals = true } = {}) {
+  if (underSudo()) {
+    fail({
+      what: `${script} is running under sudo`,
+      why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER}; the next run without sudo then fails with EACCES.`,
+      fix: `${script} without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)`,
+    });
+    process.exit(1);
+  }
   const onCrash = (err) => {
     restoreTerminal();
     stopChildren();

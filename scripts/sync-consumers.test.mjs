@@ -1,5 +1,6 @@
 /* `node --test scripts/`: sync-consumers.mjs in a sandbox. The scripts are copied into a temporary "tilburg" whose
    sibling consumers are fakes, and `pnpm`/`npm` on PATH are shell stubs: no real repository, build or install. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
@@ -11,6 +12,7 @@ import {
   readFileSync,
   realpathSync,
   rmSync,
+  symlinkSync,
   utimesSync,
   writeFileSync,
 } from 'node:fs';
@@ -44,7 +46,8 @@ exit \${NPM_EXIT:-0}
 
 /**
  * Sets up the sandbox and runs `node scripts/sync-consumers.mjs ...args`. `consumers` maps a consumer key to the
- * text of its package.json (an object is stringified); a key left out has no folder at all.
+ * text of its package.json (an object is stringified); a key left out has no folder at all. `env` may be a function
+ * of the repo path.
  */
 function sync(args = [], { consumers = {}, env = {}, before } = {}) {
   const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'sync consumers ')));
@@ -56,6 +59,14 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
   for (const file of ['sync-consumers.mjs', 'dev-config.mjs']) cpSync(join(here, file), join(repo, 'scripts', file));
   cpSync(join(here, 'lib'), join(repo, 'scripts', 'lib'), { recursive: true });
   cpSync(join(here, '..', 'package.json'), join(repo, 'package.json'));
+  /* The tarball names come from these versions. */
+  for (const [dir, name, version] of [
+    ['packages/components-angular', '@gemeente-tilburg/components-angular', '0.0.0'],
+    ['proprietary/design-tokens', '@gemeente-tilburg/design-tokens', '0.0.1'],
+  ]) {
+    mkdirSync(join(repo, dir), { recursive: true });
+    writeFileSync(join(repo, dir, 'package.json'), JSON.stringify({ name, version }));
+  }
   for (const [key, pkg] of Object.entries(consumers)) {
     mkdirSync(join(sandbox, key));
     writeFileSync(join(sandbox, key, 'package.json'), typeof pkg === 'string' ? pkg : JSON.stringify(pkg));
@@ -77,7 +88,7 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
       TMPDIR: join(sandbox, 'tmp'),
       LOG: log,
       REPO: repo,
-      ...env,
+      ...(typeof env === 'function' ? env(repo) : env),
     },
   });
   const calls = existsSync(log) ? readFileSync(log, 'utf8').replaceAll(sandbox, '<sandbox>') : '';
@@ -204,7 +215,7 @@ test('a second pnpm sync while one is running stops before packing anything', ()
     consumers: { hltsamen: hlt },
     before: (repo) => {
       const hash = createHash('sha1').update(repo).digest('hex').slice(0, 10);
-      const lock = { pid: process.pid, started: 'earlier' };
+      const lock = { pid: process.pid, started: new Date().toISOString() };
       writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${hash}.json`), JSON.stringify(lock));
     },
   });
@@ -251,4 +262,32 @@ test('Ctrl-C during a consumer sync still says what that consumer was left with'
   assert.equal(run.status, 130, run.output);
   assert.match(run.output, /Stopped \(Ctrl-C\)/);
   assert.match(run.output, /bq-tlb-frontend may be half-updated\. Changed by this sync: package-lock\.json/);
+});
+
+test('run from a git hook (GIT_DIR set to tilburg mid-merge), the consumer is still read as itself', () => {
+  const run = sync(['--to', 'hltsamen'], {
+    consumers: { hltsamen: hlt },
+    before: (repo) => {
+      gitInit(join(repo, '..', 'hltsamen'));
+      const git = gitInit(repo);
+      writeFileSync(join(repo, '.git', 'MERGE_HEAD'), git('rev-parse', 'HEAD'));
+    },
+    env: (repo) => ({ GIT_DIR: join(repo, '.git'), GIT_WORK_TREE: repo }),
+  });
+  assert.doesNotMatch(run.output, /in the middle of a merge/);
+  assert.match(run.calls, /pnpm run sync-stories @ <sandbox>\/hltsamen/);
+});
+
+test('a checkout reached through a symlink finds the consumers next to the link', () => {
+  const run = sync(['--to', 'hltsamen'], {
+    before: (repo) => {
+      const linked = join(repo, '..', 'code');
+      mkdirSync(join(linked, 'hltsamen'), { recursive: true });
+      writeFileSync(join(linked, 'hltsamen', 'package.json'), JSON.stringify(hlt));
+      symlinkSync(repo, join(linked, 'tilburg'));
+    },
+    env: (repo) => ({ PWD: join(repo, '..', 'code', 'tilburg') }),
+  });
+  assert.doesNotMatch(run.output, /No consumer repository found/);
+  assert.match(run.calls, /pnpm run sync-stories @ <sandbox>\/code\/hltsamen/);
 });

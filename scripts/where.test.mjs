@@ -1,4 +1,5 @@
 /* `node --test scripts/`: `pnpm where` with names that fit one, several or no component, and without its table. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdtempSync, rmSync } from 'node:fs';

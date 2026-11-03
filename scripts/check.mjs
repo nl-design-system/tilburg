@@ -2,17 +2,25 @@
    that is not green. Exits 1 only for ❌ rows (things that stop you), not for ⚠️ rows (things to do).
    `pnpm check --fix` then offers each row's fix one by one (Y/n), checks those rows again and prints the table anew.
    Also works as `node scripts/check.mjs`, which is handy when pnpm itself will not start (wrong Node). */
-import { parseArgs } from 'node:util';
+import util from 'node:util';
 import { c, confirm, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
 import { runAllChecks, safely } from './lib/checks.mjs';
-import { readDevLock } from './lib/lock.mjs';
+import { confirmNoDevRunning, readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm check');
 printBanner('Environment check');
 
+/* parseArgs came in Node 18.3: on an older Node, say what is wrong instead of crashing on it. */
+if (!util.parseArgs) {
+  fail({
+    what: `Node ${process.version} is too old to run this check`,
+    fix: 'nvm use   (or install the Node in .nvmrc)',
+  });
+  process.exit(1);
+}
 let wantsFix;
 try {
-  wantsFix = Boolean(parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
+  wantsFix = Boolean(util.parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
 } catch (err) {
   fail({ what: err.message, fix: 'pnpm check   or   pnpm check --fix' });
   process.exit(1);
@@ -75,6 +83,10 @@ async function offerFixes() {
     }
     console.log(`    ${c.gray}${fix.command}${c.reset}`);
     if (!(await confirm(fix.label))) {
+      console.log('');
+      continue;
+    }
+    if (/\bpnpm install\b/.test(fix.command) && !(await confirmNoDevRunning(fix.command))) {
       console.log('');
       continue;
     }

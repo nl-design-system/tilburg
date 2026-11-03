@@ -1,11 +1,12 @@
 /* `node --test scripts/`: the pnpm dev lock file — stale, corrupt and overwritten locks. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { after, test } from 'node:test';
-import { isAlive, readDevLock, writeDevLock } from './lock.mjs';
+import { isAlive, processStart, readDevLock, updateDevLock, writeDevLock } from './lock.mjs';
 
 const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
@@ -34,6 +35,57 @@ for (const content of ['null', '[]', '{"pid":"123"}', '{"pid":1.5}', '']) {
     assert.equal(readDevLock(lockWith(content)), null);
   });
 }
+
+test(
+  'a lock whose pid now belongs to another process (started later) is stale',
+  { skip: process.platform === 'win32' },
+  () => {
+    const started = processStart(process.ppid);
+    assert.ok(started, 'ps tells when a process started');
+    /* The parent is alive, but the lock says its process started a minute earlier: the pid was handed on. */
+    const file = lockWith({ pid: process.ppid, started: new Date().toISOString(), processStarted: started - 60_000 });
+    assert.equal(readDevLock(file), null);
+    assert.equal(existsSync(file), false);
+    const same = lockWith({ pid: process.ppid, started: new Date().toISOString(), processStarted: started });
+    assert.equal(readDevLock(same)?.pid, process.ppid);
+  },
+);
+
+test('writeDevLock says when another process already holds the lock', () => {
+  const file = lockWith({ pid: process.ppid, started: new Date().toISOString() });
+  assert.equal(writeDevLock({}, file), false);
+  assert.equal(JSON.parse(readFileSync(file, 'utf8')).pid, process.ppid, 'the other lock is left alone');
+  const mine = resolve(dir, `lock-${count++}.json`);
+  assert.equal(writeDevLock({}, mine), true);
+  updateDevLock({ groups: [{ pid: 1, started: 0 }] }, mine);
+  assert.deepEqual(JSON.parse(readFileSync(mine, 'utf8')).groups, [{ pid: 1, started: 0 }]);
+  updateDevLock({ groups: [] }, file);
+  assert.equal(JSON.parse(readFileSync(file, 'utf8')).groups, undefined, 'never writes another process its lock');
+});
+
+for (const content of [
+  { pid: process.ppid, started: new Date().toISOString(), storybooks: 'x' },
+  { pid: process.ppid, started: 'yesterday-ish' },
+]) {
+  test(`a lock of another shape (${JSON.stringify(content).slice(0, 60)}) is broken, not a crash later`, () => {
+    const file = lockWith(content);
+    assert.equal(readDevLock(file), null);
+    assert.equal(existsSync(file), false);
+  });
+}
+
+test('a lock in a folder we may not delete from is ignored, not a crash', { skip: !process.getuid }, () => {
+  const sticky = resolve(dir, 'ro');
+  mkdirSync(sticky);
+  const file = resolve(sticky, 'lock.json');
+  writeFileSync(file, 'broken');
+  chmodSync(sticky, 0o555);
+  try {
+    assert.equal(readDevLock(file), null);
+  } finally {
+    chmodSync(sticky, 0o755);
+  }
+});
 
 test('a missing lock file means nothing is running', () => {
   assert.equal(readDevLock(resolve(dir, 'missing.json')), null);

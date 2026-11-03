@@ -15,10 +15,16 @@ import { pullRequestUrl } from './lib/ship.mjs';
 
 installCrashHandler('pnpm ship');
 
+/* Run from a git hook, GIT_DIR and friends may point elsewhere than ROOT. GIT_TERMINAL_PROMPT=0: an HTTPS fetch
+   without a credential helper fails at once instead of prompting on the terminal while its output is captured. */
+const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...gitEnv } = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
+
 /** git in the repository. Never throws: { ok, out }. */
 function git(...args) {
-  /* A fetch that hangs (network, credential prompt) gives up after two minutes instead of blocking ship. */
-  const result = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 120_000 });
+  /* A fetch that hangs (network) gives up after two minutes instead of blocking ship. */
+  const result = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 120_000, env: gitEnv });
+  if (result.error?.code === 'ENOENT')
+    stop({ what: 'git not found', fix: 'install git (https://git-scm.com/), then pnpm ship again' });
   /* Ctrl-C reaches git, not our SIGINT handler (spawnSync blocks it): stop here rather than carry on to the push. */
   if (result.signal === 'SIGINT') {
     console.log('\n  Stopped (Ctrl-C).\n');
@@ -160,7 +166,9 @@ if (!commits) {
 }
 const count = commits.split('\n').length;
 console.log(`\n  ${count} commit${count === 1 ? '' : 's'} to push${base ? ` (${range})` : ''}:`);
-for (const line of commits.split('\n')) console.log(`     ${line}`);
+/* Without origin/main that is the whole history: the newest 20 say enough. */
+for (const line of commits.split('\n').slice(0, 20)) console.log(`     ${line}`);
+if (count > 20) console.log(`     … and ${count - 20} more`);
 console.log('');
 
 /* Always explicit: this branch to origin/<same name>, whatever push.default or the tracking setting says. */
@@ -173,7 +181,13 @@ else {
     process.exit(0);
   }
   /* stderr is read back to say why a push failed; git writes its progress there too, so pass it on. */
-  const pushed = spawnSync('git', push, { cwd: ROOT, stdio: ['inherit', 'inherit', 'pipe'], encoding: 'utf8' });
+  /* No GIT_TERMINAL_PROMPT here: stdin is the terminal, so a credential prompt can be answered. */
+  const pushed = spawnSync('git', push, {
+    cwd: ROOT,
+    stdio: ['inherit', 'inherit', 'pipe'],
+    encoding: 'utf8',
+    env: { ...gitEnv, GIT_TERMINAL_PROMPT: process.env.GIT_TERMINAL_PROMPT },
+  });
   process.stderr.write(pushed.stderr ?? '');
   if (pushed.status !== 0) {
     const { kind, why, fix } = classifyFailure(pushed.stderr ?? '', pushed.error);

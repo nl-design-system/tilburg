@@ -1,5 +1,6 @@
 /* `node --test scripts/`: `pnpm verify` exits 1 whenever a step fails or is killed, and 0 only when all pass. Runs a
    copy of the scripts in a throwaway folder with a fake pnpm whose steps pass or fail on demand: no builds, no network. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -14,12 +15,12 @@ after(() => dirs.forEach((dir) => rmSync(dir, { recursive: true, force: true }))
 
 /* The fake pnpm: FAIL and KILL are the exact arguments that make it exit 1 or kill itself. */
 const PNPM = `#!/bin/sh
-[ "$*" = "$FAIL" ] && { echo "boom"; exit 1; }
+[ "$*" = "$FAIL" ] && { echo "\${OUTPUT:-boom}"; exit 1; }
 [ "$*" = "$KILL" ] && kill -TERM $$
 exit 0
 `;
 
-function verify({ FAIL = '', KILL = '', PARITY_EXIT = '0', setup } = {}) {
+function verify({ FAIL = '', KILL = '', PARITY_EXIT = '0', OUTPUT = '', setup } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-verify-test-'));
   dirs.push(dir);
   const bin = join(dir, 'bin');
@@ -32,7 +33,7 @@ function verify({ FAIL = '', KILL = '', PARITY_EXIT = '0', setup } = {}) {
   writeFileSync(join(dir, 'package.json'), '{}\n');
   writeFileSync(join(bin, 'pnpm'), PNPM);
   chmodSync(join(bin, 'pnpm'), 0o755);
-  const env = { ...process.env, CI: '', FAIL, KILL, PARITY_EXIT, PATH: `${bin}:${process.env.PATH}` };
+  const env = { ...process.env, CI: '', FAIL, KILL, PARITY_EXIT, OUTPUT, PATH: `${bin}:${process.env.PATH}` };
   setup?.(dir, env);
   const result = spawnSync(process.execPath, ['scripts/verify.mjs'], {
     cwd: dir,
@@ -49,10 +50,27 @@ test('every step passing is the only way to exit 0', () => {
   assert.match(result.all, /Everything CI checks passes/);
 });
 
+test('an audit that fails offline is a warning, not a failure', () => {
+  const result = verify({ FAIL: 'audit --audit-level critical', OUTPUT: 'getaddrinfo ENOTFOUND registry.npmjs.org' });
+  assert.equal(result.status, 0, result.all);
+  assert.match(result.all, /could not check: no network/);
+});
+
+test('node_modules out of date with pnpm-lock.yaml is said at the top', () => {
+  const result = verify({
+    setup: (dir) => {
+      mkdirSync(join(dir, 'node_modules', '.pnpm'), { recursive: true });
+      writeFileSync(join(dir, 'node_modules', '.pnpm', 'lock.yaml'), 'old\n');
+      writeFileSync(join(dir, 'pnpm-lock.yaml'), 'new\n');
+    },
+  });
+  assert.match(result.all, /pnpm-lock\.yaml differs from what is installed/);
+});
+
 test('a failing step fails verify, and the steps after it still run', () => {
   const result = verify({ FAIL: 'run lint' });
   assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /1 of 7 failed/);
+  assert.match(result.all, /1 of 8 failed/);
   assert.doesNotMatch(result.all, /Everything CI checks passes/);
 });
 
@@ -60,13 +78,13 @@ test('a failed build skips the steps that need it, and still fails verify', () =
   const result = verify({ FAIL: 'run build' });
   assert.equal(result.status, 1, result.all);
   assert.equal(result.all.match(/skipped, the build failed/g)?.length, 3);
-  assert.match(result.all, /1 of 4 failed/);
+  assert.match(result.all, /1 of 5 failed/);
 });
 
 test('a step killed by a signal is a failure, not a pass', () => {
   const result = verify({ KILL: 'run test' });
   assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /1 of 7 failed/);
+  assert.match(result.all, /1 of 8 failed/);
 });
 
 test('a failing parity check fails verify', () => {

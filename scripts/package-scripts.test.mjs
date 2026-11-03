@@ -1,5 +1,6 @@
 /* `node --test scripts/`: package scripts and CI workflows that would fail quietly. Each check below exists because
    the tool exits 0 in that situation (measured with pnpm 11 / Jest 29), so CI would go green on a broken setup. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';

@@ -1,5 +1,6 @@
 /* `pnpm run test:scripts`: pnpm parity must never report parity it did not check. Runs the script read-only against the
    repository, or against a copy of scripts/ in a temp dir with a table of our own. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';

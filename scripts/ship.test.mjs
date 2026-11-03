@@ -1,5 +1,6 @@
 /* `node --test scripts/`: when `pnpm ship` stops, and that it never reports success after a failed step. Runs a copy
    of the scripts in a throwaway repository with a local "origin" and a fake pnpm: no network, no push to GitHub. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -266,4 +267,30 @@ test('a branch deleted on origin (merged) is not "up to date" with it', () => {
   assert.doesNotMatch(result.all, /Nothing to push/);
   assert.match(result.all, /upstream of feat\/x is gone from origin/);
   assert.match(result.all, /1 commit to push \(origin\/main\.\.HEAD\)/);
+});
+
+test('without origin/main the whole history is listed, cut at 20 lines', () => {
+  const { dir, git, ship } = sandbox();
+  git('switch', '-q', '-c', 'feat/x');
+  for (let i = 0; i < 24; i++) git('commit', '-q', '--allow-empty', '-m', `c${i}`);
+  /* An origin without main: a new branch in a clone of an empty repository. */
+  spawnSync('git', ['init', '-q', '--bare', join(dir, 'empty.git')]);
+  git('remote', 'set-url', 'origin', join(dir, 'empty.git'));
+  git('update-ref', '-d', 'refs/remotes/origin/main');
+  const result = ship('--no-verify', '--dry-run');
+  assert.equal(result.status, 0, result.all);
+  assert.match(result.all, /25 commits to push/);
+  assert.match(result.all, /… and 5 more/);
+});
+
+test('git missing from the PATH says so, not "No remote called origin"', () => {
+  const { dir, repo, env } = sandbox();
+  const result = spawnSync(process.execPath, ['scripts/ship.mjs', '--no-verify', '--dry-run'], {
+    cwd: repo,
+    env: { ...env, PATH: join(dir, 'bin') },
+    encoding: 'utf8',
+    timeout: 20_000,
+  });
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stdout + result.stderr, /git not found/);
 });

@@ -1,4 +1,5 @@
 /* `node --test scripts/`: the command list behind `pnpm commands` and `pnpm menu` must match package.json. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';

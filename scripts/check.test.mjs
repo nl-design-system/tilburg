@@ -1,4 +1,5 @@
 /* `node --test scripts/`: pnpm check end to end, in a child process (its table would confuse node:test's reporter). */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';

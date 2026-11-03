@@ -15,6 +15,7 @@ import {
   stepDone,
   stepFail,
   stepStart,
+  stripAnsi,
 } from './lib/cli-utils.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
@@ -93,7 +94,10 @@ function pick(targets) {
         return `  ${pointer} ${box}${c.reset} ${target.label.padEnd(15)} ${sizeText}  ${c.gray}${target.what}${c.reset}${warning}\x1b[0K`;
       });
       lines.push(`\n  ${c.gray}↑ ↓ move   space tick   enter delete   q cancel${c.reset}\x1b[0K`);
-      process.stdout.write(`${lines.join('\n')}\n`);
+      /* A line that wraps would make the cursor-up above miss, and the list drift down the screen. */
+      const width = (process.stdout.columns || 80) - 1;
+      const fit = (line) => (stripAnsi(line).length > width ? `${stripAnsi(line).slice(0, width)}\x1b[0K` : line);
+      process.stdout.write(`${lines.map(fit).join('\n')}\n`);
       drawn = lines.length + 1;
     };
     draw();
@@ -101,8 +105,14 @@ function pick(targets) {
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     const onKey = (key) => {
-      if (key === '\u0003' || key === 'q') {
+      if (key === '\u0003') {
+        /* Ctrl-C is a stop, not a choice: exit like a SIGINT would. */
         finish(null);
+        console.log(`\n  ${c.gray}Nothing deleted.${c.reset}\n`);
+        process.exit(130);
+      } else if (key === 'q') {
+        finish(null);
+        return;
       } else if (key === '\x1b[A') {
         cursor = (cursor - 1 + targets.length) % targets.length;
       } else if (key === '\x1b[B') {
@@ -115,13 +125,19 @@ function pick(targets) {
       }
       draw();
     };
+    /* Application-mode arrows (\x1bOA, some ssh and tmux setups) as normal ones, and several keys in one chunk one by one. */
+    let finished = false;
+    const onData = (chunk) => {
+      for (const key of chunk.replace(/\x1bO/g, '\x1b[').match(/\x1b\[[A-D]|./gs) ?? []) if (!finished) onKey(key);
+    };
     const finish = (result) => {
-      process.stdin.removeListener('data', onKey);
+      finished = true;
+      process.stdin.removeListener('data', onData);
       process.stdin.setRawMode(false);
       process.stdin.pause();
       done(result);
     };
-    process.stdin.on('data', onKey);
+    process.stdin.on('data', onData);
   });
 }
 
@@ -154,12 +170,10 @@ if (selected.some((target) => target.dangerous)) {
   }
 }
 
-/* Deleting dist/ under a running pnpm dev breaks its Storybooks, and its watchers only rebuild what changes next. */
-const devLock = selected.some((target) => target.label === 'Build output') && readDevLock();
+/* Deleting dist/, node_modules or the caches under a running pnpm dev breaks its watchers and Storybooks. */
+const devLock = selected.length > 0 && readDevLock();
 if (devLock) {
-  console.log(
-    `\n  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${devLock.pid}) and serves the dist/ folders.`,
-  );
+  console.log(`\n  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${devLock.pid}) and uses what you picked.`);
   if (!(await confirm('Delete them anyway? (or stop pnpm dev with q first)', { default: false }))) {
     console.log(`\n  ${c.gray}Nothing deleted. Stop pnpm dev with q, then run this again.${c.reset}\n`);
     process.exit(1);

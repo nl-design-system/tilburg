@@ -2,6 +2,7 @@
    in scripted ways: exit 1 silently, hang, or die by SIGKILL. A run must stop with a non-zero exit and a clear
    message, never with a raw crash, never hang past Ctrl-C, and never leave a child running. The scripts run in child
    processes only: their output never reaches this file's stdout (see the Node 24 note in recovery.test.mjs). */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';

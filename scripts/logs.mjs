@@ -20,8 +20,10 @@ const kb = (bytes) => (bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(b
 
 /** ok / exit 1 / —, padded to `width` before colouring so the columns line up. */
 function status(exit, width = 0) {
-  const text = (exit === null ? '—' : exit === '0' ? 'ok' : `exit ${exit}`).padEnd(width);
-  return `${exit === null ? c.gray : exit === '0' ? c.green : c.red}${text}${c.reset}`;
+  const text = (exit === null ? '—' : exit === '0' ? 'ok' : exit === 'stopped' ? 'stopped' : `exit ${exit}`).padEnd(
+    width,
+  );
+  return `${exit === null || exit === 'stopped' ? c.gray : exit === '0' ? c.green : c.red}${text}${c.reset}`;
 }
 
 const logs = readLogs();

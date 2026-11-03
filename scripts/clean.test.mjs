@@ -1,5 +1,6 @@
 /* `node --test scripts/`: `pnpm run clean:pick` deletes only build output and caches. It runs at import time, so each
    test copies it into a throwaway repo (with a space in its path) and runs it there without a terminal. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -104,7 +105,10 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
   const root = makeRepo();
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
   const id = createHash('sha1').update(realpathSync(root)).digest('hex').slice(0, 10);
-  writeFileSync(resolve(sandbox, `tilburg-dev-${id}.json`), JSON.stringify({ pid: process.pid, storybooks: [] }));
+  writeFileSync(
+    resolve(sandbox, `tilburg-dev-${id}.json`),
+    JSON.stringify({ pid: process.pid, started: new Date().toISOString(), storybooks: [] }),
+  );
   const result = run(root, '--yes');
   assert.equal(result.status, 1, result.stdout + result.stderr);
   assert.match(result.stdout, /pnpm dev is running/);
@@ -124,4 +128,30 @@ test('a folder it may not delete (read-only, or made with sudo) is a failure tha
   } finally {
     chmodSync(resolve(root, 'packages/a/dist/locked'), 0o755);
   }
+});
+
+/* A terminal faked in a preload, 40 columns wide: no real pty in node:test. */
+const inTerminal = (root, input) =>
+  spawnSync(
+    process.execPath,
+    [
+      '--import',
+      `data:text/javascript,${encodeURIComponent(
+        `process.stdin.isTTY = true; process.stdout.isTTY = true; process.stdin.setRawMode = () => process.stdin;
+         Object.defineProperty(process.stdout, 'columns', { value: 40 });`,
+      )}`,
+      resolve(root, 'scripts/clean.mjs'),
+    ],
+    { cwd: root, input, encoding: 'utf8', timeout: 15_000, env: { ...process.env, CI: '', TMPDIR: sandbox } },
+  );
+
+test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than the terminal', () => {
+  const root = makeRepo();
+  /* An application-mode ↓ and a space in the same chunk as the Ctrl-C: all read, none deletes anything. */
+  const result = inTerminal(root, '\x1bOB \u0003');
+  assert.equal(result.status, 130, result.stdout + result.stderr);
+  assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
+  const picker = result.stdout.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '');
+  for (const line of picker.split('\n').filter((line) => line.includes('[')))
+    assert.ok(line.length < 40, `${line.length}: ${line}`);
 });

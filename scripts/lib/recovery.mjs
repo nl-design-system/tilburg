@@ -9,7 +9,7 @@
 import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, rmSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { basename, dirname, resolve } from 'node:path';
+import { basename, dirname, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { NODE_MAJOR, ROOT } from '../dev-config.mjs';
 import {
@@ -27,6 +27,7 @@ import {
   stepStart,
   stripAnsi,
 } from './cli-utils.mjs';
+import { readDevLock } from './lock.mjs';
 
 /* Ordered: the first match wins, so specific causes come before generic ones. */
 export const FAILURES = [
@@ -297,7 +298,8 @@ export const FAILURES = [
   /* After the errno causes: an EACCES or ENOSPC on a file in .angular/cache is not a corrupt cache. */
   {
     kind: 'angular-cache',
-    test: /\.angular[\\/]cache|Unexpected end of JSON input/i,
+    /* A truncated JSON file is only the cache's when .angular is named too: a broken package.json is not. */
+    test: /\.angular[\\/]cache|Unexpected end of JSON input[\s\S]*\.angular\b|\.angular\b[\s\S]*Unexpected end of JSON input/i,
     why: 'The Angular build cache looks corrupt.',
     fix: 'pnpm run clean:pick and choose the .angular caches (and untick the rest), then retry',
   },
@@ -414,6 +416,19 @@ export function classifyFailure(output = '', err = null) {
   };
 }
 
+/**
+ * Why a fix that installs or builds in this repository must not run now: the step ran in another repository (a
+ * consumer: its own install is npm's, in its own folder), or pnpm dev's watchers would see node_modules or dist/
+ * change under them. null when it may run.
+ */
+function installSkip(cwd) {
+  const dir = resolve(cwd ?? ROOT);
+  if (dir !== ROOT && !dir.startsWith(`${ROOT}${sep}`)) return `it installs in tilburg, and this step ran in ${dir}`;
+  const dev = readDevLock();
+  if (dev) return `pnpm dev is running (process ${dev.pid}): stop it with q first, then run this again`;
+  return null;
+}
+
 /** Run a fix's command in the repository root; throws with its last line of output when it fails. */
 async function sh(command, timeoutMs = 600_000) {
   const { code, stdout, stderr, timedOut } = await capture(command, { timeoutMs, cwd: ROOT });
@@ -429,7 +444,7 @@ const older = (a, b) => {
 };
 const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
 /** The lowest Node that package.json "engines" accepts, e.g. "24.15.0". */
-function enginesMinimum() {
+export function enginesMinimum() {
   const range = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')).engines?.node ?? '';
   return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
@@ -493,9 +508,14 @@ export const RECOVERIES = {
     label: 'removing the stale .git/index.lock (only when no git process is running)',
     run: async ({ err }) => {
       const lock = stripAnsi(err.output ?? '').match(/Unable to create '([^']+index\.lock)'/)?.[1];
-      /* Exactly <repo>/.git/index.lock: the path comes from tool output, and `…/.git/../../x/index.lock` contains /.git/. */
+      /* <repo>/.git/index.lock, or one under the shared git dir (a worktree's .git/worktrees/x/, a submodule's
+         .git/modules/x/). Resolved first: the path comes from tool output, and `…/.git/../../x/index.lock` contains /.git/. */
       const path = lock && resolve(lock);
-      if (!path || basename(path) !== 'index.lock' || basename(dirname(path)) !== '.git')
+      const common = spawnSync('git', ['rev-parse', '--git-common-dir'], { cwd: ROOT, encoding: 'utf8' });
+      const commonDir = common.status === 0 && resolve(ROOT, common.stdout.trim());
+      const underGit =
+        basename(dirname(path ?? '')) === '.git' || (commonDir && (path ?? '').startsWith(`${commonDir}${sep}`));
+      if (!path || basename(path) !== 'index.lock' || !underGit)
         throw new Error('the message names no .git/index.lock');
       /* Only pgrep's "no match" (1) proves no git runs; a missing pgrep (null) or an error (2, 3) proves nothing. */
       const gitRunning = spawnSync('pgrep', ['-x', 'git']).status;
@@ -517,19 +537,22 @@ export const RECOVERIES = {
       if (result.status !== 0) throw new Error(`git config failed: ${result.stderr.trim()}`);
     },
   },
-  'missing-module': { label: 'pnpm install', run: async () => sh('pnpm install') },
-  'stencil-jest': { label: 'pnpm install', run: async () => sh('pnpm install') },
+  'missing-module': { label: 'pnpm install', install: true, run: async () => sh('pnpm install') },
+  'stencil-jest': { label: 'pnpm install', install: true, run: async () => sh('pnpm install') },
   'unexpected-store': {
     label: 'pnpm install (relinks node_modules to the current store)',
+    install: true,
     run: async () => sh('pnpm install'),
   },
   'outdated-lockfile': {
     label: 'pnpm install (updates pnpm-lock.yaml: commit it with your package.json change)',
+    install: true,
     skip: () => (process.env.CI ? 'CI installs with --frozen-lockfile on purpose; update the lockfile locally' : null),
     run: async () => sh('pnpm install'),
   },
   integrity: {
     label: 'pnpm store prune, then pnpm install',
+    install: true,
     run: async () => {
       await sh('pnpm store prune');
       await sh('pnpm install');
@@ -537,14 +560,20 @@ export const RECOVERIES = {
   },
   'wrong-arch': {
     label: 'pnpm install --force (reinstalls the native binaries for this machine)',
+    install: true,
     skip: () =>
       underRosetta() ? 'this terminal runs under Rosetta (x64): open a native (arm64) terminal first' : null,
     run: async () => sh('pnpm install --force'),
   },
   'library-not-built': {
     label: 'building the missing library',
+    install: true,
     run: async ({ err }) => {
-      const name = stripAnsi(err.output ?? '').match(/@gemeente-tilburg\/[a-z0-9-]+/)?.[0];
+      /* From the line that failed: pnpm's own header line names the package that ran, not the one that is missing. */
+      const line = stripAnsi(err.output ?? '')
+        .split('\n')
+        .find((text) => FAILURES.find((failure) => failure.kind === 'library-not-built').test.test(text));
+      const name = line?.match(/@gemeente-tilburg\/[a-z0-9-]+/)?.[0];
       if (!name) throw new Error('the message names no @gemeente-tilburg package');
       await sh(`pnpm --filter ${name} run build`);
     },
@@ -620,7 +649,7 @@ export async function runStepWithRecovery(
       return;
     } catch (err) {
       stepFail(step);
-      err.cwd ??= cwd;
+      if (err.cwd === undefined || err.cwd === null) err.cwd = cwd;
       const diagnosis = classifyFailure(err.output ?? '', err);
       err.diagnosis = diagnosis;
       /* The retry failed the same way: the report then says what was tried, not that it could be. */
@@ -631,7 +660,7 @@ export async function runStepWithRecovery(
         diagnosis.autoSkipped = `it already used its one retry${tried.size ? ` (${[...tried.values()].join(', ')})` : ''}`;
       }
       if (!fix || tried.has(diagnosis.kind) || attempt >= maxAttempts) throw err;
-      const skip = fix.skip?.();
+      const skip = fix.skip?.() ?? (fix.install ? installSkip(cwd) : null);
       if (skip) {
         diagnosis.autoSkipped = skip;
         throw err;

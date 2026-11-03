@@ -1,17 +1,29 @@
 /* `node --test scripts/`: choosing a port and waiting for a Storybook, against small local servers (no real Storybook). */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { once } from 'node:events';
+import { realpathSync } from 'node:fs';
 import http from 'node:http';
 import net from 'node:net';
-import { networkInterfaces } from 'node:os';
+import { networkInterfaces, tmpdir } from 'node:os';
 import { test } from 'node:test';
-import { choosePort, printStorybookLinks, waitForStorybook } from './storybook.mjs';
+import { listenerDir } from './checks.mjs';
+import { choosePort, localIp, printStorybookLinks, waitForStorybook } from './storybook.mjs';
 
-/** A server on `host` and a free port; `index` true answers like a Storybook, 'hang' never answers. */
+const REACT = { name: 'React Storybook', storyId: /^tilburg-.+-react--/ };
+const STORIES = {
+  react: '{"entries":{"tilburg-button-react--default":{}}}',
+  angular: '{"entries":{"tilburg-button-angular--default":{}}}',
+};
+
+/** A server on `host` and a free port; `index` true (or 'react') answers like our React Storybook, 'angular' like the
+ *  Angular one, 'hang' never answers, false is not a Storybook. */
 async function serve(host, index = true) {
   const server = http.createServer((request, response) => {
     if (index === 'hang') return;
     response.setHeader('content-type', 'application/json');
-    response.end(index ? '{"entries":{}}' : '{}');
+    response.end(index ? STORIES[index === true ? 'react' : index] : '{}');
   });
   await new Promise((done) => server.listen(0, host, done));
   return { port: server.address().port, close: () => (server.closeAllConnections(), server.close()) };
@@ -74,13 +86,13 @@ test('waitForStorybook does not take any server on the port for a Storybook', as
 
 test('choosePort: a free usual port is used as is', async () => {
   const port = await freePort();
-  assert.deepEqual(await choosePort({ port }), { port, running: false });
+  assert.deepEqual(await choosePort({ ...REACT, port }), { port, running: false });
 });
 
-test('choosePort: a Storybook on the usual port (on 0.0.0.0) is reused', async () => {
+test('choosePort: our Storybook on the usual port (on 0.0.0.0) is reused', async () => {
   const server = await serve('0.0.0.0');
   try {
-    assert.deepEqual(await choosePort({ port: server.port }), { port: server.port, running: true });
+    assert.deepEqual(await choosePort({ ...REACT, port: server.port }), { port: server.port, running: true });
   } finally {
     server.close();
   }
@@ -89,18 +101,68 @@ test('choosePort: a Storybook on the usual port (on 0.0.0.0) is reused', async (
 test('choosePort: something else on the usual port moves the Storybook to a free one', async () => {
   const server = await serve('0.0.0.0', false);
   try {
-    const choice = await choosePort({ port: server.port });
+    const choice = await choosePort({ ...REACT, port: server.port });
     assert.equal(choice.moved, true);
     assert.equal(choice.running, false);
     assert.notEqual(choice.port, server.port);
+    assert.equal(choice.taken, 'something else');
   } finally {
     server.close();
   }
 });
 
+test('choosePort: the other Tilburg Storybook on the usual port is not reused', async () => {
+  const server = await serve('0.0.0.0', 'angular');
+  try {
+    const choice = await choosePort({ ...REACT, port: server.port });
+    assert.equal(choice.running, false);
+    assert.notEqual(choice.port, server.port);
+    assert.match(choice.taken, /Storybook/);
+  } finally {
+    server.close();
+  }
+});
+
+test(
+  'choosePort: a Storybook with our stories but from another folder (clone, worktree) is not reused',
+  { skip: process.platform === 'win32' && 'no lsof' },
+  async () => {
+    const child = spawn(
+      process.execPath,
+      [
+        '-e',
+        `const s=require('http').createServer((q,r)=>r.end(${JSON.stringify(STORIES.react)})).listen(0,'0.0.0.0',()=>console.log(s.address().port))`,
+      ],
+      { cwd: tmpdir(), stdio: ['ignore', 'pipe', 'inherit'] },
+    );
+    try {
+      const port = Number((await once(child.stdout, 'data'))[0]);
+      const choice = await choosePort({ ...REACT, port });
+      assert.equal(choice.running, false);
+      assert.notEqual(choice.port, port);
+      assert.match(choice.taken, /^a Storybook from /);
+    } finally {
+      child.kill();
+    }
+  },
+);
+
+test(
+  'listenerDir names the working directory of the process on the port',
+  { skip: process.platform === 'win32' && 'no lsof' },
+  async () => {
+    const server = await serve('0.0.0.0');
+    try {
+      assert.equal(listenerDir(server.port), realpathSync(process.cwd()));
+    } finally {
+      server.close();
+    }
+  },
+);
+
 test('choosePort: a port reserved for the other Storybook is not handed out twice', async () => {
   const port = await freePort();
-  const choice = await choosePort({ port }, [port]);
+  const choice = await choosePort({ ...REACT, port }, [port]);
   assert.equal(choice.moved, true);
   assert.notEqual(choice.port, port);
 });
@@ -121,4 +183,18 @@ test('printStorybookLinks prints every Storybook in one box', () => {
   assert.match(output, /http:\/\/localhost:6006\//);
   assert.match(output, /http:\/\/localhost:6107\//);
   assert.match(output, /React Storybook: HTML/);
+});
+
+test('localIp prefers Wi-Fi or Ethernet and skips VPN, Docker and carrier-grade NAT addresses', () => {
+  const v4 = (address) => [{ family: 'IPv4', internal: false, address }];
+  assert.equal(
+    localIp({
+      lo0: [{ family: 'IPv4', internal: true, address: '127.0.0.1' }],
+      utun3: v4('10.8.0.2'),
+      en0: v4('192.168.1.20'),
+    }),
+    '192.168.1.20',
+  );
+  assert.equal(localIp({ docker0: v4('172.17.0.1'), tailscale0: v4('100.101.1.2'), bridge0: v4('172.17.0.5') }), null);
+  assert.equal(localIp({ bridge100: v4('192.168.64.1') }), '192.168.64.1');
 });

@@ -4,10 +4,10 @@
    question), command, order (lower runs first), run? }. Without `run` it only prints the command: `nvm use` is a shell
    function, so a child process cannot change your shell's Node. */
 import { spawnSync } from 'node:child_process';
-import fs, { existsSync, lstatSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import fs, { existsSync, lstatSync, readdirSync, readFileSync, readlinkSync, realpathSync, statSync } from 'node:fs';
 import http from 'node:http';
 import net from 'node:net';
-import { cpus } from 'node:os';
+import { cpus, homedir } from 'node:os';
 import { delimiter, dirname, resolve } from 'node:path';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT, STORYBOOKS } from '../dev-config.mjs';
 import { ago, c, capture } from './cli-utils.mjs';
@@ -100,6 +100,16 @@ export function checkEnvironment(env = process.env) {
     /^(true|1)$/i.test(env.npm_config_production ?? '') && 'npm_config_production',
     /\bdev\b/.test(env.npm_config_omit ?? '') && 'npm_config_omit=dev',
   ].filter(Boolean);
+  /* Every child node inherits NODE_OPTIONS: --inspect makes each one fight over port 9229, --require loads its file. */
+  const nodeOptions = env.NODE_OPTIONS?.match(/(?<!\S)(--inspect[\w-]*|--require|-r)(?![\w-])/g);
+  if (!set.length && nodeOptions) {
+    return {
+      ok: true,
+      warn: true,
+      detail: `NODE_OPTIONS holds ${nodeOptions.join(' ')}: every Node that pnpm and the builds start inherits it`,
+      note: `unset it in this terminal: ${cmd('unset NODE_OPTIONS')}`,
+    };
+  }
   if (!set.length) return { ok: true, detail: 'no settings that skip devDependencies' };
   return {
     ok: true,
@@ -127,9 +137,11 @@ export function checkCpu(
 
 /** The first `corepack` on the PATH and its version (from its package.json), or null. */
 function findCorepack() {
+  /* On Windows the PATH holds corepack.cmd, next to node_modules/corepack. */
+  const names = process.platform === 'win32' ? ['corepack.cmd', 'corepack'] : ['corepack'];
   for (const dir of (process.env.PATH ?? '').split(delimiter)) {
-    const path = resolve(dir || '.', 'corepack');
-    if (!existsSync(path)) continue;
+    const path = names.map((name) => resolve(dir || '.', name)).find((file) => existsSync(file));
+    if (!path) continue;
     try {
       const pkg = resolve(dirname(realpathSync(path)), '..', 'package.json');
       return { path, version: JSON.parse(readFileSync(pkg, 'utf8')).version };
@@ -158,7 +170,7 @@ export function checkCorepack(found = findCorepack(), nodeBin = dirname(process.
 }
 
 export async function checkPnpm() {
-  const { code, stdout, stderr, timedOut } = await capture('pnpm --version', { timeoutMs: 15_000, cwd: ROOT });
+  const { code, stdout, stderr, timedOut } = await capture('pnpm --version', { timeoutMs: 60_000, cwd: ROOT });
   const version = stdout.trim();
   /* pnpm 11 runs on whatever `node` is first on the PATH, which can be another than the one running this check
      (an nvm default of 20, say). Then it cannot start at all: say so instead of "not found". */
@@ -173,7 +185,7 @@ export async function checkPnpm() {
   }
   /* It is there but does not start (corepack cannot fetch or verify it, say): "not found" would send you the wrong way. */
   if (timedOut || (code !== 0 && code !== 127 && !/not found/.test(stderr))) {
-    const why = timedOut ? 'gave no answer in 15 s' : stderr.trim().split('\n')[0] || `exited with ${code}`;
+    const why = timedOut ? 'gave no answer in 60 s' : stderr.trim().split('\n')[0] || `exited with ${code}`;
     return {
       ok: false,
       detail: `\`pnpm --version\` failed: ${why}`,
@@ -300,10 +312,21 @@ export function checkInstallFresh() {
   };
 }
 
+/** statfs of `path`; undefined on a Node without it, null where it throws (network mounts, FUSE). */
+function statfs(path) {
+  if (!fs.statfsSync) return undefined;
+  try {
+    return fs.statfsSync(path);
+  } catch {
+    return null;
+  }
+}
+
 /** Under 2 GB free, an install or build stops halfway with ENOSPC. */
-export function checkDiskSpace(free = fs.statfsSync && fs.statfsSync(ROOT)) {
+export function checkDiskSpace(free = statfs(ROOT)) {
   /* statfsSync came in Node 18.15, and this check must still run on an old Node to say so. */
   if (free === undefined) return { skip: true, ok: true, detail: 'unknown on this Node' };
+  if (free === null) return { skip: true, ok: true, detail: 'unknown on this filesystem' };
   if (typeof free === 'object') free = free.bavail * free.bsize;
   const gb = (free / 1024 ** 3).toFixed(1);
   if (free >= 2 * 1024 ** 3) return { ok: true, detail: `${gb} GB free` };
@@ -315,11 +338,46 @@ export function checkDiskSpace(free = fs.statfsSync && fs.statfsSync(ROOT)) {
   };
 }
 
+/** The root package.json parses (a merge conflict or half-saved edit leaves it broken for every pnpm command). */
+export function checkPackageJson(file = resolve(ROOT, 'package.json')) {
+  try {
+    JSON.parse(readFileSync(file, 'utf8'));
+    return { ok: true, detail: 'readable' };
+  } catch (err) {
+    return { ok: false, detail: `does not parse: ${err.message}`, note: `fix ${cmd(file)} (merge conflict markers?)` };
+  }
+}
+
 /** A synced folder (iCloud Drive, OneDrive, Dropbox) uploads node_modules and leaves "file 2" conflict copies in it. */
-export function checkFolder(root = realpathSync(ROOT)) {
-  const synced = root.match(
-    /\/Library\/(Mobile Documents|CloudStorage)\/|\/(Dropbox|OneDrive|Google Drive)[^/]*\//,
-  )?.[0];
+export function checkFolder(
+  root = realpathSync(ROOT),
+  platform = process.platform,
+  home = homedir(),
+  /* iCloud "Desktop & Documents" keeps the /Users/x/Documents path, so only this folder gives it away. */
+  icloudDocuments = platform === 'darwin' &&
+    existsSync(resolve(home, 'Library/Mobile Documents/com~apple~CloudDocs/Documents')),
+) {
+  /* WSL on a Windows drive: file watching does not see changes there, and every install is many times slower. */
+  if (platform === 'linux' && /^\/mnt\/[a-z]\//.test(root)) {
+    return {
+      ok: true,
+      warn: true,
+      detail: 'on a Windows drive under WSL: the watchers miss changes and installs are slow',
+      note: `clone it inside WSL instead, e.g. ${cmd('~/code/tilburg')}`,
+    };
+  }
+  /* Forward slashes, so the same patterns match Windows paths (C:\\Users\\…\\OneDrive\\…). */
+  const synced = root
+    .replace(/\\/g, '/')
+    .match(/\/Library\/(Mobile Documents|CloudStorage)\/|\/(Dropbox|OneDrive|Google Drive)[^/]*\//)?.[0];
+  if (!synced && icloudDocuments && ['Documents', 'Desktop'].some((dir) => root.startsWith(`${home}/${dir}/`))) {
+    return {
+      ok: true,
+      warn: true,
+      detail: 'in ~/Documents or ~/Desktop with iCloud "Desktop & Documents" on: sync conflicts in node_modules',
+      note: `move it out, e.g. ${cmd(`mv "${root}" ~/Developer/`)}, then ${cmd('pnpm install')} there`,
+    };
+  }
   if (!synced) return { ok: true, detail: 'not in a synced folder', note: root };
   return {
     ok: true,
@@ -345,10 +403,8 @@ export function newestMtime(paths) {
       return;
     }
     if (stat.isSymbolicLink()) return;
-    if (stat.isFile()) {
-      newest = Math.max(newest, stat.mtimeMs);
-      return;
-    }
+    /* Folders too: deleting a file changes only its folder's mtime. */
+    newest = Math.max(newest, stat.mtimeMs);
     if (!stat.isDirectory()) return;
     let entries = [];
     try {
@@ -371,11 +427,13 @@ export function libraryState(library) {
   if (!existsSync(built)) return { state: 'missing' };
   const builtAt = statSync(built).mtimeMs;
   const changedAt = newestMtime(library.src.map((src) => resolve(ROOT, library.dir, src)));
-  return { state: changedAt > builtAt ? 'stale' : 'fresh', builtAt, changedAt };
+  /* A source file from the future (a zip, a machine whose clock ran ahead) would beat every build: rebuild, say why. */
+  const skewed = changedAt > Date.now();
+  return { state: skewed || changedAt > builtAt ? 'stale' : 'fresh', builtAt, changedAt, skewed };
 }
 
 export function checkLibrary(library) {
-  const { state, builtAt, changedAt } = libraryState(library);
+  const { state, builtAt, changedAt, skewed } = libraryState(library);
   const forWhom = library.for.map((key) => STORYBOOKS[key].name.replace(' Storybook', '')).join(' + ');
   if (state === 'missing') {
     return {
@@ -383,6 +441,14 @@ export function checkLibrary(library) {
       warn: true,
       detail: 'not built yet',
       note: `${cmd('pnpm dev')} builds it (needed by ${forWhom})`,
+    };
+  }
+  if (skewed) {
+    return {
+      ok: true,
+      warn: true,
+      detail: 'source has a modification time in the future (clock skew, or files from a zip)',
+      note: `${cmd('pnpm dev')} rebuilds it every time until the clock passes it; check the date, or touch the files`,
     };
   }
   if (state === 'stale') {
@@ -428,28 +494,89 @@ export async function findFreePort(from, span = 20, skip = []) {
 }
 
 /**
- * A Storybook gives itself away by its index.json. node:http, not fetch: Node 24's fetch (undici) sets the socket's
- * type of service, which macOS refuses (EINVAL) on a connection the server just closed, and that error escapes as an
- * uncaught exception no try/catch around fetch can stop (seen with a Storybook that was killed mid-check).
+ * A Storybook gives itself away by its index.json: its `entries`, or null when the port serves no Storybook. node:http,
+ * not fetch: Node 24's fetch (undici) sets the socket's type of service, which macOS refuses (EINVAL) on a connection
+ * the server just closed, and that error escapes as an uncaught exception no try/catch around fetch can stop (seen
+ * with a Storybook that was killed mid-check).
  */
-export function isStorybookOn(port) {
+export async function storybookEntries(port) {
+  /* Both loopbacks, not `localhost`: /etc/hosts may map that to only one, and the Storybook may listen on the other. */
+  return (await entriesAt('127.0.0.1', port)) ?? (await entriesAt('::1', port));
+}
+
+function entriesAt(host, port) {
   return new Promise((done) => {
-    const request = http.get({ host: 'localhost', port, path: '/index.json', timeout: 1500 }, (response) => {
+    const request = http.get({ host, port, path: '/index.json', timeout: 1500 }, (response) => {
       let body = '';
       response.setEncoding('utf8');
       response.on('data', (chunk) => (body += chunk));
-      response.on('error', () => done(false));
+      response.on('error', () => done(null));
       response.on('end', () => {
         try {
-          done(response.statusCode === 200 && Boolean(JSON.parse(body)?.entries));
+          done((response.statusCode === 200 && JSON.parse(body)?.entries) || null);
         } catch {
-          done(false);
+          done(null);
         }
       });
     });
     request.on('timeout', () => request.destroy());
-    request.on('error', () => done(false));
+    request.on('error', () => done(null));
   });
+}
+
+export async function isStorybookOn(port) {
+  return Boolean(await storybookEntries(port));
+}
+
+/**
+ * The working directory of the process listening on `port`, or null when it cannot tell (Windows, no lsof and no ss,
+ * another user's process).
+ */
+export function listenerDir(port) {
+  const run = (command, args) => spawnSync(command, args, { encoding: 'utf8', timeout: 3000 }).stdout ?? '';
+  /* -b -w: do not block on a hung network mount (and do not warn about it). */
+  const lsof = (args) => run('lsof', ['-b', '-w', ...args]);
+  let pid = lsof(['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t'])
+    .split('\n')[0]
+    .trim();
+  /* Linux without lsof (Docker, minimal Ubuntu, WSL): ss names the pid, /proc its folder. */
+  if (process.platform === 'linux') {
+    if (!pid) pid = run('ss', ['-ltnpH', `sport = :${port}`]).match(/pid=(\d+)/)?.[1];
+    try {
+      if (pid) return readlinkSync(`/proc/${pid}/cwd`);
+    } catch {
+      /* not ours to read: fall through to lsof */
+    }
+  }
+  if (!pid) return null;
+  const line = lsof(['-a', '-p', pid, '-d', 'cwd', '-Fn'])
+    .split('\n')
+    .find((entry) => entry.startsWith('n'));
+  return line ? line.slice(1) : null;
+}
+
+/**
+ * Is the Storybook on `port` this one, from this working copy? Another clone or worktree (on another branch), a
+ * consumer's Storybook (hltsamen shows our stories too) or the other Tilburg Storybook must not be reused.
+ * `{ ours: true }`, or `{ ours: false, what }` with a description for the message; null when no Storybook serves there.
+ */
+export async function identifyStorybook(storybook, port, findDir = listenerDir) {
+  const entries = await storybookEntries(port);
+  if (!entries) return null;
+  const dir = findDir(port);
+  const root = realpathSync(ROOT);
+  /* The root or one of our packages: a worktree inside the checkout (.claude/worktrees/…) is another branch. */
+  const ours = dir === root || ['packages', 'proprietary'].some((group) => dir?.startsWith(`${root}/${group}/`));
+  if (dir && !ours) return { ours: false, what: `a Storybook from ${dir}` };
+  if (!Object.keys(entries).some((id) => storybook.storyId?.test(id) ?? true)) {
+    const other = Object.values(STORYBOOKS).find(
+      (candidate) => candidate !== storybook && Object.keys(entries).some((id) => candidate.storyId?.test(id)),
+    );
+    return { ours: false, what: other ? `the ${other.name}` : 'another Storybook' };
+  }
+  /* Unknown folder (Windows, no lsof): it may be another clone's, so do not reuse it; pnpm dev moves to a free port. */
+  if (!dir) return { ours: false, what: 'a Storybook whose folder cannot be told (no lsof)' };
+  return { ours: true };
 }
 
 export async function checkStorybookPort(storybook) {
@@ -459,8 +586,17 @@ export async function checkStorybookPort(storybook) {
     return { ok: true, detail: `running in pnpm dev on ${viaDev.port}`, note: `http://localhost:${viaDev.port}/` };
   const code = await portStatus(storybook.port);
   if (code === null) return { ok: true, detail: `${storybook.port} is free` };
-  if (code === 'EADDRINUSE' && (await isStorybookOn(storybook.port))) {
+  const found = code === 'EADDRINUSE' ? await identifyStorybook(storybook, storybook.port) : null;
+  if (found?.ours) {
     return { ok: true, detail: `already running on ${storybook.port}`, note: `http://localhost:${storybook.port}/` };
+  }
+  if (found) {
+    return {
+      ok: true,
+      warn: true,
+      detail: `${storybook.port} is taken by ${found.what}`,
+      note: `${cmd('pnpm dev')} uses the next free port; stop that Storybook to get ${storybook.port} back`,
+    };
   }
   return {
     ok: true,
@@ -498,7 +634,11 @@ export async function runAllChecks() {
     },
     {
       title: 'Install',
-      rows: await Promise.all([safely('node_modules', checkInstalled), safely('Dependencies', checkInstallFresh)]),
+      rows: await Promise.all([
+        safely('package.json', checkPackageJson),
+        safely('node_modules', checkInstalled),
+        safely('Dependencies', checkInstallFresh),
+      ]),
     },
     {
       title: 'Libraries the Storybooks load from dist/',

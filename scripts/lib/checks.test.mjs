@@ -1,7 +1,9 @@
 /* `node --test scripts/`: the checks behind pnpm check, the lock file, and pnpm parity end to end. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
+import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
@@ -14,7 +16,10 @@ import {
   checkDiskSpace,
   checkEnvironment,
   checkFolder,
+  checkPackageJson,
   checkPnpm,
+  identifyStorybook,
+  libraryState,
   newestMtime,
   runInherit,
 } from './checks.mjs';
@@ -177,4 +182,97 @@ test('a repository in iCloud Drive, OneDrive or Dropbox is flagged', () => {
   }
   assert.equal(checkFolder('/Users/x/Documents/BitBucket/tilburg').warn, undefined);
   assert.equal(checkFolder('/Users/x/dev/dropbox-client').warn, undefined);
+  assert.equal(checkFolder('C:\\Users\\x\\OneDrive - Company\\tilburg', 'win32').warn, true);
+});
+
+test('WSL on a Windows drive is flagged, a clone inside WSL is not', () => {
+  assert.equal(checkFolder('/mnt/c/Users/x/tilburg', 'linux').warn, true);
+  assert.equal(checkFolder('/home/x/tilburg', 'linux').warn, undefined);
+  assert.equal(checkFolder('/mnt/c/Users/x/tilburg', 'darwin').warn, undefined);
+});
+
+test('a package.json that does not parse (merge conflict) fails the check instead of crashing', () => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-pkg-'));
+  try {
+    writeFileSync(resolve(dir, 'package.json'), '{\n<<<<<<< HEAD\n  "name": "a"\n=======\n}');
+    assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, false);
+    writeFileSync(resolve(dir, 'package.json'), '{"name":"a"}');
+    assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, true);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('a deleted file makes the source newer (its folder mtime counts)', (t) => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  mkdirSync(resolve(dir, 'src'));
+  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
+  utimesSync(resolve(dir, 'src', 'a.ts'), 1, 1);
+  utimesSync(resolve(dir, 'src'), 1, 1);
+  assert.equal(newestMtime([resolve(dir, 'src')]), 1000);
+  rmSync(resolve(dir, 'src', 'a.ts'));
+  assert.ok(newestMtime([resolve(dir, 'src')]) > 1000);
+});
+
+test('a source file from the future is stale and says clock skew', (t) => {
+  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  mkdirSync(resolve(dir, 'src'));
+  mkdirSync(resolve(dir, 'dist'));
+  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
+  writeFileSync(resolve(dir, 'dist', 'index.js'), 'a');
+  for (const path of ['src', 'src/a.ts']) utimesSync(resolve(dir, path), 1, 1);
+  const library = { dir, src: ['src'], built: 'dist/index.js' };
+  assert.equal(libraryState(library).state, 'fresh');
+  const future = Date.now() / 1000 + 3600;
+  utimesSync(resolve(dir, 'src', 'a.ts'), future, future);
+  utimesSync(resolve(dir, 'dist', 'index.js'), future + 60, future + 60);
+  assert.deepEqual([libraryState(library).state, libraryState(library).skewed], ['stale', true]);
+});
+
+test('NODE_OPTIONS with --inspect or --require is flagged, other options are not', () => {
+  assert.equal(checkEnvironment({ NODE_OPTIONS: '--inspect' }).warn, true);
+  assert.equal(checkEnvironment({ NODE_OPTIONS: '--max-old-space-size=4096 -r ./x.js' }).warn, true);
+  assert.equal(checkEnvironment({ NODE_OPTIONS: '--max-old-space-size=4096' }).warn, undefined);
+});
+
+test('disk space that cannot be read (network mount) is skipped, not a failure', () => {
+  assert.deepEqual(checkDiskSpace(null), { skip: true, ok: true, detail: 'unknown on this filesystem' });
+});
+
+test('~/Documents and ~/Desktop are flagged only with iCloud "Desktop & Documents" on', () => {
+  assert.equal(checkFolder('/Users/x/Documents/tilburg', 'darwin', '/Users/x', true).warn, true);
+  assert.equal(checkFolder('/Users/x/Desktop/tilburg', 'darwin', '/Users/x', true).warn, true);
+  assert.equal(checkFolder('/Users/x/Documents/tilburg', 'darwin', '/Users/x', false).warn, undefined);
+  assert.equal(checkFolder('/Users/x/code/tilburg', 'darwin', '/Users/x', true).warn, undefined);
+});
+
+/** A fake Storybook on `host` that serves one story; resolves with its server. */
+const fakeStorybook = (host) =>
+  new Promise((done, fail) => {
+    const server = http.createServer((_, response) => response.end('{"entries":{"a--b":{}}}'));
+    server.once('error', fail);
+    server.listen(0, host, () => done(server));
+  });
+
+test('a Storybook whose folder cannot be told is not taken for ours; one on ::1 only is still seen', async (t) => {
+  for (const host of ['127.0.0.1', '::1']) {
+    let server;
+    try {
+      server = await fakeStorybook(host);
+    } catch {
+      t.diagnostic(`${host} not available`);
+      continue;
+    }
+    try {
+      const { port } = server.address();
+      assert.deepEqual(await identifyStorybook({}, port, () => null), {
+        ours: false,
+        what: 'a Storybook whose folder cannot be told (no lsof)',
+      });
+    } finally {
+      server.close();
+    }
+  }
 });

@@ -1,5 +1,6 @@
 /* `node --test scripts/`: what `pnpm dev` makes of its watchers and Storybooks. The lifecycle tests run a copy of
    dev.mjs in a temp folder, with a dev-config whose "watchers" and "Storybooks" are tiny node scripts. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import {
@@ -12,6 +13,7 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
+import http from 'node:http';
 import net from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -40,6 +42,8 @@ const lines = [
   ['react', 'error during build:', 'failed'],
   ['react', '[vite:esbuild] Transform failed with 1 error:', 'failed'],
   ['react', '(!) [plugin vite:reporter] dynamic import will not move module into another chunk', null],
+  ['react', '[vite:css] [sass] Undefined variable.', 'failed'],
+  ['react', '[vite:css] warning: nested CSS was detected', null],
   ['stencil', '[12:00.1]  build finished, watching for changes... in 5.21 s', 'done'],
   ['stencil', '[ ERROR ]  TypeScript: src/components/tooltip.tsx:3:1', 'failed'],
   ['wc-react', '[12:00:00] Found 0 errors. Watching for file changes.', 'done'],
@@ -115,10 +119,10 @@ export const LIBRARIES = [
 }
 
 /** Run the copy of `pnpm dev react`; `whenOutput(text, child)` sees the output so far. Resolves { code, output }. */
-function runDev(root, whenOutput = () => {}, env = {}, cwd = root) {
+function runDev(root, whenOutput = () => {}, env = {}, cwd = root, args = ['react']) {
   return new Promise((done, reject) => {
     /* TMPDIR: the lock file and the logs go to the temp repo, not the real ones */
-    const child = spawn(process.execPath, [join(root, 'scripts/dev.mjs'), 'react'], {
+    const child = spawn(process.execPath, [join(root, 'scripts/dev.mjs'), ...args], {
       cwd,
       env: { ...process.env, TMPDIR: root, CI: '1', ...env },
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -173,7 +177,7 @@ test('SIGINT once the Storybook answers (on 0.0.0.0) stops everything with exit 
   const root = await fakeRepo({
     watcher: WATCHER,
     storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
   });
   let sent = false;
   const { code, output } = await runDev(root, (text, child) => {
@@ -201,7 +205,7 @@ console.log('built in 1s');
 setInterval(() => {}, 1000);
 `,
     storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
   });
   let sent = false;
   /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
@@ -229,7 +233,7 @@ test('a pnpm-lock.yaml that changes while pnpm dev runs (a git checkout) says to
   const root = await fakeRepo({
     watcher: WATCHER,
     storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
   });
   mkdirSync(join(root, 'node_modules/.pnpm'));
   writeFileSync(join(root, 'node_modules/.pnpm/lock.yaml'), 'lockfileVersion: 9\n');
@@ -265,4 +269,50 @@ test('started from another folder, the design-tokens build still runs in the rep
   const { output } = await runDev(root, () => {}, {}, elsewhere);
   assert.ok(existsSync(join(root, 'built.txt')), output);
   assert.ok(!existsSync(join(elsewhere, 'built.txt')), 'not in the folder it was started from');
+});
+
+test('unknown flags and a second Storybook name stop pnpm dev with a clear message', async () => {
+  const root = await fakeRepo({ watcher: WATCHER, storybook: '' });
+  const flag = await runDev(root, () => {}, {}, root, ['--port', '7000']);
+  assert.equal(flag.code, 1, flag.output);
+  assert.match(flag.output, /Unknown option '--port'/);
+  const two = await runDev(root, () => {}, {}, root, ['react', 'angular']);
+  assert.equal(two.code, 1, two.output);
+  assert.match(two.output, /One Storybook at a time, not react and angular/);
+});
+
+test('SIGTERM stops everything with exit code 143', async () => {
+  const root = await fakeRepo({
+    watcher: WATCHER,
+    storybook: `import http from 'node:http';
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+  });
+  let sent = false;
+  const { code, output } = await runDev(root, (text, child) => {
+    if (!sent && /Watching\./.test(text)) {
+      sent = true;
+      child.kill('SIGTERM');
+    }
+  });
+  assert.equal(code, 143, output);
+  assert.ok(await watcherGone(root), 'the watcher was stopped');
+});
+
+test('a port taken by another Storybook while the libraries built is not taken for ours', async () => {
+  const root = await fakeRepo({ watcher: WATCHER, storybook: 'setInterval(() => {}, 1000);' });
+  const port = Number(readFileSync(join(root, 'scripts/dev-config.mjs'), 'utf8').match(/port: (\d+)/)[1]);
+  /* This test's process runs from another folder than the temp repo: not "ours". */
+  let other;
+  try {
+    const { code, output } = await runDev(root, (text) => {
+      if (!other && /Building 1 libraries/.test(text)) {
+        other = http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(port, '0.0.0.0');
+      }
+    });
+    assert.equal(code, 1, output);
+    assert.match(output, new RegExp(`Port ${port} now serves a Storybook from`));
+  } finally {
+    other?.closeAllConnections();
+    other?.close();
+  }
 });

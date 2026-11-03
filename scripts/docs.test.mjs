@@ -1,5 +1,6 @@
 /* Every `pnpm <script>` / `pnpm run <script>` in the docs must exist in the root package.json. Only code (fenced blocks
    and `inline`) is checked, so prose like "every pnpm command" is ignored. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync } from 'node:fs';

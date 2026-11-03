@@ -7,6 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROOT } from './dev-config.mjs';
+import { checkInstallFresh } from './lib/checks.mjs';
 import { c, capture, installCrashHandler, printBanner, printCheckTable, stepSkip } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
@@ -19,6 +20,11 @@ const STEPS = [
     label: 'Security audit',
     command: 'pnpm audit --audit-level critical',
     why: 'CI runs this before installing and stops on a critical advisory.',
+  },
+  {
+    label: 'Lockfile',
+    command: 'pnpm install --frozen-lockfile --lockfile-only',
+    why: 'CI installs with --frozen-lockfile: a package.json change without its pnpm-lock.yaml update fails there.',
   },
   {
     label: 'Lint',
@@ -48,6 +54,10 @@ const STEPS = [
 
 if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) process.exit(1);
 
+/* An install that lags the lockfile gives other results than CI's fresh one. */
+const fresh = checkInstallFresh();
+if (fresh.warn || !fresh.ok) console.log(`  ${c.yellow}⚠${c.reset}  ${fresh.detail}: ${fresh.note}.\n`);
+
 const rows = [];
 let built = true;
 for (const step of STEPS) {
@@ -64,6 +74,17 @@ for (const step of STEPS) {
     reportStepFailure(step.label, err);
     const diagnosis = classifyFailure(err.output ?? '', err);
     if (step.label === 'Build') built = false;
+    /* Offline, the audit says nothing about the code: CI (online) decides that one. */
+    if (step.label === 'Security audit' && diagnosis.kind === 'network') {
+      rows.push({
+        ok: true,
+        warn: true,
+        label: step.label,
+        detail: 'could not check: no network',
+        note: diagnosis.fix,
+      });
+      continue;
+    }
     rows.push({
       ok: false,
       label: step.label,
