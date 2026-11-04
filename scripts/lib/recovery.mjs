@@ -810,3 +810,13 @@ export function reportStepFailure(label, err) {
   printToolOutput(err);
   console.log('');
 }
+
+/** runStepWithRecovery, or report the failure (under `reportLabel`) and exit 1: the rest would run on a broken step. */
+export async function runStepOrExit(label, command, options, reportLabel = label) {
+  try {
+    await runStepWithRecovery(label, command, options);
+  } catch (err) {
+    reportStepFailure(reportLabel, err);
+    process.exit(1);
+  }
+}

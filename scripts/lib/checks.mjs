@@ -10,11 +10,9 @@ import net from 'node:net';
 import { cpus, homedir } from 'node:os';
 import { delimiter, dirname, resolve, sep } from 'node:path';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT, STORYBOOKS } from '../dev-config.mjs';
-import { ago, c, capture } from './cli-utils.mjs';
+import { ago, capture, cmd } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
 import { newestNvmNode, nodeOutsideNvmWindows, NVM_HOME } from './nvm.mjs';
-
-const cmd = (text) => `${c.cyan}${text}${c.reset}`;
 
 /** Run a fix's command in the foreground (its output and questions go to the terminal); throws on failure. */
 export function runInherit(command) {

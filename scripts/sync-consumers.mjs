@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, delimiter, dirname, resolve, sep } from 'node:path';
-import { CONSUMERS, ROOT } from './dev-config.mjs';
+import { CONSUMERS, LIBRARIES, ROOT } from './dev-config.mjs';
 import {
   c,
   capture,
@@ -19,9 +19,10 @@ import {
   parseArgsOrExit,
   printBanner,
   printCheckTable,
+  warn,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, readDevLock, SYNC_LOCK, takeBuildLock, writeDevLock } from './lib/lock.mjs';
-import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { reportStepFailure, runStepOrExit, runStepWithRecovery } from './lib/recovery.mjs';
 import { inProgress, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm sync');
@@ -66,15 +67,8 @@ if (!present.length)
     fix: 'clone it next to tilburg, or copy the tarballs by hand (pnpm run pack:local writes them to .tarballs/)',
   });
 
-/** Run a step; on failure explain it and stop, since a half-packed set is worse than none. */
-async function step(label, command, options) {
-  try {
-    await runStepWithRecovery(label, command, options);
-  } catch (err) {
-    reportStepFailure(label, err);
-    process.exit(1);
-  }
-}
+/* A step that fails stops the sync: a half-packed set is worse than none. */
+const step = runStepOrExit;
 
 /** Does the tarball hold what the consumer will import? Catches a package packed without its build output. */
 async function checkTarball(file, mustContain, what) {
@@ -108,7 +102,8 @@ const gitIn =
   (dir) =>
   (...args) => {
     const result = spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: gitEnv });
-    return { ok: result.status === 0, out: (result.stdout ?? '').trim() };
+    /* trimEnd: a porcelain entry such as " M file" starts with its own space. */
+    return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
   };
 
 /** The `.tarballs/` files a consumer installs (`file:…/.tarballs/x.tgz` in its package.json files), as full paths. */
@@ -218,13 +213,10 @@ await confirmNoDevRunningOrExit('pnpm sync rebuilds the packages it packs, and')
 // ─── Pack ────────────────────────────────────────────────────────────────────
 
 /** Where `pnpm pack` writes each tarball: the name carries the version, so it changes with every release. */
-const tarball = (dir) => {
+const tarball = (pack) => {
+  const { dir } = LIBRARIES.find((library) => library.name === pack);
   const { name, version } = JSON.parse(readFileSync(resolve(ROOT, dir, 'package.json'), 'utf8'));
   return resolve(ROOT, dir, 'dist', `${name.replace(/^@/, '').replace('/', '-')}-${version}.tgz`);
-};
-const PACKAGE_DIRS = {
-  'components-angular': 'packages/components-angular',
-  'design-tokens': 'proprietary/design-tokens',
 };
 
 const needs = new Set(usable.flatMap((consumer) => consumer.pack));
@@ -246,12 +238,8 @@ if (needs.has('components-angular')) {
   await step('Packing components-angular', 'pnpm --filter @gemeente-tilburg/components-angular run pack:dist', {
     cwd: ROOT,
   });
-  await checkTarball(
-    tarball(PACKAGE_DIRS['components-angular']),
-    /package\/dist\/fesm2022\/.*\.mjs/,
-    'components-angular',
-  );
-  await checkTarball(tarball(PACKAGE_DIRS['design-tokens']), /package\/dist\/tilburg\/theme\.css/, 'design-tokens');
+  await checkTarball(tarball('components-angular'), /package\/dist\/fesm2022\/.*\.mjs/, 'components-angular');
+  await checkTarball(tarball('design-tokens'), /package\/dist\/tilburg\/theme\.css/, 'design-tokens');
 }
 /* A version bump packs to new file names, and the consumer's file: dependencies still name the old ones. */
 const blocked = new Set();
@@ -274,14 +262,11 @@ for (const consumer of usable.filter(installsAll)) {
 
 /** `git status` of a consumer as Map(path → 'XY'), or null when git cannot tell (not a checkout). */
 function gitChanges(dir) {
-  const result = spawnSync('git', ['-C', dir, 'status', '--porcelain', '-z', '--untracked-files=all'], {
-    encoding: 'utf8',
-    env: gitEnv,
-  });
+  const { ok, out } = gitIn(dir)('status', '--porcelain', '-z', '--untracked-files=all');
   // ponytail: a rename entry's second (old) path shows up as its own odd entry; renames are not what a sync does.
-  return result.status === 0
+  return ok
     ? new Map(
-        result.stdout
+        out
           .split('\0')
           .filter(Boolean)
           .map((entry) => [entry.slice(3), entry.slice(0, 2)]),
@@ -293,9 +278,7 @@ function gitChanges(dir) {
 function reportConsumerState(consumer, before) {
   const after = gitChanges(consumer.dir);
   if (!before || !after) {
-    console.log(
-      `  ${c.yellow}⚠${c.reset}  ${consumer.key} is not a git checkout, so what the sync changed is unknown.`,
-    );
+    warn(`${consumer.key} is not a git checkout, so what the sync changed is unknown.`);
     return;
   }
   const changed = [...after.keys()].filter((path) => !before.has(path));
@@ -306,9 +289,7 @@ function reportConsumerState(consumer, before) {
     const tracked = changed.filter((path) => after.get(path) !== '??');
     const added = changed.filter((path) => after.get(path) === '??');
     const install = existsSync(resolve(consumer.dir, 'pnpm-lock.yaml')) ? 'pnpm install' : 'npm install';
-    console.log(
-      `  ${c.yellow}⚠${c.reset}  ${consumer.key} may be half-updated. Changed by this sync: ${changed.join(', ')}`,
-    );
+    warn(`${consumer.key} may be half-updated. Changed by this sync: ${changed.join(', ')}`);
     /* A file you saved in the consumer while it synced looks changed by the sync too: look before restoring. */
     if (tracked.length) {
       /* Quoted: a path with a space must paste as one argument. */
@@ -339,7 +320,7 @@ function consumerEnv(consumer) {
     .split(delimiter)
     .filter((entry) => entry && entry !== ROOT && !entry.startsWith(`${ROOT}${sep}`))
     .join(delimiter);
-  for (const [pack, variable] of Object.entries(consumer.tarballEnv ?? {})) env[variable] = tarball(PACKAGE_DIRS[pack]);
+  for (const [pack, variable] of Object.entries(consumer.tarballEnv ?? {})) env[variable] = tarball(pack);
   /* Where hltsamen's sync-stories copies the stories from (its default is ../tilburg, maybe another checkout). */
   if (installsAll(consumer)) env.TILBURG_REPO = ROOT;
   return env;

@@ -28,6 +28,7 @@ import {
   printBanner,
   printCheckTable,
   stepSkip,
+  warn,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning, readDevLock, SYNC_LOCK } from './lib/lock.mjs';
 import { newestNvmNode, nodeOutsideNvmWindows, NVM_DIR, NVM_HOME } from './lib/nvm.mjs';
@@ -182,8 +183,8 @@ if (hasNvm && !NVM_HOME) {
     /* no default alias set */
   }
   if (!defaultAlias.replace(/^v/, '').startsWith(`${NODE_MAJOR}`)) {
-    console.log(
-      `  ${c.yellow}⚠${c.reset}  New terminals start with Node ${defaultAlias || '(no nvm default)'}; there, pnpm cannot run in this repo until you type nvm use.`,
+    warn(
+      `New terminals start with Node ${defaultAlias || '(no nvm default)'}; there, pnpm cannot run in this repo until you type nvm use.`,
     );
     if (
       await ask(`Make Node ${NODE_MAJOR} the default for new terminals (nvm alias default ${NODE_MAJOR})?`, {

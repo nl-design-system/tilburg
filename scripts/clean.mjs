@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 import { ROOT } from './dev-config.mjs';
 import {
   c,
+  cmd,
   confirm,
   installCrashHandler,
   interactive,
@@ -93,7 +94,7 @@ function pick(targets) {
       if (drawn) process.stdout.write(`\x1b[${drawn}A`);
       const lines = targets.map((target, index) => {
         const box = !target.paths.length ? `${c.gray}[ ]` : target.checked ? `${c.green}[x]` : '[ ]';
-        const pointer = index === cursor ? `${c.cyan}❯${c.reset}` : ' ';
+        const pointer = index === cursor ? `${cmd('❯')}` : ' ';
         const sizeText = target.paths.length
           ? `${c.gray}${(target.size ?? '').padStart(8)}${c.reset}`
           : `${c.gray}  (none)${c.reset}`;
@@ -164,7 +165,7 @@ if (process.stdin.isTTY && interactive) {
     console.log(
       `  No terminal to ask in. These would be deleted: ${selected.map((target) => target.label).join(', ')}.`,
     );
-    console.log(`  Run ${c.cyan}pnpm run clean:pick --yes${c.reset} to delete them without asking.\n`);
+    console.log(`  Run ${cmd('pnpm run clean:pick --yes')} to delete them without asking.\n`);
     process.exit(1);
   }
 }
@@ -231,11 +232,9 @@ for (const target of selected) {
 
 console.log('');
 if (selected.some((target) => target.dangerous) && !existsSync(resolve(ROOT, 'node_modules'))) {
-  console.log(`  Next: ${c.cyan}pnpm install${c.reset}`);
+  console.log(`  Next: ${cmd('pnpm install')}`);
 } else if (selected.some((target) => target.label === 'Build output')) {
-  console.log(
-    `  Next: ${c.cyan}pnpm dev${c.reset} builds what the Storybooks need, ${c.cyan}pnpm build${c.reset} builds everything.`,
-  );
+  console.log(`  Next: ${cmd('pnpm dev')} builds what the Storybooks need, ${cmd('pnpm build')} builds everything.`);
 }
 console.log('');
 process.exit(failures ? 1 : 0);

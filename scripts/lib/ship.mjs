@@ -1,5 +1,5 @@
 /* The git helpers of `pnpm ship`, also used by verify and sync. */
-import { execFile, spawnSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';

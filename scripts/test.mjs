@@ -12,6 +12,7 @@ import { ROOT } from './dev-config.mjs';
 import {
   c,
   exitWith,
+  hint,
   installCrashHandler,
   LOG_DIR,
   parseArgsOrExit,
@@ -178,9 +179,7 @@ for (const { layer, title, message } of failures) {
 
 const { failed, warned } = printCheckTable([{ title: `${component.name} tests`, rows }]);
 if (!rows.length) {
-  console.log(
-    `  ${c.gray}${component.name} has no wrapper in any layer, so there is nothing to test here.${c.reset}\n`,
-  );
+  console.log(`  ${hint(`${component.name} has no wrapper in any layer, so there is nothing to test here.`)}\n`);
 } else if (failed.length) {
   const watch = LAYERS.filter(({ layer }) => failed.some((row) => row.label === layer.label)).map(
     ({ package: name, watch }) => {

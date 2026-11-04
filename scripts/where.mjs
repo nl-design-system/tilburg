@@ -5,7 +5,7 @@ import { existsSync } from 'node:fs';
 import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { STORYBOOKS } from './dev-config.mjs';
-import { c, exitWith, hyperlink, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
+import { c, cmd, exitWith, hyperlink, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
 import {
   isTlb,
   loadComponents,
@@ -51,7 +51,7 @@ if (list || !query) {
     );
   }
   console.log(
-    `\n  ${c.gray}${components.length} components (${STATUS_FILE}). Details: ${c.reset}${c.cyan}pnpm where <name>${c.reset}\n`,
+    `\n  ${c.gray}${components.length} components (${STATUS_FILE}). Details: ${c.reset}${cmd('pnpm where <name>')}\n`,
   );
   process.exit(0);
 }
@@ -126,10 +126,8 @@ for (const [label, key, story] of pages) {
 // ─── Next ────────────────────────────────────────────────────────────────────
 
 console.log(`\n  ${c.bold}Next${c.reset}`);
+console.log(`  ${cmd(`pnpm dev ${component.slug}`)}     ${c.gray}open it in Storybook, rebuilt as you save${c.reset}`);
 console.log(
-  `  ${c.cyan}pnpm dev ${component.slug}${c.reset}     ${c.gray}open it in Storybook, rebuilt as you save${c.reset}`,
+  `  ${cmd(`pnpm test ${component.slug}`)}    ${c.gray}its tests in React, Angular and Web Components${c.reset}`,
 );
-console.log(
-  `  ${c.cyan}pnpm test ${component.slug}${c.reset}    ${c.gray}its tests in React, Angular and Web Components${c.reset}`,
-);
-console.log(`  ${c.cyan}pnpm parity ${component.slug}${c.reset}  ${c.gray}is it complete in every layer?${c.reset}\n`);
+console.log(`  ${cmd(`pnpm parity ${component.slug}`)}  ${c.gray}is it complete in every layer?${c.reset}\n`);

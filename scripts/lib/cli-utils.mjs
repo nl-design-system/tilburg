@@ -695,6 +695,12 @@ export function fail({ what, why, auto, fix }) {
   console.log('');
 }
 
+/** A command to type, in cyan; a hint, in gray. Not for text that goes on in another colour (they end with a reset). */
+export const cmd = (text) => `${c.cyan}${text}${c.reset}`;
+export const hint = (text) => `${c.gray}${text}${c.reset}`;
+/** One warning line: "  ⚠  text". */
+export const warn = (text) => console.log(`  ${c.yellow}⚠${c.reset}  ${text}`);
+
 /** fail(), then exit 1: a problem the script cannot go on from. */
 export function exitWith(problem) {
   fail(problem);

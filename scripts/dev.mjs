@@ -27,6 +27,7 @@ import {
   c,
   confirm,
   exitWith,
+  hint,
   installCrashHandler,
   interactive,
   killTree,
@@ -40,8 +41,9 @@ import {
   stepStart,
   stripAnsi,
   track,
+  warn,
 } from './lib/cli-utils.mjs';
-import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { classifyFailure, runStepOrExit } from './lib/recovery.mjs';
 import { requireComponent, storyUrl } from './lib/components.mjs';
 import { LOCK_FILE, processStart, readDevLock, SYNC_LOCK, updateDevLock, writeDevLock } from './lib/lock.mjs';
 import { choosePort, printStorybookLinks, waitForStorybook } from './lib/storybook.mjs';
@@ -174,9 +176,7 @@ if (syncing)
 if (!writeDevLock({ storybooks: [] })) {
   const other = readDevLock();
   if (other) pointAtRunning(other);
-  console.log(
-    `  ${c.yellow}⚠${c.reset}  The lock ${LOCK_FILE} could not be taken (another user's file?). Other scripts will not see this pnpm dev.`,
-  );
+  warn(`The lock ${LOCK_FILE} could not be taken (another user's file?). Other scripts will not see this pnpm dev.`);
 }
 
 // ─── 2b. Dependencies ─────────────────────────────────────────────────────────
@@ -186,12 +186,7 @@ if (!fresh.ok) console.log(`  ${c.yellow}⚠${c.reset}  ${fresh.detail}: ${fresh
 if (fresh.warn) {
   console.log(`  ${c.yellow}⚠${c.reset}  pnpm-lock.yaml differs from what is installed (a branch switch or pull?).`);
   if (await confirm('Run pnpm install first?', { default: true, fallback: false })) {
-    try {
-      await runStepWithRecovery('Installing dependencies', 'pnpm install', { cwd: ROOT });
-    } catch (err) {
-      reportStepFailure('pnpm install', err);
-      process.exit(1);
-    }
+    await runStepOrExit('Installing dependencies', 'pnpm install', { cwd: ROOT }, 'pnpm install');
   }
 }
 
@@ -217,9 +212,7 @@ for (const key of storybookKeys) {
       `  ${c.green}✓${c.reset}  ${STORYBOOKS[key].name} is already running on ${choice.port}; using that one.`,
     );
   } else if (choice.moved) {
-    console.log(
-      `  ${c.yellow}⚠${c.reset}  Port ${STORYBOOKS[key].port} is taken by ${choice.taken}; the ${STORYBOOKS[key].name} uses ${choice.port}.`,
-    );
+    warn(`Port ${STORYBOOKS[key].port} is taken by ${choice.taken}; the ${STORYBOOKS[key].name} uses ${choice.port}.`);
   }
   storybooks.push({ key, ...STORYBOOKS[key], port: choice.port, running: choice.running });
 }
@@ -386,12 +379,7 @@ function reportExit(name, code, signal, tail, log, consequence) {
 const tokens = libraries.find((library) => library.key === 'tokens');
 if (tokens && libraryState(tokens).state !== 'fresh') {
   /* The token watcher only builds after a change, so bring a stale build up to date first. */
-  try {
-    await runStepWithRecovery('Building design-tokens', tokens.build, { cwd: ROOT });
-  } catch (err) {
-    reportStepFailure('Building design-tokens', err);
-    process.exit(1);
-  }
+  await runStepOrExit('Building design-tokens', tokens.build, { cwd: ROOT });
 }
 
 // ─── Keys: from the first build on, so q works while it runs ─────────────────
@@ -410,7 +398,7 @@ if (process.stdin.isTTY && process.stdout.isTTY) {
       } else if (key === 's' || key === 'S') {
         storybookOutput = !storybookOutput;
         console.log(
-          `  ${c.gray}${storybookOutput ? 'Showing the Storybook output.' : 'Hiding the Storybook output (errors still show).'}${c.reset}`,
+          `  ${hint(`${storybookOutput ? 'Showing the Storybook output.' : 'Hiding the Storybook output (errors still show).'}`)}`,
         );
       } else if (key === 'o' || key === 'O') pagesFor(storybooks).forEach(openUrl);
     });
@@ -419,9 +407,7 @@ if (process.stdin.isTTY && process.stdout.isTTY) {
   }
 } else if (process.env.MSYSTEM && !process.stdin.isTTY) {
   /* Git Bash's mintty without ConPTY hands us pipes, not a terminal. */
-  console.log(
-    `  ${c.gray}No keys here (q, v, o): run in Windows Terminal, or \`winpty pnpm dev\`. Ctrl-C stops.${c.reset}`,
-  );
+  console.log(`  ${hint(`No keys here (q, v, o): run in Windows Terminal, or \`winpty pnpm dev\`. Ctrl-C stops.`)}`);
 }
 
 const colours = [c.cyan, c.magenta, c.yellow, c.blue, c.green];
@@ -618,9 +604,7 @@ if (toStart.length) {
 if (!stopping) {
   printStorybookLinks(storybooks);
   if (openBrowser) openPages(storybooks);
-  console.log(
-    `  ${c.gray}Watching. Save a file and the Storybook reloads; rebuilds and errors show up here.${c.reset}`,
-  );
+  console.log(`  ${hint(`Watching. Save a file and the Storybook reloads; rebuilds and errors show up here.`)}`);
   console.log('');
   setFooter([
     `  ${storybooks.map(({ name, port }) => `${c.cyan}${name.replace(' Storybook', '')}${c.reset} http://localhost:${port}/`).join('   ')}`,

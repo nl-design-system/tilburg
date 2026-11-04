@@ -5,6 +5,7 @@
 import util from 'node:util';
 import {
   c,
+  cmd,
   confirm,
   exitWith,
   installCrashHandler,
@@ -40,9 +41,7 @@ for (const row of groups.flatMap((group) => group.rows).filter((row) => row.fix 
 fixes.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 const runnable = fixes.filter((fix) => fix.run).length;
 const fixHint =
-  runnable && !wantsFix
-    ? `\n  ${c.gray}${runnable} can be fixed for you:${c.reset} ${c.cyan}pnpm check --fix${c.reset}`
-    : '';
+  runnable && !wantsFix ? `\n  ${c.gray}${runnable} can be fixed for you:${c.reset} ${cmd('pnpm check --fix')}` : '';
 
 if (wantsFix && (await offerFixes())) ({ failed, warned, total } = printCheckTable(groups));
 
@@ -58,7 +57,7 @@ if (warned.length) {
     `  ${c.green}Ready to work.${c.reset} ${c.yellow}${warned.length} to look at:${c.reset} ${warned.map((row) => row.label).join(', ')}.${fixHint}\n`,
   );
 } else {
-  const next = readDevLock() ? 'pnpm dev is running.' : `Start with ${c.cyan}pnpm dev${c.reset}.`;
+  const next = readDevLock() ? 'pnpm dev is running.' : `Start with ${cmd('pnpm dev')}.`;
   console.log(`  ${c.green}All ${total} checks are green.${c.reset} ${next}\n`);
 }
 
@@ -72,7 +71,7 @@ async function offerFixes() {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     console.log(`  ${c.yellow}No terminal to ask in — nothing changed.${c.reset} --fix would offer:`);
     for (const fix of fixes)
-      console.log(`    ${c.cyan}${fix.command}${c.reset}${fix.run ? '' : `  ${c.gray}(you run this one)${c.reset}`}`);
+      console.log(`    ${cmd(`${fix.command}`)}${fix.run ? '' : `  ${c.gray}(you run this one)${c.reset}`}`);
     console.log('');
     return false;
   }
@@ -81,7 +80,7 @@ async function offerFixes() {
     console.log(`  ${c.bold}${fix.rows.map((row) => row.label).join(', ')}${c.reset}`);
     if (!fix.run) {
       /* nvm is a shell function: from a child process it cannot change your shell's Node. */
-      console.log(`    Run this yourself: ${c.cyan}${fix.command}${c.reset}\n`);
+      console.log(`    Run this yourself: ${cmd(`${fix.command}`)}\n`);
       continue;
     }
     console.log(`    ${c.gray}${fix.command}${c.reset}`);

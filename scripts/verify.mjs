@@ -11,7 +11,6 @@ import { checkInstallFresh } from './lib/checks.mjs';
 import {
   c,
   capture,
-  exitWith,
   installCrashHandler,
   parseArgsOrExit,
   printBanner,
