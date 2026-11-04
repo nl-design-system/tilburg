@@ -2,7 +2,7 @@
    dev.mjs in a temp folder, with a dev-config whose "watchers" and "Storybooks" are tiny node scripts. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import {
   copyFileSync,
   existsSync,
@@ -21,6 +21,7 @@ import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { LIBRARIES, STORYBOOKS } from './dev-config.mjs';
 import { isAlive } from './lib/lock.mjs';
+import { noSignals, tempEnv } from './lib/test-fakes.mjs';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 
@@ -66,7 +67,7 @@ for (const [key, line, expected] of lines) {
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
 const temps = [];
-after(() => temps.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
+after(() => temps.forEach((dir) => rmSync(dir, { recursive: true, force: true, maxRetries: 5 })));
 
 async function freePort() {
   const server = net.createServer();
@@ -121,10 +122,10 @@ export const LIBRARIES = [
 /** Run the copy of `pnpm dev react`; `whenOutput(text, child)` sees the output so far. Resolves { code, output }. */
 function runDev(root, whenOutput = () => {}, env = {}, cwd = root, args = ['react']) {
   return new Promise((done, reject) => {
-    /* TMPDIR: the lock file and the logs go to the temp repo, not the real ones */
+    /* The temp folder: the lock file and the logs go to the temp repo, not the real ones */
     const child = spawn(process.execPath, [join(root, 'scripts/dev.mjs'), ...args], {
       cwd,
-      env: { ...process.env, TMPDIR: root, CI: '1', ...env },
+      env: { ...process.env, ...tempEnv(root), CI: '1', ...env },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let output = '';
@@ -143,6 +144,15 @@ function runDev(root, whenOutput = () => {}, env = {}, cwd = root, args = ['reac
       done({ code, output });
     });
   });
+}
+
+/**
+ * Ctrl-C for pnpm dev. On Windows a kill ends only that process, at once (no handler runs, so its watchers would be
+ * left running and keep the temp folder locked): stop the whole tree instead.
+ */
+function interrupt(child) {
+  if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
+  else child.kill('SIGINT');
 }
 
 /** Wait for a pid file to appear, then for that process to be gone (killed with its process group). */
@@ -173,58 +183,67 @@ test('a Storybook that stops on its own stops pnpm dev with exit code 1, watcher
   assert.ok(await watcherGone(root), 'the watcher was stopped');
 });
 
-test('SIGINT once the Storybook answers (on 0.0.0.0) stops everything with exit code 0 and removes the lock', async () => {
-  const root = await fakeRepo({
-    watcher: WATCHER,
-    storybook: `import http from 'node:http';
+test(
+  'SIGINT once the Storybook answers (on 0.0.0.0) stops everything with exit code 0 and removes the lock',
+  { skip: noSignals },
+  async () => {
+    const root = await fakeRepo({
+      watcher: WATCHER,
+      storybook: `import http from 'node:http';
 http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
-  });
-  let sent = false;
-  const { code, output } = await runDev(root, (text, child) => {
-    if (!sent && /Watching\./.test(text)) {
-      sent = true;
-      child.kill('SIGINT');
-    }
-  });
-  assert.equal(sent, true, output);
-  assert.equal(code, 0, output);
-  assert.ok(await watcherGone(root), 'the watcher was stopped');
-  assert.deepEqual(
-    readdirSync(root).filter((name) => name.startsWith('tilburg-dev-')),
-    [],
-    'the lock file is gone',
-  );
-});
+    });
+    let sent = false;
+    const { code, output } = await runDev(root, (text, child) => {
+      if (!sent && /Watching\./.test(text)) {
+        sent = true;
+        interrupt(child);
+      }
+    });
+    assert.equal(sent, true, output);
+    assert.equal(code, 0, output);
+    assert.ok(await watcherGone(root), 'the watcher was stopped');
+    assert.deepEqual(
+      readdirSync(root).filter((name) => name.startsWith('tilburg-dev-')),
+      [],
+      'the lock file is gone',
+    );
+  },
+);
 
-test('a closed terminal (SIGHUP, output gone) still stops a watcher that ignores SIGTERM', async () => {
-  const root = await fakeRepo({
-    watcher: `import { writeFileSync } from 'node:fs';
+test(
+  'a closed terminal (SIGHUP, output gone) still stops a watcher that ignores SIGTERM',
+  { skip: noSignals },
+  async () => {
+    const root = await fakeRepo({
+      watcher: `import { writeFileSync } from 'node:fs';
 writeFileSync('watcher.pid', String(process.pid));
 process.on('SIGTERM', () => {});
 console.log('built in 1s');
 setInterval(() => {}, 1000);
 `,
-    storybook: `import http from 'node:http';
+      storybook: `import http from 'node:http';
 http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
-  });
-  let sent = false;
-  /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
-  const { code, output } = await runDev(root, (text, child) => {
-    if (!sent && /Watching\./.test(text)) {
-      sent = true;
-      child.stdout.destroy();
-      child.stderr.destroy();
-      child.kill('SIGHUP');
-    }
-  });
-  assert.equal(sent, true, output);
-  assert.equal(code, 129, 'exit code 128 + SIGHUP');
-  assert.ok(await watcherGone(root), 'the watcher was killed');
-});
+    });
+    let sent = false;
+    /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
+    const { code, output } = await runDev(root, (text, child) => {
+      if (!sent && /Watching\./.test(text)) {
+        sent = true;
+        child.stdout.destroy();
+        child.stderr.destroy();
+        child.kill('SIGHUP');
+      }
+    });
+    assert.equal(sent, true, output);
+    assert.equal(code, 129, 'exit code 128 + SIGHUP');
+    assert.ok(await watcherGone(root), 'the watcher was killed');
+  },
+);
 
 test('the wrong Node without nvm says to install it, not `nvm use`', async () => {
   const root = await fakeRepo({ watcher: WATCHER, storybook: '', nodeMajor: 1 });
-  const { code, output } = await runDev(root, () => {}, { NVM_DIR: '' });
+  /* NVM_HOME too: nvm-windows on the machine that runs the tests. */
+  const { code, output } = await runDev(root, () => {}, { NVM_DIR: '', NVM_HOME: '' });
   assert.equal(code, 1, output);
   assert.match(output, /install Node 1 \(nvm is easiest/);
   assert.doesNotMatch(output, /Fix:\S*\s+\S*nvm use/);
@@ -249,7 +268,7 @@ http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process
     }
     if (!sent && /no longer matches node_modules/.test(text)) {
       sent = true;
-      child.kill('SIGINT');
+      interrupt(child);
     }
   });
   assert.equal(sent, true, output);
@@ -284,7 +303,7 @@ test('unknown flags and a second Storybook name stop pnpm dev with a clear messa
   assert.match(two.output, /One Storybook at a time, not react and angular/);
 });
 
-test('SIGTERM stops everything with exit code 143', async () => {
+test('SIGTERM stops everything with exit code 143', { skip: noSignals }, async () => {
   const root = await fakeRepo({
     watcher: WATCHER,
     storybook: `import http from 'node:http';
@@ -301,24 +320,29 @@ http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process
   assert.ok(await watcherGone(root), 'the watcher was stopped');
 });
 
-test('a port taken by another Storybook while the libraries built is not taken for ours', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: 'setInterval(() => {}, 1000);' });
-  const port = Number(readFileSync(join(root, 'scripts/dev-config.mjs'), 'utf8').match(/port: (\d+)/)[1]);
-  /* This test's process runs from another folder than the temp repo: not "ours". */
-  let other;
-  try {
-    const { code, output } = await runDev(root, (text) => {
-      if (!other && /Building 1 libraries/.test(text)) {
-        other = http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(port, '0.0.0.0');
-      }
-    });
-    assert.equal(code, 1, output);
-    assert.match(output, new RegExp(`Port ${port} now serves a Storybook from`));
-  } finally {
-    other?.closeAllConnections();
-    other?.close();
-  }
-});
+test(
+  'a port taken by another Storybook while the libraries built is not taken for ours',
+  /* Windows tells a folder only from …\node_modules\… in the command line, which this test process has not. */
+  { skip: process.platform === 'win32' && 'Windows cannot tell the folder of this test process' },
+  async () => {
+    const root = await fakeRepo({ watcher: WATCHER, storybook: 'setInterval(() => {}, 1000);' });
+    const port = Number(readFileSync(join(root, 'scripts/dev-config.mjs'), 'utf8').match(/port: (\d+)/)[1]);
+    /* This test's process runs from another folder than the temp repo: not "ours". */
+    let other;
+    try {
+      const { code, output } = await runDev(root, (text) => {
+        if (!other && /Building 1 libraries/.test(text)) {
+          other = http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(port, '0.0.0.0');
+        }
+      });
+      assert.equal(code, 1, output);
+      assert.match(output, new RegExp(`Port ${port} now serves a Storybook from`));
+    } finally {
+      other?.closeAllConnections();
+      other?.close();
+    }
+  },
+);
 
 const ANSWERS = `import http from 'node:http';
 http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
@@ -340,37 +364,43 @@ test('without lsof (the folder on the port cannot be told), pnpm dev keeps the S
     (text, child) => {
       if (!sent && /Watching\./.test(text)) {
         sent = true;
-        child.kill('SIGINT');
+        interrupt(child);
       }
     },
-    { PATH: `${dirname(process.execPath)}:/bin` },
+    /* Windows has no lsof anyway, and needs its own PATH for cmd.exe. */
+    process.platform === 'win32' ? {} : { PATH: `${dirname(process.execPath)}:/bin` },
   );
-  assert.equal(code, 0, output);
+  /* A kill on Windows ends pnpm dev at once, without its own exit code. */
+  if (!noSignals) assert.equal(code, 0, output);
   assert.doesNotMatch(output, /cannot be told/);
 });
 
-test('pnpm dev again right after q starts anew, not "already running" with the links that are stopping', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
-  let second;
-  let sent = false;
-  await runDev(root, (text, child) => {
-    if (!sent && /Watching\./.test(text)) {
-      sent = true;
-      child.kill('SIGINT');
-      let stopped = false;
-      second = runDev(root, (text2, child2) => {
-        if (!stopped && /Watching\./.test(text2)) {
-          stopped = true;
-          child2.kill('SIGINT');
-        }
-      });
-    }
-  });
-  const { code, output } = await second;
-  assert.equal(code, 0, output);
-  assert.doesNotMatch(output, /already running/);
-  assert.match(output, /Watching\./);
-});
+test(
+  'pnpm dev again right after q starts anew, not "already running" with the links that are stopping',
+  { skip: noSignals },
+  async () => {
+    const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
+    let second;
+    let sent = false;
+    await runDev(root, (text, child) => {
+      if (!sent && /Watching\./.test(text)) {
+        sent = true;
+        interrupt(child);
+        let stopped = false;
+        second = runDev(root, (text2, child2) => {
+          if (!stopped && /Watching\./.test(text2)) {
+            stopped = true;
+            interrupt(child2);
+          }
+        });
+      }
+    });
+    const { code, output } = await second;
+    assert.equal(code, 0, output);
+    assert.doesNotMatch(output, /already running/);
+    assert.match(output, /Watching\./);
+  },
+);
 
 test('a library with `after` starts its watcher only once that library has built', async () => {
   const root = await fakeRepo({
@@ -388,7 +418,7 @@ test('a library with `after` starts its watcher only once that library has built
   const { output } = await runDev(root, (text, child) => {
     if (!sent && /Watching\./.test(text)) {
       sent = true;
-      child.kill('SIGINT');
+      interrupt(child);
     }
   });
   assert.equal(sent, true, output);

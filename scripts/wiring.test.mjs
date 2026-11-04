@@ -4,7 +4,7 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { test } from 'node:test';
 import { promisify } from 'node:util';
@@ -83,7 +83,7 @@ test('every `node scripts/<file>` in package.json, .husky and the workflows exis
     join(ROOT, 'package.json'),
     ...readdirSync(join(ROOT, '.husky')).map((file) => join(ROOT, '.husky', file)),
     ...readdirSync(join(ROOT, '.github/workflows')).map((file) => join(ROOT, '.github/workflows', file)),
-  ].filter((file) => existsSync(file) && !file.endsWith('/_'));
+  ].filter((file) => statSync(file, { throwIfNoEntry: false })?.isFile()); /* not husky's _/ folder */
   const missing = callers.flatMap((file) =>
     [...read(file).matchAll(/\bnode\s+(scripts\/[\w./-]+)/g)]
       .map((m) => m[1])

@@ -19,7 +19,15 @@ import {
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { test } from 'node:test';
+import { test as nodeTest } from 'node:test';
+
+/* The fakes lean on POSIX: $PWD in the call log (the tests compare it with the sandbox path), tar -C with a drive
+   letter, mktemp, and pkill for Ctrl-C. On Windows, pnpm pack:local and pnpm sync are checked by hand instead. */
+const posixOnly = process.platform === 'win32' && 'the fakes need POSIX paths, tar and pkill';
+const test = (name, options, fn) =>
+  typeof options === 'function'
+    ? nodeTest(name, { skip: posixOnly }, options)
+    : nodeTest(name, { ...options, skip: posixOnly || options.skip }, fn);
 
 const here = import.meta.dirname;
 

@@ -3,13 +3,16 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, linkSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
+import { delimiter, resolve } from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { noShell, writeFake } from './lib/test-fakes.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
+/* setup starts fnm and the nvm Node without a shell: Windows runs no script that way (a .cmd needs cmd.exe). */
+const shellFakes = process.platform === 'win32' && 'Windows starts no script without a shell';
 /* A space and an accent in the path: a repo cloned into "My Documents/ontwerp-é" must work too. */
 const temp = mkdtempSync(resolve(tmpdir(), 'tilburg setup-test-é-'));
 after(() => rmSync(temp, { recursive: true, force: true }));
@@ -18,8 +21,12 @@ let count = 0;
 /**
  * A repo whose .nvmrc holds `nvmrc`, with an nvm folder holding `nvmVersions`; runs setup in it. `bin` holds fake
  * commands (name → shell script) put first on the PATH; `nodeBin` is the script for the nvm Node's bin/node.
+ * `realNode`: a version under which nvm keeps this very Node (nvm-windows' layout on Windows, nvm-sh's elsewhere).
  */
-function runSetup(nvmrc, { nvmVersions = null, bin = {}, nodeBin = '', env: extra = {}, packageJson = {} } = {}) {
+function runSetup(
+  nvmrc,
+  { nvmVersions = null, bin = {}, nodeBin = '', env: extra = {}, packageJson = {}, realNode = null } = {},
+) {
   const root = resolve(temp, `repo-${count++}`);
   mkdirSync(resolve(root, 'scripts'), { recursive: true });
   for (const file of ['setup.mjs', 'dev-config.mjs', 'lib'])
@@ -36,13 +43,34 @@ function runSetup(nvmrc, { nvmVersions = null, bin = {}, nodeBin = '', env: extr
       writeFileSync(resolve(nvm, 'versions/node', version, 'bin/node'), nodeBin, { mode: nodeBin ? 0o755 : 0o644 });
     }
   }
+  if (realNode) {
+    const windows = process.platform === 'win32';
+    const dir = windows ? resolve(nvm, 'installs', realNode) : resolve(nvm, 'versions/node', realNode, 'bin');
+    mkdirSync(dir, { recursive: true });
+    const node = resolve(dir, windows ? 'node.exe' : 'node');
+    if (!windows) symlinkSync(process.execPath, node);
+    else {
+      try {
+        linkSync(process.execPath, node);
+      } catch {
+        copyFileSync(process.execPath, node); /* another drive */
+      }
+    }
+    if (windows) extra = { NVM_HOME: nvm, ...extra };
+    else writeFileSync(resolve(nvm, 'nvm.sh'), '');
+  }
   const fakes = resolve(root, 'bin');
   mkdirSync(fakes);
-  for (const [name, script] of Object.entries(bin)) writeFileSync(resolve(fakes, name), script, { mode: 0o755 });
-  const { CI, SUDO_USER, NODE_OPTIONS, ...env } = process.env;
+  for (const [name, script] of Object.entries(bin)) writeFake(fakes, name, script);
+  /* NVM_HOME: the developer's own nvm-windows would stand in for the fake nvm. */
+  const { CI, SUDO_USER, NODE_OPTIONS, NVM_HOME, ...env } = process.env;
+  /* Windows spells it Path; a second PATH key next to it would leave which one counts to chance. */
+  const pathKey =
+    process.platform === 'win32' ? (Object.keys(env).find((key) => key.toUpperCase() === 'PATH') ?? 'PATH') : 'PATH';
+  env[pathKey] = `${fakes}${delimiter}${env[pathKey]}`;
   const result = spawnSync(process.execPath, [resolve(root, 'scripts/setup.mjs')], {
     cwd: root,
-    env: { ...env, PATH: `${fakes}:${env.PATH}`, NVM_DIR: nvm, TILBURG_SETUP_REEXEC: '1', ...extra },
+    env: { ...env, NVM_DIR: nvm, TILBURG_SETUP_REEXEC: '1', ...extra },
     stdio: ['ignore', 'pipe', 'pipe'],
     encoding: 'utf8',
     timeout: 20_000,
@@ -67,7 +95,7 @@ test('the wrong Node without nvm fails with exit 1 and says how to get the right
   assert.match(output, /nvm.* was not found/);
 });
 
-test('the wrong Node without nvm but with fnm on the PATH: prints the fnm command', () => {
+test('the wrong Node without nvm but with fnm on the PATH: prints the fnm command', { skip: shellFakes }, () => {
   const { status, output } = runSetup(String(otherMajor), { bin: { fnm: '#!/bin/sh\nexit 0\n' } });
   assert.equal(status, 1);
   assert.match(output, new RegExp(`fnm install ${otherMajor} && fnm use ${otherMajor}`));
@@ -92,7 +120,8 @@ test('a Node from nvm that cannot start is reported, not a silent exit 1', () =>
   const { status, output } = runSetup(String(otherMajor), { nvmVersions: [`v${otherMajor}.0.0`] });
   assert.equal(status, 1);
   assert.match(output, new RegExp(`Could not start Node ${otherMajor} from nvm`));
-  assert.match(output, /EACCES/);
+  /* Not executable; on Windows there is no node.exe at all. */
+  assert.match(output, process.platform === 'win32' ? /ENOENT/ : /EACCES/);
 });
 
 /* As root (sudo setup) it stops before writing anything; a test cannot run as root, so that path is the check itself.
@@ -102,7 +131,7 @@ test('sudo -iu to a normal account (SUDO_USER set, not root) is not refused', ()
   assert.doesNotMatch(output, /running under sudo/);
 });
 
-test('a NODE_OPTIONS flag the nvm Node refuses (exit 9) is named, not a bare exit 9', () => {
+test('a NODE_OPTIONS flag the nvm Node refuses (exit 9) is named, not a bare exit 9', { skip: shellFakes }, () => {
   /* What Node 24 prints for a flag Node 20 still took (reproduced with --experimental-network-imports). */
   const nodeBin = '#!/bin/sh\necho "node: --experimental-network-imports is not allowed in NODE_OPTIONS" >&2\nexit 9\n';
   const { status, output } = runSetup(String(otherMajor), {
@@ -115,13 +144,26 @@ test('a NODE_OPTIONS flag the nvm Node refuses (exit 9) is named, not a bare exi
   assert.match(output, /--max-old-space-size=4096/);
 });
 
-test('offline, corepack cannot download pnpm: says so, instead of blaming another pnpm on the PATH', () => {
-  /* The real corepack 0.35 error with no DNS, trimmed. */
-  const pnpm =
-    '#!/bin/sh\necho "Error: Error when performing the request to https://registry.npmjs.org/pnpm/11.15.1; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting" >&2\necho "    [cause]: Error: getaddrinfo ENOTFOUND registry.npmjs.org" >&2\nexit 1\n';
-  const { status, output } = runSetup(String(otherMajor - 1), { bin: { pnpm, corepack: '#!/bin/sh\nexit 0\n' } });
+test(
+  'offline, corepack cannot download pnpm: says so, instead of blaming another pnpm on the PATH',
+  { skip: noShell },
+  () => {
+    /* The real corepack 0.35 error with no DNS, trimmed. */
+    const pnpm =
+      '#!/bin/sh\necho "Error: Error when performing the request to https://registry.npmjs.org/pnpm/11.15.1; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting" >&2\necho "    [cause]: Error: getaddrinfo ENOTFOUND registry.npmjs.org" >&2\nexit 1\n';
+    const { status, output } = runSetup(String(otherMajor - 1), { bin: { pnpm, corepack: '#!/bin/sh\nexit 0\n' } });
+    assert.equal(status, 1);
+    assert.match(output, /corepack could not download pnpm 11\.15\.1/);
+    assert.match(output, /Error when performing the request to https:\/\/registry\.npmjs\.org/);
+    assert.doesNotMatch(output, /Another pnpm comes first/);
+  },
+);
+
+test('nvm (nvm-windows on Windows) keeps another Node under the version setup needs: it restarts once, then stops', () => {
+  /* This Node, filed under the next major: setup restarts under it, finds the major still wrong, and must not loop. */
+  const { status, output } = runSetup(String(otherMajor), { realNode: `v${otherMajor}.0.0` });
   assert.equal(status, 1);
-  assert.match(output, /corepack could not download pnpm 11\.15\.1/);
-  assert.match(output, /Error when performing the request to https:\/\/registry\.npmjs\.org/);
-  assert.doesNotMatch(output, /Another pnpm comes first/);
+  assert.match(output, new RegExp(`Continuing with Node ${otherMajor} from nvm`));
+  assert.match(output, new RegExp(`The Node that nvm keeps as ${otherMajor} is ${process.versions.node}`));
+  assert.equal(output.match(/Continuing with Node/g).length, 1);
 });

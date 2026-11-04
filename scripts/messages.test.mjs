@@ -107,7 +107,7 @@ test('every git subcommand a message names is one git has', () => {
 });
 
 test('nvm and corepack are only told to do what they can', () => {
-  const NVM = new Set(['install', 'use', 'alias', 'first']);
+  const NVM = new Set(['install', 'uninstall', 'use', 'alias', 'first']);
   const wrong = messages.flatMap(({ where, text }) => [
     ...[...text.matchAll(/\bnvm ([a-z]+)/g)].filter(([, sub]) => !NVM.has(sub)).map(([all]) => `${where}: ${all}`),
     ...[...text.matchAll(/\bcorepack ([a-z]+)/g)]

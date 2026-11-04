@@ -8,8 +8,7 @@
    config) ask first, and never run without a terminal. Every failure also keeps its manual fix. */
 import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { basename, dirname, resolve, sep } from 'node:path';
+import { basename, delimiter, dirname, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { NODE_MAJOR, ROOT } from '../dev-config.mjs';
 import {
@@ -27,6 +26,7 @@ import {
   stripAnsi,
 } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
+import { NVM_DIR, NVM_HOME, nvmNodes } from './nvm.mjs';
 
 /* Ordered: the first match wins, so specific causes come before generic ones. */
 export const FAILURES = [
@@ -35,6 +35,8 @@ export const FAILURES = [
     test: /ERR_UNKNOWN_BUILTIN_MODULE|node:sqlite|requires at least Node|ERR_PNPM_UNSUPPORTED_ENGINE|Node\.js version v[\d.]+ detected/i,
     why: 'This is not the Node the repo needs. pnpm 11 needs a newer Node (it uses node:sqlite), and engines (with engineStrict) needs Node 24, 24.15 or newer (Angular 22).',
     fix: 'nvm install   (installs and switches to the newest Node from .nvmrc), then run the command again in that terminal',
+    /* nvm-windows reads no .nvmrc: both commands need the version. */
+    fixWindows: `nvm install ${NODE_MAJOR}, then nvm use ${NODE_MAJOR}, then run the command again`,
   },
   {
     kind: 'pnpm-version',
@@ -161,6 +163,8 @@ export const FAILURES = [
     test: /^(<{7}|>{7}) |ERR_PNPM_BROKEN_LOCKFILE|Merge conflict marker encountered|error TS1185|^CONFLICT \(|Automatic merge failed/m,
     why: 'A file still has merge-conflict markers in it, or pnpm-lock.yaml is broken by a merge.',
     fix: 'git diff --check shows where; for pnpm-lock.yaml: git checkout origin/main -- pnpm-lock.yaml && pnpm install',
+    fixWindows:
+      'git diff --check shows where; for pnpm-lock.yaml: git checkout origin/main -- pnpm-lock.yaml, then pnpm install',
   },
   {
     kind: 'invalid-package-json',
@@ -308,6 +312,7 @@ export const FAILURES = [
     test: /JavaScript heap out of memory|Reached heap limit|Allocation failed/i,
     why: 'Node ran out of memory during the build.',
     fix: 'export NODE_OPTIONS=--max-old-space-size=8192, then retry',
+    fixWindows: '$env:NODE_OPTIONS="--max-old-space-size=8192" (PowerShell), then retry',
   },
   {
     kind: 'no-space',
@@ -334,6 +339,7 @@ export const FAILURES = [
     test: /EADDRINUSE|Port \d+ is (already in use|not available)/i,
     why: 'The port is taken by another process.',
     fix: 'pnpm dev picks a free port itself; otherwise stop the other server (lsof -i :<port>)',
+    fixWindows: 'pnpm dev picks a free port itself; otherwise stop the other server (netstat -ano | findstr :<port>)',
   },
   {
     kind: 'network',
@@ -347,6 +353,8 @@ export const FAILURES = [
     test: /installed esbuild for another platform|Cannot find module\s+'?@rollup\/rollup-|@esbuild\/[\w-]+" package|sass-embedded-(darwin|linux|win32)-|lmdb-(darwin|linux|win32)-|was compiled against a different Node\.js version|NODE_MODULE_VERSION/i,
     why: 'node_modules holds native binaries for another CPU or Node version (a Rosetta terminal on an Apple Silicon Mac, a Node switch, or a copied node_modules).',
     fix: 'node -p process.arch should match this machine (uname -m; arm64 on Apple Silicon); then rm -rf node_modules and pnpm install',
+    fixWindows:
+      'node -p process.arch should match this machine; then delete node_modules (Remove-Item -Recurse node_modules) and pnpm install',
   },
   {
     kind: 'missing-file',
@@ -384,6 +392,9 @@ const PNPM_PREFIX = /^(?:[\w@.-]+\/)+[\w@.-]+ [\w:-]+: /gm;
    node-version: ERR_UNKNOWN_BUILTIN_MODULE" must not decide the kind. */
 const PASSED_LINE = /^\s*(?:✔|✓|ok \d+ ).*$/gm;
 
+/** The manual fix of a FAILURES entry: its Windows wording (PowerShell, no &&) on Windows, else the one in the table. */
+const fixOf = (entry) => (process.platform === 'win32' && entry.fixWindows) || entry.fix;
+
 /** Diagnose a failed step from its output and the error runStep() rejected with. */
 export function classifyFailure(output = '', err = null) {
   /* Colour codes split tokens: stylelint prints `\x1b[31m✖\x1b[39m 2 problems` even with FORCE_COLOR=0. */
@@ -415,17 +426,17 @@ export function classifyFailure(output = '', err = null) {
     /^(Tests|Test Suites):\s+\d+ failed|^(ℹ|#) fail [1-9]/m.test(output) &&
     !/terminated by another process|child process exceptions/i.test(output)
   ) {
-    return { kind: tests.kind, why: tests.why, fix: tests.fix, auto: RECOVERIES[tests.kind]?.label };
+    return { kind: tests.kind, why: tests.why, fix: fixOf(tests), auto: RECOVERIES[tests.kind]?.label };
   }
   for (const failure of FAILURES) {
     if (failure.test.test(output)) {
-      return { kind: failure.kind, why: failure.why, fix: failure.fix, auto: RECOVERIES[failure.kind]?.label };
+      return { kind: failure.kind, why: failure.why, fix: fixOf(failure), auto: RECOVERIES[failure.kind]?.label };
     }
   }
   /* The shell's own "not found" (127; cmd.exe: 9009), also when it says so in another language. */
   if (err?.exitCode === 127 || err?.exitCode === 9009) {
     const notFound = FAILURES.find((failure) => failure.kind === 'command-not-found');
-    return { kind: notFound.kind, why: notFound.why, fix: notFound.fix };
+    return { kind: notFound.kind, why: notFound.why, fix: fixOf(notFound) };
   }
   if (err?.signal) {
     return {
@@ -497,7 +508,6 @@ function gitRunning() {
   const status = spawnSync('pgrep', ['-U', String(process.getuid()), '-x', 'git']).status;
   return status === 0 ? true : status === 1 ? false : null;
 }
-const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
 /** The lowest Node that package.json "engines" accepts, e.g. "24.15.0". */
 export function enginesMinimum() {
   let range = '';
@@ -508,15 +518,22 @@ export function enginesMinimum() {
   }
   return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
-/** The newest Node of the .nvmrc major that nvm has installed, as a version without "v", or null. */
-function newestNvmNode() {
+/**
+ * The newest Node of the .nvmrc major that nvm has installed, as { version (without "v"), bin }, or null. nvm-windows
+ * through nvm.mjs; nvm-sh read here as it always was (readdir order, sorted with `older`), so the pick among odd
+ * folder names such as v24.0.0-rc.1 stays the same.
+ */
+const newestInstalledNode = () => {
+  if (NVM_HOME) return nvmNodes(NODE_MAJOR)[0] ?? null;
   try {
     const versions = readdirSync(resolve(NVM_DIR, 'versions/node')).filter((v) => v.startsWith(`v${NODE_MAJOR}.`));
-    return versions.sort((a, b) => (older(a, b) ? 1 : -1))[0]?.slice(1) ?? null;
+    const newest = versions.sort((a, b) => (older(a, b) ? 1 : -1))[0];
+    return newest ? { version: newest.slice(1), bin: resolve(NVM_DIR, 'versions/node', newest, 'bin') } : null;
   } catch {
     return null;
   }
-}
+};
+const newestNvmNode = () => newestInstalledNode()?.version ?? null;
 const nodeNeedsInstall = () => {
   const newest = newestNvmNode();
   return !newest || older(newest, enginesMinimum());
@@ -536,15 +553,22 @@ export const RECOVERIES = {
     label: 'running it again with the right Node from nvm (installing it with nvm first if needed)',
     ask: () =>
       nodeNeedsInstall() ? `Install Node ${NODE_MAJOR} (${enginesMinimum()} or newer) with nvm and use it?` : null,
-    skip: () => (newestNvmNode() || process.env.NVM_DIR ? null : 'nvm is not installed'),
+    skip: () => (newestNvmNode() || process.env.NVM_DIR || NVM_HOME ? null : 'nvm is not installed'),
     run: async ({ env }) => {
-      if (nodeNeedsInstall()) await sh(`. "${NVM_DIR}/nvm.sh" && nvm install ${NODE_MAJOR}`);
-      const newest = newestNvmNode();
-      if (!newest || older(newest, enginesMinimum())) throw new Error(`nvm has no Node ${enginesMinimum()} or newer`);
+      /* nvm-windows is a program and needs the version; nvm-sh is a shell function, loaded from nvm.sh. */
+      if (nodeNeedsInstall())
+        await sh(
+          NVM_HOME
+            ? `"${resolve(NVM_HOME, 'nvm.exe')}" install ${NODE_MAJOR}`
+            : `. "${NVM_DIR}/nvm.sh" && nvm install ${NODE_MAJOR}`,
+        );
+      const newest = newestInstalledNode();
+      if (!newest || older(newest.version, enginesMinimum()))
+        throw new Error(`nvm has no Node ${enginesMinimum()} or newer`);
       return {
         env: {
           ...env,
-          PATH: `${resolve(NVM_DIR, 'versions/node', `v${newest}`, 'bin')}${process.platform === 'win32' ? ';' : ':'}${env.PATH ?? ''}`,
+          PATH: `${newest.bin}${delimiter}${env.PATH ?? ''}`,
         },
       };
     },

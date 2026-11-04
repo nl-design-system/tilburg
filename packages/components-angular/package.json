@@ -25,16 +25,16 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "pnpm run '/^build:.*/'",
+    "build": "pnpm run \"/^build:.*/\"",
     "build:components": "ng build",
     "clean": "rimraf dist/ .angular/",
     "pack:dist": "ng build && pnpm pack --pack-destination dist",
-    "lint": "pnpm run '/^lint:.*/'",
+    "lint": "pnpm run \"/^lint:.*/\"",
     "lint:ts": "tsc --noEmit --project tsconfig.json",
     "watch:build": "ng build --watch",
     "test": "jest --verbose",
     "test-build": "node test-exports.mjs",
-    "watch:test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --watch"
+    "watch:test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose --watch"
   },
   "dependencies": {
     "tslib": "2.8.1"

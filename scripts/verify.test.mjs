@@ -3,12 +3,13 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { lockName } from './lib/lock.mjs';
+import { prependPath, writeFake } from './lib/test-fakes.mjs';
 
 const SCRIPTS = fileURLToPath(new URL('.', import.meta.url));
 const dirs = [];
@@ -33,9 +34,8 @@ function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = 
     cpSync(join(SCRIPTS, 'lib', file), join(dir, 'scripts', 'lib', file));
   writeFileSync(join(dir, 'scripts', 'parity.mjs'), 'process.exit(Number(process.env.PARITY_EXIT));\n');
   writeFileSync(join(dir, 'package.json'), '{}\n');
-  writeFileSync(join(bin, 'pnpm'), PNPM);
-  chmodSync(join(bin, 'pnpm'), 0o755);
-  const env = { ...process.env, CI: '', FAIL, KILL, TOUCH, PARITY_EXIT, OUTPUT, PATH: `${bin}:${process.env.PATH}` };
+  writeFake(bin, 'pnpm', PNPM);
+  const env = prependPath({ ...process.env, CI: '', FAIL, KILL, TOUCH, PARITY_EXIT, OUTPUT }, bin);
   setup?.(dir, env);
   const result = spawnSync(process.execPath, ['scripts/verify.mjs', ...args], {
     cwd: dir,
@@ -200,10 +200,8 @@ test('--help prints the usage and runs nothing; an unknown argument is refused',
 test('while pnpm sync (or pack:local) builds, verify stops before building', () => {
   const result = verify({
     setup: (dir) => {
-      const uid = process.getuid ? `${process.getuid()}-` : '';
-      const hash = createHash('sha1').update(realpathSync(dir)).digest('hex').slice(0, 10);
       const lock = { pid: process.pid, started: new Date().toISOString(), what: 'pnpm sync' };
-      writeFileSync(join(tmpdir(), `tilburg-sync-${uid}${hash}.json`), JSON.stringify(lock));
+      writeFileSync(join(tmpdir(), lockName(realpathSync(dir), 'sync')), JSON.stringify(lock));
     },
   });
   assert.equal(result.status, 1, result.all);

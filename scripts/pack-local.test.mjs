@@ -4,7 +4,6 @@ import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import {
-  chmodSync,
   copyFileSync,
   existsSync,
   mkdirSync,
@@ -15,10 +14,11 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { lockName } from './lib/lock.mjs';
+import { noSignals, prependPath, tempEnv, writeFake } from './lib/test-fakes.mjs';
 
 /** Runs pack-local.mjs; the fake pnpm logs its arguments, creates the tarball, and exits 1 when FAIL_ON matches. */
 function packLocal({ failOn = '', previous = [], args = [], env = {}, before } = {}) {
@@ -52,24 +52,21 @@ function packLocal({ failOn = '', previous = [], args = [], env = {}, before } =
   mkdirSync(join(sandbox, 'tmp'));
   before?.(repo, join(sandbox, 'tmp'));
   const log = join(sandbox, 'pnpm.log');
-  writeFileSync(
-    join(bin, 'pnpm'),
+  writeFake(
+    bin,
+    'pnpm',
     `#!/bin/sh
 printf '%s|' "$@" >> "$LOG"; echo >> "$LOG"
 case "$PWD $*" in *"$FAIL_ON"*) [ -n "$FAIL_ON" ] && exit 1;; esac
 if [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; fi
 `,
   );
-  chmodSync(join(bin, 'pnpm'), 0o755);
   const result = spawnSync(process.execPath, [join(repo, 'scripts', 'pack-local.mjs'), ...args], {
     encoding: 'utf8',
     timeout: 20_000,
+    /* ...env last, as before: a caller's PATH would replace ours. */
     env: {
-      ...process.env,
-      PATH: `${bin}:${process.env.PATH}`,
-      LOG: log,
-      FAIL_ON: failOn,
-      TMPDIR: join(sandbox, 'tmp'),
+      ...prependPath({ ...process.env, LOG: log, FAIL_ON: failOn, ...tempEnv(join(sandbox, 'tmp')) }, bin),
       ...env,
     },
   });
@@ -82,6 +79,12 @@ if [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; fi
   };
 }
 
+/* The pack destination, as the fake pnpm logs it: a Windows path has backslashes. */
+const PARTIAL =
+  process.platform === 'win32'
+    ? /^pack\|--pack-destination\|.*\\\.partial-\d+\|$/
+    : /^pack\|--pack-destination\|.*\/\.partial-\d+\|$/;
+
 test('packs every package into .tarballs/, also when the repository path has spaces', (t) => {
   const run = packLocal();
   t.after(run.cleanup);
@@ -89,7 +92,7 @@ test('packs every package into .tarballs/, also when the repository path has spa
   const packs = run.calls.filter((call) => call.startsWith('pack|'));
   assert.equal(packs.length, 7);
   assert.ok(
-    packs.every((call) => /^pack\|--pack-destination\|.*\/\.partial-\d+\|$/.test(call) && call.includes(run.out)),
+    packs.every((call) => PARTIAL.test(call) && call.includes(run.out)),
     packs[0],
   );
   assert.match(run.stdout, /components-angular\.tgz/);
@@ -100,31 +103,36 @@ test('packs every package into .tarballs/, also when the repository path has spa
   );
 });
 
-test('a run stopped half-way (Ctrl-C) leaves no tarball in .tarballs/ for a consumer to install', async (t) => {
-  /* A real signal mid-run: the dry run only sets up the sandbox, then a slow pnpm gives time to stop it. */
-  const dry = packLocal({ failOn: 'design-tokens run build' });
-  t.after(dry.cleanup);
-  const repo = join(dry.out, '..');
-  const bin = join(repo, '..', 'bin');
-  writeFileSync(
-    join(bin, 'pnpm'),
-    `#!/bin/sh\nif [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; echo packed >> "$LOG"; fi\nsleep 0.2\n`,
-  );
-  const log = join(repo, '..', 'slow.log');
-  const child = spawn(process.execPath, [join(repo, 'scripts', 'pack-local.mjs')], {
-    stdio: 'ignore',
-    env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, LOG: log },
-  });
-  while (!(existsSync(log) && readFileSync(log, 'utf8').split('\n').length > 3))
-    await new Promise((resolveWait) => setTimeout(resolveWait, 50));
-  child.kill('SIGINT');
-  await new Promise((resolveExit) => child.on('exit', resolveExit));
-  assert.deepEqual(
-    readdirSync(dry.out).filter((file) => file.endsWith('.tgz')),
-    [],
-    'the packed ones wait in .tarballs/.partial/',
-  );
-});
+test(
+  'a run stopped half-way (Ctrl-C) leaves no tarball in .tarballs/ for a consumer to install',
+  { skip: noSignals },
+  async (t) => {
+    /* A real signal mid-run: the dry run only sets up the sandbox, then a slow pnpm gives time to stop it. */
+    const dry = packLocal({ failOn: 'design-tokens run build' });
+    t.after(dry.cleanup);
+    const repo = join(dry.out, '..');
+    const bin = join(repo, '..', 'bin');
+    writeFake(
+      bin,
+      'pnpm',
+      `#!/bin/sh\nif [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; echo packed >> "$LOG"; fi\nsleep 0.2\n`,
+    );
+    const log = join(repo, '..', 'slow.log');
+    const child = spawn(process.execPath, [join(repo, 'scripts', 'pack-local.mjs')], {
+      stdio: 'ignore',
+      env: prependPath({ ...process.env, LOG: log }, bin),
+    });
+    while (!(existsSync(log) && readFileSync(log, 'utf8').split('\n').length > 3))
+      await new Promise((resolveWait) => setTimeout(resolveWait, 50));
+    child.kill('SIGINT');
+    await new Promise((resolveExit) => child.on('exit', resolveExit));
+    assert.deepEqual(
+      readdirSync(dry.out).filter((file) => file.endsWith('.tgz')),
+      [],
+      'the packed ones wait in .tarballs/.partial/',
+    );
+  },
+);
 
 const tarballs = (out) => (existsSync(out) ? readdirSync(out).filter((file) => file.endsWith('.tgz')) : []);
 
@@ -170,12 +178,10 @@ test('--help prints the usage and builds nothing; an unknown option is refused',
   assert.deepEqual(typo.calls, []);
 });
 
-/** Writes the shared build lock as if `pid` held it; the name follows lock.mjs (user, then a hash of the repo). */
+/** Writes the shared build lock as if `pid` held it, under the name lock.mjs gives it. */
 const holdLock = (pid) => (repo, tmp) => {
-  const uid = process.getuid ? `${process.getuid()}-` : '';
-  const hash = createHash('sha1').update(repo).digest('hex').slice(0, 10);
   writeFileSync(
-    join(tmp, `tilburg-sync-${uid}${hash}.json`),
+    join(tmp, lockName(repo, 'sync')),
     JSON.stringify({ pid, started: new Date().toISOString(), what: 'pnpm verify' }),
   );
 };

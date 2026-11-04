@@ -2,13 +2,22 @@
 import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
+import { delimiter, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { PNPM_VERSION } from '../dev-config.mjs';
+import { PNPM_VERSION, ROOT } from '../dev-config.mjs';
 import {
   belowEngines,
   checkCorepack,
@@ -18,6 +27,7 @@ import {
   checkFolder,
   checkPackageJson,
   checkPnpm,
+  folderFromCommandLine,
   identifyStorybook,
   libraryState,
   mountType,
@@ -25,6 +35,7 @@ import {
   runInherit,
 } from './checks.mjs';
 import { readDevLock } from './lock.mjs';
+import { noSignals, writeFake } from './test-fakes.mjs';
 
 const scripts = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 
@@ -87,18 +98,17 @@ test('belowEngines reads the minimum for the running major from an engines range
 
 test('runInherit throws with the exit code, or the signal that stopped the command', () => {
   assert.throws(() => runInherit('exit 3'), /exited with 3$/);
-  assert.throws(() => runInherit('kill -TERM $$'), /exited with SIGTERM$/);
+  /* cmd.exe has no kill, and Windows no signals. */
+  if (!noSignals) assert.throws(() => runInherit('kill -TERM $$'), /exited with SIGTERM$/);
 });
 
 /** checkPnpm with a fake `pnpm` on the PATH (none at all when `script` is null). */
 async function withFakePnpm(script) {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-pnpm-'));
-  if (script !== null) {
-    writeFileSync(resolve(dir, 'pnpm'), `#!/bin/sh\n${script}\n`);
-    chmodSync(resolve(dir, 'pnpm'), 0o755);
-  }
+  if (script !== null) writeFake(dir, 'pnpm', `#!/bin/sh\n${script}\n`);
+  /* process.env ignores the case of names on Windows: this sets its Path. */
   const path = process.env.PATH;
-  process.env.PATH = script === null ? dir : `${dir}:${path}`;
+  process.env.PATH = script === null ? dir : `${dir}${delimiter}${path}`;
   try {
     return await checkPnpm();
   } finally {
@@ -275,6 +285,32 @@ test('a Storybook whose folder cannot be told is not taken for ours; one on ::1 
       server.close();
     }
   }
+});
+
+test('a Storybook from one of our packages is ours, in whatever case Windows spells the path', async () => {
+  const server = await fakeStorybook('127.0.0.1');
+  try {
+    const { port } = server.address();
+    const dir = resolve(realpathSync(ROOT), 'packages', 'storybook');
+    assert.deepEqual(await identifyStorybook({}, port, () => dir), { ours: true });
+    if (process.platform === 'win32')
+      assert.deepEqual(await identifyStorybook({}, port, () => dir.toUpperCase()), { ours: true });
+    assert.deepEqual(await identifyStorybook({}, port, () => `${realpathSync(ROOT)}-other`), {
+      ours: false,
+      what: `a Storybook from ${realpathSync(ROOT)}-other`,
+    });
+  } finally {
+    server.close();
+  }
+});
+
+test('folderFromCommandLine: the folder before node_modules, not the node.exe in front of it', () => {
+  /* String.raw: the backslashes as Windows prints them. */
+  const quoted = String.raw`"C:\Program Files\nodejs\node.exe" "C:\Users\a b\tilburg\packages\storybook\node_modules\.bin\..\storybook\bin\index.cjs" dev`;
+  assert.equal(folderFromCommandLine(quoted), String.raw`C:\Users\a b\tilburg\packages\storybook`);
+  assert.equal(folderFromCommandLine(String.raw`C:\nvm\node.exe C:/x/tilburg/node_modules/a.js`), 'C:/x/tilburg');
+  assert.equal(folderFromCommandLine('node.exe --test scripts/x.mjs'), null);
+  assert.equal(folderFromCommandLine('node node_modules/a.js'), null);
 });
 
 test('mountType picks the longest mount point that holds the path', () => {

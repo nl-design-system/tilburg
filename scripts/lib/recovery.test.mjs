@@ -512,8 +512,9 @@ const askingFix = (marker) => `'pnpm-version': {
   ask: 'Leave the marker?',
   run: async () => (await import('node:fs')).writeFileSync(${JSON.stringify(marker)}, 'x'),
 },`;
+/* Forward slashes: a Windows path's backslashes would be escapes in the JavaScript string (Windows reads / as well). */
 const wrongPnpmUntil = (marker) =>
-  `node -e "if (!require('fs').existsSync('${marker}')) { console.error('ERR_PNPM_BAD_PM_VERSION  configured to use v11.15.1 of pnpm'); process.exit(1) }"`;
+  `node -e "if (!require('fs').existsSync('${marker.replaceAll('\\', '/')}')) { console.error('ERR_PNPM_BAD_PM_VERSION  configured to use v11.15.1 of pnpm'); process.exit(1) }"`;
 const { CI: _ci, ...noCI } = process.env;
 
 test('a fix that changes the machine never runs without a terminal: it is reported, not run', { timeout: 20_000 }, () =>

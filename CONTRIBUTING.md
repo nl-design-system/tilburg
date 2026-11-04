@@ -18,6 +18,12 @@ daarnaast weigert pnpm zelf een andere versie (`engineStrict`). Zie je `ERR_UNKN
 nvm-default van 20) en komt het niet eens aan die controle toe: `nvm use`, of `nvm alias default 24`.
 `node scripts/check.mjs` werkt ook zonder pnpm en zegt welke van de twee het is.
 
+Op Windows: [nvm-windows](https://github.com/coreybutler/nvm-windows) leest `.nvmrc` niet, dus `nvm install 24` en
+`nvm use 24` (twee commando's: Windows PowerShell 5.1 kent `&&` niet). Staat er daarnaast een Node van nodejs.org in
+`C:\Program Files\nodejs`, dan vindt elke terminal die eerst (het systeem-`PATH` gaat vóór het gebruikers-`PATH` waar
+nvm-windows in staat) en verandert `nvm use` niets: verwijder die Node via Instellingen → Apps. `pnpm check` en setup
+herkennen dat; setup draait intussen al verder op de Node 24 van nvm-windows.
+
 Goed om te weten over `pnpm-workspace.yaml` en `.npmrc`:
 
 - **`minimumReleaseAge: 1440`** — pnpm installeert alleen versies die al minstens 24 uur op npm staan (tegen
@@ -40,8 +46,9 @@ node scripts/setup.mjs   # of `pnpm setup` als pnpm al werkt
 
 Setup doet alles wat nog ontbreekt en slaat over wat al klopt, dus je kunt hem altijd opnieuw draaien:
 
-1. **Node 24** — staat die er niet, dan installeert hij hem met nvm (na een vraag) en gaat daarop verder. Hij biedt ook
-   aan om 24 de standaard te maken voor nieuwe terminals (`nvm alias default 24`); anders start pnpm daar niet.
+1. **Node 24** — staat die er niet, dan installeert hij hem met nvm of nvm-windows (na een vraag) en gaat daarop
+   verder. Met nvm biedt hij ook aan om 24 de standaard te maken voor nieuwe terminals (`nvm alias default 24`); anders
+   start pnpm daar niet.
 2. **pnpm** via corepack, de versie uit `packageManager`. Staat er een andere pnpm vóór op je `PATH` (Homebrew, een
    globale npm-install), dan zegt hij welke.
 3. **`pnpm install`**, de **git-hooks** (husky) en de **libraries** die de Storybooks uit `dist/` laden.

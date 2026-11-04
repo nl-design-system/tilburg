@@ -3,12 +3,13 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { pullRequestUrl } from './lib/ship.mjs';
+import { noSignals, prependPath, writeFake } from './lib/test-fakes.mjs';
 
 test('pullRequestUrl reads every remote form, and nothing that is not GitHub', () => {
   const pr = 'compare/main...feat/x?expand=1';
@@ -53,10 +54,9 @@ function sandbox(pnpm = 'exit 0') {
   for (const file of readdirSync(join(SCRIPTS, 'lib')).filter((name) => /^[^.]+\.mjs$/.test(name)))
     cpSync(join(SCRIPTS, 'lib', file), join(repo, 'scripts', 'lib', file));
   writeFileSync(join(repo, 'package.json'), '{}\n');
-  writeFileSync(join(bin, 'pnpm'), `#!/bin/sh\n${pnpm}\n`);
-  chmodSync(join(bin, 'pnpm'), 0o755);
+  writeFake(bin, 'pnpm', `#!/bin/sh\n${pnpm}\n`);
   writeFileSync(join(dir, 'gitconfig'), '');
-  const env = { ...ENV, GIT_CONFIG_GLOBAL: join(dir, 'gitconfig'), PATH: `${bin}:${process.env.PATH}` };
+  const env = prependPath({ ...ENV, GIT_CONFIG_GLOBAL: join(dir, 'gitconfig') }, bin);
   const git = (...args) => {
     const result = spawnSync('git', args, { cwd: repo, env, encoding: 'utf8' });
     assert.equal(result.status, 0, result.stderr);
@@ -173,7 +173,7 @@ test('a commit made while verify runs (another terminal) stops ship before the p
   assert.equal(git('ls-remote', '--heads', 'origin', 'feat/x'), '');
 });
 
-test('a verify killed by a signal (status null) stops ship too, and says so', () => {
+test('a verify killed by a signal (status null) stops ship too, and says so', { skip: noSignals }, () => {
   const { git, ship } = sandbox('kill -TERM $$');
   git('switch', '-q', '-c', 'feat/x');
   git('commit', '-q', '--allow-empty', '-m', 'feature');

@@ -8,10 +8,11 @@ import fs, { existsSync, lstatSync, readdirSync, readFileSync, readlinkSync, rea
 import http from 'node:http';
 import net from 'node:net';
 import { cpus, homedir } from 'node:os';
-import { delimiter, dirname, resolve } from 'node:path';
+import { delimiter, dirname, resolve, sep } from 'node:path';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT, STORYBOOKS } from '../dev-config.mjs';
 import { ago, c, capture } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
+import { newestNvmNode, nodeOutsideNvmWindows, NVM_HOME } from './nvm.mjs';
 
 const cmd = (text) => `${c.cyan}${text}${c.reset}`;
 
@@ -23,9 +24,10 @@ export function runInherit(command) {
 }
 
 const shellFix = (label, command, order) => ({ label, command, order, run: () => runInherit(command) });
-/* nvm-windows has no .nvmrc support: `nvm use` there needs the version. */
-const NVM_WINDOWS = process.platform === 'win32' && Boolean(process.env.NVM_HOME);
-const NVM_USE = NVM_WINDOWS ? `nvm install ${NODE_MAJOR} && nvm use ${NODE_MAJOR}` : 'nvm use';
+/* nvm-windows has no .nvmrc support: `nvm use` there needs the version. No `a && b` in a command to type: Windows
+   PowerShell 5.1 refuses it. */
+const NVM_WINDOWS = Boolean(NVM_HOME);
+const NVM_USE = NVM_WINDOWS ? `nvm use ${NODE_MAJOR}` : 'nvm use';
 const NVM_FIX = { label: 'Switch Node', command: NVM_USE, order: 10 };
 const COREPACK_FIX = shellFix('Run corepack enable?', 'corepack enable', 20);
 const INSTALL_FIX = shellFix('Run pnpm install?', 'pnpm install', 30);
@@ -86,14 +88,30 @@ export function checkNode() {
     };
   }
   if (major === NODE_MAJOR) return { ok: true, detail: `v${version}`, note: `.nvmrc pins ${NODE_MAJOR}` };
+  if (NVM_WINDOWS) {
+    const installed = newestNvmNode(NODE_MAJOR);
+    const outside = installed && nodeOutsideNvmWindows();
+    return {
+      ok: false,
+      detail: outside
+        ? `v${version} from ${outside}, which comes before nvm's Node ${installed.version} on your PATH`
+        : `v${version}, but this repo needs Node ${NODE_MAJOR}`,
+      /* nvm use cannot switch away from a Node that Windows finds first on the (system) PATH. */
+      note: outside
+        ? `nvm use cannot change that: uninstall that Node (Settings → Apps → Node.js), then open a new terminal; ${cmd('node scripts/setup.mjs')} runs under nvm's Node meanwhile`
+        : installed
+          ? `run ${cmd(NVM_USE)}`
+          : `run ${cmd(`nvm install ${NODE_MAJOR}`)}, then ${cmd(NVM_USE)}`,
+      ...(!outside && { fix: NVM_FIX }),
+    };
+  }
   return {
     ok: false,
     detail: `v${version}, but this repo needs Node ${NODE_MAJOR}`,
-    note:
-      process.env.NVM_DIR || NVM_WINDOWS
-        ? `run ${cmd(NVM_USE)} in this terminal`
-        : `install Node ${NODE_MAJOR} (nvm is easiest: ${cmd('nvm install')})`,
-    ...((process.env.NVM_DIR || NVM_WINDOWS) && { fix: NVM_FIX }),
+    note: process.env.NVM_DIR
+      ? `run ${cmd(NVM_USE)} in this terminal`
+      : `install Node ${NODE_MAJOR} (nvm is easiest: ${cmd('nvm install')})`,
+    ...(process.env.NVM_DIR && { fix: NVM_FIX }),
   };
 }
 
@@ -157,7 +175,12 @@ function findCorepack() {
   const path = firstOnPath('corepack');
   if (!path) return null;
   try {
-    const pkg = resolve(dirname(realpathSync(path)), '..', 'package.json');
+    /* npm's Windows shim corepack.cmd sits in the Node folder, beside node_modules\corepack; elsewhere corepack is a
+       link to corepack/dist/corepack.js. */
+    const pkg =
+      process.platform === 'win32' && path.endsWith('.cmd')
+        ? resolve(dirname(path), 'node_modules', 'corepack', 'package.json')
+        : resolve(dirname(realpathSync(path)), '..', 'package.json');
     return { path, version: JSON.parse(readFileSync(pkg, 'utf8')).version };
   } catch {
     return { path, version: undefined };
@@ -177,7 +200,8 @@ export function checkCorepack(found = findCorepack(), nodeBin = dirname(process.
     ok: true,
     warn: true,
     detail: `${found.version} at ${found.path}${other}: too old for pnpm 11`,
-    note: `run ${cmd('npm install -g corepack@latest && corepack enable')}${other && `, or remove ${found.path}`}`,
+    /* Two commands on Windows: PowerShell 5.1 has no &&. */
+    note: `run ${process.platform === 'win32' ? `${cmd('npm install -g corepack@latest')}, then ${cmd('corepack enable')}` : cmd('npm install -g corepack@latest && corepack enable')}${other && `, or remove ${found.path}`}`,
   };
 }
 
@@ -200,12 +224,22 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
     return {
       ok: false,
       detail: `cannot start: pnpm 11 runs on ${pathNode} from your PATH`,
-      note: `run ${cmd(NVM_USE)}, or make ${NODE_MAJOR} the default: ${cmd(`nvm alias default ${NODE_MAJOR}`)}`,
+      /* nvm-windows has no default alias: its `nvm use` already switches every terminal. */
+      note: NVM_WINDOWS
+        ? `run ${cmd(NVM_USE)}`
+        : `run ${cmd(NVM_USE)}, or make ${NODE_MAJOR} the default: ${cmd(`nvm alias default ${NODE_MAJOR}`)}`,
       fix: NVM_FIX,
     };
   }
   /* It is there but does not start (corepack cannot fetch or verify it, say): "not found" would send you the wrong way. */
-  if (timedOut || (code !== 0 && code !== 127 && !/not found/.test(stderr))) {
+  /* Not found: 127 or "not found" from sh. On Windows also 9009 and "is not recognized" from cmd.exe, and
+     "CommandNotFound" from the pnpm.exe shim of nvm-windows 2.x while the Node it runs has no pnpm. */
+  const notFound =
+    code === 127 ||
+    /not found/.test(stderr) ||
+    (process.platform === 'win32' &&
+      (code === 9009 || /CommandNotFound|is not recognized as an internal or external/.test(stderr)));
+  if (timedOut || (code !== 0 && !notFound)) {
     const why = timedOut ? 'gave no answer in 60 s' : stderr.trim().split('\n')[0] || `exited with ${code}`;
     return {
       ok: false,
@@ -599,11 +633,46 @@ export async function isStorybookOn(port) {
 }
 
 /**
- * The working directory of the process listening on `port`, or null when it cannot tell (Windows, no lsof and no ss,
- * another user's process).
+ * The folder a program was started from, read from its (Windows) command line: what comes before `\node_modules\` in
+ * it (pnpm's shims run node with node_modules/.bin/../<tool>/… under the package). From the last drive letter before
+ * it, so the path of node.exe in front (with spaces, quoted or not) is not taken along. Null when there is none.
+ */
+export function folderFromCommandLine(commandLine) {
+  const end = commandLine.search(/[\\/]node_modules[\\/]/);
+  if (end < 0) return null;
+  const starts = [...commandLine.slice(0, end).matchAll(/[A-Za-z]:[\\/]/g)];
+  return starts.length ? commandLine.slice(starts.at(-1).index, end) : null;
+}
+
+/**
+ * Windows has no lsof, and no way to read another process's working directory: netstat names the pid listening on
+ * `port`, and its command line (from CIM, through PowerShell) the folder it runs from. Null when it cannot tell.
+ */
+function windowsListenerDir(port, run) {
+  /* "  TCP    0.0.0.0:6006    0.0.0.0:0    LISTENING    5452"; [::]:6006 for IPv6. */
+  const listening = new RegExp(`^\\s*TCP\\s+\\S+:${port}\\s+\\S+\\s+LISTENING\\s+(\\d+)\\s*$`, 'm');
+  const pidOn = (protocol) => run('netstat', ['-ano', '-p', protocol]).match(listening)?.[1];
+  const pid = pidOn('TCP') ?? pidOn('TCPv6');
+  if (!pid) return null;
+  const commandLine = run('powershell.exe', [
+    '-NoProfile',
+    '-NonInteractive',
+    '-Command',
+    `(Get-CimInstance Win32_Process -Filter 'ProcessId=${Number(pid)}').CommandLine`,
+  ]);
+  const folder = folderFromCommandLine(commandLine);
+  return folder && resolve(folder);
+}
+
+/**
+ * The working directory of the process listening on `port` (on Windows: the folder its command line runs from), or
+ * null when it cannot tell (no lsof and no ss, another user's process).
  */
 export function listenerDir(port) {
-  const run = (command, args) => spawnSync(command, args, { encoding: 'utf8', timeout: 3000 }).stdout ?? '';
+  /* 10 s: the first PowerShell of a session can take a few seconds to start. */
+  const run = (command, args) =>
+    spawnSync(command, args, { encoding: 'utf8', timeout: process.platform === 'win32' ? 10_000 : 3000 }).stdout ?? '';
+  if (process.platform === 'win32') return windowsListenerDir(port, run);
   /* -b: do not block on a hung network mount, but Linux lsof needs the stat calls -b skips to match a socket to a
      pid. -w: do not warn about it. */
   const lsof = (args) => run('lsof', [...(process.platform === 'linux' ? [] : ['-b']), '-w', ...args]);
@@ -635,9 +704,13 @@ export async function identifyStorybook(storybook, port, findDir = listenerDir) 
   const entries = await storybookEntries(port);
   if (!entries) return null;
   const dir = findDir(port);
-  const root = realpathSync(ROOT);
+  /* Windows paths ignore case (and the drive letter's case depends on how the terminal was opened). */
+  const key = (path) => (process.platform === 'win32' ? path?.toLowerCase() : path);
+  const root = key(realpathSync(ROOT));
+  const here = key(dir);
   /* The root or one of our packages: a worktree inside the checkout (.claude/worktrees/…) is another branch. */
-  const ours = dir === root || ['packages', 'proprietary'].some((group) => dir?.startsWith(`${root}/${group}/`));
+  const ours =
+    here === root || ['packages', 'proprietary'].some((group) => here?.startsWith(`${root}${sep}${group}${sep}`));
   if (dir && !ours) return { ours: false, what: `a Storybook from ${dir}` };
   if (!Object.keys(entries).some((id) => storybook.storyId?.test(id) ?? true)) {
     const other = Object.values(STORYBOOKS).find(
@@ -645,7 +718,7 @@ export async function identifyStorybook(storybook, port, findDir = listenerDir) 
     );
     return { ours: false, what: other ? `the ${other.name}` : 'another Storybook' };
   }
-  /* Unknown folder (Windows, no lsof): it may be another clone's, so do not reuse it; pnpm dev moves to a free port. */
+  /* Unknown folder (no lsof): it may be another clone's, so do not reuse it; pnpm dev moves to a free port. */
   if (!dir) return { ours: false, what: 'a Storybook whose folder cannot be told (no lsof)' };
   return { ours: true };
 }

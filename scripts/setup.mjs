@@ -14,7 +14,6 @@
    Node built-ins only, and nothing newer than Node 18, because it may be running on the Node it is about to replace. */
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT } from './dev-config.mjs';
@@ -30,6 +29,7 @@ import {
   stepSkip,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning, readDevLock, SYNC_LOCK } from './lib/lock.mjs';
+import { newestNvmNode, nodeOutsideNvmWindows, NVM_DIR, NVM_HOME } from './lib/nvm.mjs';
 import { enginesMinimum, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm setup');
@@ -71,22 +71,14 @@ if (process.platform === 'win32' && ROOT.startsWith('\\\\')) {
 
 // ─── 1. Node ─────────────────────────────────────────────────────────────────
 
-/* homedir(), not HOME: cron, env -i and docker --user have no HOME, and recovery.mjs looks there too. */
-const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
-const hasNvm = existsSync(resolve(NVM_DIR, 'nvm.sh'));
+/* nvm-sh is a shell function loaded from nvm.sh; nvm-windows is a program (nvm.exe) in NVM_HOME. Setup drives both. */
+const hasNvm = Boolean(NVM_HOME) || existsSync(resolve(NVM_DIR, 'nvm.sh'));
 
-/** The newest Node <NODE_MAJOR> that nvm has installed, as the path of its bin/ folder. */
-function nvmNodeBin() {
-  const versions = resolve(NVM_DIR, 'versions/node');
-  if (!existsSync(versions)) return null;
-  /* Not one below the engines minimum (24.13 when engines says >=24.15): pnpm install would refuse it. */
-  const minimum = enginesMinimum();
-  const matching = readdirSync(versions)
-    .filter((name) => name.startsWith(`v${NODE_MAJOR}.`))
-    .filter((name) => name.slice(1).localeCompare(minimum, undefined, { numeric: true }) >= 0)
-    .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
-  return matching.length ? resolve(versions, matching[0], 'bin') : null;
-}
+/**
+ * The newest Node <NODE_MAJOR> that nvm has installed, as the folder that holds its node program. Not one below the
+ * engines minimum (24.13 when engines says >=24.15): pnpm install would refuse it.
+ */
+const nvmNodeBin = () => newestNvmNode(NODE_MAJOR, { minimum: enginesMinimum() })?.bin ?? null;
 
 /* Without this, an alias like lts/* reads as NaN and setup would try to install "Node NaN" with nvm. */
 if (!Number.isInteger(NODE_MAJOR)) {
@@ -100,19 +92,24 @@ if (!Number.isInteger(NODE_MAJOR)) {
 
 const major = Number(process.versions.node.split('.')[0]);
 if (major !== NODE_MAJOR) {
+  /* Already restarted under nvm's Node and still the wrong one (its folder holds another Node): restarting again
+     would never end. */
+  if (process.env.TILBURG_SETUP_FROM_NODE) {
+    fail({
+      what: `The Node that nvm keeps as ${NODE_MAJOR} is ${process.versions.node} (${process.execPath})`,
+      why: 'setup restarted under it, and it is still not the Node the repo needs.',
+      fix: `reinstall it (nvm uninstall ${process.versions.node}, then nvm install ${NODE_MAJOR}), then node scripts/setup.mjs again`,
+    });
+    process.exit(1);
+  }
   if (!hasNvm) {
     /* Another version manager: setup only drives nvm, but can say what to type in this one. */
     const managers = {
       fnm: `fnm install ${NODE_MAJOR} && fnm use ${NODE_MAJOR}`,
       volta: `volta install node@${NODE_MAJOR}`,
       mise: `mise use node@${NODE_MAJOR}`,
-      'nvm-windows': `nvm install ${NODE_MAJOR} && nvm use ${NODE_MAJOR}`,
     };
-    /* nvm-windows is not nvm-sh (no nvm.sh to load), and its `nvm use` needs the version. */
-    const manager =
-      process.platform === 'win32' && process.env.NVM_HOME
-        ? 'nvm-windows'
-        : Object.keys(managers).find((name) => !spawnSync(name, ['--version'], { stdio: 'ignore' }).error);
+    const manager = Object.keys(managers).find((name) => !spawnSync(name, ['--version'], { stdio: 'ignore' }).error);
     fail({
       what: `This is Node ${process.versions.node}; the repo needs Node ${NODE_MAJOR}`,
       why: manager
@@ -120,7 +117,9 @@ if (major !== NODE_MAJOR) {
         : 'nvm (the Node version manager) was not found, so setup cannot switch for you.',
       fix: manager
         ? `${managers[manager]}, then node scripts/setup.mjs again`
-        : `install nvm (https://github.com/nvm-sh/nvm), then run node scripts/setup.mjs again. Or install Node ${NODE_MAJOR} from https://nodejs.org/`,
+        : process.platform === 'win32'
+          ? `install nvm-windows (https://github.com/coreybutler/nvm-windows), open a new terminal, then node scripts/setup.mjs again. Or install Node ${NODE_MAJOR} from https://nodejs.org/`
+          : `install nvm (https://github.com/nvm-sh/nvm), then run node scripts/setup.mjs again. Or install Node ${NODE_MAJOR} from https://nodejs.org/`,
     });
     process.exit(1);
   }
@@ -131,27 +130,39 @@ if (major !== NODE_MAJOR) {
       fail({ what: `Node ${NODE_MAJOR} is needed`, fix: `nvm install ${NODE_MAJOR}, then node scripts/setup.mjs` });
       process.exit(1);
     }
-    /* nvm is a shell function, not a program: load it in a shell and let it read .nvmrc. sh: minimal images lack bash. */
-    const result = spawnSync('sh', ['-c', `. "${NVM_DIR}/nvm.sh" && nvm install`], { cwd: ROOT, stdio: 'inherit' });
+    /* nvm-windows: its nvm.exe, with the version (it does not read .nvmrc). nvm-sh: a shell function, so load it in a
+       shell and let it read .nvmrc. sh: minimal images lack bash. */
+    const result = NVM_HOME
+      ? spawnSync(resolve(NVM_HOME, 'nvm.exe'), ['install', String(NODE_MAJOR)], { cwd: ROOT, stdio: 'inherit' })
+      : spawnSync('sh', ['-c', `. "${NVM_DIR}/nvm.sh" && nvm install`], { cwd: ROOT, stdio: 'inherit' });
     bin = nvmNodeBin();
     if (result.status !== 0 || !bin) {
       fail({
         what: `nvm could not install Node ${NODE_MAJOR}`,
-        why: 'See the nvm output above.',
+        /* nvm.exe that cannot start says why; nvm-sh prints its own output. */
+        why: (NVM_HOME && result.error?.message) || 'See the nvm output above.',
         fix: `nvm install ${NODE_MAJOR}`,
       });
       process.exit(1);
     }
   }
+  const shadowing = nodeOutsideNvmWindows();
+  if (shadowing) {
+    console.log(
+      `  ${c.yellow}⚠${c.reset}  The Node in ${shadowing} comes before nvm's on your PATH, so ${c.cyan}nvm use${c.reset} cannot switch away from it.`,
+    );
+  }
   /* Carry on under Node 24, with it first on the PATH so pnpm and corepack use it too. */
   console.log(`  ${c.green}✓${c.reset}  Continuing with Node ${NODE_MAJOR} from nvm (${bin}).\n`);
-  const result = spawnSync(resolve(bin, 'node'), [fileURLToPath(import.meta.url), ...args], {
+  const nodeProgram = resolve(bin, process.platform === 'win32' ? 'node.exe' : 'node');
+  const result = spawnSync(nodeProgram, [fileURLToPath(import.meta.url), ...args], {
     stdio: 'inherit',
     env: {
       ...process.env,
       PATH: `${bin}${delimiter}${process.env.PATH}`,
       TILBURG_SETUP_REEXEC: '1',
       TILBURG_SETUP_FROM_NODE: process.versions.node,
+      ...(shadowing && { TILBURG_SETUP_SHADOWING_NODE: shadowing }),
     },
   });
   /* Exit 9 is Node refusing its options: a NODE_OPTIONS flag the old Node took but Node 24 does not. */
@@ -159,7 +170,7 @@ if (major !== NODE_MAJOR) {
     fail({
       what: `Could not start Node ${NODE_MAJOR} from nvm`,
       why: result.error.message,
-      fix: 'nvm use, then node scripts/setup.mjs',
+      fix: NVM_HOME ? `nvm use ${NODE_MAJOR}, then node scripts/setup.mjs` : 'nvm use, then node scripts/setup.mjs',
     });
   else if (result.status === 9 && process.env.NODE_OPTIONS)
     fail({
@@ -172,7 +183,8 @@ if (major !== NODE_MAJOR) {
 done(`Node ${process.versions.node}`, `.nvmrc pins ${NODE_MAJOR}`);
 
 /* A terminal that opens with another Node makes pnpm 11 fail before it starts ("requires at least Node.js v22.13"). */
-if (hasNvm) {
+/* nvm-sh only: nvm-windows has no default alias; its `nvm use` switches every terminal at once. */
+if (hasNvm && !NVM_HOME) {
   let defaultAlias = '';
   try {
     defaultAlias = readFileSync(resolve(NVM_DIR, 'alias/default'), 'utf8').trim();
@@ -216,10 +228,13 @@ if ((await pnpmVersion()) === PNPM_VERSION) {
     process.exit(1);
   }
   if (version !== PNPM_VERSION) {
-    const { stdout: where } = await capture('command -v pnpm', { timeoutMs: 5000 });
+    /* cmd.exe has no `command -v`; `where` lists every match, the first is the one that runs. */
+    const { stdout: where } = await capture(process.platform === 'win32' ? 'where pnpm' : 'command -v pnpm', {
+      timeoutMs: 5000,
+    });
     fail({
       what: `pnpm is ${version || 'not runnable'}, but package.json pins ${PNPM_VERSION}`,
-      why: `Another pnpm comes first on your PATH (${where.trim() || 'not found'}), before corepack's.`,
+      why: `Another pnpm comes first on your PATH (${where.trim().split(/\r?\n/)[0] || 'not found'}), before corepack's.`,
       fix: 'remove that one (brew uninstall pnpm, or npm rm -g pnpm), then node scripts/setup.mjs again',
     });
     process.exit(1);
@@ -297,9 +312,17 @@ if (failed.length) {
 }
 
 const fromNode = process.env.TILBURG_SETUP_FROM_NODE;
-if (fromNode) {
+const shadowingNode = process.env.TILBURG_SETUP_SHADOWING_NODE;
+if (shadowingNode) {
+  /* nvm use cannot help here: the other Node is found first in every terminal (lib/nvm.mjs). */
   console.log(
-    `  ${c.yellow}Note:${c.reset} this terminal itself still runs Node ${fromNode}. Type ${c.cyan}nvm use${c.reset} before running pnpm here.\n`,
+    `  ${c.yellow}Note:${c.reset} new terminals still start with Node ${fromNode} from ${shadowingNode}, which comes before nvm's on your PATH.\n` +
+      `        Uninstall that Node (Settings → Apps → Node.js), open a new terminal and check that ${c.cyan}node -v${c.reset} says ${NODE_MAJOR}.\n`,
+  );
+} else if (fromNode) {
+  const nvmUse = NVM_HOME ? `nvm use ${NODE_MAJOR}` : 'nvm use';
+  console.log(
+    `  ${c.yellow}Note:${c.reset} this terminal itself still runs Node ${fromNode}. Type ${c.cyan}${nvmUse}${c.reset} before running pnpm here.\n`,
   );
 }
 

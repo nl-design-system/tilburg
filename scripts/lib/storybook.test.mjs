@@ -3,15 +3,19 @@ import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { realpathSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import net from 'node:net';
 import { networkInterfaces, tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { listenerDir } from './checks.mjs';
 import { choosePort, localIp, printStorybookLinks, waitForStorybook } from './storybook.mjs';
 
 const REACT = { name: 'React Storybook', storyId: /^tilburg-.+-react--/ };
+/* Windows tells the folder of the process on a port from its command line (…\node_modules\…), not from its working
+   directory: a server in this test process, run as node --test, has no folder there. */
+const noCwd = process.platform === 'win32' && 'Windows reads the folder from the command line';
 const STORIES = {
   react: '{"entries":{"tilburg-button-react--default":{}}}',
   angular: '{"entries":{"tilburg-button-angular--default":{}}}',
@@ -89,7 +93,7 @@ test('choosePort: a free usual port is used as is', async () => {
   assert.deepEqual(await choosePort({ ...REACT, port }), { port, running: false });
 });
 
-test('choosePort: our Storybook on the usual port (on 0.0.0.0) is reused', async () => {
+test('choosePort: our Storybook on the usual port (on 0.0.0.0) is reused', { skip: noCwd }, async () => {
   const server = await serve('0.0.0.0');
   try {
     assert.deepEqual(await choosePort({ ...REACT, port: server.port }), { port: server.port, running: true });
@@ -126,7 +130,7 @@ test('choosePort: the other Tilburg Storybook on the usual port is not reused', 
 test(
   'choosePort: a Storybook with our stories but from another folder (clone, worktree) is not reused',
   /* timeout: a helper that dies before printing its port would otherwise leave the test waiting forever. */
-  { skip: process.platform === 'win32' && 'no lsof', timeout: 15_000 },
+  { skip: noCwd, timeout: 15_000 },
   async (t) => {
     const child = spawn(
       process.execPath,
@@ -153,18 +157,14 @@ test(
   },
 );
 
-test(
-  'listenerDir names the working directory of the process on the port',
-  { skip: process.platform === 'win32' && 'no lsof' },
-  async () => {
-    const server = await serve('0.0.0.0');
-    try {
-      assert.equal(listenerDir(server.port), realpathSync(process.cwd()));
-    } finally {
-      server.close();
-    }
-  },
-);
+test('listenerDir names the working directory of the process on the port', { skip: noCwd }, async () => {
+  const server = await serve('0.0.0.0');
+  try {
+    assert.equal(listenerDir(server.port), realpathSync(process.cwd()));
+  } finally {
+    server.close();
+  }
+});
 
 test('choosePort: a port reserved for the other Storybook is not handed out twice', async () => {
   const port = await freePort();
@@ -209,3 +209,30 @@ test('localIp prefers Wi-Fi or Ethernet and skips VPN, Docker and carrier-grade 
   assert.equal(localIp({ virbr0: v4('192.168.122.1'), wg0: v4('10.8.0.2'), wlp2s0: v4('192.168.1.9') }), '192.168.1.9');
   assert.equal(localIp({ virbr0: v4('192.168.122.1'), lxcbr0: v4('10.0.3.1'), zt0: v4('10.147.1.2') }), null);
 });
+
+test(
+  'listenerDir on Windows: the folder before node_modules in the command line of the process on the port',
+  {
+    skip: process.platform !== 'win32' && 'Windows only (elsewhere lsof names the working directory)',
+    timeout: 30_000,
+  },
+  async (t) => {
+    /* A space in the path, as in "My Documents": the command line quotes it. */
+    const clone = realpathSync(mkdtempSync(join(tmpdir(), 'tilburg clone-')));
+    t.after(() => rmSync(clone, { recursive: true, force: true, maxRetries: 5 }));
+    mkdirSync(join(clone, 'node_modules'));
+    writeFileSync(
+      join(clone, 'node_modules', 'server.js'),
+      "const s=require('http').createServer((q,r)=>r.end('{}')).listen(0,'0.0.0.0',()=>process.stdout.write(s.address().port+'\\n'))",
+    );
+    const child = spawn(process.execPath, [join(clone, 'node_modules', 'server.js')], {
+      stdio: ['ignore', 'pipe', 'inherit'],
+      env: { ...process.env, NODE_OPTIONS: '' },
+    });
+    t.after(() => child.kill());
+    let printed = '';
+    let port;
+    while (!(port = Number(printed.match(/^(\d+)$/m)?.[1]))) printed += (await once(child.stdout, 'data'))[0];
+    assert.equal(listenerDir(port)?.toLowerCase(), clone.toLowerCase());
+  },
+);

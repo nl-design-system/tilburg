@@ -572,7 +572,8 @@ const ready = toStart.map((storybook, index) =>
         })
           .then(async (up) => {
             /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. */
-            /* A folder that cannot be told (Windows, no lsof) is ours here: we just started it on this port. */
+            /* A folder that cannot be told (no lsof; on Windows no node_modules in its command line) is ours here: we
+               just started it on this port. */
             const found = up
               ? await identifyStorybook(storybook, storybook.port, (port) => listenerDir(port) ?? realpathSync(ROOT))
               : null;

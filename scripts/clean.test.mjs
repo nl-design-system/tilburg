@@ -3,7 +3,6 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
   chmodSync,
   copyFileSync,
@@ -19,6 +18,8 @@ import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { afterEach, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { lockName } from './lib/lock.mjs';
+import { tempEnv } from './lib/test-fakes.mjs';
 
 const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 let sandbox;
@@ -55,13 +56,13 @@ function makeRepo({ built = true } = {}) {
   return root;
 }
 
-/* TMPDIR in the sandbox, so the pnpm dev lock (lib/lock.mjs) is ours too. */
+/* The temp folder in the sandbox, so the pnpm dev lock (lib/lock.mjs) is ours too. */
 const run = (root, ...args) =>
   spawnSync(process.execPath, [resolve(root, 'scripts/clean.mjs'), ...args], {
     cwd: root,
     encoding: 'utf8',
     timeout: 15_000,
-    env: { ...process.env, CI: '1', TMPDIR: sandbox },
+    env: { ...process.env, CI: '1', ...tempEnv(sandbox) },
   });
 
 test('without a terminal and without --yes it deletes nothing and exits 1', () => {
@@ -104,10 +105,8 @@ test('nothing to delete is not a failure, also without --yes', () => {
 test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --yes', () => {
   const root = makeRepo();
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
-  const id = createHash('sha1').update(realpathSync(root)).digest('hex').slice(0, 10);
   writeFileSync(
-    /* …and the user (lock.mjs). */
-    resolve(sandbox, `tilburg-dev-${process.getuid ? `${process.getuid()}-` : ''}${id}.json`),
+    resolve(sandbox, lockName(realpathSync(root))),
     JSON.stringify({ pid: process.pid, started: new Date().toISOString(), storybooks: [] }),
   );
   const result = run(root, '--yes');
@@ -119,7 +118,9 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
 test(
   'a folder it may not delete (read-only, or made with sudo) is a failure that says so, not a crash',
   {
-    skip: process.getuid?.() === 0 && 'root ignores permissions',
+    skip:
+      (process.getuid?.() === 0 && 'root ignores permissions') ||
+      (process.platform === 'win32' && 'Windows does not make a folder read-only with chmod'),
   },
   () => {
     const root = makeRepo();
@@ -152,7 +153,7 @@ const inTerminal = (root, input) =>
       )}`,
       resolve(root, 'scripts/clean.mjs'),
     ],
-    { cwd: root, input, encoding: 'utf8', timeout: 15_000, env: { ...process.env, CI: '', TMPDIR: sandbox } },
+    { cwd: root, input, encoding: 'utf8', timeout: 15_000, env: { ...process.env, CI: '', ...tempEnv(sandbox) } },
   );
 
 test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than the terminal', () => {

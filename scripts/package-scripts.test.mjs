@@ -38,6 +38,21 @@ test('every pnpm --filter names a real workspace package (a filter that matches 
   }
 });
 
+/* pnpm runs package scripts in cmd.exe on Windows. There single quotes reach the program as part of the argument
+   (a quoted glob then matches no file, and stylelint --allow-empty-input passes), ^ is an escape character (outside
+   double quotes), `NAME=value command` is not a command, and rm, cp and friends do not exist. */
+test('package scripts run in cmd.exe too (Windows): no single quotes, VAR=value prefixes or Unix file commands', () => {
+  for (const { where, command } of scripts) {
+    assert.doesNotMatch(command, /'/, `${where}: use \\"…\\" instead of '…'`);
+    assert.doesNotMatch(command, /(^|&&|\|\|)\s*[A-Za-z_]\w*=\S/, `${where}: cmd.exe has no NAME=value prefix`);
+    assert.doesNotMatch(
+      command,
+      /(^|&&|\|\||;)\s*(rm|cp|mv|mkdir|cat|ln|chmod|touch)\s/,
+      `${where}: no such command in cmd.exe`,
+    );
+  }
+});
+
 test('no --passWithNoTests (a broken Jest config would find 0 tests and pass)', () => {
   for (const { where, command } of commands) assert.doesNotMatch(command, /passWithNoTests/, where);
 });

@@ -16,14 +16,20 @@ import { c, confirm } from './cli-utils.mjs';
    user's lock (or a root-owned one from an old sudo run) would otherwise block ours. Windows paths ignore case, and
    the drive letter's case depends on how the terminal was opened (c:\ or C:\): the same checkout, one lock. */
 const uid = process.getuid ? `${process.getuid()}-` : '';
-const rootKey = process.platform === 'win32' ? ROOT.toLowerCase() : ROOT;
-export const LOCK_FILE = resolve(
-  tmpdir(),
-  `tilburg-dev-${uid}${createHash('sha1').update(rootKey).digest('hex').slice(0, 10)}.json`,
-);
+
+/**
+ * The name (no folder) of the `kind` lock ('dev' or 'sync') of the working copy at `root`. Exported for the tests,
+ * which put a lock where a script copied into a temp folder will look for it.
+ */
+export function lockName(root, kind = 'dev') {
+  const key = process.platform === 'win32' ? root.toLowerCase() : root;
+  return `tilburg-${kind}-${uid}${createHash('sha1').update(key).digest('hex').slice(0, 10)}.json`;
+}
+
+export const LOCK_FILE = resolve(tmpdir(), lockName(ROOT));
 
 /** The build lock pnpm sync, verify and pack:local share (one rebuild of dist/ at a time); the same format as the dev lock. */
-export const SYNC_LOCK = LOCK_FILE.replace('tilburg-dev-', 'tilburg-sync-');
+export const SYNC_LOCK = resolve(tmpdir(), lockName(ROOT, 'sync'));
 
 /** Is that process still running? `EPERM` means it is, but owned by someone else. */
 export function isAlive(pid) {

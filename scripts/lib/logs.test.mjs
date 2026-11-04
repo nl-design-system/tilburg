@@ -9,6 +9,7 @@ import { after, test } from 'node:test';
 import { LOG_DIR } from './cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './logs.mjs';
 import { pullRequestUrl } from './ship.mjs';
+import { tempEnv } from './test-fakes.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'tilburg-logs-test-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
@@ -89,7 +90,7 @@ test('pull request URL from every remote form', () => {
   assert.equal(pullRequestUrl('/tmp/origin.git', 'b'), null);
 });
 
-/** `pnpm logs` itself, with TMPDIR pointing at a temp folder so LOG_DIR is ours. */
+/** `pnpm logs` itself, with its temp folder (TMPDIR; TEMP on Windows) pointing at ours, so LOG_DIR is ours. */
 function logsCli(args, logs = {}) {
   const tmp = mkdtempSync(join(tmpdir(), 'tilburg-logs-cli-'));
   try {
@@ -99,7 +100,7 @@ function logsCli(args, logs = {}) {
     const result = spawnSync(process.execPath, [resolve(import.meta.dirname, '..', 'logs.mjs'), ...args], {
       encoding: 'utf8',
       timeout: 10_000,
-      env: { ...process.env, TMPDIR: tmp, CI: '1' },
+      env: { ...process.env, ...tempEnv(tmp), CI: '1' },
     });
     return { status: result.status, output: result.stdout + result.stderr };
   } finally {

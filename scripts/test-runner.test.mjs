@@ -4,19 +4,21 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { after, test } from 'node:test';
 import { loadComponents } from './lib/components.mjs';
+import { noSignals, prependPath, tempEnv, writeFake } from './lib/test-fakes.mjs';
 
 /* With a space: test.mjs quotes the report path, and must keep doing so. */
 const dir = mkdtempSync(join(tmpdir(), 'tilburg test-runner-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
 
 const calls = join(dir, 'calls.txt');
-writeFileSync(
-  join(dir, 'pnpm'),
+writeFake(
+  dir,
+  'pnpm',
   `#!/usr/bin/env node
 const { appendFileSync, writeFileSync } = require('node:fs');
 const args = process.argv.slice(2).join(' ');
@@ -30,14 +32,13 @@ if (signal) process.kill(process.pid, signal);
 else process.exit(exit);
 `,
 );
-chmodSync(join(dir, 'pnpm'), 0o755);
 
 function run(args, plan) {
   writeFileSync(calls, '');
   const result = spawnSync(process.execPath, [resolve(import.meta.dirname, 'test.mjs'), ...args], {
     encoding: 'utf8',
     timeout: 30_000,
-    env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, TMPDIR: dir, CI: '1', FAKE_PNPM: JSON.stringify(plan) },
+    env: prependPath({ ...process.env, ...tempEnv(dir), CI: '1', FAKE_PNPM: JSON.stringify(plan) }, dir),
   });
   return { ...result, output: result.stdout + result.stderr, calls: readFileSync(calls, 'utf8') };
 }
@@ -50,7 +51,7 @@ test('everything: a failing package run stops there and exits with its code', ()
   assert.doesNotMatch(result.calls, /test:scripts/);
 });
 
-test('everything: a run killed by a signal is a failure, not a pass', () => {
+test('everything: a run killed by a signal is a failure, not a pass', { skip: noSignals }, () => {
   const result = run([], { '--recursive': { signal: 'SIGTERM' } });
   /* 128 + 15, as a shell reports it */
   assert.equal(result.status, 143);

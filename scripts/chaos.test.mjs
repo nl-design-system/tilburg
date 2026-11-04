@@ -104,7 +104,11 @@ function orphans() {
 /* A crash the scripts did not catch: Node's own trace, or installCrashHandler's "unexpected error" report. */
 const CRASH = /unexpected error|^\s+at .+:\d+:\d+\)?$/m;
 
+/* Every test here is skipped on Windows, and so are the hooks: ps, pkill and a symlink to node are POSIX. */
+const skip = process.platform === 'win32' && 'the fakes are shell scripts';
+
 before(() => {
+  if (skip) return;
   parent = mkdtempSync(join(tmpdir(), 'tilburg-chaos-'));
   const bin = join(parent, 'bin');
   mkdirSync(bin);
@@ -133,11 +137,10 @@ exit 1
 });
 
 after(() => {
+  if (skip) return;
   orphans();
   rmSync(parent, { recursive: true, force: true });
 });
-
-const skip = process.platform === 'win32' && 'the fakes are shell scripts';
 
 for (const [condition, change] of Object.entries({
   'every tool exits 1 without output': {},

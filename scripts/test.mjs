@@ -8,11 +8,18 @@ import { spawnSync } from 'node:child_process';
 import { constants } from 'node:os';
 import { parseArgs } from 'node:util';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 import { ROOT } from './dev-config.mjs';
 import { c, fail, installCrashHandler, LOG_DIR, printBanner, printCheckTable, stripAnsi } from './lib/cli-utils.mjs';
 import { rel, requireComponent } from './lib/components.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+
+/**
+ * `path` relative to the package in `dir`, with forward slashes: Jest reads it as a pattern (a regex), in which the
+ * backslashes of a Windows path would be escapes (\c, \s, \B) and match nothing. Jest itself matches / against
+ * either separator.
+ */
+const inPackage = (dir, path) => relative(resolve(ROOT, dir), path).split(sep).join('/');
 
 installCrashHandler('pnpm test');
 /* Strict: an unknown flag (--help, a typo such as --wach) used to be dropped, which left no name and ran everything. */
@@ -58,9 +65,9 @@ const LAYERS = [
     dir: 'packages/components-react',
     /* --ci: a new snapshot fails instead of being written. --forceExit: an open handle would keep Jest running forever. */
     command: (out) =>
-      `jest --ci --forceExit --json --outputFile="${out}" ${rel(react.test).replace('packages/components-react/', '')}${react.suite ? ` -t "^${react.suite} "` : ''}`,
+      `jest --ci --forceExit --json --outputFile="${out}" ${inPackage('packages/components-react', react.test)}${react.suite ? ` -t "^${react.suite} "` : ''}`,
     /* watch:test with the same file, so the watch reruns this component only. */
-    watch: () => rel(react.test).replace('packages/components-react/', ''),
+    watch: () => inPackage('packages/components-react', react.test),
   },
   {
     layer: angular,
@@ -113,7 +120,7 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
   const file = report?.testResults?.find(
     (result) =>
       resolve(result.name) === resolve(ROOT, rel(layer.test)) ||
-      result.name.endsWith(rel(layer.test).replace(`${dir}/`, '')),
+      result.name.endsWith(relative(resolve(ROOT, dir), layer.test)),
   );
   if (!file) {
     if (runError) reportStepFailure(`${layer.label} tests`, runError);

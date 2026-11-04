@@ -375,6 +375,13 @@ function consumerEnv(consumer) {
 function manualSync(consumer) {
   const env = consumerEnv(consumer);
   const vars = [...Object.values(consumer.tarballEnv ?? {}), ...(installsAll(consumer) ? ['TILBURG_REPO'] : [])];
+  /* Windows: PowerShell, its own terminal, has no `env` or `sh`, and 5.1 no `&&`. */
+  if (process.platform === 'win32')
+    return [
+      `cd "${consumer.dir}"`,
+      ...vars.map((variable) => `$env:${variable}="${env[variable]}"`),
+      consumer.sync,
+    ].join('; ');
   const command = vars.length
     ? `env ${vars.map((variable) => `${variable}="${env[variable]}"`).join(' ')} sh -c '${consumer.sync}'`
     : consumer.sync;

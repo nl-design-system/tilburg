@@ -28,6 +28,7 @@ import {
   stripAnsi,
   underSudo,
 } from './cli-utils.mjs';
+import { nodeCommand } from './test-fakes.mjs';
 
 test('excerpt keeps the error lines, in order and once, and leaves passing lines out', () => {
   const output = [
@@ -78,7 +79,8 @@ test('runStep resolves on exit 0 and logs the output', async () => {
 });
 
 test('runStep rejects with the exit code, the output and a log file that holds everything', async () => {
-  await assert.rejects(runStep('echo "error: it broke" >&2; exit 4', { label: 'test fail' }), (err) => {
+  const command = nodeCommand("process.stderr.write('error: it broke'); process.exitCode = 4");
+  await assert.rejects(runStep(command, { label: 'test fail' }), (err) => {
     assert.equal(err.exitCode, 4);
     assert.match(err.output, /it broke/);
     assert.ok(err.log && existsSync(err.log));
@@ -89,7 +91,9 @@ test('runStep rejects with the exit code, the output and a log file that holds e
 
 test('runStep gives the tool no stdin: a question fails at once instead of waiting forever', async () => {
   const started = Date.now();
-  await assert.rejects(runStep('read -r answer || exit 7', { label: 'test prompt' }), (err) => err.exitCode === 7);
+  /* Exits 7 at end of input, as `read -r answer || exit 7` would; a waiting tool would hit the 5 s below. */
+  const question = nodeCommand("process.stdin.on('end', () => process.exit(7)).resume()");
+  await assert.rejects(runStep(question, { label: 'test prompt' }), (err) => err.exitCode === 7);
   assert.ok(Date.now() - started < 5000);
 });
 
@@ -99,7 +103,7 @@ test('runStep reports a folder that does not exist instead of throwing', async (
 
 test('capture never rejects, and a timeout stops the whole command', async () => {
   const started = Date.now();
-  const result = await capture('sleep 10', { timeoutMs: 300 });
+  const result = await capture(nodeCommand('setTimeout(() => {}, 10000)'), { timeoutMs: 300 });
   assert.equal(result.timedOut, true);
   assert.ok(Date.now() - started < 3000);
   assert.equal((await capture('exit 2')).code, 2);
@@ -127,16 +131,19 @@ test('excerpt skips echoed commands and words that merely start with an e', () =
 });
 
 /* '✖' (e2 9c 96) written in two chunks: decoded per chunk it would come out as U+FFFD. */
-const SPLIT_CHAR = "printf '\\342'; sleep 0.2; printf '\\234\\226'";
+const splitChar = (stream, exit) =>
+  nodeCommand(
+    `process.${stream}.write(Buffer.from([0xe2])); setTimeout(() => { process.${stream}.write(Buffer.from([0x9c, 0x96])); process.exitCode = ${exit} }, 200)`,
+  );
 
 test('capture keeps a character that arrives split over two chunks', async () => {
-  assert.equal((await capture(SPLIT_CHAR)).stdout, '✖');
+  assert.equal((await capture(splitChar('stdout', 0))).stdout, '✖');
 });
 
 test('runStep keeps a character that arrives split over two chunks', async () => {
   /* On stderr: runStep echoes the tool's stdout to ours, and a bare "✖" there is text node:test's report parser
      (Node 24) can misread as a message size. */
-  await assert.rejects(runStep(`(${SPLIT_CHAR}) >&2; exit 1`, { label: 'test split' }), (err) => {
+  await assert.rejects(runStep(splitChar('stderr', 1), { label: 'test split' }), (err) => {
     assert.equal(err.output, '✖');
     return true;
   });

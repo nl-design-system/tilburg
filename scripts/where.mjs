@@ -2,6 +2,7 @@
    Storybook pages that show it, local (pnpm dev) and online. `pnpm where --list` lists every component.
    Accepts any of its names: tooltip, Tooltip, "password input", PasswordInput, tilburg-wbc-tooltip. */
 import { existsSync } from 'node:fs';
+import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 import { STORYBOOKS } from './dev-config.mjs';
@@ -81,16 +82,14 @@ const fileCell = (path, { promised = true } = {}) => {
   return existsSync(path) ? link(path) : `${c.red}missing: ${rel(path)}${c.reset}`;
 };
 const testCell = (path) =>
-  existsSync(path)
-    ? `${c.green}✓${c.reset} ${c.gray}${rel(path).split('/').pop()}${c.reset}`
-    : `${c.yellow}no test${c.reset}`;
+  existsSync(path) ? `${c.green}✓${c.reset} ${c.gray}${basename(path)}${c.reset}` : `${c.yellow}no test${c.reset}`;
 
 const { html, react, angular, wbc } = component.layers;
 const rows = [
   [
     'HTML/CSS',
     html.utrecht ? `${c.gray}utrecht base only (no Tilburg CSS)${c.reset}` : fileCell(html.main),
-    existsSync(html.script) ? `${c.gray}+ script ${rel(html.script).split('/').pop()}${c.reset}` : '',
+    existsSync(html.script) ? `${c.gray}+ script ${basename(html.script)}${c.reset}` : '',
   ],
   ['HTML examples', fileCell(component.examples), `${c.gray}the reference markup every layer renders${c.reset}`],
   ['React', fileCell(react.main, react), react.promised && existsSync(react.main) ? testCell(react.test) : ''],
