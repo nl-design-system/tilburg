@@ -6,6 +6,7 @@
    exactly what the tests wrote before: the script, executable. */
 import { spawnSync } from 'node:child_process';
 import { chmodSync, cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import net from 'node:net';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -97,3 +98,25 @@ export const fakeTerminal = (columns) =>
     `process.stdin.isTTY = true; process.stdout.isTTY = true; process.stdin.setRawMode = () => process.stdin;
      Object.defineProperty(process.stdout, 'columns', { value: ${columns} });`,
   )}`;
+
+/**
+ * Run `script` with this Node, as the tests do: utf8, a 20 s timeout, and `output` = stdout + stderr. `preload` is
+ * given to node as --import. Any other option goes to spawnSync as it is.
+ */
+export function runScript(script, args = [], { preload, ...options } = {}) {
+  const result = spawnSync(process.execPath, [...(preload ? ['--import', preload] : []), script, ...args], {
+    encoding: 'utf8',
+    timeout: 20_000,
+    ...options,
+  });
+  return { ...result, output: result.stdout + result.stderr };
+}
+
+/** A port nothing listens on right now: a server bound to port 0, then closed. */
+export async function freePort() {
+  const server = net.createServer();
+  await new Promise((done) => server.listen(0, '127.0.0.1', done));
+  const { port } = server.address();
+  await new Promise((done) => server.close(done));
+  return port;
+}

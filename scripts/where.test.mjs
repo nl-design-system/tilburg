@@ -1,24 +1,20 @@
 /* `node --test scripts/`: `pnpm where` with names that fit one, several or no component, and without its table. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { cpSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { runScript } from './lib/test-fakes.mjs';
 
 const scripts = fileURLToPath(new URL('.', import.meta.url));
 const where = (args, script = join(scripts, 'where.mjs')) =>
-  spawnSync(process.execPath, [script, ...args], {
-    env: { ...process.env, CI: '1' },
-    encoding: 'utf8',
-    timeout: 10_000,
-  });
+  runScript(script, args, { env: { ...process.env, CI: '1' }, timeout: 10_000 });
 
 test('a known name shows its files and exits 0', () => {
   const result = where(['PasswordInput']);
-  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(result.status, 0, result.output);
   assert.match(result.stdout, /Where: Password Input/);
 });
 
@@ -45,15 +41,11 @@ test('a name that fits several exits 1 and lists each candidate', () => {
 
 test('--list exits 1 when the component table is missing, instead of listing nothing', () => {
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-where-'));
-  try {
-    cpSync(scripts, join(dir, 'scripts'), { recursive: true });
-    cpSync(join(scripts, '..', 'package.json'), join(dir, 'package.json'));
-    const result = where(['--list'], join(dir, 'scripts', 'where.mjs'));
-    assert.equal(result.status, 1, result.stdout + result.stderr);
-    assert.match(result.stdout, /No components found/);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  cpSync(scripts, join(dir, 'scripts'), { recursive: true });
+  cpSync(join(scripts, '..', 'package.json'), join(dir, 'package.json'));
+  const result = where(['--list'], join(dir, 'scripts', 'where.mjs'));
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.stdout, /No components found/);
 });
 
 test('an empty name exits 1 instead of listing everything', () => {

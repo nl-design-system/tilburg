@@ -2,22 +2,13 @@
    so nothing is built or packed for real. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawn, spawnSync } from 'node:child_process';
-import {
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-  realpathSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { spawn } from 'node:child_process';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, noSignals, prependPath, tempEnv, writeFake, writeLock } from './lib/test-fakes.mjs';
+import { copyScripts, noSignals, prependPath, runScript, tempEnv, writeFake, writeLock } from './lib/test-fakes.mjs';
 
 /** Runs pack-local.mjs; the fake pnpm logs its arguments, creates the tarball, and exits 1 when FAIL_ON matches. */
 function packLocal({ failOn = '', previous = [], args = [], env = {}, before } = {}) {
@@ -52,9 +43,7 @@ case "$PWD $*" in *"$FAIL_ON"*) [ -n "$FAIL_ON" ] && exit 1;; esac
 if [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; fi
 `,
   );
-  const result = spawnSync(process.execPath, [join(repo, 'scripts', 'pack-local.mjs'), ...args], {
-    encoding: 'utf8',
-    timeout: 20_000,
+  const result = runScript(join(repo, 'scripts', 'pack-local.mjs'), args, {
     /* ...env last, as before: a caller's PATH would replace ours. */
     env: {
       ...prependPath({ ...process.env, LOG: log, FAIL_ON: failOn, ...tempEnv(join(sandbox, 'tmp')) }, bin),
@@ -66,7 +55,6 @@ if [ "$1" = pack ]; then touch "$3/$(basename "$PWD").tgz"; fi
     ...result,
     calls,
     out: join(repo, '.tarballs'),
-    cleanup: () => rmSync(sandbox, { recursive: true, force: true }),
   };
 }
 
@@ -76,9 +64,8 @@ const PARTIAL =
     ? /^pack\|--pack-destination\|.*\\\.partial-\d+\|$/
     : /^pack\|--pack-destination\|.*\/\.partial-\d+\|$/;
 
-test('packs every package into .tarballs/, also when the repository path has spaces', (t) => {
+test('packs every package into .tarballs/, also when the repository path has spaces', () => {
   const run = packLocal();
-  t.after(run.cleanup);
   assert.equal(run.status, 0, run.stderr);
   const packs = run.calls.filter((call) => call.startsWith('pack|'));
   assert.equal(packs.length, 7);
@@ -97,10 +84,9 @@ test('packs every package into .tarballs/, also when the repository path has spa
 test(
   'a run stopped half-way (Ctrl-C) leaves no tarball in .tarballs/ for a consumer to install',
   { skip: noSignals },
-  async (t) => {
+  async () => {
     /* A real signal mid-run: the dry run only sets up the sandbox, then a slow pnpm gives time to stop it. */
     const dry = packLocal({ failOn: 'design-tokens run build' });
-    t.after(dry.cleanup);
     const repo = join(dry.out, '..');
     const bin = join(repo, '..', 'bin');
     writeFake(
@@ -127,9 +113,8 @@ test(
 
 const tarballs = (out) => (existsSync(out) ? readdirSync(out).filter((file) => file.endsWith('.tgz')) : []);
 
-test('a failed build stops with exit 1, adds no half set, and keeps the previous set for the consumers', (t) => {
+test('a failed build stops with exit 1, adds no half set, and keeps the previous set for the consumers', () => {
   const run = packLocal({ failOn: 'components-react run build', previous: ['old.tgz'] });
-  t.after(run.cleanup);
   assert.equal(run.status, 1);
   assert.match(run.stderr, /@gemeente-tilburg\/components-react failed/);
   assert.deepEqual(tarballs(run.out), ['old.tgz']);
@@ -140,30 +125,26 @@ test('a failed build stops with exit 1, adds no half set, and keeps the previous
   assert.ok(!run.calls.some((call) => call.includes('web-components-stencil')), 'stopped at the first failure');
 });
 
-test('a failed pack stops with exit 1 and removes the tarballs packed before it', (t) => {
+test('a failed pack stops with exit 1 and removes the tarballs packed before it', () => {
   const run = packLocal({ failOn: 'storybook-shared pack' });
-  t.after(run.cleanup);
   assert.equal(run.status, 1);
   assert.match(run.stderr, /storybook-shared failed/);
   assert.deepEqual(tarballs(run.out), []);
 });
 
-test('a complete run replaces the previous set', (t) => {
+test('a complete run replaces the previous set', () => {
   const run = packLocal({ previous: ['gone.tgz'] });
-  t.after(run.cleanup);
   assert.equal(run.status, 0, run.stderr);
   assert.equal(tarballs(run.out).includes('gone.tgz'), false);
   assert.equal(tarballs(run.out).length, 7);
 });
 
-test('--help prints the usage and builds nothing; an unknown option is refused', (t) => {
+test('--help prints the usage and builds nothing; an unknown option is refused', () => {
   const help = packLocal({ args: ['--help'] });
-  t.after(help.cleanup);
   assert.equal(help.status, 0);
   assert.match(help.stdout, /pnpm pack:local/);
   assert.deepEqual(help.calls, []);
   const typo = packLocal({ args: ['--dry-run'] });
-  t.after(typo.cleanup);
   assert.equal(typo.status, 1);
   assert.match(typo.stdout, /Unknown option '--dry-run'/);
   assert.deepEqual(typo.calls, []);
@@ -172,28 +153,25 @@ test('--help prints the usage and builds nothing; an unknown option is refused',
 /** Writes the shared build lock as if `pid` held it, under the name lock.mjs gives it. */
 const holdLock = (pid) => (repo, tmp) => writeLock(join(tmp, lockName(repo, 'sync')), { what: 'pnpm verify' }, pid);
 
-test('while another build holds the lock (verify, sync), pack:local stops before building', (t) => {
+test('while another build holds the lock (verify, sync), pack:local stops before building', () => {
   const run = packLocal({ before: holdLock(process.pid) });
-  t.after(run.cleanup);
   assert.equal(run.status, 1);
   assert.match(run.stdout, new RegExp(`pnpm verify is running \\(process ${process.pid}`));
   assert.deepEqual(run.calls, []);
 });
 
-test('started by the pnpm sync that holds the lock, pack:local goes ahead', (t) => {
+test('started by the pnpm sync that holds the lock, pack:local goes ahead', () => {
   const run = packLocal({ before: holdLock(process.pid), env: { TILBURG_SYNC_PID: String(process.pid) } });
-  t.after(run.cleanup);
-  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.equal(run.status, 0, run.output);
 });
 
-test('dist/ is emptied before each build, so output from another branch is not packed', (t) => {
+test('dist/ is emptied before each build, so output from another branch is not packed', () => {
   const run = packLocal({
     before: (repo) => {
       mkdirSync(join(repo, 'packages/storybook-shared/dist'));
       writeFileSync(join(repo, 'packages/storybook-shared/dist/gone.examples.js'), '');
     },
   });
-  t.after(run.cleanup);
   assert.equal(run.status, 0, run.stderr);
   assert.equal(existsSync(join(run.out, '..', 'packages/storybook-shared/dist/gone.examples.js')), false);
 });

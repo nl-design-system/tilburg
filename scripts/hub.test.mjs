@@ -1,21 +1,21 @@
 /* `node --test scripts/`: the menu without a terminal (CI, a pipe, closed stdin) prints the list and never waits. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { stripAnsi } from './lib/cli-utils.mjs';
-import { fakeTerminal } from './lib/test-fakes.mjs';
+import { fakeTerminal, runScript } from './lib/test-fakes.mjs';
 
 const hub = fileURLToPath(new URL('./hub.mjs', import.meta.url));
 const env = { ...process.env, CI: '1', TILBURG_TTY: '' };
+const tty = { ...process.env, CI: '', TILBURG_TTY: '' };
 
 for (const [label, input] of [
   ['closed stdin (EOF)', ''],
   ['keys on a pipe', 'q\r'],
 ]) {
   test(`with ${label} it prints the commands and exits 0 instead of waiting for keys`, () => {
-    const result = spawnSync(process.execPath, [hub], { input, env, encoding: 'utf8', timeout: 10_000 });
+    const result = runScript(hub, [], { input, env, timeout: 10_000 });
     assert.equal(result.error, undefined, 'did not hang');
     assert.equal(result.status, 0, result.stderr);
     assert.match(result.stdout, /pnpm setup/);
@@ -24,23 +24,13 @@ for (const [label, input] of [
 }
 
 test('with stdin ignored altogether it does the same', () => {
-  const result = spawnSync(process.execPath, [hub], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env,
-    encoding: 'utf8',
-    timeout: 10_000,
-  });
+  const result = runScript(hub, [], { stdio: ['ignore', 'pipe', 'pipe'], env, timeout: 10_000 });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /pnpm where/);
 });
 
 test('in a terminal too narrow for its columns it prints the list instead of a menu that wraps', () => {
-  const result = spawnSync(process.execPath, ['--import', fakeTerminal(40), hub], {
-    input: '',
-    env: { ...process.env, CI: '', TILBURG_TTY: '' },
-    encoding: 'utf8',
-    timeout: 10_000,
-  });
+  const result = runScript(hub, [], { preload: fakeTerminal(40), input: '', env: tty, timeout: 10_000 });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /pnpm setup/);
   assert.doesNotMatch(result.stdout, /Enter run/);
@@ -48,12 +38,7 @@ test('in a terminal too narrow for its columns it prints the list instead of a m
 
 test('no menu line is wider than an 80-column terminal, or a redraw drifts down the screen', () => {
   /* → selects `where`, whose description is the longest. */
-  const result = spawnSync(process.execPath, ['--import', fakeTerminal(80), hub], {
-    input: '\x1b[C',
-    env: { ...process.env, CI: '', TILBURG_TTY: '' },
-    encoding: 'utf8',
-    timeout: 10_000,
-  });
+  const result = runScript(hub, [], { preload: fakeTerminal(80), input: '\x1b[C', env: tty, timeout: 10_000 });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /❯ where/);
   const menu = stripAnsi(result.stdout.slice(result.stdout.indexOf('START'))).replace(/\x1b\[\?25[hl]/g, '');
@@ -62,21 +47,16 @@ test('no menu line is wider than an 80-column terminal, or a redraw drifts down 
 
 test('application-mode arrows and several keys in one chunk are all read', () => {
   /* →→ in application mode, then q. */
-  const result = spawnSync(process.execPath, ['--import', fakeTerminal(80), hub], {
-    input: '\x1bOC\x1bOCq',
-    env: { ...process.env, CI: '', TILBURG_TTY: '' },
-    encoding: 'utf8',
-    timeout: 10_000,
-  });
+  const result = runScript(hub, [], { preload: fakeTerminal(80), input: '\x1bOC\x1bOCq', env: tty, timeout: 10_000 });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stdout.split('Enter run').length - 1, 3, 'drawn once, then once per arrow');
 });
 
 test('TERM=dumb (no cursor control) gets the list, not a menu drawn with escape codes', () => {
-  const result = spawnSync(process.execPath, ['--import', fakeTerminal(120), hub], {
+  const result = runScript(hub, [], {
+    preload: fakeTerminal(120),
     input: '',
-    env: { ...process.env, CI: '', TILBURG_TTY: '', TERM: 'dumb' },
-    encoding: 'utf8',
+    env: { ...tty, TERM: 'dumb' },
     timeout: 10_000,
   });
   assert.equal(result.status, 0, result.stderr);
@@ -85,10 +65,10 @@ test('TERM=dumb (no cursor control) gets the list, not a menu drawn with escape 
 });
 
 test('Home and F2 are neither help nor quit: the menu stays until q', () => {
-  const result = spawnSync(process.execPath, ['--import', fakeTerminal(80), hub], {
+  const result = runScript(hub, [], {
+    preload: fakeTerminal(80),
     input: '\x1b[H\x1bOQ\x1b[Cq',
-    env: { ...process.env, CI: '', TILBURG_TTY: '' },
-    encoding: 'utf8',
+    env: tty,
     timeout: 10_000,
   });
   assert.equal(result.status, 0, result.stderr);

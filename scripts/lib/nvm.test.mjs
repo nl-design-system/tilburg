@@ -2,15 +2,14 @@
    nvm-windows' on the PATH. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { newestNvmNode, nodeOutsideNvmWindows, nvmNodes } from './nvm.mjs';
 
 /* realpath: macOS's temp folder is behind a link (/var -> /private/var), which nodeOutsideNvmWindows resolves. */
 const temp = realpathSync(mkdtempSync(resolve(tmpdir(), 'tilburg nvm-test-')));
-after(() => rmSync(temp, { recursive: true, force: true }));
 
 let count = 0;
 /** A folder holding `dirs` (relative paths), each with an empty file in it so it is a real install. */

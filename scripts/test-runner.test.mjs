@@ -3,17 +3,15 @@
    --outputFile, so nothing real runs and nothing in the repository is touched. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { loadComponents } from './lib/components.mjs';
-import { noSignals, prependPath, tempEnv, writeFake } from './lib/test-fakes.mjs';
+import { noSignals, prependPath, runScript, tempEnv, writeFake } from './lib/test-fakes.mjs';
 
 /* With a space: test.mjs quotes the report path, and must keep doing so. */
 const dir = mkdtempSync(join(tmpdir(), 'tilburg test-runner-'));
-after(() => rmSync(dir, { recursive: true, force: true }));
 
 const calls = join(dir, 'calls.txt');
 writeFake(
@@ -35,12 +33,11 @@ else process.exit(exit);
 
 function run(args, plan) {
   writeFileSync(calls, '');
-  const result = spawnSync(process.execPath, [resolve(import.meta.dirname, 'test.mjs'), ...args], {
-    encoding: 'utf8',
+  const result = runScript(resolve(import.meta.dirname, 'test.mjs'), args, {
     timeout: 30_000,
     env: prependPath({ ...process.env, ...tempEnv(dir), CI: '1', FAKE_PNPM: JSON.stringify(plan) }, dir),
   });
-  return { ...result, output: result.stdout + result.stderr, calls: readFileSync(calls, 'utf8') };
+  return { ...result, calls: readFileSync(calls, 'utf8') };
 }
 
 // ─── Everything (CI) ─────────────────────────────────────────────────────────

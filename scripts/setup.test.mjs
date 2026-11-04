@@ -2,18 +2,16 @@
    failures it explains are reached without touching nvm, corepack or pnpm. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { copyFileSync, linkSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { copyFileSync, linkSync, mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { delimiter, resolve } from 'node:path';
-import { after, test } from 'node:test';
-import { copyScripts, noShell, writeFake } from './lib/test-fakes.mjs';
+import { resolve } from 'node:path';
+import { test } from 'node:test';
+import { copyScripts, noShell, prependPath, runScript, writeFake } from './lib/test-fakes.mjs';
 
 /* setup starts fnm and the nvm Node without a shell: Windows runs no script that way (a .cmd needs cmd.exe). */
 const shellFakes = process.platform === 'win32' && 'Windows starts no script without a shell';
 /* A space and an accent in the path: a repo cloned into "My Documents/ontwerp-é" must work too. */
 const temp = mkdtempSync(resolve(tmpdir(), 'tilburg setup-test-é-'));
-after(() => rmSync(temp, { recursive: true, force: true }));
 
 let count = 0;
 /**
@@ -59,19 +57,14 @@ function runSetup(
   mkdirSync(fakes);
   for (const [name, script] of Object.entries(bin)) writeFake(fakes, name, script);
   /* NVM_HOME: the developer's own nvm-windows would stand in for the fake nvm. */
-  const { CI, SUDO_USER, NODE_OPTIONS, NVM_HOME, ...env } = process.env;
-  /* Windows spells it Path; a second PATH key next to it would leave which one counts to chance. */
-  const pathKey =
-    process.platform === 'win32' ? (Object.keys(env).find((key) => key.toUpperCase() === 'PATH') ?? 'PATH') : 'PATH';
-  env[pathKey] = `${fakes}${delimiter}${env[pathKey]}`;
-  const result = spawnSync(process.execPath, [resolve(root, 'scripts/setup.mjs')], {
+  const { CI, SUDO_USER, NODE_OPTIONS, NVM_HOME, ...rest } = process.env;
+  const env = prependPath(rest, fakes);
+  const result = runScript(resolve(root, 'scripts/setup.mjs'), [], {
     cwd: root,
     env: { ...env, NVM_DIR: nvm, TILBURG_SETUP_REEXEC: '1', ...extra },
     stdio: ['ignore', 'pipe', 'pipe'],
-    encoding: 'utf8',
-    timeout: 20_000,
   });
-  return { status: result.status, output: result.stdout + result.stderr };
+  return result;
 }
 
 const otherMajor = Number(process.versions.node.split('.')[0]) + 1;

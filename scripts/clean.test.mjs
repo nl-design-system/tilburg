@@ -2,7 +2,6 @@
    test copies it into a throwaway repo (with a space in its path) and runs it there without a terminal. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
 import {
   chmodSync,
   existsSync,
@@ -15,12 +14,11 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
-import { afterEach, test } from 'node:test';
+import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, fakeTerminal, tempEnv, writeLock } from './lib/test-fakes.mjs';
+import { copyScripts, fakeTerminal, runScript, tempEnv, writeLock } from './lib/test-fakes.mjs';
 
 let sandbox;
-afterEach(() => rmSync(sandbox, { recursive: true, force: true }));
 
 /** A fake repo: two packages with dist/, src/ and a workspace symlink, plus a folder outside the repo. */
 function makeRepo({ built = true } = {}) {
@@ -52,9 +50,8 @@ function makeRepo({ built = true } = {}) {
 
 /* The temp folder in the sandbox, so the pnpm dev lock (lib/lock.mjs) is ours too. */
 const run = (root, ...args) =>
-  spawnSync(process.execPath, [resolve(root, 'scripts/clean.mjs'), ...args], {
+  runScript(resolve(root, 'scripts/clean.mjs'), args, {
     cwd: root,
-    encoding: 'utf8',
     timeout: 15_000,
     env: { ...process.env, CI: '1', ...tempEnv(sandbox) },
   });
@@ -62,7 +59,7 @@ const run = (root, ...args) =>
 test('without a terminal and without --yes it deletes nothing and exits 1', () => {
   const root = makeRepo();
   const result = run(root);
-  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.equal(result.status, 1, result.output);
   assert.match(result.stdout, /These would be deleted: Build output/);
   assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
 });
@@ -70,7 +67,7 @@ test('without a terminal and without --yes it deletes nothing and exits 1', () =
 test('--yes deletes build output and caches, and nothing else', () => {
   const root = makeRepo();
   const result = run(root, '--yes');
-  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(result.status, 0, result.output);
   for (const gone of ['packages/a/dist', 'packages/b/dist', 'proprietary/c/.angular', 'node_modules/.cache']) {
     assert.equal(existsSync(resolve(root, gone)), false, `${gone} is deleted`);
   }
@@ -91,7 +88,7 @@ test('nothing to delete is not a failure, also without --yes', () => {
   const root = makeRepo({ built: false });
   rmSync(resolve(root, 'packages/b/dist'));
   const result = run(root);
-  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(result.status, 0, result.output);
   assert.match(result.stdout, /Nothing deleted/);
   assert.doesNotMatch(result.stdout, /These would be deleted/);
 });
@@ -101,7 +98,7 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
   writeLock(resolve(sandbox, lockName(realpathSync(root))), { storybooks: [] });
   const result = run(root, '--yes');
-  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.equal(result.status, 1, result.output);
   assert.match(result.stdout, /pnpm dev is running/);
   assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
 });
@@ -120,11 +117,8 @@ test(
     chmodSync(resolve(root, 'packages/a/dist/locked'), 0o555);
     try {
       const result = run(root, '--yes');
-      assert.equal(result.status, 1, result.stdout + result.stderr);
-      assert.match(
-        result.stdout + result.stderr,
-        /packages\/a\/dist could not be deleted[\s\S]*read-only or not yours/,
-      );
+      assert.equal(result.status, 1, result.output);
+      assert.match(result.output, /packages\/a\/dist could not be deleted[\s\S]*read-only or not yours/);
       assert.equal(existsSync(resolve(root, 'proprietary/c/.angular')), false, 'the other targets are still deleted');
     } finally {
       chmodSync(resolve(root, 'packages/a/dist/locked'), 0o755);
@@ -134,10 +128,10 @@ test(
 
 /* In a terminal 40 columns wide. */
 const inTerminal = (root, input) =>
-  spawnSync(process.execPath, ['--import', fakeTerminal(40), resolve(root, 'scripts/clean.mjs')], {
+  runScript(resolve(root, 'scripts/clean.mjs'), [], {
+    preload: fakeTerminal(40),
     cwd: root,
     input,
-    encoding: 'utf8',
     timeout: 15_000,
     env: { ...process.env, CI: '', ...tempEnv(sandbox) },
   });
@@ -146,7 +140,7 @@ test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than
   const root = makeRepo();
   /* An application-mode ↓ and a space in the same chunk as the Ctrl-C: all read, none deletes anything. */
   const result = inTerminal(root, '\x1bOB \u0003');
-  assert.equal(result.status, 130, result.stdout + result.stderr);
+  assert.equal(result.status, 130, result.output);
   assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
   const picker = result.stdout.replace(/\x1b\[[0-9;]*[A-Za-z]/g, '');
   for (const line of picker.split('\n').filter((line) => line.includes('[')))
@@ -159,7 +153,7 @@ test('the tarballs are not ticked by default: hltsamen installs from them', () =
   mkdirSync(resolve(root, '.tarballs'));
   writeFileSync(resolve(root, '.tarballs/x.tgz'), '');
   const result = run(root, '--yes');
-  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.equal(result.status, 0, result.output);
   assert.ok(existsSync(resolve(root, '.tarballs/x.tgz')));
 });
 

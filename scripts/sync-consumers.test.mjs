@@ -2,7 +2,7 @@
    sibling consumers are fakes, and `pnpm`/`npm` on PATH are shell stubs: no real repository, build or install. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import {
   cpSync,
   existsSync,
@@ -10,7 +10,6 @@ import {
   mkdtempSync,
   readFileSync,
   realpathSync,
-  rmSync,
   symlinkSync,
   utimesSync,
   writeFileSync,
@@ -20,7 +19,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test as nodeTest } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, writeFake, writeLock } from './lib/test-fakes.mjs';
+import { copyScripts, runScript, writeFake, writeLock } from './lib/test-fakes.mjs';
 
 /* The fakes lean on POSIX: $PWD in the call log (the tests compare it with the sandbox path), tar -C with a drive
    letter, mktemp, and pkill for Ctrl-C. On Windows, pnpm pack:local and pnpm sync are checked by hand instead. */
@@ -82,9 +81,8 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
   writeFake(bin, 'npm', fakeNpm);
   before?.(repo);
   const log = join(sandbox, 'calls.log');
-  const result = spawnSync(process.execPath, [join(repo, 'scripts', 'sync-consumers.mjs'), ...args], {
+  const result = runScript(join(repo, 'scripts', 'sync-consumers.mjs'), args, {
     cwd: sandbox,
-    encoding: 'utf8',
     timeout: 30_000,
     env: {
       ...process.env,
@@ -97,8 +95,7 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
     },
   });
   const calls = existsSync(log) ? readFileSync(log, 'utf8').replaceAll(sandbox, '<sandbox>') : '';
-  rmSync(sandbox, { recursive: true, force: true });
-  return { ...result, output: result.stdout + result.stderr, calls };
+  return { ...result, calls };
 }
 
 const bq = { scripts: { 'sync:tilburg-nlds': 'x' } };

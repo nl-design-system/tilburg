@@ -2,15 +2,13 @@
    `pnpm install` for a wrong Node; welcome may never stop it. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { after, test } from 'node:test';
-import { copyScripts } from './lib/test-fakes.mjs';
+import { test } from 'node:test';
+import { copyScripts, runScript } from './lib/test-fakes.mjs';
 
 const temp = mkdtempSync(resolve(tmpdir(), 'tilburg-preflight-test-'));
-after(() => rmSync(temp, { recursive: true, force: true }));
 
 const major = Number(process.versions.node.split('.')[0]);
 let count = 0;
@@ -22,15 +20,13 @@ function run(script, { files = {}, env = {}, detached = false } = {}) {
   const all = { 'package.json': JSON.stringify({ packageManager: 'pnpm@11.15.1' }), '.nvmrc': `${major}\n`, ...files };
   for (const [name, content] of Object.entries(all)) if (content !== null) writeFileSync(resolve(root, name), content);
   const { CI, npm_config_user_agent, TILBURG_QUIET, ...rest } = process.env;
-  const result = spawnSync(process.execPath, [resolve(root, 'scripts', script)], {
+  const result = runScript(resolve(root, 'scripts', script), [], {
     cwd: root,
     env: { ...rest, ...env },
     stdio: ['ignore', 'pipe', 'pipe'],
-    encoding: 'utf8',
-    timeout: 20_000,
     detached,
   });
-  return { status: result.status, output: result.stdout + result.stderr };
+  return { status: result.status, output: result.output };
 }
 
 test('preflight: the right Node passes silently', () => {

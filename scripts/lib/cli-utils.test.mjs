@@ -216,21 +216,17 @@ test('printError prints a circular object instead of throwing', (t) => {
 
 test('installCrashHandler exits 1 with its report, also for a circular rejection reason', () => {
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-crash-test-'));
-  try {
-    const script = join(dir, 'crash.mjs');
-    const lib = new URL('./cli-utils.mjs', import.meta.url).href;
-    appendFileSync(
-      script,
-      `import { installCrashHandler } from '${lib}';\ninstallCrashHandler('crash-test');\n` +
-        'const reason = {}; reason.self = reason; Promise.reject(reason);\n',
-    );
-    const run = spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8', timeout: 10_000 });
-    assert.equal(run.status, 1);
-    assert.match(run.stdout, /crash-test stopped with an unexpected error/);
-    assert.match(run.stderr, /<ref \*1>/);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  const script = join(dir, 'crash.mjs');
+  const lib = new URL('./cli-utils.mjs', import.meta.url).href;
+  appendFileSync(
+    script,
+    `import { installCrashHandler } from '${lib}';\ninstallCrashHandler('crash-test');\n` +
+      'const reason = {}; reason.self = reason; Promise.reject(reason);\n',
+  );
+  const run = spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8', timeout: 10_000 });
+  assert.equal(run.status, 1);
+  assert.match(run.stdout, /crash-test stopped with an unexpected error/);
+  assert.match(run.stderr, /<ref \*1>/);
 });
 
 test('printFullOutput prints the whole log between clear markers, and the kept tail when there is no log', (t) => {

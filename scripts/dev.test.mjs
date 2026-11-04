@@ -5,13 +5,12 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
-import net from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
 import { LIBRARIES, STORYBOOKS } from './dev-config.mjs';
 import { isAlive } from './lib/lock.mjs';
-import { copyScripts, noSignals, tempEnv } from './lib/test-fakes.mjs';
+import { copyScripts, freePort, noSignals, tempEnv } from './lib/test-fakes.mjs';
 
 test('both Storybooks run without prompts or a browser of their own, reachable from the network', () => {
   for (const storybook of Object.values(STORYBOOKS)) {
@@ -56,14 +55,6 @@ for (const [key, line, expected] of lines) {
 
 const temps = [];
 after(() => temps.forEach((dir) => rmSync(dir, { recursive: true, force: true, maxRetries: 5 })));
-
-async function freePort() {
-  const server = net.createServer();
-  await new Promise((done) => server.listen(0, '127.0.0.1', done));
-  const { port } = server.address();
-  await new Promise((done) => server.close(done));
-  return port;
-}
 
 /**
  * A temp repo with a copy of dev.mjs and lib/, one library (no dist/) whose watcher runs `watcher`, and a React
@@ -154,6 +145,10 @@ console.log('Build failed: src/index.ts');
 setInterval(() => {}, 1000);
 `;
 
+/* A Storybook stub that answers /index.json with one story. */
+const ANSWERS = `import http from 'node:http';
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
+
 test('a Storybook that stops on its own stops pnpm dev with exit code 1, watchers included', async () => {
   const root = await fakeRepo({
     watcher: WATCHER,
@@ -173,8 +168,7 @@ test(
   async () => {
     const root = await fakeRepo({
       watcher: WATCHER,
-      storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+      storybook: ANSWERS,
     });
     let sent = false;
     const { code, output } = await runDev(root, (text, child) => {
@@ -205,8 +199,7 @@ process.on('SIGTERM', () => {});
 console.log('built in 1s');
 setInterval(() => {}, 1000);
 `,
-      storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+      storybook: ANSWERS,
     });
     let sent = false;
     /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
@@ -236,8 +229,7 @@ test('the wrong Node without nvm says to install it, not `nvm use`', async () =>
 test('a pnpm-lock.yaml that changes while pnpm dev runs (a git checkout) says to reinstall', async () => {
   const root = await fakeRepo({
     watcher: WATCHER,
-    storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+    storybook: ANSWERS,
   });
   mkdirSync(join(root, 'node_modules/.pnpm'));
   writeFileSync(join(root, 'node_modules/.pnpm/lock.yaml'), 'lockfileVersion: 9\n');
@@ -290,8 +282,7 @@ test('unknown flags and a second Storybook name stop pnpm dev with a clear messa
 test('SIGTERM stops everything with exit code 143', { skip: noSignals }, async () => {
   const root = await fakeRepo({
     watcher: WATCHER,
-    storybook: `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`,
+    storybook: ANSWERS,
   });
   let sent = false;
   const { code, output } = await runDev(root, (text, child) => {
@@ -327,9 +318,6 @@ test(
     }
   },
 );
-
-const ANSWERS = `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
 
 test('a Storybook name in capitals is that Storybook, not a component', async () => {
   const root = await fakeRepo({ watcher: WATCHER, storybook: 'process.exit(1);' });

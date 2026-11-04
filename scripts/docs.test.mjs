@@ -2,14 +2,14 @@
    and `inline`) is checked, so prose like "every pnpm command" is ignored. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { FILE as BANNER_FILE, renderSvg } from './banner.mjs';
 import { ROOT } from './dev-config.mjs';
 import { FILE as TROUBLESHOOTING_FILE, withTable } from './troubleshooting.mjs';
+import { runScript } from './lib/test-fakes.mjs';
 
 /* pnpm's own commands, and the bins it runs without a script (`pnpm changeset`). */
 const BUILTINS = new Set([
@@ -83,16 +83,9 @@ test(
   },
   () => {
     const dir = mkdtempSync(join(tmpdir(), 'tilburg-banner-'));
-    try {
-      symlinkSync(ROOT, join(dir, 'repo'));
-      const run = spawnSync(process.execPath, [join(dir, 'repo/scripts/banner.mjs')], {
-        encoding: 'utf8',
-        timeout: 5000,
-      });
-      assert.equal(run.status, 0, run.stderr);
-      assert.match(run.stdout, /banner\.svg is up to date/);
-    } finally {
-      rmSync(dir, { recursive: true, force: true });
-    }
+    symlinkSync(ROOT, join(dir, 'repo'));
+    const run = runScript(join(dir, 'repo/scripts/banner.mjs'), [], { timeout: 5000 });
+    assert.equal(run.status, 0, run.stderr);
+    assert.match(run.stdout, /banner\.svg is up to date/);
   },
 );

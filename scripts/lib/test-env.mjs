@@ -16,4 +16,5 @@ Object.assign(process.env, {
   GIT_CONFIG_GLOBAL: join(dir, 'gitconfig'),
   GIT_CONFIG_NOSYSTEM: '1',
 });
-process.on('exit', () => rmSync(dir, { recursive: true, force: true }));
+/* maxRetries: on Windows a child that is still closing can hold the folder for a moment. */
+process.on('exit', () => rmSync(dir, { recursive: true, force: true, maxRetries: 5 }));

@@ -2,16 +2,7 @@
 import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import {
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  realpathSync,
-  rmSync,
-  symlinkSync,
-  utimesSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, realpathSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
@@ -39,9 +30,8 @@ import { noSignals, writeFake } from './test-fakes.mjs';
 
 const scripts = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 
-test('newestMtime does not follow a symlink loop, and skips build output', (t) => {
+test('newestMtime does not follow a symlink loop, and skips build output', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'src'));
   mkdirSync(resolve(dir, 'src', 'dist'));
   writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
@@ -49,18 +39,16 @@ test('newestMtime does not follow a symlink loop, and skips build output', (t) =
   assert.ok(newestMtime([resolve(dir, 'src'), resolve(dir, 'missing')]) > 0);
 });
 
-test('a lock left by a process that is gone is stale: ignored and removed', (t) => {
+test('a lock left by a process that is gone is stale: ignored and removed', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   const file = resolve(dir, 'lock.json');
   writeFileSync(file, JSON.stringify({ pid: 2 ** 22 + 17, started: new Date().toISOString() }));
   assert.equal(readDevLock(file), null);
   assert.equal(existsSync(file), false);
 });
 
-test('a lock of a running process is read', (t) => {
+test('a lock of a running process is read', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   const file = resolve(dir, 'lock.json');
   writeFileSync(
     file,
@@ -69,9 +57,8 @@ test('a lock of a running process is read', (t) => {
   assert.equal(readDevLock(file)?.storybooks[0].port, 6006);
 });
 
-test('a broken lock file is ignored', (t) => {
+test('a broken lock file is ignored', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   const file = resolve(dir, 'lock.json');
   writeFileSync(file, '{ not json');
   assert.equal(readDevLock(file), null);
@@ -113,7 +100,6 @@ async function withFakePnpm(script) {
     return await checkPnpm();
   } finally {
     process.env.PATH = path;
-    rmSync(dir, { recursive: true, force: true });
   }
 }
 
@@ -204,19 +190,14 @@ test('WSL on a Windows drive is flagged, a clone inside WSL is not', () => {
 
 test('a package.json that does not parse (merge conflict) fails the check instead of crashing', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-pkg-'));
-  try {
-    writeFileSync(resolve(dir, 'package.json'), '{\n<<<<<<< HEAD\n  "name": "a"\n=======\n}');
-    assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, false);
-    writeFileSync(resolve(dir, 'package.json'), '{"name":"a"}');
-    assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, true);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  writeFileSync(resolve(dir, 'package.json'), '{\n<<<<<<< HEAD\n  "name": "a"\n=======\n}');
+  assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, false);
+  writeFileSync(resolve(dir, 'package.json'), '{"name":"a"}');
+  assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, true);
 });
 
-test('only files count: a reinstall or a Finder .DS_Store does not make the source newer', (t) => {
+test('only files count: a reinstall or a Finder .DS_Store does not make the source newer', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'src'));
   writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
   utimesSync(resolve(dir, 'src', 'a.ts'), 1, 1);
@@ -225,9 +206,8 @@ test('only files count: a reinstall or a Finder .DS_Store does not make the sour
   assert.equal(newestMtime([resolve(dir, 'src')]), 1000);
 });
 
-test('a source file from the future is stale and says clock skew', (t) => {
+test('a source file from the future is stale and says clock skew', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'src'));
   mkdirSync(resolve(dir, 'dist'));
   writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
@@ -345,9 +325,8 @@ test('checkPnpm warns when the Windows pnpm comes first on the PATH under WSL', 
   assert.match(row.detail, /Windows pnpm/);
 });
 
-test('newestMtime follows a symlink given as a path, not one below it', (t) => {
+test('newestMtime follows a symlink given as a path, not one below it', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'real'));
   writeFileSync(resolve(dir, 'real', 'a.ts'), 'a');
   utimesSync(resolve(dir, 'real', 'a.ts'), 5, 5);
@@ -356,9 +335,8 @@ test('newestMtime follows a symlink given as a path, not one below it', (t) => {
   assert.equal(newestMtime([resolve(dir, 'src')]), 5000);
 });
 
-test('a build is fresh when any file in dist/ is newer than the source (Stencil skips unchanged files)', (t) => {
+test('a build is fresh when any file in dist/ is newer than the source (Stencil skips unchanged files)', () => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'src'));
   mkdirSync(resolve(dir, 'dist', 'esm'), { recursive: true });
   writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');

@@ -5,12 +5,12 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
-import net from 'node:net';
 import { networkInterfaces, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { listenerDir } from './checks.mjs';
 import { choosePort, localIp, printStorybookLinks, waitForStorybook } from './storybook.mjs';
+import { freePort } from './test-fakes.mjs';
 
 const REACT = { name: 'React Storybook', storyId: /^tilburg-.+-react--/ };
 /* Windows tells the folder of the process on a port from its command line (…\node_modules\…), not from its working
@@ -31,14 +31,6 @@ async function serve(host, index = true) {
   });
   await new Promise((done) => server.listen(0, host, done));
   return { port: server.address().port, close: () => (server.closeAllConnections(), server.close()) };
-}
-
-async function freePort() {
-  const server = net.createServer();
-  await new Promise((done) => server.listen(0, '127.0.0.1', done));
-  const { port } = server.address();
-  await new Promise((done) => server.close(done));
-  return port;
 }
 
 /* The Storybooks run with `--host 0.0.0.0` (IPv4 only), while `localhost` resolves to ::1 first on macOS. */

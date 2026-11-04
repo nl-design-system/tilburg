@@ -5,7 +5,7 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { after, before, test } from 'node:test';
@@ -139,7 +139,6 @@ exit 1
 after(() => {
   if (skip) return;
   orphans();
-  rmSync(parent, { recursive: true, force: true });
 });
 
 for (const [condition, change] of Object.entries({

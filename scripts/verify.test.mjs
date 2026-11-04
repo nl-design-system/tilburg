@@ -3,15 +3,12 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, gitIn, prependPath, writeFake, writeLock } from './lib/test-fakes.mjs';
-
-const dirs = [];
-after(() => dirs.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
+import { copyScripts, gitIn, prependPath, runScript, writeFake, writeLock } from './lib/test-fakes.mjs';
 
 /* The fake pnpm: FAIL and KILL are the exact arguments that make it exit 1 or kill itself. */
 const PNPM = `#!/bin/sh
@@ -23,7 +20,6 @@ exit 0
 
 function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = '', args = [], setup } = {}) {
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-verify-test-'));
-  dirs.push(dir);
   const bin = join(dir, 'bin');
   mkdirSync(bin);
   copyScripts(dir, 'verify.mjs');
@@ -32,25 +28,20 @@ function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = 
   writeFake(bin, 'pnpm', PNPM);
   const env = prependPath({ ...process.env, CI: '', FAIL, KILL, TOUCH, PARITY_EXIT, OUTPUT }, bin);
   setup?.(dir, env);
-  const result = spawnSync(process.execPath, ['scripts/verify.mjs', ...args], {
-    cwd: dir,
-    env,
-    encoding: 'utf8',
-    timeout: 30_000,
-  });
-  return { ...result, all: result.stdout + result.stderr };
+  const result = runScript('scripts/verify.mjs', args, { cwd: dir, env, timeout: 30_000 });
+  return result;
 }
 
 test('every step passing is the only way to exit 0', () => {
   const result = verify();
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /Everything CI checks passes/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /Everything CI checks passes/);
 });
 
 test('an audit that fails offline is a warning, not a failure', () => {
   const result = verify({ FAIL: 'audit --audit-level critical', OUTPUT: 'getaddrinfo ENOTFOUND registry.npmjs.org' });
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /could not check: no network/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /could not check: no network/);
 });
 
 test('node_modules out of date with pnpm-lock.yaml is said at the top', () => {
@@ -61,33 +52,33 @@ test('node_modules out of date with pnpm-lock.yaml is said at the top', () => {
       writeFileSync(join(dir, 'pnpm-lock.yaml'), 'new\n');
     },
   });
-  assert.match(result.all, /pnpm-lock\.yaml differs from what is installed/);
+  assert.match(result.output, /pnpm-lock\.yaml differs from what is installed/);
 });
 
 test('a failing step fails verify, and the steps after it still run', () => {
   const result = verify({ FAIL: 'run lint' });
-  assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /1 of 8 failed/);
-  assert.doesNotMatch(result.all, /Everything CI checks passes/);
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /1 of 8 failed/);
+  assert.doesNotMatch(result.output, /Everything CI checks passes/);
 });
 
 test('a failed build skips the steps that need it, and still fails verify', () => {
   const result = verify({ FAIL: 'run build' });
-  assert.equal(result.status, 1, result.all);
-  assert.equal(result.all.match(/skipped, the build failed/g)?.length, 3);
-  assert.match(result.all, /1 of 5 failed/);
+  assert.equal(result.status, 1, result.output);
+  assert.equal(result.output.match(/skipped, the build failed/g)?.length, 3);
+  assert.match(result.output, /1 of 5 failed/);
 });
 
 test('a step killed by a signal is a failure, not a pass', () => {
   const result = verify({ KILL: 'run test' });
-  assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /1 of 8 failed/);
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /1 of 8 failed/);
 });
 
 test('a failing parity check fails verify', () => {
   const result = verify({ PARITY_EXIT: '1' });
-  assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /Parity \(not in CI\)\s+failed/);
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /Parity \(not in CI\)\s+failed/);
 });
 
 test('a changeset check that crashes is reported in the table, not as a crash of verify', () => {
@@ -100,10 +91,10 @@ test('a changeset check that crashes is reported in the table, not as a crash of
       git('update-ref', 'refs/remotes/origin/main', 'HEAD');
     },
   });
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /Changeset \(not in CI\)\s+could not check/);
-  assert.match(result.all, /the check itself failed/);
-  assert.doesNotMatch(result.all, /stopped with an unexpected error/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /Changeset \(not in CI\)\s+could not check/);
+  assert.match(result.output, /the check itself failed/);
+  assert.doesNotMatch(result.output, /stopped with an unexpected error/);
 });
 
 /** A repository at dir with origin/main, then a branch that adds a published package called `name`. */
@@ -124,8 +115,8 @@ function branchWithPackage(dir, env, name) {
 
 test('a package with a non-ASCII name still needs a changeset (git quotes such paths by default)', () => {
   const result = verify({ setup: (dir, env) => branchWithPackage(dir, env, 'café') });
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /café changed, but this branch has no changeset/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /café changed, but this branch has no changeset/);
 });
 
 test('a git that fails in the changeset check is "could not check", not "no published package changed"', () => {
@@ -135,16 +126,15 @@ test('a git that fails in the changeset check is "could not check", not "no publ
       writeFileSync(join(dir, '.git', 'index'), 'not an index');
     },
   });
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /Changeset \(not in CI\)\s+could not check/);
-  assert.doesNotMatch(result.all, /no published package changed/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /Changeset \(not in CI\)\s+could not check/);
+  assert.doesNotMatch(result.output, /no published package changed/);
 });
 
 test('a shallow clone without the merge base says so, not "no origin/main"', () => {
   const result = verify({
     setup: (dir, env) => {
       const origin = `${dir}-origin`;
-      dirs.push(origin);
       const git = branchWithPackage(origin, env, 'a');
       git('switch', '-q', 'main');
       git('commit', '-q', '--allow-empty', '-m', 'main moves on');
@@ -162,9 +152,9 @@ test('a shallow clone without the merge base says so, not "no origin/main"', () 
       run('switch', '-q', 'feat/x');
     },
   });
-  assert.equal(result.status, 0, result.all);
-  assert.match(result.all, /no common history with origin\/main/);
-  assert.match(result.all, /git fetch --unshallow origin/);
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /no common history with origin\/main/);
+  assert.match(result.output, /git fetch --unshallow origin/);
 });
 
 test('a lockfile out of date fails the Lockfile step: no pnpm install that would make it pass here only', () => {
@@ -172,20 +162,20 @@ test('a lockfile out of date fails the Lockfile step: no pnpm install that would
     FAIL: 'install --frozen-lockfile --lockfile-only',
     OUTPUT: 'ERR_PNPM_OUTDATED_LOCKFILE Cannot install with "frozen-lockfile"',
   });
-  assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /Lockfile\s+failed/);
-  assert.match(result.all, /commit pnpm-lock\.yaml/);
-  assert.doesNotMatch(result.all, /attempt 2/);
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /Lockfile\s+failed/);
+  assert.match(result.output, /commit pnpm-lock\.yaml/);
+  assert.doesNotMatch(result.output, /attempt 2/);
 });
 
 test('--help prints the usage and runs nothing; an unknown argument is refused', () => {
   const help = verify({ args: ['--help'] });
-  assert.equal(help.status, 0, help.all);
-  assert.match(help.all, /pnpm verify: runs what CI checks/);
-  assert.doesNotMatch(help.all, /Security audit/);
+  assert.equal(help.status, 0, help.output);
+  assert.match(help.output, /pnpm verify: runs what CI checks/);
+  assert.doesNotMatch(help.output, /Security audit/);
   const typo = verify({ args: ['tooltip'] });
-  assert.equal(typo.status, 1, typo.all);
-  assert.match(typo.all, /Unexpected argument 'tooltip'/);
+  assert.equal(typo.status, 1, typo.output);
+  assert.match(typo.output, /Unexpected argument 'tooltip'/);
 });
 
 test('while pnpm sync (or pack:local) builds, verify stops before building', () => {
@@ -194,9 +184,9 @@ test('while pnpm sync (or pack:local) builds, verify stops before building', () 
       writeLock(join(tmpdir(), lockName(realpathSync(dir), 'sync')), { what: 'pnpm sync' });
     },
   });
-  assert.equal(result.status, 1, result.all);
-  assert.match(result.all, /pnpm sync is running/);
-  assert.doesNotMatch(result.all, /Security audit/);
+  assert.equal(result.status, 1, result.output);
+  assert.match(result.output, /pnpm sync is running/);
+  assert.doesNotMatch(result.output, /Security audit/);
 });
 
 test('a working tree that changes while verify runs gets a warning row', () => {
@@ -209,5 +199,5 @@ test('a working tree that changes while verify runs gets a warning row', () => {
       git('commit', '-q', '--no-gpg-sign', '-m', 'initial');
     },
   });
-  assert.match(result.all, /Working tree\s+changed while this ran/);
+  assert.match(result.output, /Working tree\s+changed while this ran/);
 });

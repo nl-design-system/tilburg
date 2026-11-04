@@ -2,10 +2,10 @@
 import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { ROOT } from '../dev-config.mjs';
 import {
   isAlive,
@@ -19,7 +19,6 @@ import {
 } from './lock.mjs';
 
 const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-after(() => rmSync(dir, { recursive: true, force: true }));
 let count = 0;
 const lockWith = (content) => {
   const file = resolve(dir, `lock-${count++}.json`);

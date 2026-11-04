@@ -2,11 +2,11 @@
 import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { autoLine, classifyFailure, FAILURES, RECOVERIES, runStepWithRecovery } from './recovery.mjs';
+import { autoLine, classifyFailure, FAILURES, RECOVERIES } from './recovery.mjs';
 
 const cases = [
   ['node-version', 'Error [ERR_UNKNOWN_BUILTIN_MODULE]: No such built-in module: node:sqlite'],
@@ -183,14 +183,7 @@ test('a step someone stopped (Ctrl-C, kill) is not retried as if it crashed', ()
    Each run happens in a child process: run here, its lines ("  ✗  heap step") would share stdout with node:test's own
    report, and Node 24's parser misreads text whose third byte is ≥ 0x80 when it lands right after a report in the same
    pipe read (it reads that text as a negative message size) — "Unable to deserialize cloned data", now and then. */
-const withTemp = async (run) => {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-recovery-'));
-  try {
-    await run(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-};
+const withTemp = (run) => run(mkdtempSync(join(tmpdir(), 'tilburg-recovery-')));
 const RECOVERY = new URL('./recovery.mjs', import.meta.url).href;
 /**
  * Run runStepWithRecovery() in a child; resolves to { ok, exitCode, diagnosis, output }. `recoveries`: source text of
