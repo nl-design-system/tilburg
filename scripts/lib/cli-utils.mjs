@@ -241,7 +241,8 @@ export function track(child) {
 /** Stop every tracked child and its whole tree. Synchronous: it also runs from the 'exit' event. */
 export function stopChildren(signal = 'SIGTERM') {
   for (const child of children) killTree(child, signal);
-  children.clear();
+  /* After a SIGINT they stay listed: one that ignores it (a Stencil build) still gets the SIGTERM on exit. */
+  if (signal !== 'SIGINT') children.clear();
 }
 process.on('exit', () => stopChildren());
 
@@ -269,7 +270,8 @@ export function killTree(child, signal = 'SIGTERM') {
    (a failure before the pipe closed) wins. */
 for (const stream of [process.stdout, process.stderr]) {
   stream.on('error', (err) => {
-    if (err.code === 'EPIPE') process.exit(process.exitCode ?? 141);
+    /* 0 unless something failed before: `pnpm commands | head` is not an error, and pnpm would say it was. */
+    if (err.code === 'EPIPE') process.exit(process.exitCode ?? 0);
     throw err;
   });
 }

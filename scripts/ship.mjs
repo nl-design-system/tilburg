@@ -170,7 +170,8 @@ if (count > 20) console.log(`     … and ${count - 20} more`);
 console.log('');
 
 /* Always explicit: this branch to origin/<same name>, whatever push.default or the tracking setting says. */
-const push = ['push', '-u', 'origin', `${head}:refs/heads/${branch.out}`];
+/* HEAD, not the hash: git sets the upstream (-u) only for a branch. HEAD is checked to still be `head` before this. */
+const push = ['push', '-u', 'origin', `HEAD:refs/heads/${branch.out}`];
 if (args['dry-run']) console.log(`  ${c.gray}Dry run — would run: git ${push.join(' ')}${c.reset}`);
 else {
   if (!args.yes && !process.stdin.isTTY) stop({ what: 'Not pushing: no terminal to ask', fix: 'pnpm ship --yes' });

@@ -9,6 +9,8 @@
      6. the `pnpm check` table, and `pnpm dev` if you like
 
    Flags: --yes (no questions, take the defaults), --reset (delete node_modules first), --skip-dev (do not offer to start pnpm dev). Not --no-…: pnpm reads those as its own options.
+   With flags, type `pnpm run setup --yes` (or `pnpm setup:reset`): `pnpm setup` is also pnpm's own command, which
+   swallows --yes and refuses --reset.
    Node built-ins only, and nothing newer than Node 18, because it may be running on the Node it is about to replace. */
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
@@ -27,7 +29,7 @@ import {
   printCheckTable,
   stepSkip,
 } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning } from './lib/lock.mjs';
+import { confirmNoDevRunning, readDevLock, SYNC_LOCK } from './lib/lock.mjs';
 import { enginesMinimum, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm setup');
@@ -225,6 +227,17 @@ if ((await pnpmVersion()) === PNPM_VERSION) {
 }
 
 // ─── 3. Dependencies ─────────────────────────────────────────────────────────
+
+/* A build (sync, verify, pack:local) needs node_modules and dist/ to stay put until it is done. */
+const building = readDevLock(SYNC_LOCK);
+if (building) {
+  fail({
+    what: `${building.what ?? 'pnpm sync'} is running (process ${building.pid})`,
+    why: 'setup installs and builds the same node_modules and dist/ folders.',
+    fix: 'wait for it to finish, then pnpm setup again',
+  });
+  process.exit(1);
+}
 
 /* Swapping node_modules under pnpm dev's running watchers and Storybooks breaks them half-way. */
 const needsInstall = reset || !checkInstalled().ok || checkInstallFresh().warn;

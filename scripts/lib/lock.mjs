@@ -6,7 +6,7 @@
    whose process is gone (a crash, a closed terminal) is stale: any reader stops the watchers it left and removes it. */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { lstatSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { linkSync, lstatSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
@@ -43,12 +43,14 @@ export function isAlive(pid) {
 export function processStart(pid) {
   if (process.platform === 'win32') return null;
   if (process.platform === 'linux') {
-    /* Field 22 of /proc/<pid>/stat: clock ticks since boot. ps derives lstart from the wall clock, which moves with
-       an NTP step or a WSL2 resync, and BusyBox ps has no lstart at all. The name (field 2) may hold spaces and ")". */
+    /* Field 22 of /proc/<pid>/stat: clock ticks since boot, plus the boot time from /proc/stat, so a pid from before a
+       reboot never matches. ps derives lstart from the wall clock, which moves with an NTP step or a WSL2 resync, and
+       BusyBox ps has no lstart at all. The name (field 2) may hold spaces and ")". */
     try {
       const ticks = Number(readFileSync(`/proc/${pid}/stat`, 'utf8').split(') ').pop().split(' ')[19]);
+      const boot = Number(readFileSync('/proc/stat', 'utf8').match(/^btime (\d+)/m)?.[1]);
       /* ponytail: assumes 100 ticks a second (every mainstream kernel); only the unit is off otherwise, not the match. */
-      if (Number.isFinite(ticks)) return ticks * 10;
+      if (Number.isFinite(ticks) && Number.isFinite(boot)) return boot * 1000 + ticks * 10;
     } catch {
       /* no /proc (or the process is gone): ask ps */
     }
@@ -84,10 +86,9 @@ const sameProcess = (pid, started) => {
 function reapGroups(lock) {
   for (const { pid, started } of Array.isArray(lock?.groups) ? lock.groups : []) {
     if (!Number.isInteger(pid) || pid <= 1 || !Number.isFinite(started)) continue;
-    /* A live leader must still be the process pnpm dev started, never one that got its number later. A dead leader's
-       group may still hold its children (a Storybook under a pnpm that exited): POSIX hands out no pid that is still
-       a group's id, so signalling the group then reaches only those children, or nobody (ESRCH). */
-    if (isAlive(pid) && (processStart(pid) === null || !sameProcess(pid, started))) continue;
+    /* Only while the leader is provably the process pnpm dev started. A group whose leader is gone may by now be
+       someone else's (the lock can be days old, or from before a reboot): leave it rather than stop the wrong thing. */
+    if (!isAlive(pid) || processStart(pid) === null || !sameProcess(pid, started)) continue;
     try {
       process.kill(-pid, 'SIGTERM');
     } catch {
@@ -147,20 +148,31 @@ export function readDevLock(file = LOCK_FILE, { own = false } = {}) {
  */
 export function writeDevLock(data, file = LOCK_FILE) {
   let written = true;
+  const content = JSON.stringify({
+    pid: process.pid,
+    started: new Date().toISOString(),
+    processStarted: processStart(process.pid),
+    ...data,
+  });
+  /* Written whole to a file of our own, then linked into place: link() fails when the lock exists, so it is as
+     exclusive as 'wx', and no reader ever sees the lock empty halfway through being written (and removes it). */
+  const draft = `${file}.${process.pid}.new`;
   try {
-    /* 'wx': never through a symlink or over a file someone else just made (readDevLock removed a stale one). */
-    writeFileSync(
-      file,
-      JSON.stringify({
-        pid: process.pid,
-        started: new Date().toISOString(),
-        processStarted: processStart(process.pid),
-        ...data,
-      }),
-      { flag: 'wx', mode: 0o600 },
-    );
+    rmSync(draft, { force: true });
+    writeFileSync(draft, content, { flag: 'wx', mode: 0o600 });
+    linkSync(draft, file);
   } catch (err) {
     if (err.code === 'EEXIST') written = false;
+    else if (err.syscall === 'link') {
+      /* A filesystem without hard links: the plain exclusive write. */
+      try {
+        writeFileSync(file, content, { flag: 'wx', mode: 0o600 });
+      } catch (writeErr) {
+        if (writeErr.code === 'EEXIST') written = false;
+      }
+    }
+  } finally {
+    rmSync(draft, { force: true });
   }
   process.on('exit', () => releaseDevLock(file));
   return written;

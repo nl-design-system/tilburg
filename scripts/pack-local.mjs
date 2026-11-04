@@ -62,7 +62,14 @@ if (other && String(other.pid) !== process.env.TILBURG_SYNC_PID) {
   });
   process.exit(1);
 }
-if (!other) writeDevLock({ what: 'pnpm pack:local' }, SYNC_LOCK);
+if (!other && !writeDevLock({ what: 'pnpm pack:local' }, SYNC_LOCK)) {
+  fail({
+    what: 'Another build took the build lock just now',
+    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
+    fix: 'wait for it to finish, then run this again',
+  });
+  process.exit(1);
+}
 if (!(await confirmNoDevRunning('pack:local builds every package, and'))) {
   console.log('  Stopped: stop pnpm dev with q, then run this again.');
   process.exit(1);

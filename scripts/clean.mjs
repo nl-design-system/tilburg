@@ -19,7 +19,7 @@ import {
   stripAnsi,
 } from './lib/cli-utils.mjs';
 import { splitKeys } from './lib/keys.mjs';
-import { readDevLock } from './lib/lock.mjs';
+import { readDevLock, SYNC_LOCK } from './lib/lock.mjs';
 
 installCrashHandler('pnpm run clean:pick');
 printBanner('Clean');
@@ -181,6 +181,15 @@ if (selected.some((target) => target.dangerous)) {
     console.log(`\n  ${c.gray}Cancelled.${c.reset}\n`);
     process.exit(0);
   }
+}
+
+/* A build (sync, verify, pack:local) writes what this would delete: wait for it instead. */
+const building = selected.length > 0 && readDevLock(SYNC_LOCK);
+if (building) {
+  console.log(
+    `\n  ${c.yellow}⚠${c.reset}  ${building.what ?? 'pnpm sync'} is running (process ${building.pid}). Nothing deleted: run this again when it is done.\n`,
+  );
+  process.exit(1);
 }
 
 /* Deleting dist/, node_modules or the caches under a running pnpm dev breaks its watchers and Storybooks. */

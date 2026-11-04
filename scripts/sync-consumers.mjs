@@ -214,7 +214,14 @@ if (otherSync) {
   });
   process.exit(1);
 }
-writeDevLock({ what: 'pnpm sync' }, SYNC_LOCK);
+if (!writeDevLock({ what: 'pnpm sync' }, SYNC_LOCK)) {
+  fail({
+    what: 'Another build took the build lock just now',
+    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
+    fix: 'wait for it to finish, then run this again',
+  });
+  process.exit(1);
+}
 /* And one per consumer folder: a sync from another checkout (a worktree) would run its install in the same folder. */
 for (const consumer of usable) {
   const hash = createHash('sha1').update(realpath(consumer.dir)).digest('hex').slice(0, 10);

@@ -465,9 +465,12 @@ export function newestMtime(paths) {
       return;
     }
     if (stat.isSymbolicLink()) return;
-    /* Folders too: deleting a file changes only its folder's mtime. */
-    newest = Math.max(newest, stat.mtimeMs);
-    if (!stat.isDirectory()) return;
+    /* Files only: a folder's mtime also moves for a reinstall of its node_modules or a Finder .DS_Store, which would
+       mark the build stale for nothing. ponytail: so a branch switch that only deletes files is not noticed. */
+    if (!stat.isDirectory()) {
+      newest = Math.max(newest, stat.mtimeMs);
+      return;
+    }
     let entries = [];
     try {
       entries = readdirSync(path, { withFileTypes: true });
@@ -475,7 +478,7 @@ export function newestMtime(paths) {
       return;
     }
     for (const entry of entries) {
-      if (['node_modules', 'dist', '.angular'].includes(entry.name)) continue;
+      if (['node_modules', 'dist', '.angular', '.DS_Store'].includes(entry.name)) continue;
       visit(resolve(path, entry.name));
     }
   };

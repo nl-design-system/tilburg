@@ -177,7 +177,10 @@ if (!rows.length) {
   );
 } else if (failed.length) {
   const watch = LAYERS.filter(({ layer }) => failed.some((row) => row.label === layer.label)).map(
-    ({ package: name, watch: path }) => `pnpm --filter ${name} run watch:test${path ? ` ${path}` : ''}`,
+    ({ package: name, watch }) => {
+      const path = typeof watch === 'function' ? watch() : watch;
+      return `pnpm --filter ${name} run watch:test${path ? ` ${path}` : ''}`;
+    },
   );
   console.log(`  ${c.red}Not green.${c.reset} ${c.gray}Rerun on every save while you fix it:${c.reset}`);
   for (const command of watch) console.log(`    ${c.cyan}${command}${c.reset}`);

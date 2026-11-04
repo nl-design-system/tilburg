@@ -571,7 +571,8 @@ export const RECOVERIES = {
       const lock = stripAnsi(err.output ?? '').match(/'([^']+index\.lock)'/)?.[1];
       /* <repo>/.git/index.lock, or one under the shared git dir (a worktree's .git/worktrees/x/, a submodule's
          .git/modules/x/). Resolved first: the path comes from tool output, and `…/.git/../../x/index.lock` contains /.git/. */
-      const path = lock && resolve(lock);
+      /* git prints it relative to where the step ran. */
+      const path = lock && resolve(err.cwd ?? ROOT, lock);
       const common = spawnSync('git', ['rev-parse', '--git-common-dir'], { cwd: ROOT, encoding: 'utf8' });
       const commonDir = common.status === 0 && resolve(ROOT, common.stdout.trim());
       const underGit =

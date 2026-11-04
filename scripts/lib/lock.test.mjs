@@ -103,29 +103,51 @@ test('the lock name is per user', { skip: !process.getuid }, () => {
 });
 
 test(
-  'every reader stops the groups of a stale lock, also one whose leader is gone',
+  'a reader stops the groups of a stale lock while their leader is the recorded one, and leaves the rest alone',
   { skip: process.platform === 'win32' },
   async () => {
-    /* A group whose leader (sh) exits at once, leaving its child (sleep) in the group: what a pnpm that died leaves. */
-    const group = spawn('sh', ['-c', 'sleep 30 & exit 0'], { detached: true, stdio: 'ignore' });
-    await new Promise((done) => group.on('exit', done));
-    const alive = () => {
+    const spawnGroup = (script) => spawn('sh', ['-c', script], { detached: true, stdio: 'ignore' });
+    const alive = (pid) => {
       try {
-        process.kill(-group.pid, 0);
+        process.kill(-pid, 0);
         return true;
       } catch {
         return false;
       }
     };
-    assert.equal(alive(), true, 'the sleep still runs in the group');
+    /* ours: the leader still runs, with the start time the lock recorded. */
+    const ours = spawnGroup('sleep 30');
+    /* recycled: same shape, but the lock says it started at another time (its number was handed on). */
+    const recycled = spawnGroup('sleep 30');
+    /* leaderless: the leader exited and left a child; the group id may by now be anyone's. */
+    const leaderless = spawnGroup('sleep 30 & exit 0');
+    await new Promise((done) => leaderless.on('exit', done));
+    await new Promise((done) => setTimeout(done, 100));
     const file = lockWith({
       pid: 2 ** 22 + 17,
       started: new Date().toISOString(),
-      groups: [{ pid: group.pid, started: 1 }],
+      groups: [
+        { pid: ours.pid, started: processStart(ours.pid) },
+        { pid: recycled.pid, started: processStart(recycled.pid) - 60_000 },
+        { pid: leaderless.pid, started: 1 },
+      ],
     });
-    assert.equal(readDevLock(file), null);
-    for (let waited = 0; waited < 3000 && alive(); waited += 50) await new Promise((done) => setTimeout(done, 50));
-    assert.equal(alive(), false, 'the orphan was stopped');
+    try {
+      assert.equal(readDevLock(file), null);
+      for (let waited = 0; waited < 3000 && alive(ours.pid); waited += 50)
+        await new Promise((done) => setTimeout(done, 50));
+      assert.equal(alive(ours.pid), false, 'the orphan was stopped');
+      assert.equal(alive(recycled.pid), true, 'a group whose leader started at another time is left alone');
+      assert.equal(alive(leaderless.pid), true, 'a group without its leader is left alone');
+    } finally {
+      for (const group of [ours, recycled, leaderless]) {
+        try {
+          process.kill(-group.pid, 'SIGKILL');
+        } catch {
+          /* already gone */
+        }
+      }
+    }
   },
 );
 

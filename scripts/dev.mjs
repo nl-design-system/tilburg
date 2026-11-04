@@ -168,18 +168,18 @@ function groupAlive(pid) {
     return false;
   }
 }
-/* Before the install question: an install would swap node_modules under the running one's watchers. `reap`: a pnpm dev
-   that was killed hard left its watchers running; stop those. */
+/* Before the install question: an install would swap node_modules under the running one's watchers. Reading a stale
+   lock also stops the watchers a pnpm dev that was killed hard left running (lock.mjs). */
 const orphans = process.platform === 'win32' ? [] : lockedGroups();
-const running = readDevLock(undefined, { reap: true });
+const running = readDevLock();
 if (running) pointAtRunning(running);
 /* The reaped Storybook takes a moment to exit: choosing ports now would find it still answering and reuse it. */
 for (let waited = 0; waited < 3000 && orphans.some(({ pid }) => groupAlive(pid)); waited += 100) await sleep(100);
-/* pnpm sync packs (and so rebuilds) the same dist/ folders the watchers write. */
+/* sync, verify and pack:local rebuild the same dist/ folders the watchers write. */
 const syncing = readDevLock(SYNC_LOCK);
 if (syncing) {
   fail({
-    what: `pnpm sync is running (process ${syncing.pid})`,
+    what: `${syncing.what ?? 'pnpm sync'} is running (process ${syncing.pid})`,
     why: 'it rebuilds the same dist/ folders as the watchers pnpm dev would start, and two builds at once fail with EEXIST.',
     fix: 'wait for it to finish, then pnpm dev again',
   });
@@ -328,7 +328,7 @@ function start({ name, command, colour, onLine, onExit, storybook = false }) {
   child.on('close', exit);
   processes.push(entry);
   /* Each runs in its own process group: if this process is killed hard, the next pnpm dev stops them (lock.mjs). On
-     Windows the pid only (no start time there): a tree for taskkill, not a group. */
+     Windows only the pid is recorded: with no start time to prove it is still ours, nothing reaps it there. */
   if (child.pid) {
     entry.group = { pid: child.pid, started: processStart(child.pid) };
     updateDevLock({ groups: processes.filter((running) => running.group).map((running) => running.group) });

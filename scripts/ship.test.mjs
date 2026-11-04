@@ -139,7 +139,7 @@ test('a dry run lists the commits and pushes nothing', () => {
   const result = ship('--no-verify', '--dry-run');
   assert.equal(result.status, 0, result.all);
   assert.match(result.all, /1 commit to push \(origin\/main\.\.HEAD\)/);
-  assert.match(result.all, /would run: git push -u origin [0-9a-f]{40}:refs\/heads\/feat\/x/);
+  assert.match(result.all, /would run: git push -u origin HEAD:refs\/heads\/feat\/x/);
   assert.equal(git('ls-remote', '--heads', 'origin', 'feat/x'), '');
 });
 

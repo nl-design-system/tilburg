@@ -88,10 +88,7 @@ async function offerFixes() {
       console.log('');
       continue;
     }
-    if (
-      /\bpnpm install\b/.test(fix.command) &&
-      !(await confirmNoDevRunning(`${fix.command} replaces node_modules under its watchers, and`))
-    ) {
+    if (/\bpnpm install\b/.test(fix.command) && !(await confirmNoDevRunning(fix.command))) {
       console.log('');
       continue;
     }

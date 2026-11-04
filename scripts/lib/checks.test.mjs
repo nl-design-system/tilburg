@@ -204,16 +204,15 @@ test('a package.json that does not parse (merge conflict) fails the check instea
   }
 });
 
-test('a deleted file makes the source newer (its folder mtime counts)', (t) => {
+test('only files count: a reinstall or a Finder .DS_Store does not make the source newer', (t) => {
   const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   mkdirSync(resolve(dir, 'src'));
   writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
   utimesSync(resolve(dir, 'src', 'a.ts'), 1, 1);
-  utimesSync(resolve(dir, 'src'), 1, 1);
+  mkdirSync(resolve(dir, 'src', 'node_modules'));
+  writeFileSync(resolve(dir, 'src', '.DS_Store'), '');
   assert.equal(newestMtime([resolve(dir, 'src')]), 1000);
-  rmSync(resolve(dir, 'src', 'a.ts'));
-  assert.ok(newestMtime([resolve(dir, 'src')]) > 1000);
 });
 
 test('a source file from the future is stale and says clock skew', (t) => {

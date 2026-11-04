@@ -76,7 +76,14 @@ if (building) {
   });
   process.exit(1);
 }
-writeDevLock({ what: 'pnpm verify' }, SYNC_LOCK);
+if (!writeDevLock({ what: 'pnpm verify' }, SYNC_LOCK)) {
+  fail({
+    what: 'Another build took the build lock just now',
+    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
+    fix: 'wait for it to finish, then run this again',
+  });
+  process.exit(1);
+}
 if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) {
   console.log('  Stopped: stop pnpm dev with q, then run this again.');
   process.exit(1);
