@@ -5,6 +5,19 @@
 Deze handleiding is voor wie aan de repository zelf werkt. Wil je de componenten gebruiken in een project, lees dan
 _Aan de slag_ in de Storybook.
 
+## Wat je moet kennen
+
+De scripts in `scripts/` nemen de omgeving voor hun rekening: Node, pnpm, de install, poorten, builds en de bekende
+fouten (zie _Als een script misgaat_). Wat je zelf meebrengt:
+
+- **git** — branches, commits en een pull request. `pnpm ship` doet de controles en de push, niet het branchen.
+- **TypeScript**, en **React** of **Angular** (of allebei). Elke component bestaat in beide lagen en rendert dezelfde
+  DOM; wie één laag kent, kan de andere lezen.
+- **SCSS** met BEM-classes. De stijl zit in `components-css`, niet in de frameworklagen.
+
+Storybook, Style Dictionary (de tokens), Stencil (de Web Components) en changesets hoef je niet vooraf te kennen: ze
+staan uitgelegd waar je ze tegenkomt (_Hoe de repository in elkaar zit_, _Een nieuwe component toevoegen_, _Releasen_).
+
 ## Vereisten
 
 | Tool    | Versie                                      | Hoe                                                         |
@@ -64,16 +77,18 @@ pnpm dev     # beide Storybooks; elke library wordt opnieuw gebouwd zodra je ops
 ```
 
 `pnpm dev` start van elke library de watcher (tokens, React, Angular, Stencil en de React-wrappers), wacht op de eerste
-build en start dan de Storybook(s) op 6006 en 6007, of op de eerstvolgende vrije poort. Draait er al een Storybook op
-die poort, dan gebruikt hij die. Je ziet alleen rebuilds en fouten (met waarom en wat te doen); `v` toont alle output,
-`o` opent de browser, `q` stopt alles. Alleen één Storybook: `pnpm dev:react` of `pnpm dev:angular`. De SCSS van
+build en start dan de Storybook(s) op 6006 en 6007, of op de eerstvolgende vrije poort. Draait er op die poort al een
+Storybook van deze werkkopie, dan gebruikt hij die; een andere (een tweede clone, een ander project) laat hij staan en
+hij neemt de volgende vrije poort. Je ziet alleen rebuilds en fouten (met waarom en wat te doen); `v` toont alle
+output, `s` alleen die van de Storybooks, `o` opent de browser, `q` stopt alles. Alleen één Storybook: `pnpm dev:react`
+of `pnpm dev:angular`. De SCSS van
 `components-css` en de voorbeelden in `storybook-shared` lezen de Storybooks direct uit de bron; die hebben geen
 watcher nodig.
 
 In VS Code: installeer de aanbevolen extensies (de melding bij het openen, of _Extensions → Recommended_). Opslaan
 formatteert dan met Prettier en past de fixes van ESLint, stylelint en markdownlint toe. _Run and Debug_ heeft
-configuraties om de open React-test, Angular-spec of een script te debuggen, en _Terminal → Run Task_ start `pnpm dev`,
-`check`, `parity` en `verify`.
+configuraties om de open React-test, Angular-spec, script of script-test te debuggen, en _Terminal → Run Task_ start
+`pnpm dev`, `check`, `parity`, `verify` en de tests van het huidige package.
 
 ### Handige commando's
 
@@ -82,7 +97,9 @@ configuraties om de open React-test, Angular-spec of een script te debuggen, en 
 | `pnpm setup`      | Van verse clone naar draaiende Storybook; slaat over wat al klopt                                                                     |
 | `pnpm check`      | Omgeving nalopen: Node, pnpm, install, verouderde builds, poorten, git-hooks, achterstand op `main`; `--fix` biedt de oplossingen aan |
 | `pnpm parity`     | Is elke component compleet in elke laag? (`pnpm parity tooltip` voor één, `--tests` per test)                                         |
-| `pnpm dev`        | Beide Storybooks met live rebuild van alle libraries                                                                                  |
+| `pnpm where`      | Waar een component staat, per laag, met zijn Storybook-pagina's (`pnpm where tooltip`; `--list` voor alle)                            |
+| `pnpm dev`        | Beide Storybooks met live rebuild van alle libraries (`pnpm dev tooltip` opent die component)                                         |
+| `pnpm test`       | Alle tests, zoals CI; `pnpm test tooltip` alleen die component, in React, Angular en Web Components, in één tabel                     |
 | `pnpm verify`     | Wat CI op een pull request controleert, plus `parity` en of er een changeset bij hoort                                                |
 | `pnpm ship`       | Verify, toont de commits, pusht na een vraag en geeft de link voor de pull request (`--dry-run`, `--no-verify`)                       |
 | `pnpm logs`       | De nieuwste stap-logs; `--last` toont het einde van de laatst mislukte, `--open` opent de map                                         |
@@ -100,10 +117,11 @@ Sta je in een pakketmap (`packages/x`), typ dan `pnpm -w dev` (enz.): zonder `-w
 Gaat een stap mis, dan zie je niet de hele uitvoer van de tool maar wat ertoe doet: waarom (als de oorzaak bekend is),
 wat je moet doen, de foutregels van de tool zelf en een link naar de volledige log (in de temp-map, onder
 `tilburg-logs-<uid>/`, alleen voor jou leesbaar; de laatste 40 blijven bewaard). Een tool die iets vraagt, krijgt geen
-invoer en stopt meteen in plaats van eindeloos te wachten. Ctrl-C stopt ook alles wat het script gestart heeft. Draait `pnpm dev`, dan vragen `verify`,
-`sync` en `setup` eerst of ze mogen bouwen: twee builds tegelijk in dezelfde `dist/` mislukken. Om dezelfde reden
-draaien `verify`, `sync` en `pack:local` nooit tegelijk: de tweede stopt en zegt welke al bezig is. De scripts hebben zelf
-ook tests (`pnpm run test:scripts`, onderdeel van `pnpm test`).
+invoer en stopt meteen in plaats van eindeloos te wachten. Ctrl-C stopt ook alles wat het script gestart heeft. Draait
+`pnpm dev`, dan vragen `verify`, `sync`, `pack:local` en `setup` (en `check --fix` vóór een fix die bouwt) eerst of ze
+mogen bouwen: twee builds tegelijk in dezelfde `dist/` mislukken. Om dezelfde reden draaien `verify`, `sync` en
+`pack:local` nooit tegelijk, en wachten `dev`, `setup` en `clean:pick` tot zo'n build klaar is: wie stopt, zegt welke al
+bezig is. De scripts hebben zelf ook tests (`pnpm run test:scripts`, onderdeel van `pnpm test`).
 
 ### Als een script misgaat
 
@@ -239,12 +257,13 @@ beide Storybooks volgen.
 
 ## Testen
 
-| Package                  | Commando                                                      | Opmerking                                                         |
-| ------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------- |
-| alles                    | `pnpm test`                                                   |                                                                   |
-| `components-react`       | `pnpm --filter @gemeente-tilburg/components-react test`       | Jest + Testing Library                                            |
-| `components-angular`     | `pnpm --filter @gemeente-tilburg/components-angular test`     | Jest + `jest-preset-angular`; `test-build` checkt de exports      |
-| `web-components-stencil` | `pnpm --filter @gemeente-tilburg/web-components-stencil test` | Stencil-spec-tests, `--runInBand` (zie de README van het package) |
+| Package                  | Commando                                                      | Opmerking                                                                           |
+| ------------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| alles                    | `pnpm test`                                                   | Zoals CI: elk package, dan de tests van de scripts                                  |
+| één component            | `pnpm test <naam>`                                            | React, Angular en Web Components in één tabel, met wat een mislukte test verwachtte |
+| `components-react`       | `pnpm --filter @gemeente-tilburg/components-react test`       | Jest + Testing Library                                                              |
+| `components-angular`     | `pnpm --filter @gemeente-tilburg/components-angular test`     | Jest + `jest-preset-angular`; `test-build` checkt de exports                        |
+| `web-components-stencil` | `pnpm --filter @gemeente-tilburg/web-components-stencil test` | Stencil-spec-tests, `--runInBand` (zie de README van het package)                   |
 
 jsdom kent geen `showModal()` / `close()` op `<dialog>`; de modal-tests zetten daar een kleine polyfill voor neer.
 
@@ -295,8 +314,8 @@ nieuwe `pack:local` haalt een gewone `pnpm install` daar de wijzigingen op. Na e
 pas dan die `file:`-paden aan.
 
 `@gemeente-tilburg/storybook-shared` (de HTML-voorbeelden en documentatie) en de token-bronnen in
-`@gemeente-tilburg/design-tokens` (`figma/tilburg/`, `figma/bat/`, `src/`) worden meegepakt zodat zo'n repo dezelfde stories kan
-tonen en eigen thema's op de Tilburg-tokens kan bouwen.
+`@gemeente-tilburg/design-tokens` (`figma/tilburg/`, `figma/bat/`, `src/`, `high-contrast/`) worden meegepakt zodat
+zo'n repo dezelfde stories kan tonen en eigen thema's op de Tilburg-tokens kan bouwen.
 
 ## Deployen
 
