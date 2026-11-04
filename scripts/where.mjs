@@ -4,9 +4,8 @@
 import { existsSync } from 'node:fs';
 import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { parseArgs } from 'node:util';
 import { STORYBOOKS } from './dev-config.mjs';
-import { c, fail, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
+import { c, exitWith, hyperlink, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
 import {
   isTlb,
   loadComponents,
@@ -20,28 +19,19 @@ import {
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm where');
-let list;
-let positionals;
-try {
-  ({
-    values: { list },
-    positionals,
-  } = parseArgs({ allowPositionals: true, options: { list: { type: 'boolean' } } }));
-} catch (err) {
-  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
-  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm where <component>   or   pnpm where --list' });
-  process.exit(1);
-}
+const {
+  values: { list },
+  positionals,
+} = parseArgsOrExit(
+  { allowPositionals: true, options: { list: { type: 'boolean' } } },
+  'pnpm where <component>   or   pnpm where --list',
+);
 const query = positionals.join(' ').trim();
 /* A name that is given but empty (pnpm where "") is not "list everything", as in pnpm test and pnpm parity. */
-if (positionals.length && !query) {
-  fail({ what: 'The component name is empty', fix: 'pnpm where <component>   or   pnpm where --list' });
-  process.exit(1);
-}
-if (list && query) {
-  fail({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
-  process.exit(1);
-}
+if (positionals.length && !query)
+  exitWith({ what: 'The component name is empty', fix: 'pnpm where <component>   or   pnpm where --list' });
+if (list && query)
+  exitWith({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
 
 /* pathToFileURL: encodes spaces, # and %, and gives file:///C:/… on Windows. */
 const link = (path) => hyperlink(rel(path), pathToFileURL(path).href);
@@ -49,10 +39,7 @@ const link = (path) => hyperlink(rel(path), pathToFileURL(path).href);
 if (list || !query) {
   printBanner('Components');
   const components = loadComponents();
-  if (!components.length) {
-    fail({ what: 'No components found', why: NO_TABLE });
-    process.exit(1);
-  }
+  if (!components.length) exitWith({ what: 'No components found', why: NO_TABLE });
   const width = Math.max(...components.map((component) => component.name.length)) + 2;
   for (const component of components) {
     const layers = Object.values(component.layers)

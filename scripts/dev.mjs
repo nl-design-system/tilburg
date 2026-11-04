@@ -12,7 +12,6 @@ import { spawn } from 'node:child_process';
 import { readFileSync, realpathSync, rmSync, watchFile } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { parseArgs } from 'node:util';
 import { LIBRARIES, ROOT, STORYBOOKS } from './dev-config.mjs';
 import {
   checkInstalled,
@@ -24,22 +23,23 @@ import {
   listenerDir,
 } from './lib/checks.mjs';
 import {
+  appendLog,
   c,
   confirm,
-  fail,
+  exitWith,
   installCrashHandler,
-  appendLog,
-  newLogFile,
-  printToolOutput,
-  track,
   interactive,
   killTree,
+  newLogFile,
   openUrl,
+  parseArgsOrExit,
   printBanner,
+  printToolOutput,
   stepDone,
   stepFail,
   stepStart,
   stripAnsi,
+  track,
 } from './lib/cli-utils.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 import { requireComponent, storyUrl } from './lib/components.mjs';
@@ -51,29 +51,21 @@ import { choosePort, printStorybookLinks, waitForStorybook } from './lib/storybo
 installCrashHandler('pnpm dev');
 
 const USAGE = 'pnpm dev [react|angular|all] [component] [--open] [--verbose]';
-let values;
-let positionals;
-try {
-  ({ values, positionals } = parseArgs({
-    allowPositionals: true,
-    options: { open: { type: 'boolean', short: 'o' }, verbose: { type: 'boolean' } },
-  }));
-} catch (err) {
-  /* Node's own message ends in "place it after '--'", which would make the flag a component name. */
-  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: USAGE });
-  process.exit(1);
-}
+const parsed = parseArgsOrExit(
+  { allowPositionals: true, options: { open: { type: 'boolean', short: 'o' }, verbose: { type: 'boolean' } } },
+  USAGE,
+);
+const { values } = parsed;
+let { positionals } = parsed;
 const NAMES = ['react', 'angular', 'all'];
 /* `pnpm dev React`: a Storybook name in any case, not a component called "React". */
 positionals = positionals.map((word) => (NAMES.includes(word.toLowerCase()) ? word.toLowerCase() : word));
 const targets = positionals.filter((word) => NAMES.includes(word));
-if (targets.length > 1) {
-  fail({
+if (targets.length > 1)
+  exitWith({
     what: `One Storybook at a time, not ${targets.join(' and ')}`,
     fix: 'pnpm dev   (both), pnpm dev react or pnpm dev angular',
   });
-  process.exit(1);
-}
 const target = targets[0] ?? 'all';
 const componentQuery = positionals.filter((word) => !NAMES.includes(word)).join(' ');
 /* `pnpm dev tooltip`: anything that is not a Storybook name is a component, opened in the browser once it runs. */
@@ -116,24 +108,18 @@ printBanner(`Dev · ${storybookKeys.map((key) => STORYBOOKS[key].name).join(' + 
 // ─── 1. Can this work at all? ────────────────────────────────────────────────
 
 /* cmd.exe cannot work in a UNC folder (\\wsl.localhost\…, a network share): every command would run in C:\Windows. */
-if (process.platform === 'win32' && ROOT.startsWith('\\\\')) {
-  fail({
+if (process.platform === 'win32' && ROOT.startsWith('\\\\'))
+  exitWith({
     what: `pnpm dev cannot run from ${ROOT}`,
     why: 'Windows commands do not run in a network (UNC) folder.',
     fix: 'open the repository inside WSL, or map it to a drive letter',
   });
-  process.exit(1);
-}
 const node = checkNode();
-if (!node.ok) {
-  fail({ what: `Node ${process.versions.node} is not the Node this repo uses`, why: node.detail, fix: node.note });
-  process.exit(1);
-}
+if (!node.ok)
+  exitWith({ what: `Node ${process.versions.node} is not the Node this repo uses`, why: node.detail, fix: node.note });
 if (node.warn) console.log(`  ${c.yellow}⚠${c.reset}  Node ${node.detail}: ${node.note}.`);
-if (!checkInstalled().ok) {
-  fail({ what: 'Dependencies are not installed', why: 'node_modules is missing.', fix: 'pnpm install' });
-  process.exit(1);
-}
+if (!checkInstalled().ok)
+  exitWith({ what: 'Dependencies are not installed', why: 'node_modules is missing.', fix: 'pnpm install' });
 
 // ─── 2. One pnpm dev at a time ───────────────────────────────────────────────
 
@@ -177,14 +163,12 @@ if (running) pointAtRunning(running);
 for (let waited = 0; waited < 3000 && orphans.some(({ pid }) => groupAlive(pid)); waited += 100) await sleep(100);
 /* sync, verify and pack:local rebuild the same dist/ folders the watchers write. */
 const syncing = readDevLock(SYNC_LOCK);
-if (syncing) {
-  fail({
+if (syncing)
+  exitWith({
     what: `${syncing.what ?? 'pnpm sync'} is running (process ${syncing.pid})`,
     why: 'it rebuilds the same dist/ folders as the watchers pnpm dev would start, and two builds at once fail with EEXIST.',
     fix: 'wait for it to finish, then pnpm dev again',
   });
-  process.exit(1);
-}
 /* Taken now, not once the ports are known: a second pnpm dev, sync or verify started while the install question waits
    or pnpm install runs must see this one. */
 if (!writeDevLock({ storybooks: [] })) {
@@ -219,8 +203,8 @@ for (const key of storybookKeys) {
     STORYBOOKS[key],
     storybooks.map((storybook) => storybook.port),
   );
-  if (choice.error) {
-    fail({
+  if (choice.error)
+    exitWith({
       what: `No port for the ${STORYBOOKS[key].name}`,
       why: choice.error,
       fix:
@@ -228,8 +212,6 @@ for (const key of storybookKeys) {
           ? `netstat -ano | findstr :${STORYBOOKS[key].port}`
           : `lsof -i :${STORYBOOKS[key].port}`,
     });
-    process.exit(1);
-  }
   if (choice.running) {
     console.log(
       `  ${c.green}✓${c.reset}  ${STORYBOOKS[key].name} is already running on ${choice.port}; using that one.`,

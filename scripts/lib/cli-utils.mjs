@@ -16,7 +16,7 @@ import {
 import { constants, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { inspect } from 'node:util';
+import util, { inspect } from 'node:util';
 
 /**
  * No colours, spinners or banner art in CI or when the output goes to a file. TILBURG_TTY=1 says the output reaches a
@@ -695,6 +695,24 @@ export function fail({ what, why, auto, fix }) {
   console.log('');
 }
 
+/** fail(), then exit 1: a problem the script cannot go on from. */
+export function exitWith(problem) {
+  fail(problem);
+  process.exit(1);
+}
+
+/**
+ * parseArgs (strict), or exit 1 with `usage` as the fix. Node's hint to "place it after '--'" is dropped: there it
+ * would turn a mistyped flag into a component name.
+ */
+export function parseArgsOrExit(config, usage) {
+  try {
+    return util.parseArgs(config);
+  } catch (err) {
+    exitWith({ what: err.message.replace(/\. To specify.*$/s, ''), fix: usage });
+  }
+}
+
 /** An exception in full: name, message, errno code, the `cause` chain and the stack. */
 export function printError(err, { what, why, fix } = {}) {
   if (what) fail({ what, why, fix });
@@ -746,14 +764,12 @@ export const underSudo = (env = process.env, uid = process.getuid?.()) =>
   Boolean(env.SUDO_USER || env.DOAS_USER) && uid === 0;
 
 export function installCrashHandler(script, { signals = true } = {}) {
-  if (underSudo()) {
-    fail({
+  if (underSudo())
+    exitWith({
       what: `${script} is running under sudo`,
       why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER || process.env.DOAS_USER}; the next run without sudo then fails with EACCES.`,
       fix: `${script} without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)`,
     });
-    process.exit(1);
-  }
   const onCrash = (err) => {
     restoreTerminal();
     stopChildren();

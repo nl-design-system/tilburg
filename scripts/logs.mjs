@@ -1,25 +1,15 @@
 /* `pnpm logs`: the newest step logs (the full output of every step the scripts ran, see runStep in lib/cli-utils.mjs).
    `pnpm logs --last` prints the end of the last failing one, `pnpm logs --open` opens the folder. */
-import { parseArgs } from 'node:util';
-import { c, fail, installCrashHandler, LOG_DIR, logLink, openUrl } from './lib/cli-utils.mjs';
+import { c, exitWith, installCrashHandler, LOG_DIR, logLink, openUrl, parseArgsOrExit } from './lib/cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './lib/logs.mjs';
 
 installCrashHandler('pnpm logs');
 const SHOW = 15;
 const TAIL_LINES = 80;
 
-let args;
-try {
-  ({ values: args } = parseArgs({ options: { last: { type: 'boolean' }, open: { type: 'boolean' } } }));
-  if (args.last && args.open) throw new Error('--last and --open do not go together');
-} catch (err) {
-  /* Node's advice to put it after `--` would make it a positional, which pnpm logs does not take either. */
-  fail({
-    what: err.message.replace(/\. To specify.*$/, ''),
-    fix: 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open',
-  });
-  process.exit(1);
-}
+const USAGE = 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open';
+const { values: args } = parseArgsOrExit({ options: { last: { type: 'boolean' }, open: { type: 'boolean' } } }, USAGE);
+if (args.last && args.open) exitWith({ what: '--last and --open do not go together', fix: USAGE });
 
 const kb = (bytes) => (bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`);
 

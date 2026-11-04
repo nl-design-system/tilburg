@@ -6,24 +6,27 @@
    package comes with a changeset (only a warning: not every change needs a release). */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { parseArgs } from 'node:util';
 import { ROOT } from './dev-config.mjs';
 import { checkInstallFresh } from './lib/checks.mjs';
-import { c, capture, fail, installCrashHandler, printBanner, printCheckTable, stepSkip } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning, readDevLock, SYNC_LOCK, writeDevLock } from './lib/lock.mjs';
+import {
+  c,
+  capture,
+  exitWith,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+  stepSkip,
+} from './lib/cli-utils.mjs';
+import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 import { treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm verify');
 /* Strict: `pnpm verify tooltip` or a typo must not start the full CI-length run while you wait for something else. */
-try {
-  if (parseArgs({ options: { help: { type: 'boolean', short: 'h' } } }).values.help) {
-    console.log('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
-    process.exit(0);
-  }
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm verify' });
-  process.exit(1);
+if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm verify').values.help) {
+  console.log('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
+  process.exit(0);
 }
 printBanner('Verify (what CI checks)');
 
@@ -67,27 +70,12 @@ const STEPS = [
 ];
 
 /* One build at a time: pnpm sync and pack:local build and pack the same dist/ folders (this lock is theirs too). */
-const building = readDevLock(SYNC_LOCK);
-if (building) {
-  fail({
-    what: `${building.what ?? 'pnpm sync'} is running (process ${building.pid}, since ${building.started})`,
-    why: 'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
-    fix: 'wait for it to finish, then pnpm verify again',
-  });
-  process.exit(1);
-}
-if (!writeDevLock({ what: 'pnpm verify' }, SYNC_LOCK)) {
-  fail({
-    what: 'Another build took the build lock just now',
-    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
-    fix: 'wait for it to finish, then run this again',
-  });
-  process.exit(1);
-}
-if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) {
-  console.log('  Stopped: stop pnpm dev with q, then run this again.');
-  process.exit(1);
-}
+takeBuildLock('pnpm verify', (building) => ({
+  what: `${building.what ?? 'pnpm sync'} is running (process ${building.pid}, since ${building.started})`,
+  why: 'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
+  fix: 'wait for it to finish, then pnpm verify again',
+}));
+await confirmNoDevRunningOrExit('pnpm verify builds every package and');
 const treeAtStart = await treeState(ROOT);
 
 /* An install that lags the lockfile gives other results than CI's fresh one. */

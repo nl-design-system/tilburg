@@ -10,22 +10,16 @@ import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
-import { fail, installCrashHandler } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning, readDevLock, SYNC_LOCK, writeDevLock } from './lib/lock.mjs';
+import { exitWith, installCrashHandler, parseArgsOrExit } from './lib/cli-utils.mjs';
+import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 
 /* The sudo guard. signals: false, so Ctrl-C still stops the synchronous builds below at once. */
 installCrashHandler('pnpm pack:local', { signals: false });
 
 /* Strict: `--dry-run` or a typo must not start a full build and pack. */
-try {
-  if (parseArgs({ options: { help: { type: 'boolean', short: 'h' } } }).values.help) {
-    console.log('pnpm pack:local: builds every package and packs it into .tarballs/ (no options).');
-    process.exit(0);
-  }
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm pack:local' });
-  process.exit(1);
+if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm pack:local').values.help) {
+  console.log('pnpm pack:local: builds every package and packs it into .tarballs/ (no options).');
+  process.exit(0);
 }
 
 /* Not import.meta.dirname: Node before 20.11 has none. */
@@ -53,27 +47,16 @@ const run = (command, cwd = root) => execSync(command, { cwd, stdio: 'inherit' }
 
 /* One build at a time (sync, verify, pack:local share this lock): a second run would wipe the first one's dist/ and
    tarballs. pnpm sync starts this one itself, holding the lock: TILBURG_SYNC_PID says so. */
-const other = readDevLock(SYNC_LOCK);
-if (other && String(other.pid) !== process.env.TILBURG_SYNC_PID) {
-  fail({
+takeBuildLock(
+  'pnpm pack:local',
+  (other) => ({
     what: `${other.what ?? 'pnpm sync'} is running (process ${other.pid}, since ${other.started})`,
     why: 'it builds the same dist/ folders and tarballs.',
     fix: 'wait for it to finish, then pnpm pack:local again',
-  });
-  process.exit(1);
-}
-if (!other && !writeDevLock({ what: 'pnpm pack:local' }, SYNC_LOCK)) {
-  fail({
-    what: 'Another build took the build lock just now',
-    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
-    fix: 'wait for it to finish, then run this again',
-  });
-  process.exit(1);
-}
-if (!(await confirmNoDevRunning('pack:local builds every package, and'))) {
-  console.log('  Stopped: stop pnpm dev with q, then run this again.');
-  process.exit(1);
-}
+  }),
+  (other) => String(other.pid) === process.env.TILBURG_SYNC_PID,
+);
+await confirmNoDevRunningOrExit('pack:local builds every package, and');
 
 /* The previous set stays in .tarballs/ until this one is complete: a failed build leaves a consumer something to install.
    Under the lock nobody else packs, so any .partial-* left is from a run that was killed. */

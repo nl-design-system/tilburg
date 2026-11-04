@@ -187,12 +187,9 @@ export const rel = (path) => relative(ROOT, path);
  * the name fits several, or the closest names when it fits none.
  */
 export async function requireComponent(query, command) {
-  const { c, fail } = await import('./cli-utils.mjs');
+  const { c, exitWith, fail } = await import('./cli-utils.mjs');
   const components = loadComponents();
-  if (!components.length) {
-    fail({ what: 'No components found', why: NO_TABLE });
-    process.exit(1);
-  }
+  if (!components.length) exitWith({ what: 'No components found', why: NO_TABLE });
   const { component, matches, suggestions } = findComponent(query, components);
   if (component) return component;
   if (matches) {

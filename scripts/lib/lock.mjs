@@ -10,7 +10,7 @@ import { linkSync, lstatSync, readFileSync, renameSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
-import { c, confirm } from './cli-utils.mjs';
+import { c, confirm, exitWith } from './cli-utils.mjs';
 
 /* In the temp folder, not the repo: no stray files to commit. One per working copy and user: on a shared /tmp another
    user's lock (or a root-owned one from an old sudo run) would otherwise block ours. Windows paths ignore case, and
@@ -225,4 +225,27 @@ export async function confirmNoDevRunning(what) {
   );
   const goOn = await confirm('Continue anyway? (or stop pnpm dev with q first)', { default: false, fallback: true });
   return goOn;
+}
+
+/** confirmNoDevRunning(what), or exit 1 when the user would rather stop pnpm dev first. */
+export async function confirmNoDevRunningOrExit(what) {
+  if (await confirmNoDevRunning(what)) return;
+  console.log('  Stopped: stop pnpm dev with q, then run this again.');
+  process.exit(1);
+}
+
+/**
+ * Take the build lock that pnpm sync, verify and pack:local share for `what` ('pnpm verify'), or exit 1. `busy(lock)`
+ * is the problem to show when another build holds it; a lock for which `ours(lock)` is true is left as it is (pack:local
+ * started by pnpm sync, which holds it).
+ */
+export function takeBuildLock(what, busy, ours = () => false) {
+  const other = readDevLock(SYNC_LOCK);
+  if (other && !ours(other)) exitWith(busy(other));
+  if (!other && !writeDevLock({ what }, SYNC_LOCK))
+    exitWith({
+      what: 'Another build took the build lock just now',
+      why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
+      fix: 'wait for it to finish, then run this again',
+    });
 }

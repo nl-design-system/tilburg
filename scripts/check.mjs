@@ -3,7 +3,15 @@
    `pnpm check --fix` then offers each row's fix one by one (Y/n), checks those rows again and prints the table anew.
    Also works as `node scripts/check.mjs`, which is handy when pnpm itself will not start (wrong Node). */
 import util from 'node:util';
-import { c, confirm, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
+import {
+  c,
+  confirm,
+  exitWith,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+} from './lib/cli-utils.mjs';
 import { runAllChecks, safely } from './lib/checks.mjs';
 import { confirmNoDevRunning, readDevLock } from './lib/lock.mjs';
 
@@ -11,21 +19,14 @@ installCrashHandler('pnpm check');
 printBanner('Environment check');
 
 /* parseArgs came in Node 18.3: on an older Node, say what is wrong instead of crashing on it. */
-if (!util.parseArgs) {
-  fail({
+if (!util.parseArgs)
+  exitWith({
     what: `Node ${process.version} is too old to run this check`,
     fix: 'nvm use   (or install the Node in .nvmrc)',
   });
-  process.exit(1);
-}
-let wantsFix;
-try {
-  wantsFix = Boolean(util.parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
-} catch (err) {
-  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
-  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm check   or   pnpm check --fix' });
-  process.exit(1);
-}
+const wantsFix = Boolean(
+  parseArgsOrExit({ options: { fix: { type: 'boolean' } } }, 'pnpm check   or   pnpm check --fix').values.fix,
+);
 const groups = await runAllChecks();
 let { failed, warned, total } = printCheckTable(groups);
 

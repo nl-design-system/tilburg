@@ -11,8 +11,7 @@
    and the other way round: a component with files but no row in the table. Exits 1 on ❌ (the table and the files
    disagree, or a layer misses a file), not on missing tests: the Tests column counts them, `--tests` lists them. */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
-import { c, fail, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
+import { c, exitWith, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
 import { findComponent, loadComponents, NO_TABLE, P, STATUS_FILE } from './lib/components.mjs';
 
 installCrashHandler('pnpm parity');
@@ -34,44 +33,34 @@ const rows = loadComponents().map(({ name, slug, names, layers }) => ({
   ...names,
 }));
 
-let args;
-let positionals;
-try {
-  ({ values: args, positionals } = parseArgs({ allowPositionals: true, options: { tests: { type: 'boolean' } } }));
-} catch (err) {
-  /* Node's hint ("place it after '--'") would pass the flag on as a name. */
-  fail({ what: err.message.replace(/\. To specify.*$/s, ''), fix: 'pnpm parity [component] [--tests]' });
-  process.exit(1);
-}
+const { values: args, positionals } = parseArgsOrExit(
+  { allowPositionals: true, options: { tests: { type: 'boolean' } } },
+  'pnpm parity [component] [--tests]',
+);
 const listTests = Boolean(args.tests);
 /* The same lookup as pnpm where and pnpm test ("PasswordInput", "<tilburg-tooltip>", "heading-1"); a name that fits
    several components (pnpm parity form) checks them all. A name that is given but empty is not "everything". */
 const filter = positionals.join(' ').trim();
-if (positionals.length && !filter) {
-  fail({ what: 'The component name is empty', fix: 'pnpm parity <component>, or pnpm parity for everything' });
-  process.exit(1);
-}
+if (positionals.length && !filter)
+  exitWith({ what: 'The component name is empty', fix: 'pnpm parity <component>, or pnpm parity for everything' });
 const found = filter ? findComponent(filter) : null;
 const wanted = found?.component ? [found.component] : (found?.matches ?? []);
 if (found && !wanted.length) {
   const close = found.suggestions;
-  fail({
+  exitWith({
     what: `No component matches "${filter}"`,
     why: close.length ? `Did you mean ${close.map((component) => component.name).join(', ')}?` : undefined,
     fix: close.length ? `pnpm parity ${close[0].slug}` : 'pnpm where --list shows every component',
   });
-  process.exit(1);
 }
 const selected = filter ? rows.filter((row) => wanted.some((component) => component.slug === row.slug)) : rows;
 /* Nothing selected would report "0 components, every layer is there": parity that was never checked. */
-if (!selected.length) {
-  fail({
+if (!selected.length)
+  exitWith({
     what: filter ? `No component matches "${filter}"` : 'No components found',
     why: filter ? `${STATUS_FILE} has no row for it.` : NO_TABLE,
     fix: 'pnpm where --list shows every component',
   });
-  process.exit(1);
-}
 
 // ─── The facts: the files ────────────────────────────────────────────────────
 

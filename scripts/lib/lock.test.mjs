@@ -6,7 +6,17 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, wr
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { after, test } from 'node:test';
-import { isAlive, LOCK_FILE, processStart, readDevLock, releaseDevLock, updateDevLock, writeDevLock } from './lock.mjs';
+import { ROOT } from '../dev-config.mjs';
+import {
+  isAlive,
+  LOCK_FILE,
+  lockName,
+  processStart,
+  readDevLock,
+  releaseDevLock,
+  updateDevLock,
+  writeDevLock,
+} from './lock.mjs';
 
 const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
 after(() => rmSync(dir, { recursive: true, force: true }));
@@ -186,4 +196,32 @@ test('pnpm dev leaves a lock alone that another pnpm dev wrote over its own', ()
   const result = runWriter(file, { pid: process.pid, started: 'x' });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(readFileSync(file, 'utf8')).pid, process.pid);
+});
+
+test('takeBuildLock: takes a free lock, exits 1 with the busy problem when another build holds it, leaves "ours" alone', () => {
+  const temp = mkdtempSync(resolve(dir, 'build-'));
+  const take = (ours) =>
+    spawnSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '-e',
+        `import { readFileSync } from 'node:fs';
+         import { SYNC_LOCK, takeBuildLock } from ${JSON.stringify(new URL('./lock.mjs', import.meta.url).href)};
+         takeBuildLock('pnpm test', (other) => ({ what: 'busy: ' + other.what }), ${ours ? '() => true' : 'undefined'});
+         console.log('took ' + JSON.parse(readFileSync(SYNC_LOCK, 'utf8')).what);`,
+      ],
+      { env: { ...process.env, TMPDIR: temp, TMP: temp, TEMP: temp }, encoding: 'utf8', timeout: 10_000 },
+    );
+  const free = take();
+  assert.equal(free.status, 0, free.stderr);
+  assert.match(free.stdout, /took pnpm test/);
+
+  writeDevLock({ what: 'pnpm sync' }, resolve(temp, lockName(ROOT, 'sync')));
+  const busy = take();
+  assert.equal(busy.status, 1);
+  assert.match(busy.stdout, /busy: pnpm sync/);
+  const ours = take(true);
+  assert.equal(ours.status, 0, ours.stderr);
+  assert.match(ours.stdout, /took pnpm sync/);
 });

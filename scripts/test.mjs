@@ -6,11 +6,19 @@
    file, so it runs all of them (about 20 s) and only this component's results are shown. */
 import { spawnSync } from 'node:child_process';
 import { constants } from 'node:os';
-import { parseArgs } from 'node:util';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { ROOT } from './dev-config.mjs';
-import { c, fail, installCrashHandler, LOG_DIR, printBanner, printCheckTable, stripAnsi } from './lib/cli-utils.mjs';
+import {
+  c,
+  exitWith,
+  installCrashHandler,
+  LOG_DIR,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+  stripAnsi,
+} from './lib/cli-utils.mjs';
 import { rel, requireComponent } from './lib/components.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
@@ -23,22 +31,13 @@ const inPackage = (dir, path) => relative(resolve(ROOT, dir), path).split(sep).j
 
 installCrashHandler('pnpm test');
 /* Strict: an unknown flag (--help, a typo such as --wach) used to be dropped, which left no name and ran everything. */
-let positionals;
-try {
-  ({ positionals } = parseArgs({ allowPositionals: true, options: {} }));
-} catch (err) {
-  /* Node's advice to put it after `--` would make it a component name. */
-  fail({
-    what: err.message.replace(/\. To specify.*$/, ''),
-    fix: 'pnpm test   (everything, as CI does)   or   pnpm test <component>',
-  });
-  process.exit(1);
-}
+const { positionals } = parseArgsOrExit(
+  { allowPositionals: true, options: {} },
+  'pnpm test   (everything, as CI does)   or   pnpm test <component>',
+);
 const query = positionals.join(' ').trim();
-if (positionals.length && !query) {
-  fail({ what: 'The component name is empty', fix: 'pnpm test <component>, or pnpm test for everything' });
-  process.exit(1);
-}
+if (positionals.length && !query)
+  exitWith({ what: 'The component name is empty', fix: 'pnpm test <component>, or pnpm test for everything' });
 
 // ─── Everything ──────────────────────────────────────────────────────────────
 

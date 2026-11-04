@@ -10,32 +10,34 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, delimiter, dirname, resolve, sep } from 'node:path';
-import { parseArgs } from 'node:util';
 import { CONSUMERS, ROOT } from './dev-config.mjs';
-import { c, capture, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning, readDevLock, SYNC_LOCK, writeDevLock } from './lib/lock.mjs';
+import {
+  c,
+  capture,
+  exitWith,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+} from './lib/cli-utils.mjs';
+import { confirmNoDevRunningOrExit, readDevLock, SYNC_LOCK, takeBuildLock, writeDevLock } from './lib/lock.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 import { inProgress, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm sync');
 printBanner('Sync to consumers');
 
-let wanted;
-try {
-  /* Strict: `--to=hltsamen`, `--to hltsamen` and a typo like `--too` are all read (or refused), never ignored. */
-  wanted = parseArgs({ options: { to: { type: 'string', default: 'all' } } }).values.to.toLowerCase();
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm sync   or   pnpm sync --to bq-tlb-frontend|hltsamen' });
-  process.exit(1);
-}
+/* Strict: `--to=hltsamen`, `--to hltsamen` and a typo like `--too` are all read (or refused), never ignored. */
+const wanted = parseArgsOrExit(
+  { options: { to: { type: 'string', default: 'all' } } },
+  'pnpm sync   or   pnpm sync --to bq-tlb-frontend|hltsamen',
+).values.to.toLowerCase();
 const known = CONSUMERS.map((consumer) => consumer.key);
-if (wanted !== 'all' && !known.includes(wanted)) {
-  fail({
+if (wanted !== 'all' && !known.includes(wanted))
+  exitWith({
     what: `Unknown consumer '${wanted}'`,
     fix: `${known.map((key) => `pnpm sync --to ${key}`).join('   or   ')}   (or leave --to out for all)`,
   });
-  process.exit(1);
-}
 
 const selected = CONSUMERS.filter((consumer) => wanted === 'all' || consumer.key === wanted);
 /* A checkout reached through a symlink: ROOT is the real path, but the consumers may sit next to the link. */
@@ -57,14 +59,12 @@ const present = selected.filter((consumer) => existsSync(consumer.dir));
 for (const consumer of selected.filter((consumer) => !present.includes(consumer))) {
   console.log(`  ${c.gray}–  ${consumer.key}: not found at ${consumer.dir}, skipped.${c.reset}`);
 }
-if (!present.length) {
-  fail({
+if (!present.length)
+  exitWith({
     what: 'No consumer repository found',
     why: `pnpm sync looks for ${selected.map((consumer) => `../${consumer.key}`).join(' and ')} next to this repository.`,
     fix: 'clone it next to tilburg, or copy the tarballs by hand (pnpm run pack:local writes them to .tarballs/)',
   });
-  process.exit(1);
-}
 
 /** Run a step; on failure explain it and stop, since a half-packed set is worse than none. */
 async function step(label, command, options) {
@@ -78,37 +78,28 @@ async function step(label, command, options) {
 
 /** Does the tarball hold what the consumer will import? Catches a package packed without its build output. */
 async function checkTarball(file, mustContain, what) {
-  if (!existsSync(file)) {
-    fail({ what: `${what}: no tarball at ${file}`, fix: 'see the build output above' });
-    process.exit(1);
-  }
+  if (!existsSync(file)) exitWith({ what: `${what}: no tarball at ${file}`, fix: 'see the build output above' });
   /* A version bump packs to another file name, so the old one would pass every check below. 2 s slack: FAT and exFAT
      keep mtimes in 2 s steps. */
-  if (statSync(file).mtimeMs < packStartedAt - 2000) {
-    fail({
+  if (statSync(file).mtimeMs < packStartedAt - 2000)
+    exitWith({
       what: `${what}: the tarball at ${file} is stale`,
       why: 'it was not rewritten by the pack just now.',
       fix: 'see the pack output above, then pnpm sync again',
     });
-    process.exit(1);
-  }
   /* From its own folder: Git Bash's GNU tar reads the C: of a full Windows path as a remote host. */
   const { code, stdout, stderr } = await capture(`tar tzf "${basename(file)}"`, {
     cwd: dirname(file),
     timeoutMs: 30_000,
   });
-  if (code !== 0) {
-    fail({ what: `${what}: cannot read the tarball at ${file}`, why: stderr.trim(), fix: 'pnpm sync again' });
-    process.exit(1);
-  }
-  if (!mustContain.test(stdout)) {
-    fail({
+  if (code !== 0)
+    exitWith({ what: `${what}: cannot read the tarball at ${file}`, why: stderr.trim(), fix: 'pnpm sync again' });
+  if (!mustContain.test(stdout))
+    exitWith({
       what: `${what}: the tarball is missing its build output`,
       why: `${file} has no file matching ${mustContain}. The package was probably packed before (or without) its build.`,
       fix: 'pnpm build, then pnpm sync again',
     });
-    process.exit(1);
-  }
 }
 
 /* Run from a git hook, GIT_DIR and friends point at tilburg and would override `git -C <consumer>`. */
@@ -205,41 +196,24 @@ if (!usable.length) {
   process.exit(1);
 }
 /* Two syncs pack into the same dist/ and .tarballs/ folders: one would install what the other is still writing. */
-const otherSync = readDevLock(SYNC_LOCK);
-if (otherSync) {
-  fail({
-    what: `Another ${otherSync.what ?? 'pnpm sync'} is running (process ${otherSync.pid}, since ${otherSync.started})`,
-    why: 'two builds at once rebuild the same dist/ and tarballs, and a consumer could install one while it is being rewritten.',
-    fix: 'wait for it to finish, then pnpm sync again',
-  });
-  process.exit(1);
-}
-if (!writeDevLock({ what: 'pnpm sync' }, SYNC_LOCK)) {
-  fail({
-    what: 'Another build took the build lock just now',
-    why: 'it started between the check above and this one; two builds at once fail with EEXIST.',
-    fix: 'wait for it to finish, then run this again',
-  });
-  process.exit(1);
-}
+takeBuildLock('pnpm sync', (otherSync) => ({
+  what: `Another ${otherSync.what ?? 'pnpm sync'} is running (process ${otherSync.pid}, since ${otherSync.started})`,
+  why: 'two builds at once rebuild the same dist/ and tarballs, and a consumer could install one while it is being rewritten.',
+  fix: 'wait for it to finish, then pnpm sync again',
+}));
 /* And one per consumer folder: a sync from another checkout (a worktree) would run its install in the same folder. */
 for (const consumer of usable) {
   const hash = createHash('sha1').update(realpath(consumer.dir)).digest('hex').slice(0, 10);
   const lock = SYNC_LOCK.replace(/[0-9a-f]{10}\.json$/, `to-${hash}.json`);
   const other = readDevLock(lock);
-  if (other || !writeDevLock({ what: 'pnpm sync' }, lock)) {
-    fail({
+  if (other || !writeDevLock({ what: 'pnpm sync' }, lock))
+    exitWith({
       what: `Another pnpm sync is syncing ${consumer.key}${other ? ` (process ${other.pid}, since ${other.started})` : ''}`,
       why: 'probably from another checkout of tilburg; two installs at once in one folder break each other.',
       fix: 'wait for it to finish, then pnpm sync again',
     });
-    process.exit(1);
-  }
 }
-if (!(await confirmNoDevRunning('pnpm sync rebuilds the packages it packs, and'))) {
-  console.log('  Stopped: stop pnpm dev with q, then run this again.');
-  process.exit(1);
-}
+await confirmNoDevRunningOrExit('pnpm sync rebuilds the packages it packs, and');
 
 // ─── Pack ────────────────────────────────────────────────────────────────────
 

@@ -5,9 +5,16 @@
    --no-verify skips pnpm verify. --dry-run does everything but the push. --yes answers the questions; without a
    terminal it is the only way to push. */
 import { spawnSync } from 'node:child_process';
-import { parseArgs } from 'node:util';
 import { ROOT } from './dev-config.mjs';
-import { c, confirm, fail, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
+import {
+  c,
+  confirm,
+  exitWith,
+  hyperlink,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+} from './lib/cli-utils.mjs';
 import { classifyFailure } from './lib/recovery.mjs';
 import { inProgress, pullRequestUrl } from './lib/ship.mjs';
 
@@ -27,7 +34,7 @@ function git(...args) {
   /* A fetch that hangs (network) gives up after two minutes instead of blocking ship. */
   const result = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 120_000, env: gitEnv });
   if (result.error?.code === 'ENOENT')
-    stop({ what: 'git not found', fix: 'install git (https://git-scm.com/), then pnpm ship again' });
+    exitWith({ what: 'git not found', fix: 'install git (https://git-scm.com/), then pnpm ship again' });
   /* Ctrl-C reaches git, not our SIGINT handler (spawnSync blocks it): stop here rather than carry on to the push. */
   if (result.signal === 'SIGINT') {
     console.log('\n  Stopped (Ctrl-C).\n');
@@ -36,31 +43,25 @@ function git(...args) {
   return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
 }
 
-function stop(problem) {
-  fail(problem);
-  process.exit(1);
-}
-
-let args;
-try {
-  ({ values: args } = parseArgs({
+const { values: args } = parseArgsOrExit(
+  {
     options: {
       'no-verify': { type: 'boolean' },
       'dry-run': { type: 'boolean' },
       yes: { type: 'boolean', short: 'y' },
     },
-  }));
-} catch (err) {
-  stop({ what: err.message, fix: 'pnpm ship   with any of --dry-run, --no-verify, --yes' });
-}
+  },
+  'pnpm ship   with any of --dry-run, --no-verify, --yes',
+);
 
 printBanner(args['dry-run'] ? 'Ship (dry run)' : 'Ship');
 
 const busy = inProgress(ROOT, git);
-if (busy) stop({ what: `${busy[1]} is in progress`, why: 'pushing now would push the state before it', fix: busy[2] });
+if (busy)
+  exitWith({ what: `${busy[1]} is in progress`, why: 'pushing now would push the state before it', fix: busy[2] });
 
 if (!git('remote', 'get-url', 'origin').ok)
-  stop({
+  exitWith({
     what: 'No remote called origin',
     why: 'ship pushes to origin',
     fix: 'git remote add origin <url> (git remote -v lists the remotes)',
@@ -68,14 +69,14 @@ if (!git('remote', 'get-url', 'origin').ok)
 
 const branch = git('symbolic-ref', '--short', 'HEAD');
 if (!branch.ok)
-  stop({
+  exitWith({
     what: 'Not on a branch',
     why: 'HEAD is detached (or this is not a git repository)',
     fix: 'git switch -c <feature-branch>',
   });
 if (['main', 'master'].includes(branch.out)) {
   const ahead = Number(git('rev-list', '--count', `origin/${branch.out}..HEAD`).out) || 0;
-  stop({
+  exitWith({
     what: `You are on ${branch.out}`,
     why: `work reaches main through a pull request, not a direct push${ahead ? `; ${branch.out} has ${ahead} local commit${ahead === 1 ? '' : 's'}` : ''}`,
     /* The new branch keeps the commits; only then is it safe to put main back where origin has it. */
@@ -87,13 +88,13 @@ if (['main', 'master'].includes(branch.out)) {
 console.log(`  Branch  ${c.cyan}${branch.out}${c.reset}`);
 
 const status = git('status', '--porcelain');
-if (!status.ok) stop({ what: 'Could not read the working tree', why: 'git status failed', fix: 'git status' });
+if (!status.ok) exitWith({ what: 'Could not read the working tree', why: 'git status failed', fix: 'git status' });
 const dirty = status.out;
 if (dirty) {
   console.log(`\n  ${c.yellow}Uncommitted changes (they will not be pushed):${c.reset}`);
   for (const line of dirty.split('\n')) console.log(`     ${line}`);
   if (!args.yes && !(await confirm('Continue anyway?', { default: false })))
-    stop({ what: 'Stopped: uncommitted changes', fix: 'commit or stash them, then pnpm ship again' });
+    exitWith({ what: 'Stopped: uncommitted changes', fix: 'commit or stash them, then pnpm ship again' });
 }
 
 /* Not fatal: offline, compare against what was fetched last. --prune: a branch deleted on origin (merged) must not
@@ -141,13 +142,13 @@ else {
   });
   /* status is null when pnpm did not start or was killed: then there is no table to point at. */
   if (verify.status !== 0)
-    stop({
+    exitWith({
       what: 'Verify failed — not pushing',
       why: verify.error?.message ?? (verify.signal ? `pnpm verify was stopped by ${verify.signal}` : undefined),
       fix: 'fix what the table above says, or pnpm ship --no-verify',
     });
   if (git('symbolic-ref', '--short', 'HEAD').out !== branch.out || git('rev-parse', 'HEAD').out !== head)
-    stop({
+    exitWith({
       what: 'The branch or HEAD changed while verify ran — not pushing',
       why: `verify checked ${head.slice(0, 7)} on ${branch.out}; a checkout, pull or rebase in another terminal moved it`,
       fix: 'pnpm ship again',
@@ -156,7 +157,8 @@ else {
 
 const log = git('log', '--oneline', '--no-decorate', range);
 /* Fails on a branch without commits (or a broken ref): that is not "up to date". */
-if (!log.ok) stop({ what: 'Could not list the commits to push', why: `git log ${range} failed`, fix: 'git status' });
+if (!log.ok)
+  exitWith({ what: 'Could not list the commits to push', why: `git log ${range} failed`, fix: 'git status' });
 const commits = log.out;
 if (!commits) {
   console.log(`\n  ${c.green}Nothing to push.${c.reset} ${branch.out} is up to date with ${base}.\n`);
@@ -174,7 +176,7 @@ console.log('');
 const push = ['push', '-u', 'origin', `HEAD:refs/heads/${branch.out}`];
 if (args['dry-run']) console.log(`  ${c.gray}Dry run — would run: git ${push.join(' ')}${c.reset}`);
 else {
-  if (!args.yes && !process.stdin.isTTY) stop({ what: 'Not pushing: no terminal to ask', fix: 'pnpm ship --yes' });
+  if (!args.yes && !process.stdin.isTTY) exitWith({ what: 'Not pushing: no terminal to ask', fix: 'pnpm ship --yes' });
   if (!args.yes && !(await confirm(`Push to ${target}?`))) {
     console.log('  Not pushed.\n');
     process.exit(0);
@@ -190,7 +192,7 @@ else {
   process.stderr.write(pushed.stderr ?? '');
   if (pushed.status !== 0) {
     const { kind, why, fix } = classifyFailure(pushed.stderr ?? '', pushed.error);
-    stop({ what: 'git push failed', why: kind === 'unknown' ? 'see the message from git above' : why, fix });
+    exitWith({ what: 'git push failed', why: kind === 'unknown' ? 'see the message from git above' : why, fix });
   }
 }
 
