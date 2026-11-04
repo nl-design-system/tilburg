@@ -31,7 +31,7 @@ export function nvmNodes(major, { minimum, nvmDir = NVM_DIR, nvmHome = NVM_HOME 
       return; /* no such folder: this nvm (or this layout of it) is not installed */
     }
     for (const name of names) {
-      /* startsWith, as setup.mjs and recovery.mjs always matched: a v24.0.0-rc.1 folder counts too. */
+      /* startsWith, as setup.mjs and recovery.mjs always did: a v24.0.0-rc.1 folder counts too. */
       if (!name.startsWith(`v${major}.`)) continue;
       found.push({ version: name.slice(1), bin: binOf(resolve(folder, name)) });
     }

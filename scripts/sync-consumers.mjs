@@ -159,8 +159,8 @@ for (const consumer of present) {
     });
     continue;
   }
-  /* npm/pnpm would rewrite the lockfile into the merge (or the old commit of a bisect), and "git restore" below would
-     not be a clean way back. */
+  /* npm/pnpm would rewrite the lockfile into the merge (or a bisect's old commit), and the "git restore" below would
+     be no clean way back. */
   const midway = inProgress(consumer.dir, gitIn(consumer.dir));
   if (midway) {
     rows.push({
@@ -310,7 +310,7 @@ process.on('exit', () => {
 
 /**
  * The consumer's own environment: without what `pnpm run` set for tilburg (the lowercase npm_* and pnpm_* settings,
- * our node_modules/.bin first on PATH), which its npm install would otherwise take as its own. Plus where our
+ * our node_modules/.bin first on PATH), which its npm install would otherwise take as its own; plus where our
  * tarballs are, for a consumer that reads them from the environment.
  */
 function consumerEnv(consumer) {

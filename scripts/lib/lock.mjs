@@ -1,9 +1,9 @@
 /* One `pnpm dev` per working copy, and a warning for anything that rebuilds dist/ underneath it.
 
-   `pnpm dev` writes a small lock file (its pid and the Storybook ports) and removes it on exit. Other scripts read it:
-   a second `pnpm dev` points at the first one instead of starting watchers that write the same dist/ folders twice;
-   `verify`, `sync` and `setup` ask before building while it runs (that is what caused "EEXIST: mkdir dist/…"). A lock
-   whose process is gone (a crash, a closed terminal) is stale: any reader stops the watchers it left and removes it. */
+   pnpm dev writes a small lock (its pid and the Storybook ports) and removes it on exit. A second pnpm dev points at
+   the first instead of starting watchers that write the same dist/ twice; verify, sync and setup ask before building
+   while it runs (the cause of "EEXIST: mkdir dist/…"). A lock whose process is gone (a crash, a closed terminal) is
+   stale: any reader stops the watchers it left behind and removes it. */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { linkSync, lstatSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
@@ -12,15 +12,12 @@ import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
 import { c, confirm, exitWith } from './cli-utils.mjs';
 
-/* In the temp folder, not the repo: no stray files to commit. One per working copy and user: on a shared /tmp another
-   user's lock (or a root-owned one from an old sudo run) would otherwise block ours. Windows paths ignore case, and
-   the drive letter's case depends on how the terminal was opened (c:\ or C:\): the same checkout, one lock. */
+/* In the temp folder (nothing stray to commit), one per working copy and user: on a shared /tmp, another user's lock
+   (or a root-owned one from an old sudo run) must not block ours. Windows paths ignore case, and the drive letter's
+   case depends on how the terminal was opened (c:\ or C:\): same checkout, one lock. */
 const uid = process.getuid ? `${process.getuid()}-` : '';
 
-/**
- * The name (no folder) of the `kind` lock ('dev' or 'sync') of the working copy at `root`. Exported for the tests,
- * which put a lock where a script copied into a temp folder will look for it.
- */
+/** The file name of the `kind` lock ('dev' or 'sync') of the working copy at `root`. Tests use it to plant locks. */
 export function lockName(root, kind = 'dev') {
   const key = process.platform === 'win32' ? root.toLowerCase() : root;
   return `tilburg-${kind}-${uid}${createHash('sha1').update(key).digest('hex').slice(0, 10)}.json`;
@@ -28,7 +25,7 @@ export function lockName(root, kind = 'dev') {
 
 export const LOCK_FILE = resolve(tmpdir(), lockName(ROOT));
 
-/** The build lock pnpm sync, verify and pack:local share (one rebuild of dist/ at a time); the same format as the dev lock. */
+/** The build lock sync, verify and pack:local share (one rebuild of dist/ at a time); same format as the dev lock. */
 export const SYNC_LOCK = resolve(tmpdir(), lockName(ROOT, 'sync'));
 
 /** Is that process still running? `EPERM` means it is, but owned by someone else. */
@@ -42,16 +39,15 @@ export function isAlive(pid) {
 }
 
 /**
- * When that process started, in ms, or null where nobody can tell (Windows). Only comparable with another
- * processStart() on the same machine. A pid can be handed to a new process after the old one died, so a pid alone
- * does not say the lock's process is still the one that wrote it.
+ * When that process started (ms), or null where nobody can tell (Windows); comparable only on the same machine. A pid
+ * alone proves nothing: it can be handed to a new process after the one that wrote the lock died.
  */
 export function processStart(pid) {
   if (process.platform === 'win32') return null;
   if (process.platform === 'linux') {
-    /* Field 22 of /proc/<pid>/stat: clock ticks since boot, plus the boot time from /proc/stat, so a pid from before a
-       reboot never matches. ps derives lstart from the wall clock, which moves with an NTP step or a WSL2 resync, and
-       BusyBox ps has no lstart at all. The name (field 2) may hold spaces and ")". */
+    /* Field 22 of /proc/<pid>/stat (ticks since boot) plus btime from /proc/stat, so a pid from before a reboot never
+       matches. ps's lstart follows the wall clock (NTP steps, WSL2 resyncs), and BusyBox ps has none. The name
+       (field 2) may hold spaces and ")". */
     try {
       const ticks = Number(readFileSync(`/proc/${pid}/stat`, 'utf8').split(') ').pop().split(' ')[19]);
       const boot = Number(readFileSync('/proc/stat', 'utf8').match(/^btime (\d+)/m)?.[1]);
@@ -70,8 +66,8 @@ export function processStart(pid) {
   return Number.isNaN(started) ? null : started;
 }
 
-/* Windows has no start time: a pid there is only still pnpm dev's while it belongs to a node.exe. No tasklist
-   (or it fails) proves nothing, so the lock stays. */
+/* Windows has no start time: a pid is still pnpm dev's only while it belongs to a node.exe. No tasklist, or one that
+   fails, proves nothing: the lock stays. */
 function windowsNode(pid) {
   const result = spawnSync('tasklist', ['/fi', `PID eq ${pid}`, '/fo', 'csv', '/nh'], {
     encoding: 'utf8',
@@ -92,8 +88,8 @@ const sameProcess = (pid, started) => {
 function reapGroups(lock) {
   for (const { pid, started } of Array.isArray(lock?.groups) ? lock.groups : []) {
     if (!Number.isInteger(pid) || pid <= 1 || !Number.isFinite(started)) continue;
-    /* Only while the leader is provably the process pnpm dev started. A group whose leader is gone may by now be
-       someone else's (the lock can be days old, or from before a reboot): leave it rather than stop the wrong thing. */
+    /* Only while the leader is provably the one pnpm dev started: a group whose leader is gone may be someone else's
+       by now (the lock can be days old, or from before a reboot). Better leave it than stop the wrong thing. */
     if (!isAlive(pid) || processStart(pid) === null || !sameProcess(pid, started)) continue;
     try {
       process.kill(-pid, 'SIGTERM');
@@ -113,10 +109,9 @@ function removeLock(file) {
 }
 
 /**
- * The running `pnpm dev` ({ pid, storybooks, started }), or null. A stale lock is removed, after stopping the watchers
- * a pnpm dev that was killed hard left behind: every reader does that, since removing the lock loses the record of
- * them (`reap` is still accepted, and ignored). Our own lock is null without being touched, unless `own` asks for it
- * (code inside pnpm dev that needs to know whether pnpm dev runs).
+ * The running pnpm dev ({ pid, storybooks, started }), or null. A stale lock is removed after stopping the watchers a
+ * hard-killed pnpm dev left behind; every reader does that, as removing the lock loses the record of them (`reap` is
+ * still accepted, and ignored). Our own lock reads as null, untouched, unless `own` asks for it.
  */
 export function readDevLock(file = LOCK_FILE, { own = false } = {}) {
   let lock;
@@ -126,7 +121,7 @@ export function readDevLock(file = LOCK_FILE, { own = false } = {}) {
     if (process.getuid && owner !== process.getuid()) return null;
     lock = JSON.parse(readFileSync(file, 'utf8'));
   } catch {
-    /* unreadable or broken (also a symlink planted in a shared temp folder): remove the link itself, not its target */
+    /* unreadable, broken, or a symlink planted in a shared temp folder: remove the link itself, not its target */
     removeLock(file);
     return null;
   }
@@ -149,8 +144,8 @@ export function readDevLock(file = LOCK_FILE, { own = false } = {}) {
 }
 
 /**
- * Returns false when another process holds the lock (it wrote it between our check and now); true otherwise, also
- * when the lock could not be written for another reason (then the other scripts just cannot warn).
+ * False when another process holds the lock (written between our check and now); true otherwise, also when it could
+ * not be written for another reason (the other scripts then just cannot warn).
  */
 export function writeDevLock(data, file = LOCK_FILE) {
   let written = true;
@@ -160,8 +155,8 @@ export function writeDevLock(data, file = LOCK_FILE) {
     processStarted: processStart(process.pid),
     ...data,
   });
-  /* Written whole to a file of our own, then linked into place: link() fails when the lock exists, so it is as
-     exclusive as 'wx', and no reader ever sees the lock empty halfway through being written (and removes it). */
+  /* Written whole to our own file, then linked into place: link() fails when the lock exists (as exclusive as 'wx'),
+     and no reader ever sees a half-written lock and removes it. */
   const draft = `${file}.${process.pid}.new`;
   try {
     rmSync(draft, { force: true });
@@ -209,8 +204,8 @@ export function updateDevLock(data, file = LOCK_FILE) {
 }
 
 /**
- * Before a script rebuilds dist/: is `pnpm dev` running? Then say so, and ask whether to go on (without a terminal
- * it goes on, with the warning in the log). Returns false when the user would rather stop.
+ * Before a script rebuilds dist/: if pnpm dev runs, say so and ask whether to go on (without a terminal: go on, with
+ * the warning in the log). False when the user would rather stop.
  */
 export async function confirmNoDevRunning(what) {
   const lock = readDevLock();
@@ -235,9 +230,8 @@ export async function confirmNoDevRunningOrExit(what) {
 }
 
 /**
- * Take the build lock that pnpm sync, verify and pack:local share for `what` ('pnpm verify'), or exit 1. `busy(lock)`
- * is the problem to show when another build holds it; a lock for which `ours(lock)` is true is left as it is (pack:local
- * started by pnpm sync, which holds it).
+ * Take the build lock of sync, verify and pack:local for `what` ('pnpm verify'), or exit 1 with `busy(lock)` when
+ * another build holds it. A lock for which `ours(lock)` is true is left alone (pack:local started by the sync holding it).
  */
 export function takeBuildLock(what, busy, ours = () => false) {
   const other = readDevLock(SYNC_LOCK);

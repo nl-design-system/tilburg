@@ -1,4 +1,4 @@
-/* `pnpm logs`: the newest step logs (the full output of every step the scripts ran, see runStep in lib/cli-utils.mjs).
+/* `pnpm logs`: the newest step logs (the full output of every step the scripts ran; runStep in lib/cli-utils.mjs).
    `pnpm logs --last` prints the end of the last failing one, `pnpm logs --open` opens the folder. */
 import { c, exitWith, installCrashHandler, LOG_DIR, logLink, openUrl, parseArgsOrExit } from './lib/cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './lib/logs.mjs';

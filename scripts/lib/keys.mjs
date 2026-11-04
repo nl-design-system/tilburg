@@ -1,9 +1,9 @@
 /* Raw-mode key input for `pnpm menu` and `pnpm run clean:pick`. */
 
 /**
- * The keys in one chunk of raw stdin, one by one: arrows (also application-mode `\x1bOA`), Enter, Ctrl-C and printable
- * characters, and Esc on its own. Any other escape sequence (Home, F2, Alt-q) is dropped whole, so its letters are not read as keys. A
- * chunk of several keys with a newline in it is a paste: only Ctrl-C counts, so a pasted line never runs or deletes.
+ * The keys in one chunk of raw stdin, one by one: arrows (also application-mode `\x1bOA`), Enter, Ctrl-C, printable
+ * characters, and Esc on its own. Any other escape sequence (Home, F2, Alt-q) is dropped whole (not read as
+ * letters). Several keys with a newline are a paste: only Ctrl-C counts, so a pasted line never runs or deletes.
  */
 export function splitKeys(chunk) {
   const keys =

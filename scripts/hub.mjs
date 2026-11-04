@@ -14,7 +14,7 @@ const GAP = 3;
 /* Restores the terminal (raw mode, cursor) on a crash; Ctrl-C is a key here, or the launched command's. */
 installCrashHandler('pnpm menu', { signals: false });
 
-/* Redrawing moves the cursor up by the lines it wrote: a line that wraps would leave the menu drifting down the screen.
+/* Redrawing moves the cursor up by the lines it wrote: a wrapped line would leave the menu drifting down the screen.
    Too narrow for the columns: the list instead. */
 const width = () => process.stdout.columns || 80;
 const tooNarrow = () => width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;

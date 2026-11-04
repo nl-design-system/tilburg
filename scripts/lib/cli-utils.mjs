@@ -20,7 +20,7 @@ import util, { inspect } from 'node:util';
 
 /**
  * No colours, spinners or banner art in CI or when the output goes to a file. TILBURG_TTY=1 says the output reaches a
- * terminal by another way (welcome.mjs writes to /dev/tty, because pnpm folds the output of install hooks away).
+ * terminal another way (welcome.mjs writes to /dev/tty: pnpm folds the output of install hooks away).
  */
 export const interactive =
   (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI && process.env.TERM !== 'dumb';
@@ -55,7 +55,7 @@ export function hyperlink(text, url) {
   return links ? `\x1b]8;;${url}\x07${text}\x1b]8;;\x07` : text;
 }
 
-/** Remove colour codes, cursor control, charset switches and OSC sequences (hyperlinks, titles), to measure or store the visible text. */
+/** Strip colour, cursor, charset and OSC (hyperlink, title) sequences, to measure or store the visible text. */
 export function stripAnsi(text) {
   return String(text).replace(/\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[()][0-9A-B]/g, '');
 }
@@ -115,7 +115,7 @@ function fg([r, g, b], depth) {
   return `\x1b[38;5;${16 + 36 * level(r) + 6 * level(g) + level(b)}m`;
 }
 
-/** Mix two sRGB colours in linear light: a straight mix in sRGB (or a walk round the hue circle) goes muddy or garish. */
+/** Mix two sRGB colours in linear light: a straight sRGB mix (or a walk round the hue circle) goes muddy or garish. */
 function mix(from, to, t) {
   const linear = (value) => (value / 255 <= 0.04045 ? value / 255 / 12.92 : ((value / 255 + 0.055) / 1.055) ** 2.4);
   const srgb = (value) => Math.round(255 * (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055));
@@ -140,8 +140,8 @@ function saturate([r, g, b], minimum) {
 }
 
 /**
- * The banner in Tilburg blue running into Tilburg pink, column by column: the █ blocks are the letters, the ╔═╗ lines
- * become their drop shadow (the same colour, darker). Same size as the plain version.
+ * The banner in Tilburg blue running into pink, column by column: the █ blocks are the letters, the ╔═╗ lines their
+ * drop shadow (same colour, darker). Same size as the plain version.
  */
 function colourBanner(depth) {
   return bannerLines.map(
@@ -227,8 +227,7 @@ export function stepSkip(label, why) {
 
 // ─── Child processes: tracked, logged, stoppable ─────────────────────────────
 
-/* Every long-running child goes in here, so a crash, Ctrl-C or a plain exit stops them all instead of leaving a
-   watcher or a Storybook running in the background. */
+/* Every long-running child: a crash, Ctrl-C or a plain exit stops them all, so no watcher or Storybook lingers. */
 const children = new Set();
 
 /** Register a child (spawned with `detached`, so it leads its own process group) to be stopped when we exit. */
@@ -265,12 +264,11 @@ export function killTree(child, signal = 'SIGTERM') {
   }
 }
 
-/* `pnpm check | head` closes the pipe early; writing to it then throws EPIPE. That is the reader's choice, not a crash. */
-/* 141 (128 + SIGPIPE) is what a shell reports for that, so `set -o pipefail` still sees it; an exit code already set
-   (a failure before the pipe closed) wins. */
+/* `pnpm check | head` closes the pipe early; writing to it then throws EPIPE: the reader's choice, not a crash. Exit
+   with the code already set (a failure before the pipe closed), else 0: `pnpm commands | head` is not an error, and
+   pnpm would report one for the shell's 141 (128 + SIGPIPE). */
 for (const stream of [process.stdout, process.stderr]) {
   stream.on('error', (err) => {
-    /* 0 unless something failed before: `pnpm commands | head` is not an error, and pnpm would say it was. */
     if (err.code === 'EPIPE') process.exit(process.exitCode ?? 0);
     throw err;
   });
@@ -278,7 +276,7 @@ for (const stream of [process.stdout, process.stderr]) {
 
 // ─── Logs: the full output of every step, kept on disk ───────────────────────
 
-/* One per user: on a temp folder shared between users (Linux /tmp), someone else's folder would leave us without logs. */
+/* One per user: on a temp folder users share (Linux /tmp), someone else's folder would leave us without logs. */
 export const LOG_DIR = resolve(tmpdir(), process.getuid ? `tilburg-logs-${process.getuid()}` : 'tilburg-logs');
 const KEEP_LOGS = 40;
 const MAX_LOG_BYTES = 20 * 1024 * 1024;
@@ -331,8 +329,8 @@ export function newLogFile(label) {
 }
 
 /**
- * Append to a log without ever throwing: losing a log line is better than losing the step. Past 20 MB (a watcher that
- * loops for days) only one "truncated" line and the closing "# exit" line are still written.
+ * Append to a log without ever throwing: a lost log line beats a lost step. Past 20 MB (a watcher that loops for
+ * days) only one "truncated" line and the closing "# exit" line are still written.
  */
 export function appendLog(path, text) {
   if (!path) return;
@@ -356,8 +354,8 @@ export const logLink = (path) => (path ? hyperlink(path, pathToFileURL(path).hre
 
 // ─── What did the tool say? ──────────────────────────────────────────────────
 
-/* Lines that carry the actual complaint, from pnpm, npm, node, tsc, ng, vite, jest, eslint, stylelint and markdownlint.
-   "0 errors" and the like are left out. */
+/* The complaint lines of pnpm, npm, node, tsc, ng, vite, jest, eslint, stylelint and markdownlint; "0 errors" and the
+   like are left out. */
 const ERROR_LINE =
   /\b(error|ERR!|failed|failure|cannot|can't|unable to|not found|missing|denied|refused|invalid|unexpected|exception)\b|✖|✗|×|●|\bFAIL\b/i;
 /* Case-sensitive on purpose: errno and tool codes (ENOENT, ERR_PNPM_…, TS2304, NG8002, MD041). Case-insensitive,
@@ -440,7 +438,7 @@ export function printToolOutput({ output = '', log } = {}) {
 
 /** How much of a failed command's output is kept for classifyFailure(). */
 const OUTPUT_TAIL_BYTES = 256 * 1024;
-/** No output for this long: say that it is still busy, rather than look stuck. */
+/** No output for this long: say it is still busy rather than look stuck. */
 const QUIET_NOTICE_MS = 2 * 60_000;
 
 /**
@@ -608,8 +606,8 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
 
 /**
  * What a key (one 'data' chunk in raw mode) answers: Enter takes the default, y and n answer, Esc and Ctrl-D answer
- * no. null for anything else (Tab, Backspace, an arrow or F-key sequence, another letter): ignored, keep waiting. A
- * paste counts by its first character.
+ * no; null for anything else (Tab, Backspace, an arrow or F-key sequence, another letter): keep waiting. A paste
+ * counts by its first character.
  */
 export function confirmAnswer(chunk, dflt) {
   if (chunk[0] === '\r' || chunk[0] === '\n') return dflt;
@@ -617,7 +615,7 @@ export function confirmAnswer(chunk, dflt) {
   return /^y/i.test(chunk) ? true : null;
 }
 
-/** One-key [Y/n] question (see confirmAnswer). Without a terminal it answers `fallback` instead of waiting for nobody. */
+/** One-key [Y/n] question (see confirmAnswer). Without a terminal it answers `fallback` rather than wait for nobody. */
 export function confirm(question, { default: dflt = true, fallback = false } = {}) {
   return new Promise((resolve) => {
     /* stdout too: with the output redirected (`pnpm verify > out.txt`) nobody sees the question it waits for. */
@@ -757,18 +755,17 @@ function restoreTerminal() {
 }
 
 /**
- * The safety net for every script: anything nobody caught is printed in full (with where to go next), and Ctrl-C or
- * a kill stops every child process before exiting, so nothing keeps running in the background. A script with its own
- * shutdown (pnpm dev) passes `signals: false`.
- */
-/**
- * Running as root through sudo: node_modules, dist/ and the logs would then belong to root, and every later run without
- * sudo fails with EACCES. SUDO_USER alone is not enough: `sudo -iu dev` sets it too, and then the files belong to the
- * right user.
+ * Run as root via sudo: node_modules, dist/ and the logs would belong to root, and every later run without sudo fails
+ * with EACCES. SUDO_USER alone is not enough: `sudo -iu dev` sets it too, yet the files belong to the right user.
  */
 export const underSudo = (env = process.env, uid = process.getuid?.()) =>
   Boolean(env.SUDO_USER || env.DOAS_USER) && uid === 0;
 
+/**
+ * The safety net for every script: anything nobody caught is printed in full (with where to go next), and Ctrl-C or
+ * a kill stops every child process before exiting, so nothing keeps running in the background. A script with its own
+ * shutdown (pnpm dev) passes `signals: false`.
+ */
 export function installCrashHandler(script, { signals = true } = {}) {
   if (underSudo())
     exitWith({

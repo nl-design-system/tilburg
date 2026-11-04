@@ -1,5 +1,5 @@
 /* Tilburgse en Brabantse uitdrukkingen voor onder de titel van `pnpm start` (het menu): elke keer een andere.
-   Elk heeft een vertaling, soms met een knipoog naar het werk; de uitdrukking zelf staat er zoals Tilburgers hem zeggen.
+   Elk heeft een vertaling, soms met een knipoog naar het werk; de uitdrukking staat er zoals Tilburgers hem zeggen.
    Er een toevoegen mag gewoon: [uitdrukking, betekenis]. */
 export const SAYINGS = [
   ['Houdoe!', 'tot ziens (letterlijk: houd u goed) — en tot de volgende build'],

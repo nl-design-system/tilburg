@@ -90,8 +90,7 @@ if (!Number.isInteger(NODE_MAJOR))
 
 const major = Number(process.versions.node.split('.')[0]);
 if (major !== NODE_MAJOR) {
-  /* Already restarted under nvm's Node and still the wrong one (its folder holds another Node): restarting again
-     would never end. */
+  /* Already restarted under nvm's Node and still wrong (its folder holds another Node): another restart would loop. */
   if (process.env.TILBURG_SETUP_FROM_NODE)
     exitWith({
       what: `The Node that nvm keeps as ${NODE_MAJOR} is ${process.versions.node} (${process.execPath})`,

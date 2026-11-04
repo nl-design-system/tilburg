@@ -158,8 +158,7 @@ export const LIBRARIES = [
 
 /**
  * Sibling repositories that install our tarballs, for `pnpm sync` only (not everyone has them, so `pnpm check` does
- * not list them). Each keeps its own sync logic (lockfile hashes, cache wipes); we
- * only pack and then call it.
+ * not list them). Each keeps its own sync logic (lockfile hashes, cache wipes); we only pack and then call it.
  */
 export const CONSUMERS = [
   {

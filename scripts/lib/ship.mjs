@@ -6,8 +6,8 @@ import { resolve } from 'node:path';
 
 /**
  * The GitHub "open a pull request" page for `branch` against `base`, from the remote URL in any of its forms
- * (git@github.com:owner/repo.git, ssh://git@github.com/…, https://user@github.com/…). null for anything that is not
- * a GitHub URL (a local path, GitLab, Bitbucket).
+ * (git@github.com:owner/repo.git, ssh://git@github.com/…, https://user@github.com/…); null for a non-GitHub URL (a
+ * local path, GitLab, Bitbucket).
  */
 export function pullRequestUrl(remote, branch, base = 'main') {
   /* A port only in ssh://: in git@host:1234/repo.git the 1234 is the owner. */

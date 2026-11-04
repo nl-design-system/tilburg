@@ -97,8 +97,8 @@ if (dirty) {
     exitWith({ what: 'Stopped: uncommitted changes', fix: 'commit or stash them, then pnpm ship again' });
 }
 
-/* Not fatal: offline, compare against what was fetched last. --prune: a branch deleted on origin (merged) must not
-   still count as our upstream. */
+/* Not fatal: offline, compare with the last fetch. --prune: a branch deleted on origin (merged) must not still count
+   as our upstream. */
 if (!git('fetch', '--quiet', '--prune', 'origin').ok)
   console.log(`  ${c.gray}Could not fetch origin; comparing against the last fetch.${c.reset}`);
 

@@ -24,9 +24,8 @@ import { rel, requireComponent } from './lib/components.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
 
 /**
- * `path` relative to the package in `dir`, with forward slashes: Jest reads it as a pattern (a regex), in which the
- * backslashes of a Windows path would be escapes (\c, \s, \B) and match nothing. Jest itself matches / against
- * either separator.
+ * `path` relative to the package in `dir`, with forward slashes: Jest reads it as a regex pattern, in which a Windows
+ * path's backslashes would be escapes (\c, \s, \B) and match nothing; Jest itself matches / against either separator.
  */
 const inPackage = (dir, path) => relative(resolve(ROOT, dir), path).split(sep).join('/');
 

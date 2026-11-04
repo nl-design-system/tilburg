@@ -350,9 +350,9 @@ function stopAll(exitCode = 0) {
 for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.removeAllListeners(signal);
 process.on('SIGINT', () => stopAll(0));
 process.on('SIGTERM', () => stopAll(143));
-/* The terminal window was closed (SIGHUP, and every write fails with EIO): stop too, or the watchers keep running
-   without anyone to see them. The usual EPIPE exit, or a crash on EIO, ended this process before the SIGKILL in
-   stopAll, leaving a watcher that ignores SIGTERM behind: write nowhere instead, and stop the normal way. */
+/* The terminal window was closed (SIGHUP, and every write fails with EIO): stop too, or the watchers keep running with
+   nobody to see them. The usual EPIPE exit, or a crash on EIO, ended this process before stopAll's SIGKILL and left a
+   watcher that ignores SIGTERM behind: write nowhere instead, and stop the normal way. */
 function hangUp() {
   for (const stream of [process.stdout, process.stderr]) stream.write = () => true;
   /* 128 + SIGHUP, as a shell reports a hang-up; also when only the writes failed: the terminal is gone either way. */
@@ -539,9 +539,9 @@ const ready = toStart.map((storybook, index) =>
           return exited || stopping || performance.now() - lastOutput > STORYBOOK_SILENT_MS;
         })
           .then(async (up) => {
-            /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. */
-            /* A folder that cannot be told (no lsof; on Windows no node_modules in its command line) is ours here: we
-               just started it on this port. */
+            /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. A folder that
+               cannot be told (no lsof; on Windows no node_modules in its command line) is ours here: we just started it
+               on this port. */
             const found = up
               ? await identifyStorybook(storybook, storybook.port, (port) => listenerDir(port) ?? realpathSync(ROOT))
               : null;

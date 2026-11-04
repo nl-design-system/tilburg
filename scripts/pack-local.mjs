@@ -1,11 +1,11 @@
-/* Builds the Tilburg packages and packs them as tarballs into `.tarballs/`, so another local repository (for
-   example HLTsamen) can install them with `file:../tilburg/.tarballs/<name>.tgz` before anything is published.
+/* Builds the Tilburg packages and packs them as tarballs into `.tarballs/`, so another local repository (for example
+   HLTsamen) can install them with `file:../tilburg/.tarballs/<name>.tgz` before anything is published.
 
-   Uses `pnpm pack` (not `npm pack`) so `workspace:*` dependencies become real versions. Every package is packed
-   from its root, exactly as CI publishes it, so import paths such as
-   `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css` stay the same as after an npm release. The Angular
-   package must not be packed from its ng-packagr output (`dist/`): the package.json copied there keeps
-   `"files": ["dist/"]`, which matches nothing inside dist/, so the tarball would hold no bundle at all. */
+   Uses `pnpm pack` (not `npm pack`) so `workspace:*` dependencies become real versions. Every package is packed from
+   its root, exactly as CI publishes it, so import paths like `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`
+   stay the same as after an npm release. The Angular package must not be packed from its ng-packagr output (`dist/`):
+   the package.json copied there keeps `"files": ["dist/"]`, which matches nothing inside dist/, so the tarball would
+   hold no bundle at all. */
 import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -43,8 +43,8 @@ const packages = [
 
 const run = (command, cwd = ROOT) => execSync(command, { cwd, stdio: 'inherit' });
 
-/* One build at a time (sync, verify, pack:local share this lock): a second run would wipe the first one's dist/ and
-   tarballs. pnpm sync starts this one itself, holding the lock: TILBURG_SYNC_PID says so. */
+/* One build at a time (sync, verify, pack:local share this lock): a second run would wipe the first's dist/ and
+   tarballs. pnpm sync starts this one itself while holding the lock: TILBURG_SYNC_PID says so. */
 takeBuildLock(
   'pnpm pack:local',
   (other) => ({
@@ -57,7 +57,7 @@ takeBuildLock(
 await confirmNoDevRunningOrExit('pack:local builds every package, and');
 
 /* The previous set stays in .tarballs/ until this one is complete: a failed build leaves a consumer something to install.
-   Under the lock nobody else packs, so any .partial-* left is from a run that was killed. */
+   Under the lock nobody else packs, so any .partial-* left is from a killed run. */
 mkdirSync(out, { recursive: true });
 for (const file of readdirSync(out))
   if (file.startsWith('.partial')) rmSync(resolve(out, file), { recursive: true, force: true });

@@ -44,8 +44,8 @@ export async function safely(label, fn, ...args) {
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
 /**
- * The minimum that an engines range ("^22.22.3 || ^24.15.0 || >=26.0.0") sets for `version`'s major, as "24.15.0",
- * when `version` is below it; else null. A prerelease (24.15.0-nightly…) is below its release.
+ * The minimum an engines range ("^22.22.3 || ^24.15.0 || >=26.0.0") sets for `version`'s major, as "24.15.0", when
+ * `version` is below it; else null. A prerelease (24.15.0-nightly…) is below its release.
  */
 export function belowEngines(version, range) {
   const [major, minor, patch] = version.replace(/^v/, '').split(/[.+-]/).map(Number);
@@ -186,8 +186,8 @@ function findCorepack() {
 }
 
 /**
- * corepack older than 0.31 cannot verify (or, on Node 24, even start) the pnpm 11 it has to fetch. It is usually a
- * leftover from another install (an old Node in /usr/local, Homebrew) that comes before nvm's on the PATH.
+ * corepack before 0.31 cannot verify (or, on Node 24, even start) the pnpm 11 it has to fetch: usually a leftover of
+ * another install (an old Node in /usr/local, Homebrew) that comes before nvm's on the PATH.
  */
 export function checkCorepack(found = findCorepack(), nodeBin = dirname(process.execPath)) {
   if (!found) return { ok: true, detail: 'not on your PATH', note: `only needed for ${cmd('corepack enable')}` };
@@ -215,8 +215,8 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
   }
   const { code, stdout, stderr, timedOut } = await capture('pnpm --version', { timeoutMs: 60_000, cwd: ROOT });
   const version = stdout.trim();
-  /* pnpm 11 runs on whatever `node` is first on the PATH, which can be another than the one running this check
-     (an nvm default of 20, say). Then it cannot start at all: say so instead of "not found". */
+  /* pnpm 11 runs on whatever `node` is first on the PATH, which may not be the one running this check (an nvm
+     default of 20, say); then it cannot start at all: say so instead of "not found". */
   if (/requires at least Node|node:sqlite|ERR_UNKNOWN_BUILTIN_MODULE/.test(stderr)) {
     const pathNode = stderr.match(/current version of Node\.js is (v\d+(?:\.\d+)*)/)?.[1] ?? 'an older Node';
     return {
@@ -229,7 +229,7 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
       fix: NVM_FIX,
     };
   }
-  /* It is there but does not start (corepack cannot fetch or verify it, say): "not found" would send you the wrong way. */
+  /* There but not starting (corepack cannot fetch or verify it, say): "not found" would send you the wrong way. */
   /* Not found: 127 or "not found" from sh. On Windows also 9009 and "is not recognized" from cmd.exe, and
      "CommandNotFound" from the pnpm.exe shim of nvm-windows 2.x while the Node it runs has no pnpm. */
   const notFound =
@@ -297,8 +297,8 @@ export async function checkGitPush() {
 }
 
 /**
- * Commits the branch is behind its upstream and origin/main, from the refs already here: no fetch, so it stays fast and
- * offline. Skipped outside a git checkout or when there is nothing to compare with.
+ * Commits the branch is behind its upstream and origin/main, from the refs already here (no fetch: fast and offline).
+ * Skipped outside a git checkout or with nothing to compare with.
  */
 export async function checkBranchBehind() {
   const note = 'as of the last fetch';
@@ -341,9 +341,8 @@ export function checkInstalled() {
 }
 
 /**
- * A branch switch or a pull that changed the dependencies, without an install since. pnpm keeps a copy of the
- * lockfile it installed (node_modules/.pnpm/lock.yaml); compared by content, because pnpm also rewrites an unchanged
- * pnpm-lock.yaml.
+ * A branch switch or pull that changed the dependencies without an install since. pnpm keeps a copy of the lockfile
+ * it installed (node_modules/.pnpm/lock.yaml); compared by content, as pnpm also rewrites an unchanged pnpm-lock.yaml.
  */
 export function checkInstallFresh() {
   const installedLock = resolve(ROOT, 'node_modules/.pnpm/lock.yaml');
@@ -575,8 +574,8 @@ function tryBind(port, host) {
 }
 
 /**
- * null when the port is free, else the error code. Tries the loopbacks and the wildcard addresses: a server on
- * 0.0.0.0 (http-server, Storybook) does not stop a bind to 127.0.0.1 on macOS, so testing only the loopbacks misses it.
+ * null when the port is free, else the error code. Tries the loopbacks and the wildcards: on macOS a server on 0.0.0.0
+ * (http-server, Storybook) does not stop a bind to 127.0.0.1, so the loopbacks alone would miss it.
  */
 export async function portStatus(port) {
   for (const host of ['127.0.0.1', '::1', '0.0.0.0', '::']) {
@@ -597,8 +596,8 @@ export async function findFreePort(from, span = 20, skip = []) {
 /**
  * A Storybook gives itself away by its index.json: its `entries`, or null when the port serves no Storybook. node:http,
  * not fetch: Node 24's fetch (undici) sets the socket's type of service, which macOS refuses (EINVAL) on a connection
- * the server just closed, and that error escapes as an uncaught exception no try/catch around fetch can stop (seen
- * with a Storybook that was killed mid-check).
+ * the server just closed (a Storybook killed mid-check), and that error escapes as an uncaught exception no try/catch
+ * around fetch can stop.
  */
 export async function storybookEntries(port) {
   /* Both loopbacks, not `localhost`: /etc/hosts may map that to only one, and the Storybook may listen on the other. */
@@ -631,9 +630,9 @@ export async function isStorybookOn(port) {
 }
 
 /**
- * The folder a program was started from, read from its (Windows) command line: what comes before `\node_modules\` in
- * it (pnpm's shims run node with node_modules/.bin/../<tool>/… under the package). From the last drive letter before
- * it, so the path of node.exe in front (with spaces, quoted or not) is not taken along. Null when there is none.
+ * The folder a program was started from, read from its (Windows) command line: what comes before `\node_modules\`
+ * (pnpm's shims run node with node_modules/.bin/../<tool>/… under the package), from the last drive letter before it,
+ * so the path of node.exe in front (with spaces, quoted or not) is not taken along. Null when there is none.
  */
 export function folderFromCommandLine(commandLine) {
   const end = commandLine.search(/[\\/]node_modules[\\/]/);

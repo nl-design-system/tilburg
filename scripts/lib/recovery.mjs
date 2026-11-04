@@ -359,7 +359,7 @@ export const FAILURES = [
   {
     kind: 'missing-file',
     /* A path, not a package name (relative, or absolute: also `node <script>` started from the wrong folder): a typo, a
-       deleted file, or the wrong folder. pnpm install does not fix any of those. */
+       deleted file or the wrong folder, none of which pnpm install fixes. */
     test: /Could not resolve "\.{1,2}\/|Cannot find module '(\/|\.{1,2}\/|[A-Za-z]:\\)|Failed to resolve import "\.{1,2}\/|Can't resolve '\.{1,2}\//,
     why: 'An import or a script path points at a file that does not exist: a typo, a file that was moved or deleted, or a command started from the wrong folder.',
     fix: 'the message names the missing path; fix it there, or run the command from the repository root',
@@ -392,7 +392,7 @@ const PNPM_PREFIX = /^(?:[\w@.-]+\/)+[\w@.-]+ [\w:-]+: /gm;
    node-version: ERR_UNKNOWN_BUILTIN_MODULE" must not decide the kind. */
 const PASSED_LINE = /^\s*(?:✔|✓|ok \d+ ).*$/gm;
 
-/** The manual fix of a FAILURES entry: its Windows wording (PowerShell, no &&) on Windows, else the one in the table. */
+/** A FAILURES entry's manual fix: its Windows wording (PowerShell, no &&) on Windows, else the one in the table. */
 const fixOf = (entry) => (process.platform === 'win32' && entry.fixWindows) || entry.fix;
 
 /** Diagnose a failed step from its output and the error runStep() rejected with. */
@@ -460,9 +460,8 @@ export function classifyFailure(output = '', err = null) {
 }
 
 /**
- * Why a fix that installs or builds in this repository must not run now: the step ran in another repository (a
- * consumer: its own install is npm's, in its own folder), or pnpm dev's watchers would see node_modules or dist/
- * change under them. null when it may run.
+ * Why an install or build fix must not run now, or null: the step ran in another repository (a consumer: its own
+ * install is npm's, in its own folder), or pnpm dev's watchers would see node_modules or dist/ change under them.
  */
 function installSkip(cwd) {
   const dir = resolve(cwd ?? ROOT);
@@ -520,8 +519,7 @@ export function enginesMinimum() {
 }
 /**
  * The newest Node of the .nvmrc major that nvm has installed, as { version (without "v"), bin }, or null. nvm-windows
- * through nvm.mjs; nvm-sh read here as it always was (readdir order, sorted with `older`), so the pick among odd
- * folder names such as v24.0.0-rc.1 stays the same.
+ * through nvm.mjs; nvm-sh here (readdir order, `older`): the pick among odd names like v24.0.0-rc.1 stays the same.
  */
 const newestInstalledNode = () => {
   if (NVM_HOME) return nvmNodes(NODE_MAJOR)[0] ?? null;
@@ -594,8 +592,8 @@ export const RECOVERIES = {
       /* Only the quoted path: the words around it are translated in a git that speaks another language. */
       const lock = stripAnsi(err.output ?? '').match(/'([^']+index\.lock)'/)?.[1];
       /* <repo>/.git/index.lock, or one under the shared git dir (a worktree's .git/worktrees/x/, a submodule's
-         .git/modules/x/). Resolved first: the path comes from tool output, and `…/.git/../../x/index.lock` contains /.git/. */
-      /* git prints it relative to where the step ran. */
+         .git/modules/x/), relative to where the step ran. Resolved first: the path comes from tool output, and
+         `…/.git/../../x/index.lock` contains /.git/. */
       const path = lock && resolve(err.cwd ?? ROOT, lock);
       const common = spawnSync('git', ['rev-parse', '--git-common-dir'], { cwd: ROOT, encoding: 'utf8' });
       const commonDir = common.status === 0 && resolve(ROOT, common.stdout.trim());
@@ -718,7 +716,7 @@ export const RECOVERIES = {
 export async function runStepWithRecovery(
   label,
   command,
-  /* recoveries: only tests pass their own, so that a fix that asks first can be answered without changing the machine. */
+  /* recoveries: only tests pass their own, so a fix that asks first can be answered without changing the machine. */
   { env = process.env, cwd, maxAttempts = 2, recoveries = RECOVERIES } = {},
 ) {
   const tried = new Map();

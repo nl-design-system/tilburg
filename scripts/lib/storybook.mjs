@@ -29,9 +29,8 @@ export function localIp(interfaces = networkInterfaces()) {
 
 /**
  * Where should this Storybook run? `{ port, running }`: `running` when this Storybook, from this working copy, already
- * serves on its usual port (then nothing has to start), otherwise the usual port or the next free one, with `taken`
- * saying what holds the usual port. `reserved` are ports promised to the other Storybook in this run. `{ error }` when
- * nothing is free.
+ * serves on its usual port (nothing to start); else the usual port or the next free one, with `taken` naming what holds
+ * the usual one. `reserved`: ports promised to the other Storybook in this run. `{ error }` when nothing is free.
  */
 export async function choosePort(storybook, reserved = []) {
   const status = await portStatus(storybook.port);

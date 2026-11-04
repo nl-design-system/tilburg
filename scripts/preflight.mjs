@@ -3,8 +3,8 @@
    start at all (ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite) — and then this script never gets to run either; CONTRIBUTING
    explains that one. Node built-ins only: node_modules does not exist yet. Silent in CI unless something is wrong.
 
-   Only a wrong Node (or a Windows network path, where no step can run) stops the install. If this check itself breaks (a bad .nvmrc, a bug here), it says so and lets
-   the install carry on: a guard must never be the thing that blocks you. */
+   Only a wrong Node (or a Windows network path, where no step can run) stops the install. If this check itself
+   breaks (a bad .nvmrc, a bug here), it says so and the install carries on: a guard must never be what blocks you. */
 import { readFileSync } from 'node:fs';
 
 let verdict = 'ok';

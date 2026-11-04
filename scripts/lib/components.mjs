@@ -149,8 +149,8 @@ function distance(a, b) {
 
 /**
  * Find a component by any of its names: "tooltip", "Tooltip", "password input", "PasswordInput", "tilburg-wbc-tooltip",
- * "<tilburg-tooltip>", "fieldset". Returns { component } on one match, { matches } when several fit, or
- * { suggestions } (closest names) when none does.
+ * "<tilburg-tooltip>", "fieldset". { component } on one match, { matches } when several fit, { suggestions } (the
+ * closest names) when none does.
  */
 export function findComponent(query, components = loadComponents()) {
   const wanted = kebab(String(query).replace(/^<|>$/g, '')).replace(/^tilburg-(wbc-)?/, '');
