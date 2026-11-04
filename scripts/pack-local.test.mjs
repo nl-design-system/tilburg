@@ -4,7 +4,6 @@ import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import {
-  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -18,23 +17,15 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { noSignals, prependPath, tempEnv, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, noSignals, prependPath, tempEnv, writeFake, writeLock } from './lib/test-fakes.mjs';
 
 /** Runs pack-local.mjs; the fake pnpm logs its arguments, creates the tarball, and exits 1 when FAIL_ON matches. */
 function packLocal({ failOn = '', previous = [], args = [], env = {}, before } = {}) {
   const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'pack-local ')));
   const repo = join(sandbox, 'my repo');
   const bin = join(sandbox, 'bin');
-  mkdirSync(join(repo, 'scripts'), { recursive: true });
   mkdirSync(bin);
-  copyFileSync(join(import.meta.dirname, 'pack-local.mjs'), join(repo, 'scripts', 'pack-local.mjs'));
-  /* It asks lock.mjs whether pnpm dev is running (in this sandbox it is not). */
-  copyFileSync(join(import.meta.dirname, 'dev-config.mjs'), join(repo, 'scripts', 'dev-config.mjs'));
-  mkdirSync(join(repo, 'scripts', 'lib'));
-  for (const file of readdirSync(join(import.meta.dirname, 'lib')).filter(
-    (name) => name.endsWith('.mjs') && !name.endsWith('.test.mjs'),
-  ))
-    copyFileSync(join(import.meta.dirname, 'lib', file), join(repo, 'scripts', 'lib', file));
+  copyScripts(repo, 'pack-local.mjs');
   for (const file of previous) {
     mkdirSync(join(repo, '.tarballs'), { recursive: true });
     writeFileSync(join(repo, '.tarballs', file), 'previous');
@@ -179,12 +170,7 @@ test('--help prints the usage and builds nothing; an unknown option is refused',
 });
 
 /** Writes the shared build lock as if `pid` held it, under the name lock.mjs gives it. */
-const holdLock = (pid) => (repo, tmp) => {
-  writeFileSync(
-    join(tmp, lockName(repo, 'sync')),
-    JSON.stringify({ pid, started: new Date().toISOString(), what: 'pnpm verify' }),
-  );
-};
+const holdLock = (pid) => (repo, tmp) => writeLock(join(tmp, lockName(repo, 'sync')), { what: 'pnpm verify' }, pid);
 
 test('while another build holds the lock (verify, sync), pack:local stops before building', (t) => {
   const run = packLocal({ before: holdLock(process.pid) });

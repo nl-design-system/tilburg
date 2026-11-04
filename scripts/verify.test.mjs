@@ -3,15 +3,13 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { lockName } from './lib/lock.mjs';
-import { prependPath, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, gitIn, prependPath, writeFake, writeLock } from './lib/test-fakes.mjs';
 
-const SCRIPTS = fileURLToPath(new URL('.', import.meta.url));
 const dirs = [];
 after(() => dirs.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
 
@@ -27,11 +25,8 @@ function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = 
   const dir = mkdtempSync(join(tmpdir(), 'tilburg-verify-test-'));
   dirs.push(dir);
   const bin = join(dir, 'bin');
-  mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true });
   mkdirSync(bin);
-  for (const file of ['verify.mjs', 'dev-config.mjs']) cpSync(join(SCRIPTS, file), join(dir, 'scripts', file));
-  for (const file of readdirSync(join(SCRIPTS, 'lib')).filter((name) => /^[^.]+\.mjs$/.test(name)))
-    cpSync(join(SCRIPTS, 'lib', file), join(dir, 'scripts', 'lib', file));
+  copyScripts(dir, 'verify.mjs');
   writeFileSync(join(dir, 'scripts', 'parity.mjs'), 'process.exit(Number(process.env.PARITY_EXIT));\n');
   writeFileSync(join(dir, 'package.json'), '{}\n');
   writeFake(bin, 'pnpm', PNPM);
@@ -99,8 +94,7 @@ test('a changeset check that crashes is reported in the table, not as a crash of
   const result = verify({
     /* origin/main exists, but there is no packages/ folder to read. */
     setup: (dir, env) => {
-      const git = (...args) =>
-        spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd: dir, env });
+      const git = gitIn(dir, env);
       git('init', '-q', '-b', 'main');
       git('commit', '-q', '--allow-empty', '--no-gpg-sign', '-m', 'initial');
       git('update-ref', 'refs/remotes/origin/main', 'HEAD');
@@ -114,11 +108,8 @@ test('a changeset check that crashes is reported in the table, not as a crash of
 
 /** A repository at dir with origin/main, then a branch that adds a published package called `name`. */
 function branchWithPackage(dir, env, name) {
-  const git = (...args) =>
-    spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgSign=false', ...args], {
-      cwd: dir,
-      env,
-    });
+  const run = gitIn(dir, env);
+  const git = (...args) => run('-c', 'commit.gpgSign=false', ...args);
   mkdirSync(join(dir, 'packages', name), { recursive: true });
   mkdirSync(join(dir, 'proprietary'));
   git('init', '-q', '-b', 'main');
@@ -200,8 +191,7 @@ test('--help prints the usage and runs nothing; an unknown argument is refused',
 test('while pnpm sync (or pack:local) builds, verify stops before building', () => {
   const result = verify({
     setup: (dir) => {
-      const lock = { pid: process.pid, started: new Date().toISOString(), what: 'pnpm sync' };
-      writeFileSync(join(tmpdir(), lockName(realpathSync(dir), 'sync')), JSON.stringify(lock));
+      writeLock(join(tmpdir(), lockName(realpathSync(dir), 'sync')), { what: 'pnpm sync' });
     },
   });
   assert.equal(result.status, 1, result.all);
@@ -213,8 +203,7 @@ test('a working tree that changes while verify runs gets a warning row', () => {
   const result = verify({
     TOUCH: 'run lint',
     setup: (dir, env) => {
-      const git = (...args) =>
-        spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd: dir, env });
+      const git = gitIn(dir, env);
       git('init', '-q', '-b', 'main');
       git('add', '.');
       git('commit', '-q', '--no-gpg-sign', '-m', 'initial');

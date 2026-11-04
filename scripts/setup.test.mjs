@@ -3,14 +3,12 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, cpSync, linkSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { copyFileSync, linkSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
 import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
-import { noShell, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, noShell, writeFake } from './lib/test-fakes.mjs';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
 /* setup starts fnm and the nvm Node without a shell: Windows runs no script that way (a .cmd needs cmd.exe). */
 const shellFakes = process.platform === 'win32' && 'Windows starts no script without a shell';
 /* A space and an accent in the path: a repo cloned into "My Documents/ontwerp-é" must work too. */
@@ -28,9 +26,7 @@ function runSetup(
   { nvmVersions = null, bin = {}, nodeBin = '', env: extra = {}, packageJson = {}, realNode = null } = {},
 ) {
   const root = resolve(temp, `repo-${count++}`);
-  mkdirSync(resolve(root, 'scripts'), { recursive: true });
-  for (const file of ['setup.mjs', 'dev-config.mjs', 'lib'])
-    cpSync(resolve(here, file), resolve(root, 'scripts', file), { recursive: true });
+  copyScripts(root, 'setup.mjs');
   writeFileSync(resolve(root, 'package.json'), JSON.stringify({ packageManager: 'pnpm@11.15.1', ...packageJson }));
   writeFileSync(resolve(root, '.nvmrc'), `${nvmrc}\n`);
   const nvm = resolve(root, 'nvm');

@@ -3,13 +3,12 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { copyScripts } from './lib/test-fakes.mjs';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
 const temp = mkdtempSync(resolve(tmpdir(), 'tilburg-preflight-test-'));
 after(() => rmSync(temp, { recursive: true, force: true }));
 
@@ -19,9 +18,7 @@ let count = 0;
 /** Run `script` in a fake repo; `files` are its root files (null leaves one out). */
 function run(script, { files = {}, env = {}, detached = false } = {}) {
   const root = resolve(temp, `repo-${count++}`);
-  mkdirSync(resolve(root, 'scripts'), { recursive: true });
-  for (const file of [script, 'dev-config.mjs', 'lib'])
-    cpSync(resolve(here, file), resolve(root, 'scripts', file), { recursive: true });
+  copyScripts(root, script);
   const all = { 'package.json': JSON.stringify({ packageManager: 'pnpm@11.15.1' }), '.nvmrc': `${major}\n`, ...files };
   for (const [name, content] of Object.entries(all)) if (content !== null) writeFileSync(resolve(root, name), content);
   const { CI, npm_config_user_agent, TILBURG_QUIET, ...rest } = process.env;

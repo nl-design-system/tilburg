@@ -4,7 +4,6 @@ import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
-  chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
@@ -20,6 +19,8 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test as nodeTest } from 'node:test';
+import { lockName } from './lib/lock.mjs';
+import { copyScripts, writeFake, writeLock } from './lib/test-fakes.mjs';
 
 /* The fakes lean on POSIX: $PWD in the call log (the tests compare it with the sandbox path), tar -C with a drive
    letter, mktemp, and pkill for Ctrl-C. On Windows, pnpm pack:local and pnpm sync are checked by hand instead. */
@@ -61,11 +62,9 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
   const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'sync consumers ')));
   const repo = join(sandbox, 'tilburg');
   const bin = join(sandbox, 'bin');
-  mkdirSync(join(repo, 'scripts', 'lib'), { recursive: true });
   mkdirSync(bin);
   mkdirSync(join(sandbox, 'tmp'));
-  for (const file of ['sync-consumers.mjs', 'dev-config.mjs']) cpSync(join(here, file), join(repo, 'scripts', file));
-  cpSync(join(here, 'lib'), join(repo, 'scripts', 'lib'), { recursive: true });
+  copyScripts(repo, 'sync-consumers.mjs');
   cpSync(join(here, '..', 'package.json'), join(repo, 'package.json'));
   /* The tarball names come from these versions. */
   for (const [dir, name, version] of [
@@ -79,10 +78,8 @@ function sync(args = [], { consumers = {}, env = {}, before } = {}) {
     mkdirSync(join(sandbox, key));
     writeFileSync(join(sandbox, key, 'package.json'), typeof pkg === 'string' ? pkg : JSON.stringify(pkg));
   }
-  writeFileSync(join(bin, 'pnpm'), fakePnpm);
-  writeFileSync(join(bin, 'npm'), fakeNpm);
-  chmodSync(join(bin, 'pnpm'), 0o755);
-  chmodSync(join(bin, 'npm'), 0o755);
+  writeFake(bin, 'pnpm', fakePnpm);
+  writeFake(bin, 'npm', fakeNpm);
   before?.(repo);
   const log = join(sandbox, 'calls.log');
   const result = spawnSync(process.execPath, [join(repo, 'scripts', 'sync-consumers.mjs'), ...args], {
@@ -227,9 +224,7 @@ test('a second pnpm sync while one is running stops before packing anything', ()
   const run = sync([], {
     consumers: { hltsamen: hlt },
     before: (repo) => {
-      const hash = createHash('sha1').update(repo).digest('hex').slice(0, 10);
-      const lock = { pid: process.pid, started: new Date().toISOString() };
-      writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${uid}${hash}.json`), JSON.stringify(lock));
+      writeLock(join(repo, '..', 'tmp', lockName(repo, 'sync')));
     },
   });
   assert.equal(run.status, 1);
@@ -374,8 +369,7 @@ test('a consumer another checkout is syncing right now is left alone', () => {
     before: (repo) => {
       const dir = realpathSync(join(repo, '..', 'hltsamen'));
       const hash = createHash('sha1').update(dir).digest('hex').slice(0, 10);
-      const lock = { pid: process.pid, started: new Date().toISOString() };
-      writeFileSync(join(repo, '..', 'tmp', `tilburg-sync-${uid}to-${hash}.json`), JSON.stringify(lock));
+      writeLock(join(repo, '..', 'tmp', `tilburg-sync-${uid}to-${hash}.json`));
     },
   });
   assert.equal(run.status, 1);

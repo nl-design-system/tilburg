@@ -5,7 +5,6 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import {
   chmodSync,
-  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -17,11 +16,9 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { afterEach, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { lockName } from './lib/lock.mjs';
-import { tempEnv } from './lib/test-fakes.mjs';
+import { copyScripts, fakeTerminal, tempEnv, writeLock } from './lib/test-fakes.mjs';
 
-const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 let sandbox;
 afterEach(() => rmSync(sandbox, { recursive: true, force: true }));
 
@@ -33,10 +30,7 @@ function makeRepo({ built = true } = {}) {
     mkdirSync(dirname(resolve(root, path)), { recursive: true });
     writeFileSync(resolve(root, path), content);
   };
-  for (const name of ['clean.mjs', 'dev-config.mjs', 'lib/cli-utils.mjs', 'lib/keys.mjs', 'lib/lock.mjs']) {
-    mkdirSync(dirname(resolve(root, 'scripts', name)), { recursive: true });
-    copyFileSync(resolve(SCRIPTS, name), resolve(root, 'scripts', name));
-  }
+  copyScripts(root, 'clean.mjs');
   file('package.json', '{}');
   file('packages/a/src/index.ts');
   file('packages/b/src/index.ts');
@@ -105,10 +99,7 @@ test('nothing to delete is not a failure, also without --yes', () => {
 test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --yes', () => {
   const root = makeRepo();
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
-  writeFileSync(
-    resolve(sandbox, lockName(realpathSync(root))),
-    JSON.stringify({ pid: process.pid, started: new Date().toISOString(), storybooks: [] }),
-  );
+  writeLock(resolve(sandbox, lockName(realpathSync(root))), { storybooks: [] });
   const result = run(root, '--yes');
   assert.equal(result.status, 1, result.stdout + result.stderr);
   assert.match(result.stdout, /pnpm dev is running/);
@@ -141,20 +132,15 @@ test(
   },
 );
 
-/* A terminal faked in a preload, 40 columns wide: no real pty in node:test. */
+/* In a terminal 40 columns wide. */
 const inTerminal = (root, input) =>
-  spawnSync(
-    process.execPath,
-    [
-      '--import',
-      `data:text/javascript,${encodeURIComponent(
-        `process.stdin.isTTY = true; process.stdout.isTTY = true; process.stdin.setRawMode = () => process.stdin;
-         Object.defineProperty(process.stdout, 'columns', { value: 40 });`,
-      )}`,
-      resolve(root, 'scripts/clean.mjs'),
-    ],
-    { cwd: root, input, encoding: 'utf8', timeout: 15_000, env: { ...process.env, CI: '', ...tempEnv(sandbox) } },
-  );
+  spawnSync(process.execPath, ['--import', fakeTerminal(40), resolve(root, 'scripts/clean.mjs')], {
+    cwd: root,
+    input,
+    encoding: 'utf8',
+    timeout: 15_000,
+    env: { ...process.env, CI: '', ...tempEnv(sandbox) },
+  });
 
 test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than the terminal', () => {
   const root = makeRepo();

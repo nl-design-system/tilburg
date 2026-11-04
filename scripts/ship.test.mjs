@@ -3,13 +3,12 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { pullRequestUrl } from './lib/ship.mjs';
-import { noSignals, prependPath, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, noSignals, prependPath, writeFake } from './lib/test-fakes.mjs';
 
 test('pullRequestUrl reads every remote form, and nothing that is not GitHub', () => {
   const pr = 'compare/main...feat/x?expand=1';
@@ -28,7 +27,6 @@ test('pullRequestUrl reads every remote form, and nothing that is not GitHub', (
   assert.equal(pullRequestUrl('https://bitbucket.org/o/r.git', 'feat/x'), null);
 });
 
-const SCRIPTS = fileURLToPath(new URL('.', import.meta.url));
 const dirs = [];
 after(() => dirs.forEach((dir) => rmSync(dir, { recursive: true, force: true })));
 
@@ -48,11 +46,8 @@ function sandbox(pnpm = 'exit 0') {
   dirs.push(dir);
   const repo = join(dir, 'repo');
   const bin = join(dir, 'bin');
-  mkdirSync(join(repo, 'scripts', 'lib'), { recursive: true });
   mkdirSync(bin);
-  for (const file of ['ship.mjs', 'dev-config.mjs']) cpSync(join(SCRIPTS, file), join(repo, 'scripts', file));
-  for (const file of readdirSync(join(SCRIPTS, 'lib')).filter((name) => /^[^.]+\.mjs$/.test(name)))
-    cpSync(join(SCRIPTS, 'lib', file), join(repo, 'scripts', 'lib', file));
+  copyScripts(repo, 'ship.mjs');
   writeFileSync(join(repo, 'package.json'), '{}\n');
   writeFake(bin, 'pnpm', `#!/bin/sh\n${pnpm}\n`);
   writeFileSync(join(dir, 'gitconfig'), '');

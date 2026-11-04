@@ -3,27 +3,15 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import {
-  copyFileSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import net from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { LIBRARIES, STORYBOOKS } from './dev-config.mjs';
 import { isAlive } from './lib/lock.mjs';
-import { noSignals, tempEnv } from './lib/test-fakes.mjs';
-
-const HERE = fileURLToPath(new URL('.', import.meta.url));
+import { copyScripts, noSignals, tempEnv } from './lib/test-fakes.mjs';
 
 test('both Storybooks run without prompts or a browser of their own, reachable from the network', () => {
   for (const storybook of Object.values(STORYBOOKS)) {
@@ -89,14 +77,10 @@ async function fakeRepo({
 }) {
   const root = mkdtempSync(join(tmpdir(), 'tilburg-dev-test-'));
   temps.push(root);
-  mkdirSync(join(root, 'scripts/lib'), { recursive: true });
   mkdirSync(join(root, 'node_modules'), { recursive: true });
   writeFileSync(join(root, 'node_modules/.modules.yaml'), '');
-  copyFileSync(join(HERE, 'dev.mjs'), join(root, 'scripts/dev.mjs'));
-  for (const name of readdirSync(join(HERE, 'lib')).filter(
-    (file) => file.endsWith('.mjs') && !file.endsWith('.test.mjs'),
-  ))
-    copyFileSync(join(HERE, 'lib', name), join(root, 'scripts/lib', name));
+  /* dev-config.mjs is replaced below. */
+  copyScripts(root, 'dev.mjs');
   writeFileSync(join(root, 'watcher.mjs'), watcher);
   writeFileSync(join(root, 'storybook.mjs'), storybook);
   const port = await freePort();
