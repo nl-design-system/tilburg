@@ -160,3 +160,8 @@ test('every `pnpm --filter <name>` in scripts/ is a workspace package', () => {
   assert.ok(packages.size > 5, 'the workspace packages should be found');
   assert.deepEqual(unknown, []);
 });
+
+test('setup starts pnpm dev without a bare `--`: pnpm 7+ hands it to the script, where dev reads --open as a component', () => {
+  const launches = [...read(join(SCRIPTS, 'setup.mjs')).matchAll(/spawn\('pnpm', \[([^\]]*)\]/g)].map((m) => m[1]);
+  assert.deepEqual(launches, ["'run', 'dev', '--open'"]);
+});

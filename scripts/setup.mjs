@@ -322,7 +322,7 @@ if (await ask('Start pnpm dev now (both Storybooks, rebuilt as you save)?', { de
   /* pnpm dev owns the terminal now: Ctrl-C is for it (it stops its watchers itself), not for setup. */
   process.removeAllListeners('SIGINT');
   process.on('SIGINT', () => {});
-  spawn('pnpm', ['run', 'dev', '--', '--open'], { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' })
+  spawn('pnpm', ['run', 'dev', '--open'], { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' })
     .on('error', (err) => {
       exitWith({ what: 'Could not start pnpm dev', why: err.message, fix: 'pnpm dev' });
     })
