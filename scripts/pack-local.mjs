@@ -10,17 +10,15 @@ import { execSync } from 'node:child_process';
 import { mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROOT } from './dev-config.mjs';
-import { installCrashHandler, parseArgsOrExit } from './lib/cli-utils.mjs';
+import { exitAfter, installCrashHandler, parseArgsOrExit } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 
 /* The sudo guard. signals: false, so Ctrl-C still stops the synchronous builds below at once. */
 installCrashHandler('pnpm pack:local', { signals: false });
 
 /* Strict: `--dry-run` or a typo must not start a full build and pack. */
-if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm pack:local').values.help) {
-  console.log('pnpm pack:local: builds every package and packs it into .tarballs/ (no options).');
-  process.exit(0);
-}
+if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm pack:local').values.help)
+  exitAfter('pnpm pack:local: builds every package and packs it into .tarballs/ (no options).');
 
 const out = resolve(ROOT, '.tarballs');
 /* Packed here first and moved up at the end: a run stopped half-way (Ctrl-C, a kill) leaves no half set in

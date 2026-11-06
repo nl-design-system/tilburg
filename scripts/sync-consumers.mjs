@@ -19,11 +19,15 @@ import {
   parseArgsOrExit,
   printBanner,
   printCheckTable,
+  readJson,
+  tryOr,
   warn,
+  warnRow,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, readDevLock, SYNC_LOCK, takeBuildLock, writeDevLock } from './lib/lock.mjs';
-import { reportStepFailure, runStepOrExit, runStepWithRecovery } from './lib/recovery.mjs';
-import { inProgress, treeState } from './lib/ship.mjs';
+/* A step that fails stops the sync: a half-packed set is worse than none. */
+import { reportStepFailure, runStepOrExit as step, runStepWithRecovery } from './lib/recovery.mjs';
+import { GIT_ENV, inProgress, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm sync');
 printBanner('Sync to consumers');
@@ -42,13 +46,7 @@ if (wanted !== 'all' && !known.includes(wanted))
 
 const selected = CONSUMERS.filter((consumer) => wanted === 'all' || consumer.key === wanted);
 /* A checkout reached through a symlink: ROOT is the real path, but the consumers may sit next to the link. */
-const realpath = (dir) => {
-  try {
-    return realpathSync(dir);
-  } catch {
-    return null;
-  }
-};
+const realpath = (dir) => tryOr(() => realpathSync(dir), null);
 const linkedRoot = [process.env.PWD, process.env.INIT_CWD].find(
   (dir) => dir && resolve(dir) !== ROOT && realpath(dir) === realpath(ROOT),
 );
@@ -66,9 +64,6 @@ if (!present.length)
     why: `pnpm sync looks for ${selected.map((consumer) => `../${consumer.key}`).join(' and ')} next to this repository.`,
     fix: 'clone it next to tilburg, or copy the tarballs by hand (pnpm run pack:local writes them to .tarballs/)',
   });
-
-/* A step that fails stops the sync: a half-packed set is worse than none. */
-const step = runStepOrExit;
 
 /** Does the tarball hold what the consumer will import? Catches a package packed without its build output. */
 async function checkTarball(file, mustContain, what) {
@@ -96,12 +91,10 @@ async function checkTarball(file, mustContain, what) {
     });
 }
 
-/* Run from a git hook, GIT_DIR and friends point at tilburg and would override `git -C <consumer>`. */
-const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...gitEnv } = process.env;
 const gitIn =
   (dir) =>
   (...args) => {
-    const result = spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: gitEnv });
+    const result = spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: GIT_ENV });
     /* trimEnd: a porcelain entry such as " M file" starts with its own space. */
     return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
   };
@@ -110,21 +103,13 @@ const gitIn =
 function tarballSpecs(dir) {
   const manifests = [
     resolve(dir, 'package.json'),
-    ...['packages', 'proprietary'].flatMap((group) => {
-      try {
-        return readdirSync(resolve(dir, group)).map((name) => resolve(dir, group, name, 'package.json'));
-      } catch {
-        return [];
-      }
-    }),
+    ...['packages', 'proprietary'].flatMap((group) =>
+      tryOr(() => readdirSync(resolve(dir, group)), []).map((name) => resolve(dir, group, name, 'package.json')),
+    ),
   ];
   return manifests.filter(existsSync).flatMap((manifest) => {
-    let pkg;
-    try {
-      pkg = JSON.parse(readFileSync(manifest, 'utf8'));
-    } catch {
-      return [];
-    }
+    const pkg = readJson(manifest);
+    if (!pkg) return [];
     return Object.values({ ...pkg.dependencies, ...pkg.devDependencies, ...pkg.optionalDependencies })
       .filter((spec) => typeof spec === 'string' && /^file:.*\.tarballs\/[^/]+\.tgz$/.test(spec))
       .map((spec) => resolve(dirname(manifest), spec.slice('file:'.length)));
@@ -135,40 +120,34 @@ const installsAll = (consumer) => consumer.pack.includes('all');
 
 /* Before packing anything: does each consumer have the script we are about to call? An older checkout may not. */
 const rows = [];
+const refuse = (consumer, detail, note) => rows.push({ ok: false, label: consumer.key, detail, note });
 const usable = [];
 for (const consumer of present) {
   let scripts = {};
   try {
     scripts = JSON.parse(readFileSync(resolve(consumer.dir, 'package.json'), 'utf8')).scripts ?? {};
   } catch (err) {
-    rows.push({
-      ok: false,
-      label: consumer.key,
-      detail: `cannot read its package.json (${err.code ?? err.message})`,
-      note: consumer.dir,
-    });
+    refuse(consumer, `cannot read its package.json (${err.code ?? err.message})`, consumer.dir);
     continue;
   }
   const missingScripts = (consumer.requires ?? []).filter((name) => !scripts[name]);
   if (missingScripts.length) {
-    rows.push({
-      ok: false,
-      label: consumer.key,
-      detail: `has no ${missingScripts.map((name) => `"${name}"`).join(', ')} script`,
-      note: `an older checkout? git pull in ${consumer.dir}`,
-    });
+    refuse(
+      consumer,
+      `has no ${missingScripts.map((name) => `"${name}"`).join(', ')} script`,
+      `an older checkout? git pull in ${consumer.dir}`,
+    );
     continue;
   }
   /* npm/pnpm would rewrite the lockfile into the merge (or a bisect's old commit), and the "git restore" below would
      be no clean way back. */
   const midway = inProgress(consumer.dir, gitIn(consumer.dir));
   if (midway) {
-    rows.push({
-      ok: false,
-      label: consumer.key,
-      detail: `is in the middle of ${midway[1].toLowerCase()}`,
-      note: `finish or abort it first, in ${consumer.dir}: ${midway[2]}`,
-    });
+    refuse(
+      consumer,
+      `is in the middle of ${midway[1].toLowerCase()}`,
+      `finish or abort it first, in ${consumer.dir}: ${midway[2]}`,
+    );
     continue;
   }
   /* A worktree or second clone: the consumer would install the tarballs of the checkout its paths name, not ours. */
@@ -176,12 +155,11 @@ for (const consumer of present) {
     ? tarballSpecs(consumer.dir).find((file) => realpath(dirname(dirname(file))) !== realpath(ROOT))
     : null;
   if (foreign) {
-    rows.push({
-      ok: false,
-      label: consumer.key,
-      detail: `installs from ${dirname(foreign)}, not from this checkout`,
-      note: `run pnpm sync from ${dirname(dirname(foreign))}, or point its file: dependencies at ${resolve(ROOT, '.tarballs')}`,
-    });
+    refuse(
+      consumer,
+      `installs from ${dirname(foreign)}, not from this checkout`,
+      `run pnpm sync from ${dirname(dirname(foreign))}, or point its file: dependencies at ${resolve(ROOT, '.tarballs')}`,
+    );
     continue;
   }
   usable.push(consumer);
@@ -209,8 +187,6 @@ for (const consumer of usable) {
     });
 }
 await confirmNoDevRunningOrExit('pnpm sync rebuilds the packages it packs, and');
-
-// ─── Pack ────────────────────────────────────────────────────────────────────
 
 /** Where `pnpm pack` writes each tarball: the name carries the version, so it changes with every release. */
 const tarball = (pack) => {
@@ -247,18 +223,13 @@ for (const consumer of usable.filter(installsAll)) {
   const missing = tarballSpecs(consumer.dir).filter((file) => !existsSync(file));
   if (!missing.length) continue;
   blocked.add(consumer);
-  const packed = existsSync(resolve(ROOT, '.tarballs'))
-    ? readdirSync(resolve(ROOT, '.tarballs')).filter((file) => file.endsWith('.tgz'))
-    : [];
-  rows.push({
-    ok: false,
-    label: consumer.key,
-    detail: `its package.json files name ${[...new Set(missing.map((file) => basename(file)))].join(', ')}, which .tarballs/ does not have`,
-    note: `a version bump? .tarballs/ has ${packed.join(', ') || 'nothing'}: update those file: dependencies in ${consumer.dir}`,
-  });
+  const packed = tryOr(() => readdirSync(resolve(ROOT, '.tarballs')), []).filter((file) => file.endsWith('.tgz'));
+  refuse(
+    consumer,
+    `its package.json files name ${[...new Set(missing.map((file) => basename(file)))].join(', ')}, which .tarballs/ does not have`,
+    `a version bump? .tarballs/ has ${packed.join(', ') || 'nothing'}: update those file: dependencies in ${consumer.dir}`,
+  );
 }
-
-// ─── Sync ────────────────────────────────────────────────────────────────────
 
 /** `git status` of a consumer as Map(path → 'XY'), or null when git cannot tell (not a checkout). */
 function gitChanges(dir) {
@@ -358,12 +329,7 @@ for (const consumer of usable.filter((consumer) => !blocked.has(consumer))) {
     });
   } catch (err) {
     reportStepFailure(`Syncing ${consumer.key} (${consumer.sync})`, err);
-    rows.push({
-      ok: false,
-      label: consumer.key,
-      detail: 'failed, see above',
-      note: manualSync(consumer),
-    });
+    refuse(consumer, 'failed, see above', manualSync(consumer));
     reportConsumerState(consumer, syncing.before);
   }
   syncing = null;
@@ -371,13 +337,13 @@ for (const consumer of usable.filter((consumer) => !blocked.has(consumer))) {
 
 const treeAtEnd = await treeState(ROOT);
 if (treeAtStart && treeAtEnd && treeAtStart !== treeAtEnd)
-  rows.push({
-    ok: true,
-    warn: true,
-    label: 'tilburg',
-    detail: 'the working tree changed while this ran',
-    note: 'a checkout, pull or stash meanwhile: the tarballs may mix two trees, so pnpm sync again',
-  });
+  rows.push(
+    warnRow(
+      'the working tree changed while this ran',
+      'a checkout, pull or stash meanwhile: the tarballs may mix two trees, so pnpm sync again',
+      { label: 'tilburg' },
+    ),
+  );
 
 console.log('');
 const { failed } = printCheckTable([{ title: 'Result', rows }]);

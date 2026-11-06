@@ -2,7 +2,7 @@
    Sections sit side by side; without a terminal (or one without cursor control, TERM=dumb) it prints the help list. */
 import { spawn } from 'node:child_process';
 import { checkInstalled, checkInstallFresh } from './lib/checks.mjs';
-import { c, installCrashHandler, interactive, printBanner, stripAnsi } from './lib/cli-utils.mjs';
+import { c, installCrashHandler, interactive, printBanner, readKeys, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
 import { splitKeys } from './lib/keys.mjs';
 import { randomSaying } from './lib/sayings.mjs';
@@ -80,8 +80,7 @@ function render() {
 
 function leave() {
   process.stdout.write('\x1b[?25h');
-  process.stdin.setRawMode(false);
-  process.stdin.pause();
+  process.stdin.setRawMode(false).pause();
 }
 
 let running = false;
@@ -118,10 +117,7 @@ process.stdout.on('resize', async () => {
   process.exit(0);
 });
 
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', (chunk) => {
+readKeys((chunk) => {
   for (const key of splitKeys(chunk)) if (!running) onKey(key);
 });
 function onKey(key) {

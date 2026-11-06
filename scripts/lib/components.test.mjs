@@ -1,10 +1,10 @@
 /* `pnpm run test:scripts`: the component lookup behind pnpm where, dev <name>, test <name> and parity. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { findComponent, isTlb, loadComponents, storyUrl } from './components.mjs';
+import { runModule } from './test-fakes.mjs';
 
 const components = loadComponents();
 
@@ -49,16 +49,11 @@ test('nothing to look up, or nothing close: no match and no suggestions, not a c
 
 /** requireComponent in a child process: it ends with process.exit, so it cannot run in this one. */
 const requireIn = (query) =>
-  spawnSync(
-    process.execPath,
-    [
-      '--input-type=module',
-      '-e',
-      `const { requireComponent } = await import(${JSON.stringify(new URL('./components.mjs', import.meta.url).href)});
+  runModule(
+    `const { requireComponent } = await import(${JSON.stringify(new URL('./components.mjs', import.meta.url).href)});
        const component = await requireComponent(${JSON.stringify(query)}, 'pnpm where');
        console.log('FOUND ' + component.slug);`,
-    ],
-    { encoding: 'utf8', timeout: 20_000, env: { ...process.env, CI: '1' } },
+    { env: { ...process.env, CI: '1' } },
   );
 
 test('requireComponent returns the one match', () => {

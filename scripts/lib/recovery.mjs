@@ -7,7 +7,7 @@
    retry's environment or command) run by themselves; fixes that change the machine (corepack, nvm, git's global
    config) ask first, and never run without a terminal. Every failure also keeps its manual fix. */
 import { spawnSync } from 'node:child_process';
-import { readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { readdirSync, rmSync, statSync } from 'node:fs';
 import { basename, delimiter, dirname, resolve, sep } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { NODE_MAJOR, ROOT } from '../dev-config.mjs';
@@ -23,10 +23,11 @@ import {
   stepDone,
   stepFail,
   stepStart,
+  readJson,
   stripAnsi,
 } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
-import { NVM_DIR, NVM_HOME, nvmNodes } from './nvm.mjs';
+import { NVM_DIR, NVM_HOME, newestNvmNode } from './nvm.mjs';
 
 /* Ordered: the first match wins, so specific causes come before generic ones. */
 export const FAILURES = [
@@ -439,11 +440,7 @@ export function classifyFailure(output = '', err = null) {
     return { kind: notFound.kind, why: notFound.why, fix: fixOf(notFound) };
   }
   if (err?.signal) {
-    return {
-      kind: 'killed',
-      why: `The process was killed by ${err.signal} (usually out of memory).`,
-      fix: 'retry',
-    };
+    return { kind: 'killed', why: `The process was killed by ${err.signal} (usually out of memory).`, fix: 'retry' };
   }
   if (!output.trim()) {
     return {
@@ -489,12 +486,6 @@ async function sh(command) {
   }
 }
 
-const version = (text) => text.replace(/^v/, '').split('.').map(Number);
-const older = (a, b) => {
-  const [x, y] = [version(a), version(b)];
-  for (let i = 0; i < 3; i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) < (y[i] ?? 0);
-  return false;
-};
 /**
  * Does a git of ours run? true, false, or null when nobody can tell. Only our own user's: another user's git (or a
  * shared box) cannot hold our index.lock. Only pgrep's "no match" (1) proves no git runs.
@@ -509,37 +500,19 @@ function gitRunning() {
 }
 /** The lowest Node that package.json "engines" accepts, e.g. "24.15.0". */
 export function enginesMinimum() {
-  let range = '';
-  try {
-    range = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')).engines?.node ?? '';
-  } catch {
-    /* a broken package.json is its own failure; here the .nvmrc major is enough */
-  }
+  /* a broken package.json is its own failure; here the .nvmrc major is enough */
+  const range = readJson(resolve(ROOT, 'package.json'))?.engines?.node ?? '';
   return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
-/**
- * The newest Node of the .nvmrc major that nvm has installed, as { version (without "v"), bin }, or null. nvm-windows
- * through nvm.mjs; nvm-sh here (readdir order, `older`): the pick among odd names like v24.0.0-rc.1 stays the same.
- */
-const newestInstalledNode = () => {
-  if (NVM_HOME) return nvmNodes(NODE_MAJOR)[0] ?? null;
-  try {
-    const versions = readdirSync(resolve(NVM_DIR, 'versions/node')).filter((v) => v.startsWith(`v${NODE_MAJOR}.`));
-    const newest = versions.sort((a, b) => (older(a, b) ? 1 : -1))[0];
-    return newest ? { version: newest.slice(1), bin: resolve(NVM_DIR, 'versions/node', newest, 'bin') } : null;
-  } catch {
-    return null;
-  }
-};
-const newestNvmNode = () => newestInstalledNode()?.version ?? null;
-const nodeNeedsInstall = () => {
-  const newest = newestNvmNode();
-  return !newest || older(newest, enginesMinimum());
-};
+/** The newest Node of the .nvmrc major that nvm has installed and engines accepts ({ version, bin }), or null. */
+const nvmNode = () => newestNvmNode(NODE_MAJOR, { minimum: enginesMinimum() });
 /** On an Apple Silicon Mac, a terminal under Rosetta runs x64 Node: installs then fetch x64 binaries again. */
 const underRosetta = () =>
   process.platform === 'darwin' &&
   spawnSync('sysctl', ['-n', 'sysctl.proc_translated'], { encoding: 'utf8' }).stdout?.trim() === '1';
+
+/** A fix that is a plain pnpm install in the repository (`install`: not under a running pnpm dev). */
+const install = (label, extra) => ({ label, install: true, run: async () => sh('pnpm install'), ...extra });
 
 /**
  * Automatic fixes, by failure kind. `run` returns what the retry changes: { env } and/or { command }.
@@ -549,26 +522,19 @@ const underRosetta = () =>
 export const RECOVERIES = {
   'node-version': {
     label: 'running it again with the right Node from nvm (installing it with nvm first if needed)',
-    ask: () =>
-      nodeNeedsInstall() ? `Install Node ${NODE_MAJOR} (${enginesMinimum()} or newer) with nvm and use it?` : null,
-    skip: () => (newestNvmNode() || process.env.NVM_DIR || NVM_HOME ? null : 'nvm is not installed'),
+    ask: () => (nvmNode() ? null : `Install Node ${NODE_MAJOR} (${enginesMinimum()} or newer) with nvm and use it?`),
+    skip: () => (newestNvmNode(NODE_MAJOR) || process.env.NVM_DIR || NVM_HOME ? null : 'nvm is not installed'),
     run: async ({ env }) => {
       /* nvm-windows is a program and needs the version; nvm-sh is a shell function, loaded from nvm.sh. */
-      if (nodeNeedsInstall())
+      if (!nvmNode())
         await sh(
           NVM_HOME
             ? `"${resolve(NVM_HOME, 'nvm.exe')}" install ${NODE_MAJOR}`
             : `. "${NVM_DIR}/nvm.sh" && nvm install ${NODE_MAJOR}`,
         );
-      const newest = newestInstalledNode();
-      if (!newest || older(newest.version, enginesMinimum()))
-        throw new Error(`nvm has no Node ${enginesMinimum()} or newer`);
-      return {
-        env: {
-          ...env,
-          PATH: `${newest.bin}${delimiter}${env.PATH ?? ''}`,
-        },
-      };
+      const newest = nvmNode();
+      if (!newest) throw new Error(`nvm has no Node ${enginesMinimum()} or newer`);
+      return { env: { ...env, PATH: `${newest.bin}${delimiter}${env.PATH ?? ''}` } };
     },
   },
   'pnpm-version': {
@@ -619,19 +585,12 @@ export const RECOVERIES = {
       if (result.status !== 0) throw new Error(`git config failed: ${result.stderr.trim()}`);
     },
   },
-  'missing-module': { label: 'pnpm install', install: true, run: async () => sh('pnpm install') },
-  'stencil-jest': { label: 'pnpm install', install: true, run: async () => sh('pnpm install') },
-  'unexpected-store': {
-    label: 'pnpm install (relinks node_modules to the current store)',
-    install: true,
-    run: async () => sh('pnpm install'),
-  },
-  'outdated-lockfile': {
-    label: 'pnpm install (updates pnpm-lock.yaml: commit it with your package.json change)',
-    install: true,
+  'missing-module': install('pnpm install'),
+  'stencil-jest': install('pnpm install'),
+  'unexpected-store': install('pnpm install (relinks node_modules to the current store)'),
+  'outdated-lockfile': install('pnpm install (updates pnpm-lock.yaml: commit it with your package.json change)', {
     skip: () => (process.env.CI ? 'CI installs with --frozen-lockfile on purpose; update the lockfile locally' : null),
-    run: async () => sh('pnpm install'),
-  },
+  }),
   integrity: {
     label: 'pnpm store prune, then pnpm install',
     install: true,
@@ -675,18 +634,9 @@ export const RECOVERIES = {
       command: `l=$(ulimit -n); [ "$l" != unlimited ] && [ "$l" -lt 10240 ] && ulimit -n 10240 2>/dev/null; ${command}`,
     }),
   },
-  network: {
-    label: 'waiting 3 s and retrying',
-    run: async () => sleep(3000),
-  },
-  'dist-collision': {
-    label: 'waiting 5 s and building again',
-    run: async () => sleep(5000),
-  },
-  'jest-crash': {
-    label: 'running the tests once more',
-    run: async () => {},
-  },
+  network: { label: 'waiting 3 s and retrying', run: async () => sleep(3000) },
+  'dist-collision': { label: 'waiting 5 s and building again', run: async () => sleep(5000) },
+  'jest-crash': { label: 'running the tests once more', run: async () => {} },
   heap: {
     label: 'retrying with 8 GB of memory',
     run: async ({ env }) => {
@@ -703,10 +653,7 @@ export const RECOVERIES = {
       }
     },
   },
-  killed: {
-    label: 'retrying once',
-    run: async () => {},
-  },
+  killed: { label: 'retrying once', run: async () => {} },
 };
 
 /**
@@ -717,9 +664,10 @@ export async function runStepWithRecovery(
   label,
   command,
   /* recoveries: only tests pass their own, so a fix that asks first can be answered without changing the machine. */
-  { env = process.env, cwd, maxAttempts = 2, recoveries = RECOVERIES } = {},
+  { env = process.env, cwd, recoveries = RECOVERIES } = {},
 ) {
-  const tried = new Map();
+  /* The one fix that ran, as { kind, label }. */
+  let tried = null;
   let runEnv = env;
   let runCommand = command;
   for (let attempt = 1; ; attempt++) {
@@ -738,14 +686,12 @@ export async function runStepWithRecovery(
       const diagnosis = classifyFailure(err.output ?? '', err);
       err.diagnosis = diagnosis;
       /* The retry failed (the same way, or another): the report then says what was already tried. */
-      if (tried.has(diagnosis.kind)) diagnosis.autoTried = tried.get(diagnosis.kind);
-      else if (tried.size) diagnosis.autoTried = [...tried.values()].join(', ');
+      if (tried) diagnosis.autoTried = tried.label;
       const fix = recoveries[diagnosis.kind];
-      /* Each fix at most once: a fix that did not help the first time hides the real error the second time. */
-      if (fix && !tried.has(diagnosis.kind) && attempt >= maxAttempts) {
-        diagnosis.autoSkipped = `it already used its one retry${tried.size ? ` (${[...tried.values()].join(', ')})` : ''}`;
-      }
-      if (!fix || tried.has(diagnosis.kind) || attempt >= maxAttempts) throw err;
+      /* One fix and one retry: a fix that did not help the first time hides the real error the second time. */
+      if (fix && tried && tried.kind !== diagnosis.kind)
+        diagnosis.autoSkipped = `it already used its one retry (${tried.label})`;
+      if (!fix || tried) throw err;
       const skip = fix.skip?.() ?? (fix.install ? installSkip(cwd) : null);
       if (skip) {
         diagnosis.autoSkipped = skip;
@@ -763,7 +709,7 @@ export async function runStepWithRecovery(
           throw err;
         }
       }
-      tried.set(diagnosis.kind, fix.label);
+      tried = { kind: diagnosis.kind, label: fix.label };
       diagnosis.autoTried = fix.label;
       console.log(
         `\n  ${c.yellow}↻${c.reset}  ${question ? '' : `${diagnosis.why} `}${c.gray}Fixing it automatically: ${fix.label}...${c.reset}`,

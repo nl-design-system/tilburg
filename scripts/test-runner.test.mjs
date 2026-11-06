@@ -3,15 +3,14 @@
    --outputFile, so nothing real runs and nothing in the repository is touched. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { loadComponents } from './lib/components.mjs';
-import { noSignals, prependPath, runScript, tempEnv, writeFake } from './lib/test-fakes.mjs';
+import { noSignals, prependPath, runScript, tempDir, tempEnv, writeFake } from './lib/test-fakes.mjs';
 
 /* With a space: test.mjs quotes the report path, and must keep doing so. */
-const dir = mkdtempSync(join(tmpdir(), 'tilburg test-runner-'));
+const dir = tempDir('tilburg test-runner-');
 
 const calls = join(dir, 'calls.txt');
 writeFake(
@@ -40,8 +39,6 @@ function run(args, plan) {
   return { ...result, calls: readFileSync(calls, 'utf8') };
 }
 
-// ─── Everything (CI) ─────────────────────────────────────────────────────────
-
 test('everything: a failing package run stops there and exits with its code', () => {
   const result = run([], { '--recursive': { exit: 3 } });
   assert.equal(result.status, 3);
@@ -64,8 +61,6 @@ test('everything: both green is exit 0', () => {
   assert.equal(result.status, 0);
   assert.match(result.calls, /--recursive run test\nrun test:scripts\n/);
 });
-
-// ─── One component ───────────────────────────────────────────────────────────
 
 /* A component with tests in all three layers, so each layer is run. */
 const component = loadComponents().find((entry) =>

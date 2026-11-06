@@ -3,24 +3,30 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, noSignals, prependPath, runScript, tempEnv, writeFake, writeLock } from './lib/test-fakes.mjs';
+import {
+  copyScripts,
+  noSignals,
+  prependPath,
+  runScript,
+  tempDir,
+  tempEnv,
+  writeFake,
+  writeFile,
+  writeLock,
+} from './lib/test-fakes.mjs';
 
 /** Runs pack-local.mjs; the fake pnpm logs its arguments, creates the tarball, and exits 1 when FAIL_ON matches. */
 function packLocal({ failOn = '', previous = [], args = [], env = {}, before } = {}) {
-  const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'pack-local ')));
+  const sandbox = realpathSync(tempDir('pack-local '));
   const repo = join(sandbox, 'my repo');
   const bin = join(sandbox, 'bin');
   mkdirSync(bin);
   copyScripts(repo, 'pack-local.mjs');
-  for (const file of previous) {
-    mkdirSync(join(repo, '.tarballs'), { recursive: true });
-    writeFileSync(join(repo, '.tarballs', file), 'previous');
-  }
+  for (const file of previous) writeFile(join(repo, '.tarballs', file), 'previous');
   for (const dir of [
     'proprietary/design-tokens',
     'packages/components-css',
@@ -167,10 +173,7 @@ test('started by the pnpm sync that holds the lock, pack:local goes ahead', () =
 
 test('dist/ is emptied before each build, so output from another branch is not packed', () => {
   const run = packLocal({
-    before: (repo) => {
-      mkdirSync(join(repo, 'packages/storybook-shared/dist'));
-      writeFileSync(join(repo, 'packages/storybook-shared/dist/gone.examples.js'), '');
-    },
+    before: (repo) => writeFile(join(repo, 'packages/storybook-shared/dist/gone.examples.js'), ''),
   });
   assert.equal(run.status, 0, run.stderr);
   assert.equal(existsSync(join(run.out, '..', 'packages/storybook-shared/dist/gone.examples.js')), false);

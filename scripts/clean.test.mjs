@@ -2,32 +2,19 @@
    test copies it into a throwaway repo (with a space in its path) and runs it there without a terminal. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  realpathSync,
-  rmSync,
-  symlinkSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, resolve } from 'node:path';
+import { chmodSync, existsSync, mkdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, fakeTerminal, runScript, tempEnv, writeLock } from './lib/test-fakes.mjs';
+import { copyScripts, fakeTerminal, runScript, tempDir, tempEnv, writeFile, writeLock } from './lib/test-fakes.mjs';
 
 let sandbox;
 
 /** A fake repo: two packages with dist/, src/ and a workspace symlink, plus a folder outside the repo. */
 function makeRepo({ built = true } = {}) {
-  sandbox = mkdtempSync(resolve(tmpdir(), 'tilburg clean $(x) '));
+  sandbox = tempDir('tilburg clean $(x) ');
   const root = resolve(sandbox, 'repo');
-  const file = (path, content = 'x') => {
-    mkdirSync(dirname(resolve(root, path)), { recursive: true });
-    writeFileSync(resolve(root, path), content);
-  };
+  const file = (path, content = 'x') => writeFile(resolve(root, path), content);
   copyScripts(root, 'clean.mjs');
   file('package.json', '{}');
   file('packages/a/src/index.ts');
@@ -42,18 +29,18 @@ function makeRepo({ built = true } = {}) {
   mkdirSync(resolve(root, 'packages/a/node_modules/@gemeente-tilburg'));
   symlinkSync(resolve(root, 'packages/b'), resolve(root, 'packages/a/node_modules/@gemeente-tilburg/b'));
   /* A dist/ that is a link to somewhere else: the link goes, what it points at stays. */
-  mkdirSync(resolve(sandbox, 'outside'));
-  writeFileSync(resolve(sandbox, 'outside/keep.txt'), 'x');
+  writeFile(resolve(sandbox, 'outside/keep.txt'), 'x');
   symlinkSync(resolve(sandbox, 'outside'), resolve(root, 'packages/b/dist'));
   return root;
 }
 
 /* The temp folder in the sandbox, so the pnpm dev lock (lib/lock.mjs) is ours too. */
-const run = (root, ...args) =>
+const run = (root, args = [], options = {}) =>
   runScript(resolve(root, 'scripts/clean.mjs'), args, {
     cwd: root,
     timeout: 15_000,
     env: { ...process.env, CI: '1', ...tempEnv(sandbox) },
+    ...options,
   });
 
 test('without a terminal and without --yes it deletes nothing and exits 1', () => {
@@ -66,11 +53,10 @@ test('without a terminal and without --yes it deletes nothing and exits 1', () =
 
 test('--yes deletes build output and caches, and nothing else', () => {
   const root = makeRepo();
-  const result = run(root, '--yes');
+  const result = run(root, ['--yes']);
   assert.equal(result.status, 0, result.output);
-  for (const gone of ['packages/a/dist', 'packages/b/dist', 'proprietary/c/.angular', 'node_modules/.cache']) {
+  for (const gone of ['packages/a/dist', 'packages/b/dist', 'proprietary/c/.angular', 'node_modules/.cache'])
     assert.equal(existsSync(resolve(root, gone)), false, `${gone} is deleted`);
-  }
   for (const kept of [
     'packages/a/src/index.ts',
     'packages/b/src/index.ts',
@@ -78,9 +64,8 @@ test('--yes deletes build output and caches, and nothing else', () => {
     'packages/a/node_modules/lodash/index.js',
     'packages/a/node_modules/@gemeente-tilburg/b/src/index.ts',
     'scripts/clean.mjs',
-  ]) {
+  ])
     assert.ok(existsSync(resolve(root, kept)), `${kept} is kept`);
-  }
   assert.ok(existsSync(resolve(sandbox, 'outside/keep.txt')), 'the target of a symlinked dist/ is kept');
 });
 
@@ -97,7 +82,7 @@ test('while pnpm dev runs it refuses to delete the dist/ it serves, also with --
   const root = makeRepo();
   /* LOCK_FILE's name: ROOT is where the script really is, macOS's /var is a link to /private/var. */
   writeLock(resolve(sandbox, lockName(realpathSync(root))), { storybooks: [] });
-  const result = run(root, '--yes');
+  const result = run(root, ['--yes']);
   assert.equal(result.status, 1, result.output);
   assert.match(result.stdout, /pnpm dev is running/);
   assert.ok(existsSync(resolve(root, 'packages/a/dist/index.js')));
@@ -112,11 +97,10 @@ test(
   },
   () => {
     const root = makeRepo();
-    mkdirSync(resolve(root, 'packages/a/dist/locked'));
-    writeFileSync(resolve(root, 'packages/a/dist/locked/x.js'), 'x');
+    writeFile(resolve(root, 'packages/a/dist/locked/x.js'), 'x');
     chmodSync(resolve(root, 'packages/a/dist/locked'), 0o555);
     try {
-      const result = run(root, '--yes');
+      const result = run(root, ['--yes']);
       assert.equal(result.status, 1, result.output);
       assert.match(result.output, /packages\/a\/dist could not be deleted[\s\S]*read-only or not yours/);
       assert.equal(existsSync(resolve(root, 'proprietary/c/.angular')), false, 'the other targets are still deleted');
@@ -128,13 +112,7 @@ test(
 
 /* In a terminal 40 columns wide. */
 const inTerminal = (root, input) =>
-  runScript(resolve(root, 'scripts/clean.mjs'), [], {
-    preload: fakeTerminal(40),
-    cwd: root,
-    input,
-    timeout: 15_000,
-    env: { ...process.env, CI: '', ...tempEnv(sandbox) },
-  });
+  run(root, [], { preload: fakeTerminal(40), input, env: { ...process.env, CI: '', ...tempEnv(sandbox) } });
 
 test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than the terminal', () => {
   const root = makeRepo();
@@ -150,9 +128,8 @@ test('in the picker, Ctrl-C exits 130 and deletes nothing; no line is wider than
 test('the tarballs are not ticked by default: hltsamen installs from them', () => {
   const root = makeRepo();
   writeFileSync(resolve(root, 'package.json'), '{}');
-  mkdirSync(resolve(root, '.tarballs'));
-  writeFileSync(resolve(root, '.tarballs/x.tgz'), '');
-  const result = run(root, '--yes');
+  writeFile(resolve(root, '.tarballs/x.tgz'), '');
+  const result = run(root, ['--yes']);
   assert.equal(result.status, 0, result.output);
   assert.ok(existsSync(resolve(root, '.tarballs/x.tgz')));
 });

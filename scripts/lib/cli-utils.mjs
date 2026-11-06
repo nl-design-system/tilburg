@@ -237,8 +237,20 @@ export function track(child) {
   return child;
 }
 
+/** A tracked shell command in its own process group (killTree stops it whole), without stdin, output piped. */
+export const spawnShell = (command, cwd, env) =>
+  track(
+    spawn(command, {
+      shell: true,
+      cwd,
+      detached: process.platform !== 'win32',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env,
+    }),
+  );
+
 /** Stop every tracked child and its whole tree. Synchronous: it also runs from the 'exit' event. */
-export function stopChildren(signal = 'SIGTERM') {
+function stopChildren(signal = 'SIGTERM') {
   for (const child of children) killTree(child, signal);
   /* After a SIGINT they stay listed: one that ignores it (a Stencil build) still gets the SIGTERM on exit. */
   if (signal !== 'SIGINT') children.clear();
@@ -256,11 +268,7 @@ export function killTree(child, signal = 'SIGTERM') {
       process.kill(-child.pid, signal);
     }
   } catch {
-    try {
-      child.kill(signal);
-    } catch {
-      /* already gone */
-    }
+    tryOr(() => child.kill(signal)); /* already gone */
   }
 }
 
@@ -349,7 +357,6 @@ export function appendLog(path, text) {
   }
 }
 
-/** The path as a clickable file link. */
 export const logLink = (path) => (path ? hyperlink(path, pathToFileURL(path).href) : '(no log could be written)');
 
 // ─── What did the tool say? ──────────────────────────────────────────────────
@@ -396,15 +403,10 @@ export function excerpt(output, { max = 12, tail = 10 } = {}) {
  * stripped), or the tail runStep() kept when the log could not be written or read.
  */
 export function printFullOutput({ command, exitCode, signal, output = '', log } = {}) {
-  let text = output;
-  let complete = false;
-  try {
-    /* The log starts with the "$ command" header runStep() wrote; the output follows the first blank line. */
-    text = readFileSync(log, 'utf8').split('\n\n').slice(1).join('\n\n');
-    complete = true;
-  } catch {
-    /* no log: show the tail instead */
-  }
+  const logText = readText(log, null);
+  const complete = logText !== null;
+  /* The log starts with the "$ command" header runStep() wrote; the output follows the first blank line. */
+  const text = complete ? logText.split('\n\n').slice(1).join('\n\n') : output;
   /* All of it, also for a long build: the summary comes after it, so it stays the last thing on screen. */
   const lines = text
     .replace(/\n# exit \S+\n?$/, '')
@@ -434,7 +436,7 @@ export function printToolOutput({ output = '', log } = {}) {
   if (log) console.log(`     ${c.gray}Full output:${c.reset} ${logLink(log)}`);
 }
 
-// ─── Steps ───────────────────────────────────────────────────────────────────
+// ─── Commands: run one as a step with a log, or capture a probe's output ─────
 
 /** How much of a failed command's output is kept for classifyFailure(). */
 const OUTPUT_TAIL_BYTES = 256 * 1024;
@@ -453,17 +455,13 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
     appendLog(log, `$ ${command}\n# in ${cwd ?? process.cwd()}, ${new Date().toISOString()}\n\n`);
     let child;
     try {
-      child = track(
-        spawn(command, {
-          shell: true,
-          cwd,
-          detached: process.platform !== 'win32',
-          stdio: ['ignore', 'pipe', 'pipe'],
-          /* Tools print colour into a pipe only when forced: only when it reaches a terminal (not a file, CI or
-             NO_COLOR). LANGUAGE: git, the shell and strerror in English, which classifyFailure reads. */
-          env: { ...(colour ? { FORCE_COLOR: '1' } : {}), ...(env ?? process.env), LANGUAGE: 'en' },
-        }),
-      );
+      /* Tools print colour into a pipe only when forced: only when it reaches a terminal (not a file, CI or
+         NO_COLOR). LANGUAGE: git, the shell and strerror in English, which classifyFailure reads. */
+      child = spawnShell(command, cwd, {
+        ...(colour ? { FORCE_COLOR: '1' } : {}),
+        ...(env ?? process.env),
+        LANGUAGE: 'en',
+      });
     } catch (err) {
       /* A missing cwd throws here, synchronously, instead of emitting 'error'. */
       Object.assign(err, { command, output: '', log });
@@ -495,22 +493,9 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
     };
     const stopListening = () => {
       clearInterval(quietTimer);
-      if (process.stdin.isTTY) {
-        process.stdin.removeListener('data', onKey);
-        try {
-          process.stdin.setRawMode(false);
-        } catch {
-          /* stdin already closed */
-        }
-        process.stdin.pause();
-      }
+      if (process.stdin.isTTY) stopKeys(onKey);
     };
-    if (process.stdin.isTTY) {
-      process.stdin.setRawMode(true);
-      process.stdin.resume();
-      process.stdin.setEncoding('utf8');
-      process.stdin.on('data', onKey);
-    }
+    if (process.stdin.isTTY) readKeys(onKey);
     const quietTimer = setInterval(() => {
       if (verbose || Date.now() - lastOutput < QUIET_NOTICE_MS) return;
       lastOutput = Date.now();
@@ -566,15 +551,7 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
   return new Promise((resolvePromise) => {
     let child;
     try {
-      child = track(
-        spawn(command, {
-          shell: true,
-          cwd,
-          detached: process.platform !== 'win32',
-          stdio: ['ignore', 'pipe', 'pipe'],
-          env: { ...process.env, LANGUAGE: 'en' },
-        }),
-      );
+      child = spawnShell(command, cwd, { ...process.env, LANGUAGE: 'en' });
     } catch (err) {
       resolvePromise({ code: 1, stdout: '', stderr: String(err.message ?? err), timedOut: false });
       return;
@@ -604,6 +581,16 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
 
 // ─── Questions ───────────────────────────────────────────────────────────────
 
+/** Read keys from the terminal: raw mode, one 'data' chunk per key press. Undone by stopKeys(). */
+export const readKeys = (onKey) => process.stdin.setRawMode(true).resume().setEncoding('utf8').on('data', onKey);
+
+/** The reverse of readKeys(); a stdin that is already closed is left alone. */
+export function stopKeys(onKey) {
+  process.stdin.removeListener('data', onKey);
+  tryOr(() => process.stdin.setRawMode(false));
+  process.stdin.pause();
+}
+
 /**
  * What a key (one 'data' chunk in raw mode) answers: Enter takes the default, y and n answer, Esc and Ctrl-D answer
  * no; null for anything else (Tab, Backspace, an arrow or F-key sequence, another letter): keep waiting. A paste
@@ -623,9 +610,6 @@ export function confirm(question, { default: dflt = true, fallback = false } = {
       resolve(fallback);
       return;
     }
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.setEncoding('utf8');
     const onCtrlC = (chunk) => {
       if (!chunk.includes('\u0003')) return false;
       process.stdout.write('\n');
@@ -633,7 +617,7 @@ export function confirm(question, { default: dflt = true, fallback = false } = {
     };
     /* Keys typed before the question (an Enter pressed while a step ran waits in the terminal) must not answer it:
        what arrives in the first moment after resume() was typed earlier, and is dropped. */
-    process.stdin.on('data', onCtrlC);
+    readKeys(onCtrlC);
     setTimeout(() => {
       process.stdin.removeListener('data', onCtrlC);
       process.stdout.write(`  ${c.bold}${question}${c.reset} ${c.cyan}${dflt ? '[Y/n]' : '[y/N]'}${c.reset}  `);
@@ -641,9 +625,7 @@ export function confirm(question, { default: dflt = true, fallback = false } = {
         onCtrlC(chunk);
         const yes = confirmAnswer(chunk, dflt);
         if (yes === null) return;
-        process.stdin.removeListener('data', onKey);
-        process.stdin.setRawMode(false);
-        process.stdin.pause();
+        stopKeys(onKey);
         process.stdout.write(`\r\x1b[2K  ${c.bold}${question}${c.reset}  ${c.gray}${yes ? 'yes' : 'no'}${c.reset}\n`);
         resolve(yes);
       };
@@ -653,6 +635,27 @@ export function confirm(question, { default: dflt = true, fallback = false } = {
 }
 
 // ─── Reporting ───────────────────────────────────────────────────────────────
+
+/** A `warn` row for printCheckTable; `extra` carries `fix`, `label` or `error`. */
+export const warnRow = (detail, note, extra) => ({ ok: true, warn: true, detail, note, ...extra });
+
+/**
+ * `fn()`, or `fallback` when it throws: for a read whose absence is an answer, not an error, and for a side effect
+ * (a kill, an rm, a terminal reset) whose target may already be gone.
+ */
+export function tryOr(fn, fallback) {
+  try {
+    return fn();
+  } catch {
+    return fallback;
+  }
+}
+
+/** Parsed JSON, or undefined when the file is missing or does not parse. */
+export const readJson = (file) => tryOr(() => JSON.parse(readFileSync(file, 'utf8')));
+
+/** The file's text, or `fallback` when it cannot be read. */
+export const readText = (file, fallback = '') => tryOr(() => readFileSync(file, 'utf8'), fallback);
 
 /**
  * Print groups of { ok, warn, skip, label, detail, note } rows as a ✅/⚠️/❌ table. A `warn` row works but deserves
@@ -696,13 +699,16 @@ export function fail({ what, why, auto, fix }) {
 /** A command to type, in cyan; a hint, in gray. Not for text that goes on in another colour (they end with a reset). */
 export const cmd = (text) => `${c.cyan}${text}${c.reset}`;
 export const hint = (text) => `${c.gray}${text}${c.reset}`;
-/** One warning line: "  ⚠  text". */
 export const warn = (text) => console.log(`  ${c.yellow}⚠${c.reset}  ${text}`);
 
-/** fail(), then exit 1: a problem the script cannot go on from. */
 export function exitWith(problem) {
   fail(problem);
   process.exit(1);
+}
+
+export function exitAfter(text, code = 0) {
+  console.log(text);
+  process.exit(code);
 }
 
 /**
@@ -745,14 +751,11 @@ export function printError(err, { what, why, fix } = {}) {
   console.error('');
 }
 
-function restoreTerminal() {
-  try {
+const restoreTerminal = () =>
+  tryOr(() => {
     if (process.stdin.isTTY && process.stdin.isRaw) process.stdin.setRawMode(false);
     if (process.stdout.isTTY) process.stdout.write('\x1b[?25h');
-  } catch {
-    /* nothing more we can do */
-  }
-}
+  });
 
 /**
  * Run as root via sudo: node_modules, dist/ and the logs would belong to root, and every later run without sudo fails

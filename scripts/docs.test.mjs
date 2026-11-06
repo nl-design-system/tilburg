@@ -2,34 +2,18 @@
    and `inline`) is checked, so prose like "every pnpm command" is ignored. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readdirSync, readFileSync, symlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { readdirSync, readFileSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { FILE as BANNER_FILE, renderSvg } from './banner.mjs';
 import { ROOT } from './dev-config.mjs';
 import { FILE as TROUBLESHOOTING_FILE, withTable } from './troubleshooting.mjs';
-import { runScript } from './lib/test-fakes.mjs';
+import { runScript, tempDir } from './lib/test-fakes.mjs';
 
 /* pnpm's own commands, and the bins it runs without a script (`pnpm changeset`). */
-const BUILTINS = new Set([
-  'add',
-  'audit',
-  'changeset',
-  'dlx',
-  'exec',
-  'i',
-  'install',
-  'link',
-  'ls',
-  'outdated',
-  'pack',
-  'publish',
-  'remove',
-  'run',
-  'update',
-  'why',
-]);
+const BUILTINS = new Set(
+  'add audit changeset dlx exec i install link ls outdated pack publish remove run update why'.split(' '),
+);
 const scripts = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).scripts;
 const DOCUMENTATION = 'packages/storybook-shared/src/documentation';
 const docFiles = [
@@ -82,7 +66,7 @@ test(
     skip: readFileSync(BANNER_FILE, 'utf8') !== renderSvg() && 'banner.svg is out of date',
   },
   () => {
-    const dir = mkdtempSync(join(tmpdir(), 'tilburg-banner-'));
+    const dir = tempDir('tilburg-banner-');
     symlinkSync(ROOT, join(dir, 'repo'));
     const run = runScript(join(dir, 'repo/scripts/banner.mjs'), [], { timeout: 5000 });
     assert.equal(run.status, 0, run.stderr);

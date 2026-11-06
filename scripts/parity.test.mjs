@@ -2,29 +2,29 @@
    repository, or against a copy of scripts/ in a temp dir with a table of our own. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, resolve } from 'node:path';
+import { cpSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { STATUS_FILE } from './lib/components.mjs';
-import { runScript } from './lib/test-fakes.mjs';
+import { runScript, SCRIPTS, tempDir, writeFile } from './lib/test-fakes.mjs';
 
-const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 const parity = (args, cwd = SCRIPTS, script = resolve(SCRIPTS, 'parity.mjs')) =>
   runScript(script, args, { cwd, env: { ...process.env, CI: '1' } });
 
 /** A fake repository: scripts/ copied next to a package.json and the given implementation-status table. */
 function fakeRepo(table) {
-  const root = mkdtempSync(resolve(tmpdir(), 'tilburg-parity-'));
+  const root = tempDir('tilburg-parity-');
   cpSync(SCRIPTS, resolve(root, 'scripts'), { recursive: true, filter: (path) => !path.includes('node_modules') });
   writeFileSync(resolve(root, 'package.json'), '{}');
-  if (table !== undefined) {
-    mkdirSync(dirname(resolve(root, STATUS_FILE)), { recursive: true });
-    writeFileSync(resolve(root, STATUS_FILE), table);
-  }
+  if (table !== undefined) writeFile(resolve(root, STATUS_FILE), table);
   return root;
 }
+
+test('a complete component passes (exit 0) and names its layers', () => {
+  const { status, stdout, output } = parity(['tooltip']);
+  assert.equal(status, 0, output);
+  assert.match(stdout, /Tooltip\s+✓\s+✓\s+✓\s+✓/);
+});
 
 test('an unknown name exits 1 instead of "0 components, every layer is there"', () => {
   const { status, stdout } = parity(['no-such-component']);
@@ -73,10 +73,8 @@ test('a leftover folder without its main file is no orphan; a story without a ro
   const root = fakeRepo(
     '| Component | HTML/CSS | React | Angular | Web Components |\n| Real | utrecht | — | — | — |\n',
   );
-  mkdirSync(resolve(root, 'packages/components-css/ghost'), { recursive: true });
-  writeFileSync(resolve(root, 'packages/components-css/ghost/.DS_Store'), '');
-  mkdirSync(resolve(root, 'packages/storybook/src'), { recursive: true });
-  writeFileSync(resolve(root, 'packages/storybook/src/tilburg-ghost-react.stories.tsx'), '');
+  writeFile(resolve(root, 'packages/components-css/ghost/.DS_Store'), '');
+  writeFile(resolve(root, 'packages/storybook/src/tilburg-ghost-react.stories.tsx'), '');
   const { stdout } = parity([], root, resolve(root, 'scripts/parity.mjs'));
   assert.doesNotMatch(stdout, /components-css\/ghost/);
   assert.match(stdout, /tilburg-ghost-react\.stories\.tsx, but/);

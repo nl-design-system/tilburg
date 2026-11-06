@@ -9,6 +9,7 @@ import { ROOT } from './dev-config.mjs';
 import {
   c,
   confirm,
+  exitAfter,
   exitWith,
   hyperlink,
   installCrashHandler,
@@ -16,18 +17,13 @@ import {
   printBanner,
 } from './lib/cli-utils.mjs';
 import { classifyFailure } from './lib/recovery.mjs';
-import { inProgress, pullRequestUrl } from './lib/ship.mjs';
+import { GIT_ENV, inProgress, pullRequestUrl } from './lib/ship.mjs';
 
 installCrashHandler('pnpm ship');
 
-/* Run from a git hook, GIT_DIR and friends may point elsewhere than ROOT. GIT_TERMINAL_PROMPT=0: an HTTPS fetch
-   without a credential helper fails at once instead of prompting on the terminal while its output is captured. */
-/* LANGUAGE=en: the messages ship matches on are git's English ones. */
-const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...gitEnv } = {
-  ...process.env,
-  GIT_TERMINAL_PROMPT: '0',
-  LANGUAGE: 'en',
-};
+/* GIT_TERMINAL_PROMPT=0: an HTTPS fetch without a credential helper fails at once instead of prompting on the terminal
+   while its output is captured. LANGUAGE=en: the messages ship matches on are git's English ones. */
+const gitEnv = { ...GIT_ENV, GIT_TERMINAL_PROMPT: '0', LANGUAGE: 'en' };
 
 /** git in the repository. Never throws: { ok, out }. */
 function git(...args) {
@@ -36,10 +32,7 @@ function git(...args) {
   if (result.error?.code === 'ENOENT')
     exitWith({ what: 'git not found', fix: 'install git (https://git-scm.com/), then pnpm ship again' });
   /* Ctrl-C reaches git, not our SIGINT handler (spawnSync blocks it): stop here rather than carry on to the push. */
-  if (result.signal === 'SIGINT') {
-    console.log('\n  Stopped (Ctrl-C).\n');
-    process.exit(130);
-  }
+  if (result.signal === 'SIGINT') exitAfter('\n  Stopped (Ctrl-C).\n', 130);
   return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
 }
 
@@ -160,10 +153,7 @@ const log = git('log', '--oneline', '--no-decorate', range);
 if (!log.ok)
   exitWith({ what: 'Could not list the commits to push', why: `git log ${range} failed`, fix: 'git status' });
 const commits = log.out;
-if (!commits) {
-  console.log(`\n  ${c.green}Nothing to push.${c.reset} ${branch.out} is up to date with ${base}.\n`);
-  process.exit(0);
-}
+if (!commits) exitAfter(`\n  ${c.green}Nothing to push.${c.reset} ${branch.out} is up to date with ${base}.\n`);
 const count = commits.split('\n').length;
 console.log(`\n  ${count} commit${count === 1 ? '' : 's'} to push${base ? ` (${base}..HEAD)` : ''}:`);
 /* Without origin/main that is the whole history: the newest 20 say enough. */
@@ -177,10 +167,7 @@ const push = ['push', '-u', 'origin', `HEAD:refs/heads/${branch.out}`];
 if (args['dry-run']) console.log(`  ${c.gray}Dry run — would run: git ${push.join(' ')}${c.reset}`);
 else {
   if (!args.yes && !process.stdin.isTTY) exitWith({ what: 'Not pushing: no terminal to ask', fix: 'pnpm ship --yes' });
-  if (!args.yes && !(await confirm(`Push to ${target}?`))) {
-    console.log('  Not pushed.\n');
-    process.exit(0);
-  }
+  if (!args.yes && !(await confirm(`Push to ${target}?`))) exitAfter('  Not pushed.\n');
   /* stderr is read back to say why a push failed; git writes its progress there too, so pass it on. */
   /* No GIT_TERMINAL_PROMPT here: stdin is the terminal, so a credential prompt can be answered. */
   const pushed = spawnSync('git', push, {

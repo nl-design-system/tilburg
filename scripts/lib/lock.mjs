@@ -10,7 +10,7 @@ import { linkSync, lstatSync, readFileSync, renameSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
-import { c, confirm, exitWith } from './cli-utils.mjs';
+import { c, confirm, exitAfter, exitWith, tryOr } from './cli-utils.mjs';
 
 /* In the temp folder (nothing stray to commit), one per working copy and user: on a shared /tmp, another user's lock
    (or a root-owned one from an old sudo run) must not block ours. Windows paths ignore case, and the drive letter's
@@ -91,22 +91,12 @@ function reapGroups(lock) {
     /* Only while the leader is provably the one pnpm dev started: a group whose leader is gone may be someone else's
        by now (the lock can be days old, or from before a reboot). Better leave it than stop the wrong thing. */
     if (!isAlive(pid) || processStart(pid) === null || !sameProcess(pid, started)) continue;
-    try {
-      process.kill(-pid, 'SIGTERM');
-    } catch {
-      /* gone meanwhile, or not ours */
-    }
+    tryOr(() => process.kill(-pid, 'SIGTERM'));
   }
 }
 
 /* Another user's file in a sticky /tmp cannot be removed (EPERM): leave it, it is not ours anyway. */
-function removeLock(file) {
-  try {
-    rmSync(file, { force: true });
-  } catch {
-    /* not ours to remove */
-  }
-}
+const removeLock = (file) => tryOr(() => rmSync(file, { force: true }));
 
 /**
  * The running pnpm dev ({ pid, storybooks, started }), or null. A stale lock is removed after stopping the watchers a
@@ -183,9 +173,7 @@ export function writeDevLock(data, file = LOCK_FILE) {
 export function releaseDevLock(file = LOCK_FILE) {
   try {
     if (JSON.parse(readFileSync(file, 'utf8')).pid === process.pid) rmSync(file, { force: true });
-  } catch {
-    /* gone already, or not ours to judge */
-  }
+  } catch {}
 }
 
 /** Add to our own lock (e.g. the watchers' process groups once they run). Never touches another process's lock. */
@@ -198,9 +186,7 @@ export function updateDevLock(data, file = LOCK_FILE) {
     rmSync(next, { force: true });
     writeFileSync(next, JSON.stringify({ ...lock, ...data }), { flag: 'wx', mode: 0o600 });
     renameSync(next, file);
-  } catch {
-    /* no lock to add to */
-  }
+  } catch {}
 }
 
 /**
@@ -218,15 +204,13 @@ export async function confirmNoDevRunning(what) {
   console.log(
     `  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${lock.pid}${ports ? `, Storybook on ${ports}` : ''}). ${what} ${clash}`,
   );
-  const goOn = await confirm('Continue anyway? (or stop pnpm dev with q first)', { default: false, fallback: true });
-  return goOn;
+  return confirm('Continue anyway? (or stop pnpm dev with q first)', { default: false, fallback: true });
 }
 
 /** confirmNoDevRunning(what), or exit 1 when the user would rather stop pnpm dev first. */
 export async function confirmNoDevRunningOrExit(what) {
   if (await confirmNoDevRunning(what)) return;
-  console.log('  Stopped: stop pnpm dev with q, then run this again.');
-  process.exit(1);
+  exitAfter('  Stopped: stop pnpm dev with q, then run this again.', 1);
 }
 
 /**

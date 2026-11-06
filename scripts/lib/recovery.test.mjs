@@ -58,14 +58,6 @@ const cases = [
   ['no-space', "Error: ENOSPC: no space left on device, write '/r/packages/storybook-angular/.angular/cache/x'"],
 ];
 
-for (const [kind, output] of cases) {
-  test(`recognises ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
-    const diagnosis = classifyFailure(output, { exitCode: 1 });
-    assert.equal(diagnosis.kind, kind);
-    assert.ok(diagnosis.why, 'says why');
-  });
-}
-
 test('a truncated JSON file is only the Angular cache when .angular is named too', () => {
   assert.notEqual(
     classifyFailure('Error: package.json: Unexpected end of JSON input', { exitCode: 1 }).kind,
@@ -222,8 +214,7 @@ process.exit(0);`,
         child.stdin.write(answer);
       }
     };
-    child.stdout.setEncoding('utf8').on('data', read);
-    child.stderr.setEncoding('utf8').on('data', read);
+    for (const stream of [child.stdout, child.stderr]) stream.setEncoding('utf8').on('data', read);
     child.on('close', () => {
       clearTimeout(timer);
       const line = output.split(/\r?\n/).findLast((text) => text.startsWith('@@'));
@@ -474,10 +465,11 @@ const realOutput = [
     'Error: \nReference Errors:\nSome token references (2) could not be found.\nUse log.verbosity "verbose" or use CLI option --verbose for more details.',
   ],
 ];
-for (const [kind, output] of realOutput) {
-  test(`real output: ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
+for (const [kind, output] of [...cases, ...realOutput]) {
+  test(`recognises ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
     const diagnosis = classifyFailure(output, { exitCode: 1 });
     assert.equal(diagnosis.kind, kind);
+    assert.ok(diagnosis.why, 'says why');
     assert.ok(diagnosis.fix, 'every recognised failure has a manual fix');
   });
 }
@@ -638,9 +630,8 @@ test('a failing test is a test failure, whatever its name or message says', () =
 
 test('a step stopped from outside is never retried, even when its output looks retryable', () => {
   const output = ' WARN  GET https://registry.npmjs.org/x error (ECONNRESET). Will retry in 10 seconds.';
-  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'])
     assert.equal(classifyFailure(output, { signal }).kind, 'stopped', signal);
-  }
 });
 
 test('after the one retry, the report says the fix was not tried because the retry was used', { timeout: 20_000 }, () =>

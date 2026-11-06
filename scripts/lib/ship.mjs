@@ -24,9 +24,14 @@ export function pullRequestUrl(remote, branch, base = 'main') {
   return `https://${host}/${path}/compare/${ref(base)}...${ref(branch)}?expand=1`;
 }
 
+/* Run from a git hook, GIT_DIR and friends point at this repository and would override cwd and `git -C <dir>`. */
+const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...gitEnv } = process.env;
+/** process.env without git's own GIT_DIR, GIT_INDEX_FILE and GIT_WORK_TREE. */
+export const GIT_ENV = gitEnv;
+
 /* Half-way through one of these the branch (or HEAD) is not what it will end up as: ship will not push it, sync will
    not write a consumer's lockfile into it. [file under `git rev-parse --git-path`, what, how to finish it] */
-export const IN_PROGRESS = [
+const IN_PROGRESS = [
   ['rebase-merge', 'A rebase', 'git rebase --continue (or git rebase --abort)'],
   ['rebase-apply', 'A rebase', 'git rebase --continue (or git rebase --abort)'],
   ['MERGE_HEAD', 'A merge', 'git commit to finish it (or git merge --abort)'],
@@ -51,15 +56,13 @@ export function inProgress(dir, git) {
  * they differ, a checkout, pull or stash happened meanwhile and the result came from a mix of two trees.
  */
 export async function treeState(dir) {
-  /* From a git hook, GIT_DIR and friends would point elsewhere than `dir`. */
-  const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...env } = process.env;
   /* Async: a blocking git (a hung mount, a lock) would keep Ctrl-C from stopping the script. */
   const git = (...args) =>
     new Promise((done) =>
       execFile(
         'git',
         ['-C', dir, ...args],
-        { encoding: 'utf8', env, timeout: 30_000, maxBuffer: 64 << 20 },
+        { encoding: 'utf8', env: GIT_ENV, timeout: 30_000, maxBuffer: 64 << 20 },
         (err, stdout) => done(err ? null : stdout),
       ),
     );

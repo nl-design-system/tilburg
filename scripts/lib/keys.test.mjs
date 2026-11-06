@@ -14,9 +14,8 @@ test('splitKeys reads arrows (both modes), Enter, Esc and letters, several in on
 });
 
 test('splitKeys drops other escape sequences whole: Home is not H, F2 is not Q, Alt-q is not q', () => {
-  for (const sequence of ['\x1b[H', '\x1bOH', '\x1bOQ', '\x1b[15~', '\x1b[1;5A', '\x1bq']) {
+  for (const sequence of ['\x1b[H', '\x1bOH', '\x1bOQ', '\x1b[15~', '\x1b[1;5A', '\x1bq'])
     assert.deepEqual(splitKeys(sequence), [], JSON.stringify(sequence));
-  }
   assert.deepEqual(splitKeys('\x1b[H\x1b[A'), ['\x1b[A']);
 });
 

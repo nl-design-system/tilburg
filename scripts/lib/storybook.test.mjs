@@ -3,14 +3,14 @@ import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import http from 'node:http';
 import { networkInterfaces, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { listenerDir } from './checks.mjs';
 import { choosePort, localIp, printStorybookLinks, waitForStorybook } from './storybook.mjs';
-import { freePort } from './test-fakes.mjs';
+import { freePort, tempDir, writeFile } from './test-fakes.mjs';
 
 const REACT = { name: 'React Storybook', storyId: /^tilburg-.+-react--/ };
 /* Windows tells the folder of the process on a port from its command line (…\node_modules\…), not from its working
@@ -21,16 +21,17 @@ const STORIES = {
   angular: '{"entries":{"tilburg-button-angular--default":{}}}',
 };
 
-/** A server on `host` and a free port; `index` true (or 'react') answers like our React Storybook, 'angular' like the
- *  Angular one, 'hang' never answers, false is not a Storybook. */
-async function serve(host, index = true) {
+/** A server on `host` and a free port, closed after test `t`; `index` true (or 'react') answers like our React
+ *  Storybook, 'angular' like the Angular one, 'hang' never answers, false is not a Storybook. Resolves with the port. */
+async function serve(t, host, index = true) {
   const server = http.createServer((request, response) => {
     if (index === 'hang') return;
     response.setHeader('content-type', 'application/json');
     response.end(index ? STORIES[index === true ? 'react' : index] : '{}');
   });
   await new Promise((done) => server.listen(0, host, done));
-  return { port: server.address().port, close: () => (server.closeAllConnections(), server.close()) };
+  t.after(() => (server.closeAllConnections(), server.close()));
+  return server.address().port;
 }
 
 /* The Storybooks run with `--host 0.0.0.0` (IPv4 only), while `localhost` resolves to ::1 first on macOS. */
@@ -40,44 +41,28 @@ const ipv6 = Object.values(networkInterfaces())
   .some((address) => address?.address === '::1');
 for (const host of ['0.0.0.0', '127.0.0.1', '::1']) {
   const skip = host === '::1' && !ipv6 && 'no IPv6 loopback on this machine';
-  test(`waitForStorybook finds a Storybook listening on ${host} via localhost`, { skip }, async () => {
-    const server = await serve(host);
-    try {
-      assert.equal(await waitForStorybook(server.port, () => false), true);
-    } finally {
-      server.close();
-    }
+  test(`waitForStorybook finds a Storybook listening on ${host} via localhost`, { skip }, async (t) => {
+    const port = await serve(t, host);
+    assert.equal(await waitForStorybook(port, () => false), true);
   });
 }
 
-test('waitForStorybook gives up when stop() says so, also on a server that never answers', async () => {
-  const server = await serve('0.0.0.0', 'hang');
+test('waitForStorybook gives up when stop() says so, also on a server that never answers', async (t) => {
+  const port = await serve(t, '0.0.0.0', 'hang');
   const startedAt = Date.now();
-  try {
-    assert.equal(await waitForStorybook(server.port, () => Date.now() - startedAt > 500), false);
-    assert.ok(Date.now() - startedAt < 6000, 'each probe has its own timeout');
-  } finally {
-    server.close();
-  }
+  assert.equal(await waitForStorybook(port, () => Date.now() - startedAt > 500), false);
+  assert.ok(Date.now() - startedAt < 6000, 'each probe has its own timeout');
 });
 
-test('waitForStorybook still looks once when stop() is already true (the limit passed while the laptop slept)', async () => {
-  const server = await serve('0.0.0.0');
-  try {
-    assert.equal(await waitForStorybook(server.port, () => true), true);
-  } finally {
-    server.close();
-  }
+test('waitForStorybook still looks once when stop() is already true (the limit passed while the laptop slept)', async (t) => {
+  const port = await serve(t, '0.0.0.0');
+  assert.equal(await waitForStorybook(port, () => true), true);
 });
 
-test('waitForStorybook does not take any server on the port for a Storybook', async () => {
-  const server = await serve('0.0.0.0', false);
+test('waitForStorybook does not take any server on the port for a Storybook', async (t) => {
+  const port = await serve(t, '0.0.0.0', false);
   let probes = 0;
-  try {
-    assert.equal(await waitForStorybook(server.port, () => probes++ >= 1), false);
-  } finally {
-    server.close();
-  }
+  assert.equal(await waitForStorybook(port, () => probes++ >= 1), false);
 });
 
 test('choosePort: a free usual port is used as is', async () => {
@@ -85,38 +70,26 @@ test('choosePort: a free usual port is used as is', async () => {
   assert.deepEqual(await choosePort({ ...REACT, port }), { port, running: false });
 });
 
-test('choosePort: our Storybook on the usual port (on 0.0.0.0) is reused', { skip: noCwd }, async () => {
-  const server = await serve('0.0.0.0');
-  try {
-    assert.deepEqual(await choosePort({ ...REACT, port: server.port }), { port: server.port, running: true });
-  } finally {
-    server.close();
-  }
+test('choosePort: our Storybook on the usual port (on 0.0.0.0) is reused', { skip: noCwd }, async (t) => {
+  const port = await serve(t, '0.0.0.0');
+  assert.deepEqual(await choosePort({ ...REACT, port }), { port, running: true });
 });
 
-test('choosePort: something else on the usual port moves the Storybook to a free one', async () => {
-  const server = await serve('0.0.0.0', false);
-  try {
-    const choice = await choosePort({ ...REACT, port: server.port });
-    assert.equal(choice.moved, true);
-    assert.equal(choice.running, false);
-    assert.notEqual(choice.port, server.port);
-    assert.equal(choice.taken, 'something else');
-  } finally {
-    server.close();
-  }
+test('choosePort: something else on the usual port moves the Storybook to a free one', async (t) => {
+  const port = await serve(t, '0.0.0.0', false);
+  const choice = await choosePort({ ...REACT, port });
+  assert.equal(choice.moved, true);
+  assert.equal(choice.running, false);
+  assert.notEqual(choice.port, port);
+  assert.equal(choice.taken, 'something else');
 });
 
-test('choosePort: the other Tilburg Storybook on the usual port is not reused', async () => {
-  const server = await serve('0.0.0.0', 'angular');
-  try {
-    const choice = await choosePort({ ...REACT, port: server.port });
-    assert.equal(choice.running, false);
-    assert.notEqual(choice.port, server.port);
-    assert.match(choice.taken, /Storybook/);
-  } finally {
-    server.close();
-  }
+test('choosePort: the other Tilburg Storybook on the usual port is not reused', async (t) => {
+  const port = await serve(t, '0.0.0.0', 'angular');
+  const choice = await choosePort({ ...REACT, port });
+  assert.equal(choice.running, false);
+  assert.notEqual(choice.port, port);
+  assert.match(choice.taken, /Storybook/);
 });
 
 test(
@@ -149,13 +122,9 @@ test(
   },
 );
 
-test('listenerDir names the working directory of the process on the port', { skip: noCwd }, async () => {
-  const server = await serve('0.0.0.0');
-  try {
-    assert.equal(listenerDir(server.port), realpathSync(process.cwd()));
-  } finally {
-    server.close();
-  }
+test('listenerDir names the working directory of the process on the port', { skip: noCwd }, async (t) => {
+  const port = await serve(t, '0.0.0.0');
+  assert.equal(listenerDir(port), realpathSync(process.cwd()));
 });
 
 test('choosePort: a port reserved for the other Storybook is not handed out twice', async () => {
@@ -165,18 +134,13 @@ test('choosePort: a port reserved for the other Storybook is not handed out twic
   assert.notEqual(choice.port, port);
 });
 
-test('printStorybookLinks prints every Storybook in one box', () => {
+test('printStorybookLinks prints every Storybook in one box', (t) => {
   const lines = [];
-  const log = console.log;
-  console.log = (...args) => lines.push(args.join(' '));
-  try {
-    printStorybookLinks([
-      { name: 'React Storybook', port: 6006, note: 'HTML' },
-      { name: 'Angular Storybook', port: 6107 },
-    ]);
-  } finally {
-    console.log = log;
-  }
+  t.mock.method(console, 'log', (...args) => lines.push(args.join(' ')));
+  printStorybookLinks([
+    { name: 'React Storybook', port: 6006, note: 'HTML' },
+    { name: 'Angular Storybook', port: 6107 },
+  ]);
   const output = lines.join('\n');
   assert.match(output, /http:\/\/localhost:6006\//);
   assert.match(output, /http:\/\/localhost:6107\//);
@@ -210,10 +174,8 @@ test(
   },
   async (t) => {
     /* A space in the path, as in "My Documents": the command line quotes it. */
-    const clone = realpathSync(mkdtempSync(join(tmpdir(), 'tilburg clone-')));
-    t.after(() => rmSync(clone, { recursive: true, force: true, maxRetries: 5 }));
-    mkdirSync(join(clone, 'node_modules'));
-    writeFileSync(
+    const clone = realpathSync(tempDir('tilburg clone-'));
+    writeFile(
       join(clone, 'node_modules', 'server.js'),
       "const s=require('http').createServer((q,r)=>r.end('{}')).listen(0,'0.0.0.0',()=>process.stdout.write(s.address().port+'\\n'))",
     );

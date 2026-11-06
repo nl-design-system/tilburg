@@ -1,13 +1,10 @@
-/* `node --test scripts/`: the checks behind pnpm check, the lock file, and pnpm parity end to end. */
+/* `node --test scripts/`: the checks behind pnpm check. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, realpathSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
+import { mkdirSync, realpathSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
-import { tmpdir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { PNPM_VERSION, ROOT } from '../dev-config.mjs';
 import {
   belowEngines,
@@ -25,49 +22,14 @@ import {
   newestMtime,
   runInherit,
 } from './checks.mjs';
-import { readDevLock } from './lock.mjs';
-import { noSignals, writeFake } from './test-fakes.mjs';
-
-const scripts = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
+import { noSignals, tempDir, writeFake, writeFile } from './test-fakes.mjs';
 
 test('newestMtime does not follow a symlink loop, and skips build output', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  mkdirSync(resolve(dir, 'src'));
+  const dir = tempDir('tilburg-test-');
+  writeFile(resolve(dir, 'src', 'a.ts'), 'a');
   mkdirSync(resolve(dir, 'src', 'dist'));
-  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
   symlinkSync(dir, resolve(dir, 'src', 'loop'));
   assert.ok(newestMtime([resolve(dir, 'src'), resolve(dir, 'missing')]) > 0);
-});
-
-test('a lock left by a process that is gone is stale: ignored and removed', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  const file = resolve(dir, 'lock.json');
-  writeFileSync(file, JSON.stringify({ pid: 2 ** 22 + 17, started: new Date().toISOString() }));
-  assert.equal(readDevLock(file), null);
-  assert.equal(existsSync(file), false);
-});
-
-test('a lock of a running process is read', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  const file = resolve(dir, 'lock.json');
-  writeFileSync(
-    file,
-    JSON.stringify({ pid: process.ppid, started: new Date().toISOString(), storybooks: [{ port: 6006 }] }),
-  );
-  assert.equal(readDevLock(file)?.storybooks[0].port, 6006);
-});
-
-test('a broken lock file is ignored', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
-  const file = resolve(dir, 'lock.json');
-  writeFileSync(file, '{ not json');
-  assert.equal(readDevLock(file), null);
-});
-
-test('pnpm parity passes for a complete component and names the layers', () => {
-  const result = spawnSync(process.execPath, [resolve(scripts, 'parity.mjs'), 'tooltip'], { encoding: 'utf8' });
-  assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.match(result.stdout, /Tooltip\s+✓\s+✓\s+✓\s+✓/);
 });
 
 test('belowEngines reads the minimum for the running major from an engines range', () => {
@@ -91,7 +53,7 @@ test('runInherit throws with the exit code, or the signal that stopped the comma
 
 /** checkPnpm with a fake `pnpm` on the PATH (none at all when `script` is null). */
 async function withFakePnpm(script) {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-pnpm-'));
+  const dir = tempDir('tilburg-pnpm-');
   if (script !== null) writeFake(dir, 'pnpm', `#!/bin/sh\n${script}\n`);
   /* process.env ignores the case of names on Windows: this sets its Path. */
   const path = process.env.PATH;
@@ -155,9 +117,8 @@ test('corepack older than 0.31 is flagged, and named as another install when it 
   assert.match(old.detail, /0\.14\.2 at \/usr\/local\/bin\/corepack, not the one of the Node/);
   assert.match(old.note, /npm install -g corepack@latest/);
   assert.doesNotMatch(checkCorepack({ path: '/n/bin/corepack', version: '0.30.0' }, '/n/bin').detail, /not the one/);
-  for (const version of ['0.31.0', '0.35.0', '1.0.0', undefined]) {
+  for (const version of ['0.31.0', '0.35.0', '1.0.0', undefined])
     assert.equal(checkCorepack({ path: '/n/bin/corepack', version }, '/n/bin').warn, undefined, version);
-  }
   assert.equal(checkCorepack(null).warn, undefined);
 });
 
@@ -174,9 +135,8 @@ test('a repository in iCloud Drive, OneDrive or Dropbox is flagged', () => {
     '/Users/x/Library/CloudStorage/OneDrive-Gemeente/tilburg',
     '/Users/x/Dropbox/work/tilburg',
     '/Users/x/OneDrive - Company/tilburg',
-  ]) {
+  ])
     assert.equal(checkFolder(root).warn, true, root);
-  }
   assert.equal(checkFolder('/Users/x/Documents/BitBucket/tilburg').warn, undefined);
   assert.equal(checkFolder('/Users/x/dev/dropbox-client').warn, undefined);
   assert.equal(checkFolder('C:\\Users\\x\\OneDrive - Company\\tilburg', 'win32').warn, true);
@@ -189,7 +149,7 @@ test('WSL on a Windows drive is flagged, a clone inside WSL is not', () => {
 });
 
 test('a package.json that does not parse (merge conflict) fails the check instead of crashing', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-pkg-'));
+  const dir = tempDir('tilburg-pkg-');
   writeFileSync(resolve(dir, 'package.json'), '{\n<<<<<<< HEAD\n  "name": "a"\n=======\n}');
   assert.equal(checkPackageJson(resolve(dir, 'package.json')).ok, false);
   writeFileSync(resolve(dir, 'package.json'), '{"name":"a"}');
@@ -197,9 +157,8 @@ test('a package.json that does not parse (merge conflict) fails the check instea
 });
 
 test('only files count: a reinstall or a Finder .DS_Store does not make the source newer', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  mkdirSync(resolve(dir, 'src'));
-  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
+  const dir = tempDir('tilburg-test-');
+  writeFile(resolve(dir, 'src', 'a.ts'), 'a');
   utimesSync(resolve(dir, 'src', 'a.ts'), 1, 1);
   mkdirSync(resolve(dir, 'src', 'node_modules'));
   writeFileSync(resolve(dir, 'src', '.DS_Store'), '');
@@ -207,11 +166,9 @@ test('only files count: a reinstall or a Finder .DS_Store does not make the sour
 });
 
 test('a source file from the future is stale and says clock skew', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  mkdirSync(resolve(dir, 'src'));
-  mkdirSync(resolve(dir, 'dist'));
-  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
-  writeFileSync(resolve(dir, 'dist', 'index.js'), 'a');
+  const dir = tempDir('tilburg-test-');
+  writeFile(resolve(dir, 'src', 'a.ts'), 'a');
+  writeFile(resolve(dir, 'dist', 'index.js'), 'a');
   for (const path of ['src', 'src/a.ts']) utimesSync(resolve(dir, path), 1, 1);
   const library = { dir, src: ['src'], built: 'dist/index.js' };
   assert.equal(libraryState(library).state, 'fresh');
@@ -255,33 +212,26 @@ test('a Storybook whose folder cannot be told is not taken for ours; one on ::1 
       t.diagnostic(`${host} not available`);
       continue;
     }
-    try {
-      const { port } = server.address();
-      assert.deepEqual(await identifyStorybook({}, port, () => null), {
-        ours: false,
-        what: 'a Storybook whose folder cannot be told (no lsof)',
-      });
-    } finally {
-      server.close();
-    }
+    t.after(() => server.close());
+    assert.deepEqual(await identifyStorybook({}, server.address().port, () => null), {
+      ours: false,
+      what: 'a Storybook whose folder cannot be told (no lsof)',
+    });
   }
 });
 
-test('a Storybook from one of our packages is ours, in whatever case Windows spells the path', async () => {
+test('a Storybook from one of our packages is ours, in whatever case Windows spells the path', async (t) => {
   const server = await fakeStorybook('127.0.0.1');
-  try {
-    const { port } = server.address();
-    const dir = resolve(realpathSync(ROOT), 'packages', 'storybook');
-    assert.deepEqual(await identifyStorybook({}, port, () => dir), { ours: true });
-    if (process.platform === 'win32')
-      assert.deepEqual(await identifyStorybook({}, port, () => dir.toUpperCase()), { ours: true });
-    assert.deepEqual(await identifyStorybook({}, port, () => `${realpathSync(ROOT)}-other`), {
-      ours: false,
-      what: `a Storybook from ${realpathSync(ROOT)}-other`,
-    });
-  } finally {
-    server.close();
-  }
+  t.after(() => server.close());
+  const { port } = server.address();
+  const dir = resolve(realpathSync(ROOT), 'packages', 'storybook');
+  assert.deepEqual(await identifyStorybook({}, port, () => dir), { ours: true });
+  if (process.platform === 'win32')
+    assert.deepEqual(await identifyStorybook({}, port, () => dir.toUpperCase()), { ours: true });
+  assert.deepEqual(await identifyStorybook({}, port, () => `${realpathSync(ROOT)}-other`), {
+    ours: false,
+    what: `a Storybook from ${realpathSync(ROOT)}-other`,
+  });
 });
 
 test('folderFromCommandLine: the folder before node_modules, not the node.exe in front of it', () => {
@@ -326,9 +276,8 @@ test('checkPnpm warns when the Windows pnpm comes first on the PATH under WSL', 
 });
 
 test('newestMtime follows a symlink given as a path, not one below it', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  mkdirSync(resolve(dir, 'real'));
-  writeFileSync(resolve(dir, 'real', 'a.ts'), 'a');
+  const dir = tempDir('tilburg-test-');
+  writeFile(resolve(dir, 'real', 'a.ts'), 'a');
   utimesSync(resolve(dir, 'real', 'a.ts'), 5, 5);
   utimesSync(resolve(dir, 'real'), 5, 5);
   symlinkSync(resolve(dir, 'real'), resolve(dir, 'src'));
@@ -336,12 +285,10 @@ test('newestMtime follows a symlink given as a path, not one below it', () => {
 });
 
 test('a build is fresh when any file in dist/ is newer than the source (Stencil skips unchanged files)', () => {
-  const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-test-'));
-  mkdirSync(resolve(dir, 'src'));
-  mkdirSync(resolve(dir, 'dist', 'esm'), { recursive: true });
-  writeFileSync(resolve(dir, 'src', 'a.ts'), 'a');
-  writeFileSync(resolve(dir, 'dist', 'index.js'), 'a');
-  writeFileSync(resolve(dir, 'dist', 'esm', 'a.js'), 'a');
+  const dir = tempDir('tilburg-test-');
+  writeFile(resolve(dir, 'src', 'a.ts'), 'a');
+  writeFile(resolve(dir, 'dist', 'index.js'), 'a');
+  writeFile(resolve(dir, 'dist', 'esm', 'a.js'), 'a');
   for (const path of ['src', 'src/a.ts']) utimesSync(resolve(dir, path), 20, 20);
   for (const path of ['dist', 'dist/esm', 'dist/index.js']) utimesSync(resolve(dir, path), 10, 10);
   utimesSync(resolve(dir, 'dist', 'esm', 'a.js'), 30, 30);

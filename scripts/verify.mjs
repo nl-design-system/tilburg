@@ -11,11 +11,13 @@ import { checkInstallFresh } from './lib/checks.mjs';
 import {
   c,
   capture,
+  exitAfter,
   installCrashHandler,
   parseArgsOrExit,
   printBanner,
   printCheckTable,
   stepSkip,
+  warnRow,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
@@ -23,10 +25,8 @@ import { treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm verify');
 /* Strict: `pnpm verify tooltip` or a typo must not start the full CI-length run while you wait for something else. */
-if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm verify').values.help) {
-  console.log('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
-  process.exit(0);
-}
+if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm verify').values.help)
+  exitAfter('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
 printBanner('Verify (what CI checks)');
 
 const STEPS = [
@@ -103,13 +103,7 @@ for (const step of STEPS) {
     if (step.label === 'Build') built = false;
     /* Offline, the audit says nothing about the code: CI (online) decides that one. */
     if (step.label === 'Security audit' && diagnosis.kind === 'network') {
-      rows.push({
-        ok: true,
-        warn: true,
-        label: step.label,
-        detail: 'could not check: no network',
-        note: diagnosis.fix,
-      });
+      rows.push(warnRow('could not check: no network', diagnosis.fix, { label: step.label }));
       continue;
     }
     rows.push({
@@ -123,32 +117,26 @@ for (const step of STEPS) {
 
 /* Only a warning: a crash in it (a broken package.json) must not throw away the table of the steps above. */
 rows.push(
-  await changesetRow().catch((error) => ({
-    ok: true,
-    warn: true,
-    label: 'Changeset (not in CI)',
-    detail: 'could not check',
-    error,
-  })),
+  await changesetRow().catch((error) =>
+    warnRow('could not check', undefined, { label: 'Changeset (not in CI)', error }),
+  ),
 );
 
 /* A checkout, pull or stash meanwhile: the steps ran on a mix of two trees. */
 const treeAtEnd = await treeState(ROOT);
 if (treeAtStart && treeAtEnd && treeAtStart !== treeAtEnd)
-  rows.push({
-    ok: true,
-    warn: true,
-    label: 'Working tree',
-    detail: 'changed while this ran',
-    note: 'a checkout, pull or stash meanwhile: the steps saw a mix of two trees, so pnpm verify again',
-  });
+  rows.push(
+    warnRow(
+      'changed while this ran',
+      'a checkout, pull or stash meanwhile: the steps saw a mix of two trees, so pnpm verify again',
+      { label: 'Working tree' },
+    ),
+  );
 
 console.log('');
 const { failed, total } = printCheckTable([{ title: 'Result', rows }]);
-if (failed.length) {
-  console.log(`  ${c.red}${failed.length} of ${total} failed.${c.reset} CI would fail the same way.\n`);
-  process.exit(1);
-}
+if (failed.length)
+  exitAfter(`  ${c.red}${failed.length} of ${total} failed.${c.reset} CI would fail the same way.\n`, 1);
 console.log(`  ${c.green}Everything CI checks passes.${c.reset}\n`);
 
 /**
@@ -170,13 +158,11 @@ async function changesetRow() {
   /* Fails without a shared commit: a shallow clone (CI's checkout) has cut the history off before it. */
   const base = await git('merge-base HEAD origin/main').catch(() => '');
   if (!base)
-    return {
-      ok: true,
-      warn: true,
-      label,
-      detail: 'could not check: no common history with origin/main',
-      note: `a shallow clone? ${c.cyan}git fetch --unshallow origin${c.reset}`,
-    };
+    return warnRow(
+      'could not check: no common history with origin/main',
+      `a shallow clone? ${c.cyan}git fetch --unshallow origin${c.reset}`,
+      { label },
+    );
   const changed = [
     ...(await git(`diff --name-only ${base}`)).split('\n'),
     ...(await git('ls-files --others --exclude-standard')).split('\n'),
@@ -192,11 +178,9 @@ async function changesetRow() {
   if (!touched.length) return { ok: true, label, detail: 'no published package changed' };
   if (changesets.length)
     return { ok: true, label, detail: `${changesets.length} on this branch`, note: changesets.join(', ') };
-  return {
-    ok: true,
-    warn: true,
-    label,
-    detail: `${touched.map((dir) => dir.split('/')[1]).join(', ')} changed, but this branch has no changeset`,
-    note: `${c.cyan}pnpm changeset${c.reset} describes the change for the release (skip it for refactors and tests)`,
-  };
+  return warnRow(
+    `${touched.map((dir) => dir.split('/')[1]).join(', ')} changed, but this branch has no changeset`,
+    `${c.cyan}pnpm changeset${c.reset} describes the change for the release (skip it for refactors and tests)`,
+    { label },
+  );
 }

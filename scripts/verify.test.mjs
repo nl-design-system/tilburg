@@ -3,12 +3,21 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
+import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, gitIn, prependPath, runScript, writeFake, writeLock } from './lib/test-fakes.mjs';
+import {
+  copyScripts,
+  gitIn,
+  prependPath,
+  runScript,
+  tempDir,
+  writeFake,
+  writeFile,
+  writeLock,
+} from './lib/test-fakes.mjs';
 
 /* The fake pnpm: FAIL and KILL are the exact arguments that make it exit 1 or kill itself. */
 const PNPM = `#!/bin/sh
@@ -19,7 +28,7 @@ exit 0
 `;
 
 function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = '', args = [], setup } = {}) {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-verify-test-'));
+  const dir = tempDir('tilburg-verify-test-');
   const bin = join(dir, 'bin');
   mkdirSync(bin);
   copyScripts(dir, 'verify.mjs');
@@ -28,8 +37,7 @@ function verify({ FAIL = '', KILL = '', TOUCH = '', PARITY_EXIT = '0', OUTPUT = 
   writeFake(bin, 'pnpm', PNPM);
   const env = prependPath({ ...process.env, CI: '', FAIL, KILL, TOUCH, PARITY_EXIT, OUTPUT }, bin);
   setup?.(dir, env);
-  const result = runScript('scripts/verify.mjs', args, { cwd: dir, env, timeout: 30_000 });
-  return result;
+  return runScript('scripts/verify.mjs', args, { cwd: dir, env, timeout: 30_000 });
 }
 
 test('every step passing is the only way to exit 0', () => {
@@ -47,8 +55,7 @@ test('an audit that fails offline is a warning, not a failure', () => {
 test('node_modules out of date with pnpm-lock.yaml is said at the top', () => {
   const result = verify({
     setup: (dir) => {
-      mkdirSync(join(dir, 'node_modules', '.pnpm'), { recursive: true });
-      writeFileSync(join(dir, 'node_modules', '.pnpm', 'lock.yaml'), 'old\n');
+      writeFile(join(dir, 'node_modules', '.pnpm', 'lock.yaml'), 'old\n');
       writeFileSync(join(dir, 'pnpm-lock.yaml'), 'new\n');
     },
   });
@@ -180,9 +187,7 @@ test('--help prints the usage and runs nothing; an unknown argument is refused',
 
 test('while pnpm sync (or pack:local) builds, verify stops before building', () => {
   const result = verify({
-    setup: (dir) => {
-      writeLock(join(tmpdir(), lockName(realpathSync(dir), 'sync')), { what: 'pnpm sync' });
-    },
+    setup: (dir) => writeLock(join(tmpdir(), lockName(realpathSync(dir), 'sync')), { what: 'pnpm sync' }),
   });
   assert.equal(result.status, 1, result.output);
   assert.match(result.output, /pnpm sync is running/);

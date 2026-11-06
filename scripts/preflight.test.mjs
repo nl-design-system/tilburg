@@ -2,13 +2,12 @@
    `pnpm install` for a wrong Node; welcome may never stop it. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { copyScripts, runScript } from './lib/test-fakes.mjs';
+import { copyScripts, runScript, tempDir } from './lib/test-fakes.mjs';
 
-const temp = mkdtempSync(resolve(tmpdir(), 'tilburg-preflight-test-'));
+const temp = tempDir('tilburg-preflight-test-');
 
 const major = Number(process.versions.node.split('.')[0]);
 let count = 0;

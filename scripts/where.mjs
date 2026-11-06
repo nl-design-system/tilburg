@@ -62,8 +62,6 @@ console.log(
   `  ${isTlb(component) ? `${c.magenta}Tilburg component (TLB)${c.reset}: its own tilburg-* markup and CSS, no Utrecht base.` : `${c.gray}Built on the Utrecht component, with Tilburg styling.${c.reset}`}\n`,
 );
 
-// ─── Files ───────────────────────────────────────────────────────────────────
-
 const fileCell = (path, { promised = true } = {}) => {
   if (!promised) return `${c.gray}— no wrapper (on purpose, see implementation-status.md)${c.reset}`;
   return existsSync(path) ? link(path) : `${c.red}missing: ${rel(path)}${c.reset}`;
@@ -99,8 +97,6 @@ if (existsSync(component.guidance))
 console.log(`  ${c.bold}Files${c.reset}`);
 for (const [label, file, extra] of rows) console.log(`  ${label.padEnd(15)}${file}${extra ? `  ${extra}` : ''}`);
 
-// ─── Storybook ───────────────────────────────────────────────────────────────
-
 const running = readDevLock();
 const port = (key) => running?.storybooks?.find((storybook) => storybook.name === STORYBOOKS[key].name)?.port;
 const local = (key) => `http://localhost:${port(key) ?? STORYBOOKS[key].port}/`;
@@ -122,8 +118,6 @@ for (const [label, key, story] of pages) {
   console.log(`  ${label.padEnd(18)}${live}${hyperlink(localUrl, localUrl)}${c.reset}`);
   console.log(`  ${''.padEnd(18)}${c.gray}online: ${hyperlink(onlineUrl, onlineUrl)}${c.reset}`);
 }
-
-// ─── Next ────────────────────────────────────────────────────────────────────
 
 console.log(`\n  ${c.bold}Next${c.reset}`);
 console.log(`  ${cmd(`pnpm dev ${component.slug}`)}     ${c.gray}open it in Storybook, rebuilt as you save${c.reset}`);

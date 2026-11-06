@@ -1,18 +1,7 @@
 /* `node --test scripts/`: running tools, reading their output, and never hanging on them. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import {
-  appendFileSync,
-  existsSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  statSync,
-  utimesSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import {
@@ -28,7 +17,9 @@ import {
   stripAnsi,
   underSudo,
 } from './cli-utils.mjs';
-import { nodeCommand } from './test-fakes.mjs';
+import { nodeCommand, runModule } from './test-fakes.mjs';
+
+const LIB = new URL('./cli-utils.mjs', import.meta.url).href;
 
 test('excerpt keeps the error lines, in order and once, and leaves passing lines out', () => {
   const output = [
@@ -215,15 +206,9 @@ test('printError prints a circular object instead of throwing', (t) => {
 });
 
 test('installCrashHandler exits 1 with its report, also for a circular rejection reason', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-crash-test-'));
-  const script = join(dir, 'crash.mjs');
-  const lib = new URL('./cli-utils.mjs', import.meta.url).href;
-  appendFileSync(
-    script,
-    `import { installCrashHandler } from '${lib}';\ninstallCrashHandler('crash-test');\n` +
-      'const reason = {}; reason.self = reason; Promise.reject(reason);\n',
-  );
-  const run = spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8', timeout: 10_000 });
+  const code = `const { installCrashHandler } = await import('${LIB}'); installCrashHandler('crash-test');
+    const reason = {}; reason.self = reason; Promise.reject(reason);`;
+  const run = runModule(code, { timeout: 10_000 });
   assert.equal(run.status, 1);
   assert.match(run.stdout, /crash-test stopped with an unexpected error/);
   assert.match(run.stderr, /<ref \*1>/);
@@ -263,10 +248,9 @@ test('printError prints an error whose getters throw or whose stack is not a str
 });
 
 test('installCrashHandler still exits 1 with its report when the stack is not a string (not 7)', () => {
-  const lib = new URL('./cli-utils.mjs', import.meta.url).href;
-  const code = `const { installCrashHandler } = await import('${lib}'); installCrashHandler('crash-test');
+  const code = `const { installCrashHandler } = await import('${LIB}'); installCrashHandler('crash-test');
     const err = new Error('the real problem'); err.stack = 42; throw err;`;
-  const run = spawnSync(process.execPath, ['--input-type=module', '-e', code], { encoding: 'utf8', timeout: 10_000 });
+  const run = runModule(code, { timeout: 10_000 });
   assert.equal(run.status, 1, run.stderr);
   assert.match(run.stderr, /Error: the real problem/);
 });
@@ -289,17 +273,11 @@ test('printFullOutput shows all of a runaway log, quickly, with the end marker a
 
 /* The banner in a child that believes it has a terminal (TILBURG_TTY), `columns` wide. */
 const banner = (env, columns = 100) =>
-  spawnSync(
-    process.execPath,
-    [
-      '--input-type=module',
-      '-e',
-      `Object.defineProperty(process.stdout, 'columns', { value: ${columns} });
-       const { printBanner } = await import('${new URL('./cli-utils.mjs', import.meta.url).href}'); printBanner('Test');`,
-    ],
+  runModule(
+    `Object.defineProperty(process.stdout, 'columns', { value: ${columns} });
+       const { printBanner } = await import('${LIB}'); printBanner('Test');`,
     {
       env: { ...process.env, CI: '', TILBURG_TTY: '1', NO_COLOR: '', FORCE_COLOR: '', TERM: 'xterm', ...env },
-      encoding: 'utf8',
     },
   ).stdout;
 

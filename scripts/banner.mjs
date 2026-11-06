@@ -1,10 +1,10 @@
 /* `node scripts/banner.mjs`: write .github/banner.svg, the coloured terminal banner for the README. GitHub drops
    terminal colours from markdown, so it is an image; drawn as shapes, not text, so it does not depend on the reader's
    fonts. scripts/docs.test.mjs fails when it is out of date. */
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { realpathSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROOT } from './dev-config.mjs';
-import { bannerColour, bannerLines } from './lib/cli-utils.mjs';
+import { bannerColour, bannerLines, readText } from './lib/cli-utils.mjs';
 
 export const FILE = resolve(ROOT, '.github/banner.svg');
 
@@ -60,12 +60,7 @@ export function renderSvg() {
 
 /* ROOT is the real path; argv[1] is as typed, so through a symlink it would otherwise do nothing and exit 0. */
 if (process.argv[1] && realpathSync(resolve(process.argv[1])) === resolve(ROOT, 'scripts/banner.mjs')) {
-  let before = '';
-  try {
-    before = readFileSync(FILE, 'utf8');
-  } catch {
-    /* first run */
-  }
+  const before = readText(FILE);
   const after = renderSvg();
   if (after === before) console.log('  .github/banner.svg is up to date.');
   else {

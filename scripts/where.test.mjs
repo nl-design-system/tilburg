@@ -1,15 +1,12 @@
 /* `node --test scripts/`: `pnpm where` with names that fit one, several or no component, and without its table. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { cpSync, mkdtempSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { cpSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
-import { runScript } from './lib/test-fakes.mjs';
+import { runScript, SCRIPTS, tempDir } from './lib/test-fakes.mjs';
 
-const scripts = fileURLToPath(new URL('.', import.meta.url));
-const where = (args, script = join(scripts, 'where.mjs')) =>
+const where = (args, script = join(SCRIPTS, 'where.mjs')) =>
   runScript(script, args, { env: { ...process.env, CI: '1' }, timeout: 10_000 });
 
 test('a known name shows its files and exits 0', () => {
@@ -40,9 +37,9 @@ test('a name that fits several exits 1 and lists each candidate', () => {
 });
 
 test('--list exits 1 when the component table is missing, instead of listing nothing', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-where-'));
-  cpSync(scripts, join(dir, 'scripts'), { recursive: true });
-  cpSync(join(scripts, '..', 'package.json'), join(dir, 'package.json'));
+  const dir = tempDir('tilburg-where-');
+  cpSync(SCRIPTS, join(dir, 'scripts'), { recursive: true });
+  cpSync(join(SCRIPTS, '..', 'package.json'), join(dir, 'package.json'));
   const result = where(['--list'], join(dir, 'scripts', 'where.mjs'));
   assert.equal(result.status, 1, result.output);
   assert.match(result.stdout, /No components found/);

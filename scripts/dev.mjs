@@ -8,7 +8,6 @@
    Storybooks', O opens the browser, Q (or Ctrl-C) stops everything.
 
    Components-css (SCSS) and storybook-shared are read from source by the Storybooks, so they need no watcher. */
-import { spawn } from 'node:child_process';
 import { readFileSync, realpathSync, rmSync, watchFile } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -18,9 +17,9 @@ import {
   checkInstallFresh,
   checkNode,
   identifyStorybook,
-  isStorybookOn,
   libraryState,
   listenerDir,
+  storybookEntries,
 } from './lib/checks.mjs';
 import {
   appendLog,
@@ -36,16 +35,19 @@ import {
   parseArgsOrExit,
   printBanner,
   printToolOutput,
+  readJson,
+  readKeys,
+  spawnShell,
   stepDone,
   stepFail,
   stepStart,
   stripAnsi,
-  track,
+  tryOr,
   warn,
 } from './lib/cli-utils.mjs';
 import { classifyFailure, runStepOrExit } from './lib/recovery.mjs';
 import { requireComponent, storyUrl } from './lib/components.mjs';
-import { LOCK_FILE, processStart, readDevLock, SYNC_LOCK, updateDevLock, writeDevLock } from './lib/lock.mjs';
+import { isAlive, LOCK_FILE, processStart, readDevLock, SYNC_LOCK, updateDevLock, writeDevLock } from './lib/lock.mjs';
 import { choosePort, printStorybookLinks, waitForStorybook } from './lib/storybook.mjs';
 
 /* With the shared signal handlers until dev's own take over below: a SIGTERM or a closed terminal during the first
@@ -79,18 +81,14 @@ const storybookKeys = target === 'all' ? ['react', 'angular'] : [target];
 
 /** Where to point the browser: the component's docs page in each Storybook (its own layer, else its HTML page). */
 function pagesFor(storybookList) {
-  if (!component) return storybookList.map((storybook) => `http://localhost:${storybook.port}/`);
-  return storybookList.flatMap((storybook) => {
+  return storybookList.map((storybook) => {
+    const base = `http://localhost:${storybook.port}/`;
     const key = Object.keys(STORYBOOKS).find((name) => STORYBOOKS[name].name === storybook.name);
-    const { layers } = component;
+    const { html, react, angular } = component?.layers ?? {};
     const story =
-      key === 'angular'
-        ? (layers.angular.stories[0] ?? layers.html.stories[1])
-        : (layers.react.stories[0] ?? layers.html.stories[0]);
-    /* No story yet: the Storybook's start page, rather than nothing. */
-    return [
-      story?.id ? storyUrl(`http://localhost:${storybook.port}/`, story.id) : `http://localhost:${storybook.port}/`,
-    ];
+      key === 'angular' ? (angular?.stories[0] ?? html?.stories[1]) : (react?.stories[0] ?? html?.stories[0]);
+    /* No story yet (or no component): the Storybook's start page, rather than nothing. */
+    return story?.id ? storyUrl(base, story.id) : base;
   });
 }
 
@@ -140,21 +138,8 @@ function pointAtRunning(running) {
 }
 /** The process groups in the lock as it is now: readDevLock removes a stale lock, and with it this list. */
 function lockedGroups() {
-  try {
-    const { groups } = JSON.parse(readFileSync(LOCK_FILE, 'utf8'));
-    return Array.isArray(groups) ? groups.filter(({ pid } = {}) => Number.isInteger(pid) && pid > 1) : [];
-  } catch {
-    return [];
-  }
-}
-/** Does any process of that group still run? (Signal 0 sends nothing.) */
-function groupAlive(pid) {
-  try {
-    process.kill(-pid, 0);
-    return true;
-  } catch {
-    return false;
-  }
+  const groups = readJson(LOCK_FILE)?.groups;
+  return Array.isArray(groups) ? groups.filter((g) => Number.isInteger(g?.pid) && g.pid > 1) : [];
 }
 /* Before the install question: an install would swap node_modules under the running one's watchers. Reading a stale
    lock also stops the watchers a pnpm dev that was killed hard left running (lock.mjs). */
@@ -162,7 +147,7 @@ const orphans = process.platform === 'win32' ? [] : lockedGroups();
 const running = readDevLock();
 if (running) pointAtRunning(running);
 /* The reaped Storybook takes a moment to exit: choosing ports now would find it still answering and reuse it. */
-for (let waited = 0; waited < 3000 && orphans.some(({ pid }) => groupAlive(pid)); waited += 100) await sleep(100);
+for (let waited = 0; waited < 3000 && orphans.some(({ pid }) => isAlive(-pid)); waited += 100) await sleep(100);
 /* sync, verify and pack:local rebuild the same dist/ folders the watchers write. */
 const syncing = readDevLock(SYNC_LOCK);
 if (syncing)
@@ -194,27 +179,23 @@ if (fresh.warn) {
 
 const storybooks = [];
 for (const key of storybookKeys) {
+  const storybook = STORYBOOKS[key];
   const choice = await choosePort(
-    STORYBOOKS[key],
-    storybooks.map((storybook) => storybook.port),
+    storybook,
+    storybooks.map((chosen) => chosen.port),
   );
   if (choice.error)
     exitWith({
-      what: `No port for the ${STORYBOOKS[key].name}`,
+      what: `No port for the ${storybook.name}`,
       why: choice.error,
-      fix:
-        process.platform === 'win32'
-          ? `netstat -ano | findstr :${STORYBOOKS[key].port}`
-          : `lsof -i :${STORYBOOKS[key].port}`,
+      fix: process.platform === 'win32' ? `netstat -ano | findstr :${storybook.port}` : `lsof -i :${storybook.port}`,
     });
   if (choice.running) {
-    console.log(
-      `  ${c.green}✓${c.reset}  ${STORYBOOKS[key].name} is already running on ${choice.port}; using that one.`,
-    );
+    console.log(`  ${c.green}✓${c.reset}  ${storybook.name} is already running on ${choice.port}; using that one.`);
   } else if (choice.moved) {
-    warn(`Port ${STORYBOOKS[key].port} is taken by ${choice.taken}; the ${STORYBOOKS[key].name} uses ${choice.port}.`);
+    warn(`Port ${storybook.port} is taken by ${choice.taken}; the ${storybook.name} uses ${choice.port}.`);
   }
-  storybooks.push({ key, ...STORYBOOKS[key], port: choice.port, running: choice.running });
+  storybooks.push({ key, ...storybook, port: choice.port, running: choice.running });
 }
 updateDevLock({ storybooks: storybooks.map(({ name, port, note }) => ({ name, port, note })) });
 
@@ -261,16 +242,11 @@ function start({ name, command, colour, onLine, onExit, storybook = false }) {
   /* Every process logs to its own file: when one stops, the report points at everything it said. */
   const log = newLogFile(`dev-${name}`);
   appendLog(log, `$ ${command}\n# ${new Date().toISOString()}\n\n`);
-  const child = track(
-    spawn(command, {
-      shell: true,
-      cwd: ROOT,
-      detached: process.platform !== 'win32',
-      stdio: ['ignore', 'pipe', 'pipe'],
-      /* NO_COLOR and FORCE_COLOR=0 ask for plain text, as in runStep (cli-utils.mjs). */
-      env: { ...process.env, ...(process.env.NO_COLOR || process.env.FORCE_COLOR === '0' ? {} : { FORCE_COLOR: '1' }) },
-    }),
-  );
+  /* NO_COLOR and FORCE_COLOR=0 ask for plain text, as in runStep (cli-utils.mjs). */
+  const child = spawnShell(command, ROOT, {
+    ...process.env,
+    ...(process.env.NO_COLOR || process.env.FORCE_COLOR === '0' ? {} : { FORCE_COLOR: '1' }),
+  });
   const entry = { name, child, tail: [], log };
   /* A spawn that fails (EAGAIN) may never send 'close': report it as an exit, once. */
   const exit = (code, signal) => {
@@ -298,8 +274,7 @@ function start({ name, command, colour, onLine, onExit, storybook = false }) {
       onLine?.(plain, line);
     }
   };
-  child.stdout.on('data', read);
-  child.stderr.on('data', read);
+  for (const stream of [child.stdout, child.stderr]) stream.on('data', read);
   child.on('close', exit);
   processes.push(entry);
   /* Each runs in its own process group: if this process is killed hard, the next pnpm dev stops them (lock.mjs). On
@@ -323,16 +298,11 @@ function stopAll(exitCode = 0) {
   process.on('exit', () => {
     try {
       if (JSON.parse(readFileSync(LOCK_FILE, 'utf8')).pid === 0) rmSync(LOCK_FILE, { force: true });
-    } catch {
-      /* gone already: a new pnpm dev removed it */
-    }
+    } catch {}
   });
   setFooter([]);
-  try {
-    if (process.stdin.isTTY) process.stdin.setRawMode(false);
-  } catch {
-    /* stdin already gone (closed terminal) */
-  }
+  /* A closed terminal has no stdin to reset. */
+  if (process.stdin.isTTY) tryOr(() => process.stdin.setRawMode(false));
   console.log(`\n  ${c.gray}Stopping the watchers and Storybooks...${c.reset}`);
   for (const { name, port } of storybooks.filter((storybook) => storybook.running)) {
     console.log(`  ${c.gray}The ${name} on ${port} was already running before pnpm dev and keeps running.${c.reset}`);
@@ -387,10 +357,7 @@ if (tokens && libraryState(tokens).state !== 'fresh') {
 /* Not when the output is no terminal, and a background job (`pnpm dev &`) may not take the terminal: try. */
 if (process.stdin.isTTY && process.stdout.isTTY) {
   try {
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('data', (key) => {
+    readKeys((key) => {
       if (key.includes('\u0003') || key === 'q' || key === 'Q') stopAll(0);
       else if (key === 'v' || key === 'V') {
         verbose = !verbose;
@@ -494,69 +461,56 @@ const firstBuilds = libraries.map((library, index) => {
 
 const toStart = storybooks.filter((storybook) => !storybook.running);
 /* Each Storybook starts as soon as its own libraries have built, while the others are still building. */
-const ready = toStart.map((storybook, index) =>
-  Promise.all(firstBuilds.filter((_, i) => libraries[i].for.includes(storybook.key))).then(
-    () =>
-      new Promise((resolveReady) => {
-        if (stopping) return resolveReady(false);
-        let exited = false;
-        /* performance.now(), not Date.now(): time the laptop spent asleep does not count against the limit. */
-        let lastOutput = performance.now();
-        start({
-          name: storybook.name,
-          command: storybook.command(storybook.port),
-          colour: colours[(libraries.length + index) % colours.length],
-          storybook: true,
-          onLine: (plain) => {
-            lastOutput = performance.now();
-            if (
-              !verbose &&
-              !storybookOutput &&
-              /\bERROR\b|Error:|✖|Module not found|Failed to (resolve|load)/.test(plain)
-            ) {
-              console.log(`${c.red}[${storybook.name}]${c.reset} ${plain}`);
-            }
-          },
-          onExit: (code, signal, tail, log) => {
-            exited = true;
-            resolveReady(false);
-            reportExit(storybook.name, code, signal, tail, log, 'Stopping everything.');
-            stopAll(1);
-          },
-        });
-        /* A cold first build can take long: give up only after a long silence, not after a total time. But say so after
-           5 minutes without an answer, also while it keeps printing (an index error answers 500 for ever). */
-        const startedAt = performance.now();
-        let warned = false;
-        waitForStorybook(storybook.port, () => {
-          if (!warned && performance.now() - startedAt > STORYBOOK_SILENT_MS / 2) {
-            warned = true;
-            const silent = performance.now() - lastOutput > STORYBOOK_SILENT_MS / 2;
-            console.log(
-              `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} for 5 minutes${silent ? ' and printed nothing' : ''}. [v] shows what it is doing.`,
-            );
-          }
-          return exited || stopping || performance.now() - lastOutput > STORYBOOK_SILENT_MS;
-        })
-          .then(async (up) => {
-            /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. A folder that
-               cannot be told (no lsof; on Windows no node_modules in its command line) is ours here: we just started it
-               on this port. */
-            const found = up
-              ? await identifyStorybook(storybook, storybook.port, (port) => listenerDir(port) ?? realpathSync(ROOT))
-              : null;
-            if (!found || found.ours || stopping) return up;
-            console.log(
-              `\n  ${c.red}✗${c.reset}  ${c.bold}Port ${storybook.port} now serves ${found.what}, not the ${storybook.name}${c.reset}` +
-                `\n     ${c.gray}It was taken while the libraries built. Stop that one, or run pnpm dev again for another port.${c.reset}`,
-            );
-            stopAll(1);
-            return false;
-          })
-          .then(resolveReady);
-      }),
-  ),
-);
+const ready = toStart.map(async (storybook, index) => {
+  await Promise.all(firstBuilds.filter((_, i) => libraries[i].for.includes(storybook.key)));
+  if (stopping) return false;
+  let exited = false;
+  /* performance.now(), not Date.now(): time the laptop spent asleep does not count against the limit. */
+  let lastOutput = performance.now();
+  start({
+    name: storybook.name,
+    command: storybook.command(storybook.port),
+    colour: colours[(libraries.length + index) % colours.length],
+    storybook: true,
+    onLine: (plain) => {
+      lastOutput = performance.now();
+      if (!verbose && !storybookOutput && /\bERROR\b|Error:|✖|Module not found|Failed to (resolve|load)/.test(plain)) {
+        console.log(`${c.red}[${storybook.name}]${c.reset} ${plain}`);
+      }
+    },
+    onExit: (code, signal, tail, log) => {
+      exited = true;
+      reportExit(storybook.name, code, signal, tail, log, 'Stopping everything.');
+      stopAll(1);
+    },
+  });
+  /* A cold first build can take long: give up only after a long silence, not after a total time. But say so after
+     5 minutes without an answer, also while it keeps printing (an index error answers 500 for ever). */
+  const startedAt = performance.now();
+  let warned = false;
+  const up = await waitForStorybook(storybook.port, () => {
+    if (!warned && performance.now() - startedAt > STORYBOOK_SILENT_MS / 2) {
+      warned = true;
+      const silent = performance.now() - lastOutput > STORYBOOK_SILENT_MS / 2;
+      console.log(
+        `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} has not answered on ${storybook.port} for 5 minutes${silent ? ' and printed nothing' : ''}. [v] shows what it is doing.`,
+      );
+    }
+    return exited || stopping || performance.now() - lastOutput > STORYBOOK_SILENT_MS;
+  });
+  /* The port was free when chosen, minutes ago: make sure what answers now is this Storybook. A folder that cannot be
+     told (no lsof; on Windows no node_modules in its command line) is ours here: we just started it on this port. */
+  const found = up
+    ? await identifyStorybook(storybook, storybook.port, (port) => listenerDir(port) ?? realpathSync(ROOT))
+    : null;
+  if (!found || found.ours || stopping) return up;
+  console.log(
+    `\n  ${c.red}✗${c.reset}  ${c.bold}Port ${storybook.port} now serves ${found.what}, not the ${storybook.name}${c.reset}` +
+      `\n     ${c.gray}It was taken while the libraries built. Stop that one, or run pnpm dev again for another port.${c.reset}`,
+  );
+  stopAll(1);
+  return false;
+});
 
 step = stepStart(`Building ${libraries.length} libraries in watch mode`);
 if (interactive) process.stdout.write(`  ${c.gray}(the first build takes a minute)${c.reset}`);
@@ -615,7 +569,7 @@ if (!stopping) {
 /* A Storybook that was already running is not ours to watch: say once when it is gone, or its link stays up dead. */
 for (const storybook of stopping ? [] : storybooks.filter(({ running }) => running)) {
   const timer = setInterval(async () => {
-    if (stopping || (await isStorybookOn(storybook.port))) return;
+    if (stopping || (await storybookEntries(storybook.port))) return;
     clearInterval(timer);
     console.log(
       `\n  ${c.yellow}⚠${c.reset}  The ${storybook.name} on ${storybook.port} (started before pnpm dev) has stopped. Stop (q) and start pnpm dev again.\n`,

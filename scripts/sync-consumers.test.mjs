@@ -7,7 +7,6 @@ import {
   cpSync,
   existsSync,
   mkdirSync,
-  mkdtempSync,
   readFileSync,
   realpathSync,
   symlinkSync,
@@ -15,11 +14,10 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test as nodeTest } from 'node:test';
 import { lockName } from './lib/lock.mjs';
-import { copyScripts, runScript, writeFake, writeLock } from './lib/test-fakes.mjs';
+import { copyScripts, runScript, SCRIPTS, tempDir, writeFake, writeFile, writeLock } from './lib/test-fakes.mjs';
 
 /* The fakes lean on POSIX: $PWD in the call log (the tests compare it with the sandbox path), tar -C with a drive
    letter, mktemp, and pkill for Ctrl-C. On Windows, pnpm pack:local and pnpm sync are checked by hand instead. */
@@ -28,8 +26,6 @@ const test = (name, options, fn) =>
   typeof options === 'function'
     ? nodeTest(name, { skip: posixOnly }, options)
     : nodeTest(name, { ...options, skip: posixOnly || options.skip }, fn);
-
-const here = import.meta.dirname;
 
 /* pack:dist writes a tarball per TARBALL: good (holds the build output), garbage (unreadable) or none. */
 const fakePnpm = `#!/bin/sh
@@ -58,25 +54,21 @@ exit \${NPM_EXIT:-0}
  * of the repo path.
  */
 function sync(args = [], { consumers = {}, env = {}, before } = {}) {
-  const sandbox = realpathSync(mkdtempSync(join(tmpdir(), 'sync consumers ')));
+  const sandbox = realpathSync(tempDir('sync consumers '));
   const repo = join(sandbox, 'tilburg');
   const bin = join(sandbox, 'bin');
   mkdirSync(bin);
   mkdirSync(join(sandbox, 'tmp'));
   copyScripts(repo, 'sync-consumers.mjs');
-  cpSync(join(here, '..', 'package.json'), join(repo, 'package.json'));
+  cpSync(join(SCRIPTS, '..', 'package.json'), join(repo, 'package.json'));
   /* The tarball names come from these versions. */
   for (const [dir, name, version] of [
     ['packages/components-angular', '@gemeente-tilburg/components-angular', '0.0.0'],
     ['proprietary/design-tokens', '@gemeente-tilburg/design-tokens', '0.0.1'],
-  ]) {
-    mkdirSync(join(repo, dir), { recursive: true });
-    writeFileSync(join(repo, dir, 'package.json'), JSON.stringify({ name, version }));
-  }
-  for (const [key, pkg] of Object.entries(consumers)) {
-    mkdirSync(join(sandbox, key));
-    writeFileSync(join(sandbox, key, 'package.json'), typeof pkg === 'string' ? pkg : JSON.stringify(pkg));
-  }
+  ])
+    writeFile(join(repo, dir, 'package.json'), JSON.stringify({ name, version }));
+  for (const [key, pkg] of Object.entries(consumers))
+    writeFile(join(sandbox, key, 'package.json'), typeof pkg === 'string' ? pkg : JSON.stringify(pkg));
   writeFake(bin, 'pnpm', fakePnpm);
   writeFake(bin, 'npm', fakeNpm);
   before?.(repo);
@@ -168,8 +160,7 @@ test('a stale tarball from an earlier pack is refused', () => {
     env: { TARBALL: 'none' },
     before: (repo) => {
       const dir = join(repo, 'packages/components-angular/dist');
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(join(dir, 'gemeente-tilburg-components-angular-0.0.0.tgz'), '');
+      writeFile(join(dir, 'gemeente-tilburg-components-angular-0.0.0.tgz'), '');
       utimesSync(join(dir, 'gemeente-tilburg-components-angular-0.0.0.tgz'), old, old);
     },
   });
@@ -220,9 +211,7 @@ test('a consumer in the middle of a merge is not synced, and the table says so',
 test('a second pnpm sync while one is running stops before packing anything', () => {
   const run = sync([], {
     consumers: { hltsamen: hlt },
-    before: (repo) => {
-      writeLock(join(repo, '..', 'tmp', lockName(repo, 'sync')));
-    },
+    before: (repo) => writeLock(join(repo, '..', 'tmp', lockName(repo, 'sync'))),
   });
   assert.equal(run.status, 1);
   assert.match(run.output, new RegExp(`Another pnpm sync is running \\(process ${process.pid}`));
@@ -290,8 +279,7 @@ test('a checkout reached through a symlink finds the consumers next to the link'
   const run = sync(['--to', 'hltsamen'], {
     before: (repo) => {
       const linked = join(repo, '..', 'code');
-      mkdirSync(join(linked, 'hltsamen'), { recursive: true });
-      writeFileSync(join(linked, 'hltsamen', 'package.json'), JSON.stringify(hlt));
+      writeFile(join(linked, 'hltsamen', 'package.json'), JSON.stringify(hlt));
       symlinkSync(repo, join(linked, 'tilburg'));
     },
     env: (repo) => ({ PWD: join(repo, '..', 'code', 'tilburg') }),
@@ -305,8 +293,7 @@ const hltWith = (tilburg, file) => ({
   ...hlt,
   setup: (repo) => {
     const dir = join(repo, '..', 'hltsamen', 'packages', 'storybook');
-    mkdirSync(dir, { recursive: true });
-    writeFileSync(
+    writeFile(
       join(dir, 'package.json'),
       JSON.stringify({ dependencies: { x: `file:../../../${tilburg}/.tarballs/${file}` } }),
     );
@@ -319,8 +306,7 @@ test("hltsamen installs from its tarballs only when they are this checkout's, an
     consumers: { hltsamen: hlt },
     before: (repo) => {
       ok.setup(repo);
-      mkdirSync(join(repo, '.tarballs'));
-      writeFileSync(join(repo, '.tarballs', 'x-1.0.0.tgz'), '');
+      writeFile(join(repo, '.tarballs', 'x-1.0.0.tgz'), '');
     },
   });
   assert.equal(run.status, 0, run.output);
@@ -340,8 +326,7 @@ test('after a version bump, hltsamen naming a tarball .tarballs/ lacks is not sy
     consumers: { hltsamen: hlt },
     before: (repo) => {
       hltWith('tilburg', 'x-0.0.0.tgz').setup(repo);
-      mkdirSync(join(repo, '.tarballs'));
-      writeFileSync(join(repo, '.tarballs', 'x-0.1.0.tgz'), '');
+      writeFile(join(repo, '.tarballs', 'x-0.1.0.tgz'), '');
     },
   });
   assert.equal(run.status, 1);

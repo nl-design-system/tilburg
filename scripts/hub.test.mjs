@@ -1,12 +1,12 @@
 /* `node --test scripts/`: the menu without a terminal (CI, a pipe, closed stdin) prints the list and never waits. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { stripAnsi } from './lib/cli-utils.mjs';
-import { fakeTerminal, runScript } from './lib/test-fakes.mjs';
+import { fakeTerminal, runScript, SCRIPTS } from './lib/test-fakes.mjs';
 
-const hub = fileURLToPath(new URL('./hub.mjs', import.meta.url));
+const hub = join(SCRIPTS, 'hub.mjs');
 const env = { ...process.env, CI: '1', TILBURG_TTY: '' };
 const tty = { ...process.env, CI: '', TILBURG_TTY: '' };
 

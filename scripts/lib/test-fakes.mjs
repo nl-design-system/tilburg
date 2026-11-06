@@ -1,19 +1,15 @@
-/* For the script tests: fake commands, PATH and the temp folder, the same way on macOS, Linux and Windows.
-
-   The fakes are shell scripts (or node scripts with #!/usr/bin/env node). Windows runs neither from a file without an
-   extension: cmd.exe, and the scripts' `shell: true`, look for name.cmd. writeFake() adds one that hands the script to
-   Git for Windows' sh.exe (every clone of this repo on Windows has Git), or to node. On macOS and Linux it writes
-   exactly what the tests wrote before: the script, executable. */
+/* For the script tests: fake commands, PATH and the temp folder, the same way on macOS, Linux and Windows. */
 import { spawnSync } from 'node:child_process';
-import { chmodSync, cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
+import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SCRIPTS = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+export const SCRIPTS = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Git for Windows' sh.exe (C:\Program Files\Git\bin\sh.exe), found from `git --exec-path`; null elsewhere. */
-export const WINDOWS_SH = process.platform === 'win32' ? findWindowsSh() : null;
+/** Git for Windows' sh.exe (every clone on Windows has Git), found from `git --exec-path`; null elsewhere. */
+const WINDOWS_SH = process.platform === 'win32' ? findWindowsSh() : null;
 
 function findWindowsSh() {
   /* e.g. C:/Program Files/Git/mingw64/libexec/git-core: Git's root is a few folders up. */
@@ -36,8 +32,8 @@ export const noSignals =
   process.platform === 'win32' && 'Windows has no POSIX signals: a kill ends the process at once';
 
 /**
- * Write the fake command `name` into `dir`: `script` as is, executable; on Windows also name.cmd that runs it. Returns
- * the path of the script.
+ * Write the fake command `name` into `dir`: `script` as is, executable. Windows runs no file without an extension, so
+ * there a name.cmd that hands the script to sh.exe (or node) comes with it. Returns the path of the script.
  */
 export function writeFake(dir, name, script) {
   const file = join(dir, name);
@@ -110,6 +106,15 @@ export function runScript(script, args = [], { preload, ...options } = {}) {
     ...options,
   });
   return { ...result, output: result.stdout + result.stderr };
+}
+
+export const runModule = (code, options) => runScript('--input-type=module', ['-e', code], options);
+
+export const tempDir = (prefix) => mkdtempSync(join(tmpdir(), prefix));
+
+export function writeFile(path, content = '', options) {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, content, options);
 }
 
 /** A port nothing listens on right now: a server bound to port 0, then closed. */

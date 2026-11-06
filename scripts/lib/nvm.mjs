@@ -4,6 +4,7 @@
 import { readdirSync, realpathSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, resolve, sep } from 'node:path';
+import { tryOr } from './cli-utils.mjs';
 
 /* homedir(), not HOME: cron, env -i and docker --user have no HOME. */
 export const NVM_DIR = process.env.NVM_DIR ?? resolve(homedir(), '.nvm');
@@ -24,13 +25,8 @@ const older = (a, b) => a.localeCompare(b, undefined, { numeric: true }) < 0;
 export function nvmNodes(major, { minimum, nvmDir = NVM_DIR, nvmHome = NVM_HOME } = {}) {
   const found = [];
   const scan = (folder, binOf) => {
-    let names = [];
-    try {
-      names = readdirSync(folder);
-    } catch {
-      return; /* no such folder: this nvm (or this layout of it) is not installed */
-    }
-    for (const name of names) {
+    /* No such folder: this nvm (or this layout of it) is not installed. */
+    for (const name of tryOr(() => readdirSync(folder), [])) {
       /* startsWith, as setup.mjs and recovery.mjs always did: a v24.0.0-rc.1 folder counts too. */
       if (!name.startsWith(`v${major}.`)) continue;
       found.push({ version: name.slice(1), bin: binOf(resolve(folder, name)) });
@@ -47,7 +43,6 @@ export function nvmNodes(major, { minimum, nvmDir = NVM_DIR, nvmHome = NVM_HOME 
     .sort((a, b) => (older(a.version, b.version) ? 1 : -1));
 }
 
-/** The newest of nvmNodes(), or null. */
 export const newestNvmNode = (major, options) => nvmNodes(major, options)[0] ?? null;
 
 /**
@@ -58,13 +53,7 @@ export const newestNvmNode = (major, options) => nvmNodes(major, options)[0] ?? 
  */
 export function nodeOutsideNvmWindows(execPath = process.execPath, nvmHome = NVM_HOME) {
   if (!nvmHome) return null;
-  const real = (path) => {
-    try {
-      return realpathSync(path).toLowerCase();
-    } catch {
-      return resolve(path).toLowerCase();
-    }
-  };
+  const real = (path) => tryOr(() => realpathSync(path), resolve(path)).toLowerCase();
   const folder = dirname(execPath);
   const home = real(nvmHome);
   const here = real(folder);

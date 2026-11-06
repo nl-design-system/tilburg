@@ -73,14 +73,11 @@ function run(root, name, { env = base, cwd = root, ctrlC, limit = 25_000 } = {})
     detached: true,
   });
   let output = '';
-  child.stdout.on('data', (data) => (output += data));
-  child.stderr.on('data', (data) => (output += data));
+  for (const stream of [child.stdout, child.stderr]) stream.on('data', (data) => (output += data));
   const signal = (sig) => {
     try {
       process.kill(-child.pid, sig);
-    } catch {
-      /* already gone */
-    }
+    } catch {}
   };
   const timers = [setTimeout(() => signal('SIGKILL'), limit)];
   if (ctrlC) timers.push(setTimeout(() => signal('SIGINT'), ctrlC));
@@ -194,10 +191,7 @@ test(
 
 test(
   'node_modules installed but pnpm-lock.yaml deleted: dev says what is wrong instead of crashing',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('no-lockfile', { installed: true, lock: false });
     for (const name of ['dev', 'check']) {
@@ -210,10 +204,7 @@ test(
 
 test(
   'ship: Ctrl-C while git fetch hangs stops ship, instead of running verify and exiting 0',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('ship');
     const bin = join(parent, 'ship-bin');
@@ -241,10 +232,7 @@ test(
 
 test(
   'verify started from another folder still runs its steps in the repository',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('elsewhere-verify');
     const result = await run(root, 'verify', { cwd: join(parent, 'elsewhere') });

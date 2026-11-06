@@ -6,7 +6,7 @@
    file, so it runs all of them (about 20 s) and only this component's results are shown. */
 import { spawnSync } from 'node:child_process';
 import { constants } from 'node:os';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, rmSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { ROOT } from './dev-config.mjs';
 import {
@@ -18,7 +18,9 @@ import {
   parseArgsOrExit,
   printBanner,
   printCheckTable,
+  readJson,
   stripAnsi,
+  warnRow,
 } from './lib/cli-utils.mjs';
 import { rel, requireComponent } from './lib/components.mjs';
 import { reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
@@ -39,8 +41,6 @@ const query = positionals.join(' ').trim();
 if (positionals.length && !query)
   exitWith({ what: 'The component name is empty', fix: 'pnpm test <component>, or pnpm test for everything' });
 
-// ─── Everything ──────────────────────────────────────────────────────────────
-
 if (!query) {
   for (const command of ['pnpm --recursive run test', 'pnpm run test:scripts']) {
     const result = spawnSync(command, { cwd: ROOT, shell: true, stdio: 'inherit' });
@@ -50,8 +50,6 @@ if (!query) {
   }
   process.exit(0);
 }
-
-// ─── One component ───────────────────────────────────────────────────────────
 
 const component = await requireComponent(query, 'pnpm test');
 printBanner(`Test: ${component.name}`);
@@ -66,14 +64,14 @@ const LAYERS = [
     command: (out) =>
       `jest --ci --forceExit --json --outputFile="${out}" ${inPackage('packages/components-react', react.test)}${react.suite ? ` -t "^${react.suite} "` : ''}`,
     /* watch:test with the same file, so the watch reruns this component only. */
-    watch: () => inPackage('packages/components-react', react.test),
+    watch: inPackage('packages/components-react', react.test),
   },
   {
     layer: angular,
     package: '@gemeente-tilburg/components-angular',
     dir: 'packages/components-angular',
     command: (out) => `jest --ci --forceExit --json --outputFile="${out}" src/${component.names.angular}/`,
-    watch: () => `src/${component.names.angular}/`,
+    watch: `src/${component.names.angular}/`,
   },
   {
     layer: wbc,
@@ -89,13 +87,7 @@ const failures = [];
 for (const { layer, package: name, dir, command, note } of LAYERS) {
   if (!layer.promised) continue;
   if (!existsSync(layer.test)) {
-    rows.push({
-      ok: true,
-      warn: true,
-      label: layer.label,
-      detail: 'no tests yet',
-      note: `${rel(layer.test)} does not exist`,
-    });
+    rows.push(warnRow('no tests yet', `${rel(layer.test)} does not exist`, { label: layer.label }));
     continue;
   }
   /* The pid: two `pnpm test tooltip` at once must not read each other's report. */
@@ -107,15 +99,9 @@ for (const { layer, package: name, dir, command, note } of LAYERS) {
     /* Failing tests also land here (Jest exits 1): the JSON says which. Without JSON it did not get that far. */
     runError = err;
   }
-  let report = null;
-  try {
-    report = JSON.parse(readFileSync(out, 'utf8'));
-  } catch {
-    /* no report: a crash or a compile error before the tests ran */
-  } finally {
-    /* Read once; the step log keeps the output. */
-    rmSync(out, { force: true });
-  }
+  /* No report: a crash or a compile error before the tests ran. Read once; the step log keeps the output. */
+  const report = readJson(out);
+  rmSync(out, { force: true });
   const file = report?.testResults?.find(
     (result) =>
       resolve(result.name) === resolve(ROOT, rel(layer.test)) ||
@@ -181,10 +167,7 @@ if (!rows.length) {
   console.log(`  ${hint(`${component.name} has no wrapper in any layer, so there is nothing to test here.`)}\n`);
 } else if (failed.length) {
   const watch = LAYERS.filter(({ layer }) => failed.some((row) => row.label === layer.label)).map(
-    ({ package: name, watch }) => {
-      const path = typeof watch === 'function' ? watch() : watch;
-      return `pnpm --filter ${name} run watch:test${path ? ` ${path}` : ''}`;
-    },
+    ({ package: name, watch }) => `pnpm --filter ${name} run watch:test${watch ? ` ${watch}` : ''}`,
   );
   console.log(`  ${c.red}Not green.${c.reset} ${c.gray}Rerun on every save while you fix it:${c.reset}`);
   for (const command of watch) console.log(`    ${c.cyan}${command}${c.reset}`);

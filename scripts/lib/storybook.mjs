@@ -2,7 +2,7 @@
    that is already running), wait until it serves, and print its local and network address. */
 import { networkInterfaces } from 'node:os';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { findFreePort, identifyStorybook, isStorybookOn, portStatus } from './checks.mjs';
+import { findFreePort, identifyStorybook, portStatus, storybookEntries } from './checks.mjs';
 import { c, hyperlink } from './cli-utils.mjs';
 
 /**
@@ -48,7 +48,7 @@ export async function choosePort(storybook, reserved = []) {
 /** Resolves once the Storybook on `port` serves its index, or with false when `stop()` says to give up. */
 export async function waitForStorybook(port, stop) {
   /* Look before giving up: after the laptop slept, the wall-clock limit has passed although the Storybook is up. */
-  while (!(await isStorybookOn(port))) {
+  while (!(await storybookEntries(port))) {
     if (stop()) return false;
     await sleep(1000);
   }

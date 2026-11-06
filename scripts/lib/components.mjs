@@ -25,22 +25,16 @@ const EXCEPTIONS = {
 
 /* React tests that share one file, with a describe() per component (Form.test.tsx has describe('Checkbox')). */
 const SHARED_REACT_TESTS = {
-  Form: [
-    'Checkbox',
-    'Fieldset',
-    'FormField',
-    'FormFieldDescription',
-    'FormLabel',
-    'Textarea',
-    'Textbox',
-    'ValidationMessage',
-  ],
-  Layout: ['Article', 'ButtonGroup', 'Document', 'Page', 'PageContent', 'PageFooter', 'PageHeader'],
-  List: ['OrderedList', 'Separator'],
-  Status: ['Alert', 'BadgeStatus', 'Breadcrumb', 'Pagination', 'ProgressBar'],
+  Form: 'Checkbox Fieldset FormField FormFieldDescription FormLabel Textarea Textbox ValidationMessage'.split(' '),
+  Layout: 'Article ButtonGroup Document Page PageContent PageFooter PageHeader'.split(' '),
+  List: 'OrderedList Separator'.split(' '),
+  Status: 'Alert BadgeStatus Breadcrumb Pagination ProgressBar'.split(' '),
 };
 
-export const kebab = (text) =>
+/** The file's text, or '' when it does not exist: a layer whose index is missing has nothing exported. */
+const read = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
+
+const kebab = (text) =>
   text
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase()
@@ -61,9 +55,7 @@ function storyMeta(path) {
  * Every row of the implementation-status table, with its files. `layers` lists, per layer, whether the table
  * promises it (`promised`), the main file, its test, and the story (with its Storybook id) that shows it.
  */
-export function loadComponents(
-  table = existsSync(resolve(ROOT, STATUS_FILE)) ? readFileSync(resolve(ROOT, STATUS_FILE), 'utf8') : '',
-) {
+export function loadComponents(table = read(resolve(ROOT, STATUS_FILE))) {
   /* Both sides of a merge conflict would load: every name then fits two components. */
   if (/^<{7}/m.test(table)) return [];
   return table
@@ -102,8 +94,7 @@ export function loadComponents(
             test: P('components-react/src', `${names.reactTest ?? names.react}.test.tsx`),
             /* In a shared test file: the describe() that holds this component's tests. */
             suite: names.reactSuite,
-            exported: () =>
-              readFileSync(P('components-react/src/index.ts'), 'utf8').includes(`from './${names.react}'`),
+            exported: () => read(P('components-react/src/index.ts')).includes(`from './${names.react}'`),
             stories: [story('storybook', '-react')],
           },
           angular: {
@@ -111,8 +102,7 @@ export function loadComponents(
             promised: angular === '✅',
             main: P('components-angular/src', names.angular, 'component.ts'),
             test: P('components-angular/src', names.angular, 'component.spec.ts'),
-            exported: () =>
-              readFileSync(P('components-angular/src/components.ts'), 'utf8').includes(`./${names.angular}/component'`),
+            exported: () => read(P('components-angular/src/components.ts')).includes(`./${names.angular}/component'`),
             stories: [story('storybook-angular', '')],
           },
           wbc: {
@@ -179,7 +169,6 @@ export function findComponent(query, components = loadComponents()) {
 /** The Storybook URL of a story id: its docs page, on a local port or online. */
 export const storyUrl = (base, id) => `${base.replace(/\/?$/, '/')}?path=/docs/${id}--docs`;
 
-/** A path relative to the repository, for display. */
 export const rel = (path) => relative(ROOT, path);
 
 /**
@@ -187,7 +176,7 @@ export const rel = (path) => relative(ROOT, path);
  * the name fits several, or the closest names when it fits none.
  */
 export async function requireComponent(query, command) {
-  const { c, exitWith, fail } = await import('./cli-utils.mjs');
+  const { c, exitAfter, exitWith, fail } = await import('./cli-utils.mjs');
   const components = loadComponents();
   if (!components.length) exitWith({ what: 'No components found', why: NO_TABLE });
   const { component, matches, suggestions } = findComponent(query, components);
@@ -204,6 +193,5 @@ export async function requireComponent(query, command) {
       fix: suggestions.length ? `${command} ${suggestions[0].slug}` : 'pnpm where --list shows every component',
     });
   }
-  console.log(`  ${c.gray}Names come from ${STATUS_FILE}.${c.reset}\n`);
-  process.exit(1);
+  exitAfter(`  ${c.gray}Names come from ${STATUS_FILE}.${c.reset}\n`, 1);
 }

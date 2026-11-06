@@ -3,12 +3,11 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { pullRequestUrl } from './lib/ship.mjs';
-import { copyScripts, noSignals, prependPath, runScript, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, noSignals, prependPath, runScript, tempDir, writeFake } from './lib/test-fakes.mjs';
 
 test('pullRequestUrl reads every remote form, and nothing that is not GitHub', () => {
   const pr = 'compare/main...feat/x?expand=1';
@@ -17,6 +16,8 @@ test('pullRequestUrl reads every remote form, and nothing that is not GitHub', (
   assert.equal(pullRequestUrl('ssh://git@github.com:22/o/r.git', 'feat/x'), `https://github.com/o/r/${pr}`);
   assert.equal(pullRequestUrl('ssh://github.com/o/r.git', 'feat/x'), `https://github.com/o/r/${pr}`);
   assert.equal(pullRequestUrl('https://user@github.com/o/r/', 'feat/x'), `https://github.com/o/r/${pr}`);
+  assert.equal(pullRequestUrl('https://github.com/o/r.git', 'feat/x'), `https://github.com/o/r/${pr}`);
+  assert.equal(pullRequestUrl('https://user:token@github.com/o/r', 'feat/x'), `https://github.com/o/r/${pr}`);
   /* A numeric owner is not a port. */
   assert.equal(pullRequestUrl('git@github.com:1234/r.git', 'feat/x'), `https://github.com/1234/r/${pr}`);
   assert.equal(pullRequestUrl('/Users/me/remote.git', 'feat/x'), null);
@@ -37,9 +38,10 @@ const ENV = {
   GIT_COMMITTER_EMAIL: 't@t',
 };
 
-/** A repository with the ship scripts committed on main, pushed to a local bare origin, and a fake `pnpm`. */
-function sandbox(pnpm = 'exit 0') {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-ship-test-'));
+/** A repository with the ship scripts committed on main, pushed to a local bare origin, and a fake `pnpm`.
+    `branch` switches to that new branch with one empty commit on it. */
+function sandbox({ pnpm = 'exit 0', branch } = {}) {
+  const dir = tempDir('tilburg-ship-test-');
   const repo = join(dir, 'repo');
   const bin = join(dir, 'bin');
   mkdirSync(bin);
@@ -61,10 +63,11 @@ function sandbox(pnpm = 'exit 0') {
   git('push', '-q', '-u', 'origin', 'main');
   /* As on GitHub: origin's HEAD is main, so a clone of it checks main out. */
   git('--git-dir', join(dir, 'origin.git'), 'symbolic-ref', 'HEAD', 'refs/heads/main');
-  const ship = (...args) => {
-    const result = runScript('scripts/ship.mjs', args, { cwd: repo, env });
-    return result;
-  };
+  if (branch) {
+    git('switch', '-q', '-c', branch);
+    git('commit', '-q', '--allow-empty', '-m', 'feature');
+  }
+  const ship = (...args) => runScript('scripts/ship.mjs', args, { cwd: repo, env });
   return { dir, repo, env, git, ship };
 }
 
@@ -119,9 +122,7 @@ test('a branch with nothing new says so and exits 0', () => {
 });
 
 test('a dry run lists the commits and pushes nothing', () => {
-  const { git, ship } = sandbox();
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { git, ship } = sandbox({ branch: 'feat/x' });
   const result = ship('--no-verify', '--dry-run');
   assert.equal(result.status, 0, result.output);
   assert.match(result.output, /1 commit to push \(origin\/main\.\.HEAD\)/);
@@ -130,9 +131,7 @@ test('a dry run lists the commits and pushes nothing', () => {
 });
 
 test('without a terminal and without --yes, ship does not push', () => {
-  const { git, ship } = sandbox();
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { git, ship } = sandbox({ branch: 'feat/x' });
   const result = ship('--no-verify');
   assert.equal(result.status, 1, result.output);
   assert.match(result.output, /no terminal to ask/);
@@ -140,9 +139,7 @@ test('without a terminal and without --yes, ship does not push', () => {
 });
 
 test('a failing verify stops ship before the push', () => {
-  const { git, ship } = sandbox('exit 3');
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { git, ship } = sandbox({ pnpm: 'exit 3', branch: 'feat/x' });
   const result = ship('--yes');
   assert.equal(result.status, 1, result.output);
   assert.match(result.output, /Verify failed — not pushing/);
@@ -150,9 +147,7 @@ test('a failing verify stops ship before the push', () => {
 });
 
 test('a commit made while verify runs (another terminal) stops ship before the push', () => {
-  const { git, ship } = sandbox('git commit -q --allow-empty -m moved');
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { git, ship } = sandbox({ pnpm: 'git commit -q --allow-empty -m moved', branch: 'feat/x' });
   const result = ship('--yes');
   assert.equal(result.status, 1, result.output);
   assert.match(result.output, /changed while verify ran/);
@@ -160,9 +155,7 @@ test('a commit made while verify runs (another terminal) stops ship before the p
 });
 
 test('a verify killed by a signal (status null) stops ship too, and says so', { skip: noSignals }, () => {
-  const { git, ship } = sandbox('kill -TERM $$');
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { git, ship } = sandbox({ pnpm: 'kill -TERM $$', branch: 'feat/x' });
   const result = ship('--yes');
   assert.equal(result.status, 1, result.output);
   assert.match(result.output, /Verify failed — not pushing/);
@@ -228,7 +221,7 @@ test('a cherry-pick in progress in a worktree is found too (its state is not in 
 });
 
 test('without an origin, ship stops before verify and says how to add one', () => {
-  const { git, ship } = sandbox('exit 3');
+  const { git, ship } = sandbox({ pnpm: 'exit 3' });
   git('switch', '-q', '-c', 'feat/x');
   git('remote', 'remove', 'origin');
   const result = ship('--dry-run', '--yes');
@@ -247,9 +240,7 @@ test('local commits on main: the fix moves them to a branch and puts main back',
 });
 
 test('a branch deleted on origin (merged) is not "up to date" with it', () => {
-  const { dir, git, ship } = sandbox();
-  git('switch', '-q', '-c', 'feat/x');
-  git('commit', '-q', '--allow-empty', '-m', 'feature');
+  const { dir, git, ship } = sandbox({ branch: 'feat/x' });
   git('push', '-q', '-u', 'origin', 'feat/x');
   /* Deleted on the server, as GitHub does after a merge: the local origin/feat/x is still there. */
   git('--git-dir', join(dir, 'origin.git'), 'branch', '-q', '-D', 'feat/x');

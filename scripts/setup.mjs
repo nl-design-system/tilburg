@@ -1,19 +1,12 @@
 /* `pnpm setup` — or, on a fresh clone where pnpm cannot start yet, `node scripts/setup.mjs`: from clone to a running
    Storybook in one go. Safe to run again: every step checks first and only does what is missing.
 
-     1. Node 24 (installs it with nvm when missing, then carries on under it)
-     2. pnpm through corepack, the version package.json pins
-     3. pnpm install (or a clean reinstall with --reset)
-     4. the git hooks (husky)
-     5. the libraries the Storybooks load from dist/
-     6. the `pnpm check` table, and `pnpm dev` if you like
-
    Flags: --yes (no questions, take the defaults), --reset (delete node_modules first), --skip-dev (do not offer to start pnpm dev). Not --no-…: pnpm reads those as its own options.
    With flags, type `pnpm run setup --yes` (or `pnpm setup:reset`): `pnpm setup` is also pnpm's own command, which
    swallows --yes and refuses --reset.
    Node built-ins only, and nothing newer than Node 18, because it may be running on the Node it is about to replace. */
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { delimiter, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT } from './dev-config.mjs';
@@ -22,12 +15,14 @@ import {
   c,
   capture,
   confirm,
+  exitAfter,
   exitWith,
   fail,
   installCrashHandler,
   printBanner,
   printCheckTable,
-  stepSkip,
+  readText,
+  stepSkip as done,
   warn,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning, readDevLock, SYNC_LOCK } from './lib/lock.mjs';
@@ -48,14 +43,12 @@ async function step(label, command, options = {}) {
     await runStepWithRecovery(label, command, { cwd: ROOT, ...options, env: { ...process.env, TILBURG_QUIET: '1' } });
   } catch (err) {
     reportStepFailure(label, err);
-    console.log(
+    exitAfter(
       `  ${c.gray}Fix it and run ${c.cyan}node scripts/setup.mjs${c.gray} again; finished steps are skipped.${c.reset}\n`,
+      1,
     );
-    process.exit(1);
   }
 }
-
-const done = (label, why) => stepSkip(label, why);
 
 if (!process.env.TILBURG_SETUP_REEXEC) printBanner('Setup');
 
@@ -175,12 +168,7 @@ done(`Node ${process.versions.node}`, `.nvmrc pins ${NODE_MAJOR}`);
 /* A terminal that opens with another Node makes pnpm 11 fail before it starts ("requires at least Node.js v22.13"). */
 /* nvm-sh only: nvm-windows has no default alias; its `nvm use` switches every terminal at once. */
 if (hasNvm && !NVM_HOME) {
-  let defaultAlias = '';
-  try {
-    defaultAlias = readFileSync(resolve(NVM_DIR, 'alias/default'), 'utf8').trim();
-  } catch {
-    /* no default alias set */
-  }
+  const defaultAlias = readText(resolve(NVM_DIR, 'alias/default')).trim();
   if (!defaultAlias.replace(/^v/, '').startsWith(`${NODE_MAJOR}`)) {
     warn(
       `New terminals start with Node ${defaultAlias || '(no nvm default)'}; there, pnpm cannot run in this repo until you type nvm use.`,
@@ -199,8 +187,7 @@ if (hasNvm && !NVM_HOME) {
 
 // ─── 2. pnpm ─────────────────────────────────────────────────────────────────
 
-const pnpmVersion = async () => (await capture('pnpm --version', { cwd: ROOT, timeoutMs: 60_000 })).stdout.trim();
-if ((await pnpmVersion()) === PNPM_VERSION) {
+if ((await capture('pnpm --version', { cwd: ROOT, timeoutMs: 60_000 })).stdout.trim() === PNPM_VERSION) {
   done(`pnpm ${PNPM_VERSION}`, 'via corepack');
 } else {
   /* COREPACK_ENABLE_DOWNLOAD_PROMPT=0: corepack would otherwise ask before downloading the pinned pnpm. */
@@ -289,12 +276,11 @@ for (const library of LIBRARIES) {
 
 console.log('');
 const { failed } = printCheckTable(await runAllChecks());
-if (failed.length) {
-  console.log(
+if (failed.length)
+  exitAfter(
     `  ${c.red}Not everything is ready:${c.reset} ${failed.map((row) => row.label).join(', ')}. See the notes above.\n`,
+    1,
   );
-  process.exit(1);
-}
 
 const fromNode = process.env.TILBURG_SETUP_FROM_NODE;
 const shadowingNode = process.env.TILBURG_SETUP_SHADOWING_NODE;
@@ -314,10 +300,7 @@ if (shadowingNode) {
 console.log(
   `  ${c.green}${c.bold}Ready.${c.reset} ${c.gray}pnpm commands lists every command; CONTRIBUTING.md explains the rest.${c.reset}\n`,
 );
-if (noStart || !process.stdin.isTTY) {
-  console.log(`  Next: ${c.cyan}pnpm dev${c.reset}\n`);
-  process.exit(0);
-}
+if (noStart || !process.stdin.isTTY) exitAfter(`  Next: ${c.cyan}pnpm dev${c.reset}\n`);
 if (await ask('Start pnpm dev now (both Storybooks, rebuilt as you save)?', { default: true })) {
   /* pnpm dev owns the terminal now: Ctrl-C is for it (it stops its watchers itself), not for setup. */
   process.removeAllListeners('SIGINT');

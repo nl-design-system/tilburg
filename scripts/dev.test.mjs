@@ -3,14 +3,13 @@
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
-import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { LIBRARIES, STORYBOOKS } from './dev-config.mjs';
 import { isAlive } from './lib/lock.mjs';
-import { copyScripts, freePort, noSignals, tempEnv } from './lib/test-fakes.mjs';
+import { copyScripts, freePort, noSignals, tempDir, tempEnv, writeFile } from './lib/test-fakes.mjs';
 
 test('both Storybooks run without prompts or a browser of their own, reachable from the network', () => {
   for (const storybook of Object.values(STORYBOOKS)) {
@@ -51,25 +50,30 @@ for (const [key, line, expected] of lines) {
   });
 }
 
-// ─── Lifecycle ───────────────────────────────────────────────────────────────
+/* A watcher that fails its build and then keeps running. */
+const WATCHER = `import { writeFileSync } from 'node:fs';
+writeFileSync('watcher.pid', String(process.pid));
+console.log('Build failed: src/index.ts');
+setInterval(() => {}, 1000);
+`;
 
-const temps = [];
-after(() => temps.forEach((dir) => rmSync(dir, { recursive: true, force: true, maxRetries: 5 })));
+/* A Storybook stub that answers /index.json with one story. */
+const ANSWERS = `import http from 'node:http';
+http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
 
 /**
- * A temp repo with a copy of dev.mjs and lib/, one library (no dist/) whose watcher runs `watcher`, and a React
- * Storybook that runs `storybook` (both node scripts; the Storybook gets its port as argv[2]).
+ * A temp repo with a copy of dev.mjs and lib/, one library (no dist/) whose watcher runs `watcher` (WATCHER by
+ * default), and a React Storybook that runs `storybook` (ANSWERS by default; both node scripts, the Storybook gets
+ * its port as argv[2]).
  */
 async function fakeRepo({
-  watcher,
-  storybook,
+  watcher = WATCHER,
+  storybook = ANSWERS,
   nodeMajor = Number(process.versions.node.split('.')[0]),
   libraries = '',
-}) {
-  const root = mkdtempSync(join(tmpdir(), 'tilburg-dev-test-'));
-  temps.push(root);
-  mkdirSync(join(root, 'node_modules'), { recursive: true });
-  writeFileSync(join(root, 'node_modules/.modules.yaml'), '');
+} = {}) {
+  const root = tempDir('tilburg-dev-test-');
+  writeFile(join(root, 'node_modules/.modules.yaml'), '');
   /* dev-config.mjs is replaced below. */
   copyScripts(root, 'dev.mjs');
   writeFileSync(join(root, 'watcher.mjs'), watcher);
@@ -108,8 +112,7 @@ function runDev(root, whenOutput = () => {}, env = {}, cwd = root, args = ['reac
       output += data;
       whenOutput(output, child);
     };
-    child.stdout.on('data', onData);
-    child.stderr.on('data', onData);
+    for (const stream of [child.stdout, child.stderr]) stream.on('data', onData);
     const timer = setTimeout(() => {
       child.kill('SIGKILL');
       reject(new Error(`pnpm dev did not stop in time:\n${output}`));
@@ -130,6 +133,22 @@ function interrupt(child) {
   else child.kill('SIGINT');
 }
 
+/** Run pnpm dev and `stop` it (Ctrl-C by default) once it prints "Watching."; `sent` says whether it got that far. */
+async function stopWhen(root, { env, stop = interrupt } = {}) {
+  let sent = false;
+  const result = await runDev(
+    root,
+    (text, child) => {
+      if (!sent && /Watching\./.test(text)) {
+        sent = true;
+        stop(child);
+      }
+    },
+    env,
+  );
+  return { ...result, sent };
+}
+
 /** Wait for a pid file to appear, then for that process to be gone (killed with its process group). */
 async function watcherGone(root) {
   const file = join(root, 'watcher.pid');
@@ -139,19 +158,8 @@ async function watcherGone(root) {
   return !isAlive(pid);
 }
 
-const WATCHER = `import { writeFileSync } from 'node:fs';
-writeFileSync('watcher.pid', String(process.pid));
-console.log('Build failed: src/index.ts');
-setInterval(() => {}, 1000);
-`;
-
-/* A Storybook stub that answers /index.json with one story. */
-const ANSWERS = `import http from 'node:http';
-http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(Number(process.argv[2]), '0.0.0.0');`;
-
 test('a Storybook that stops on its own stops pnpm dev with exit code 1, watchers included', async () => {
   const root = await fakeRepo({
-    watcher: WATCHER,
     storybook: `console.log('Error: listen EADDRINUSE: address already in use :::' + process.argv[2]); process.exit(1);`,
   });
   const { code, output } = await runDev(root);
@@ -166,17 +174,8 @@ test(
   'SIGINT once the Storybook answers (on 0.0.0.0) stops everything with exit code 0 and removes the lock',
   { skip: noSignals },
   async () => {
-    const root = await fakeRepo({
-      watcher: WATCHER,
-      storybook: ANSWERS,
-    });
-    let sent = false;
-    const { code, output } = await runDev(root, (text, child) => {
-      if (!sent && /Watching\./.test(text)) {
-        sent = true;
-        interrupt(child);
-      }
-    });
+    const root = await fakeRepo();
+    const { code, output, sent } = await stopWhen(root);
     assert.equal(sent, true, output);
     assert.equal(code, 0, output);
     assert.ok(await watcherGone(root), 'the watcher was stopped');
@@ -199,17 +198,14 @@ process.on('SIGTERM', () => {});
 console.log('built in 1s');
 setInterval(() => {}, 1000);
 `,
-      storybook: ANSWERS,
     });
-    let sent = false;
     /* A pipe nobody reads any more fails every write, like a closed terminal does (EPIPE there, EIO here). */
-    const { code, output } = await runDev(root, (text, child) => {
-      if (!sent && /Watching\./.test(text)) {
-        sent = true;
+    const { code, output, sent } = await stopWhen(root, {
+      stop: (child) => {
         child.stdout.destroy();
         child.stderr.destroy();
         child.kill('SIGHUP');
-      }
+      },
     });
     assert.equal(sent, true, output);
     assert.equal(code, 129, 'exit code 128 + SIGHUP');
@@ -218,7 +214,7 @@ setInterval(() => {}, 1000);
 );
 
 test('the wrong Node without nvm says to install it, not `nvm use`', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: '', nodeMajor: 1 });
+  const root = await fakeRepo({ storybook: '', nodeMajor: 1 });
   /* NVM_HOME too: nvm-windows on the machine that runs the tests. */
   const { code, output } = await runDev(root, () => {}, { NVM_DIR: '', NVM_HOME: '' });
   assert.equal(code, 1, output);
@@ -227,12 +223,8 @@ test('the wrong Node without nvm says to install it, not `nvm use`', async () =>
 });
 
 test('a pnpm-lock.yaml that changes while pnpm dev runs (a git checkout) says to reinstall', async () => {
-  const root = await fakeRepo({
-    watcher: WATCHER,
-    storybook: ANSWERS,
-  });
-  mkdirSync(join(root, 'node_modules/.pnpm'));
-  writeFileSync(join(root, 'node_modules/.pnpm/lock.yaml'), 'lockfileVersion: 9\n');
+  const root = await fakeRepo();
+  writeFile(join(root, 'node_modules/.pnpm/lock.yaml'), 'lockfileVersion: 9\n');
   writeFileSync(join(root, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n');
   let changed = false;
   let sent = false;
@@ -253,7 +245,6 @@ test('a pnpm-lock.yaml that changes while pnpm dev runs (a git checkout) says to
 
 test('started from another folder, the design-tokens build still runs in the repository root', async () => {
   const root = await fakeRepo({
-    watcher: WATCHER,
     storybook: 'process.exit(1);',
     libraries: `
   { key: 'tokens', name: 'design-tokens', dir: 'tokens', src: ['src'], built: 'dist/theme.css',
@@ -268,7 +259,7 @@ test('started from another folder, the design-tokens build still runs in the rep
 });
 
 test('unknown flags and a second Storybook name stop pnpm dev with a clear message', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: '' });
+  const root = await fakeRepo({ storybook: '' });
   const flag = await runDev(root, () => {}, {}, root, ['--port', '7000']);
   assert.equal(flag.code, 1, flag.output);
   assert.match(flag.output, /Unknown option '--port'/);
@@ -280,17 +271,8 @@ test('unknown flags and a second Storybook name stop pnpm dev with a clear messa
 });
 
 test('SIGTERM stops everything with exit code 143', { skip: noSignals }, async () => {
-  const root = await fakeRepo({
-    watcher: WATCHER,
-    storybook: ANSWERS,
-  });
-  let sent = false;
-  const { code, output } = await runDev(root, (text, child) => {
-    if (!sent && /Watching\./.test(text)) {
-      sent = true;
-      child.kill('SIGTERM');
-    }
-  });
+  const root = await fakeRepo();
+  const { code, output } = await stopWhen(root, { stop: (child) => child.kill('SIGTERM') });
   assert.equal(code, 143, output);
   assert.ok(await watcherGone(root), 'the watcher was stopped');
 });
@@ -300,15 +282,14 @@ test(
   /* Windows tells a folder only from …\node_modules\… in the command line, which this test process has not. */
   { skip: process.platform === 'win32' && 'Windows cannot tell the folder of this test process' },
   async () => {
-    const root = await fakeRepo({ watcher: WATCHER, storybook: 'setInterval(() => {}, 1000);' });
+    const root = await fakeRepo({ storybook: 'setInterval(() => {}, 1000);' });
     const port = Number(readFileSync(join(root, 'scripts/dev-config.mjs'), 'utf8').match(/port: (\d+)/)[1]);
     /* This test's process runs from another folder than the temp repo: not "ours". */
     let other;
     try {
       const { code, output } = await runDev(root, (text) => {
-        if (!other && /Building 1 libraries/.test(text)) {
+        if (!other && /Building 1 libraries/.test(text))
           other = http.createServer((q, r) => r.end('{"entries":{"x":{}}}')).listen(port, '0.0.0.0');
-        }
       });
       assert.equal(code, 1, output);
       assert.match(output, new RegExp(`Port ${port} now serves a Storybook from`));
@@ -320,7 +301,7 @@ test(
 );
 
 test('a Storybook name in capitals is that Storybook, not a component', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: 'process.exit(1);' });
+  const root = await fakeRepo({ storybook: 'process.exit(1);' });
   const { code, output } = await runDev(root, () => {}, {}, root, ['React']);
   assert.equal(code, 1, output);
   assert.doesNotMatch(output, /No component called/);
@@ -328,20 +309,12 @@ test('a Storybook name in capitals is that Storybook, not a component', async ()
 });
 
 test('without lsof (the folder on the port cannot be told), pnpm dev keeps the Storybook it started itself', async () => {
-  const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
-  let sent = false;
+  const root = await fakeRepo();
   /* node, sh and ps, but no lsof (macOS keeps it in /usr/sbin; Linux finds ss in /bin and still tells the folder) */
-  const { code, output } = await runDev(
-    root,
-    (text, child) => {
-      if (!sent && /Watching\./.test(text)) {
-        sent = true;
-        interrupt(child);
-      }
-    },
+  const { code, output } = await stopWhen(root, {
     /* Windows has no lsof anyway, and needs its own PATH for cmd.exe. */
-    process.platform === 'win32' ? {} : { PATH: `${dirname(process.execPath)}:/bin` },
-  );
+    env: process.platform === 'win32' ? {} : { PATH: `${dirname(process.execPath)}:/bin` },
+  });
   /* A kill on Windows ends pnpm dev at once, without its own exit code. */
   if (!noSignals) assert.equal(code, 0, output);
   assert.doesNotMatch(output, /cannot be told/);
@@ -351,20 +324,12 @@ test(
   'pnpm dev again right after q starts anew, not "already running" with the links that are stopping',
   { skip: noSignals },
   async () => {
-    const root = await fakeRepo({ watcher: WATCHER, storybook: ANSWERS });
+    const root = await fakeRepo();
     let second;
-    let sent = false;
     await runDev(root, (text, child) => {
-      if (!sent && /Watching\./.test(text)) {
-        sent = true;
+      if (!second && /Watching\./.test(text)) {
         interrupt(child);
-        let stopped = false;
-        second = runDev(root, (text2, child2) => {
-          if (!stopped && /Watching\./.test(text2)) {
-            stopped = true;
-            interrupt(child2);
-          }
-        });
+        second = stopWhen(root);
       }
     });
     const { code, output } = await second;
@@ -377,7 +342,6 @@ test(
 test('a library with `after` starts its watcher only once that library has built', async () => {
   const root = await fakeRepo({
     watcher: `console.log('built in 1s'); setInterval(() => {}, 1000);`,
-    storybook: ANSWERS,
     libraries: `
   { key: 'stencil', name: 'stencil', dir: 'st', src: ['src'], built: 'dist/x.js', for: ['react'],
     watch: 'node -e "setTimeout(() => { require(\\'fs\\').writeFileSync(\\'generated.txt\\', \\'\\'); console.log(\\'build finished\\'); }, 500); setInterval(() => {}, 1000)"',
@@ -386,13 +350,7 @@ test('a library with `after` starts its watcher only once that library has built
     watch: 'node -e "console.log(require(\\'fs\\').existsSync(\\'generated.txt\\') ? \\'Found 0 errors\\' : \\'Found 1 error\\'); setInterval(() => {}, 1000)"',
     done: /Found 0 errors/, failed: /Found [1-9]/ },`,
   });
-  let sent = false;
-  const { output } = await runDev(root, (text, child) => {
-    if (!sent && /Watching\./.test(text)) {
-      sent = true;
-      interrupt(child);
-    }
-  });
+  const { output, sent } = await stopWhen(root);
   assert.equal(sent, true, output);
   assert.doesNotMatch(output, /wc-react did not build/);
 });

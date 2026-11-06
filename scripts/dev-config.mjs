@@ -13,9 +13,7 @@ export const ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
 let rootPackage = {};
 try {
   rootPackage = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
-} catch {
-  /* reported by pnpm check (checkPackageJson) */
-}
+} catch {}
 
 /**
  * `.nvmrc` pins the major version; `engines` and pnpm's `engineStrict` refuse anything else at install time. "24",
@@ -36,7 +34,6 @@ export const STORYBOOKS = {
   react: {
     name: 'React Storybook',
     port: 6006,
-    filter: '@gemeente-tilburg/storybook',
     /* `--ci`: no browser and no "use another port?" question. `--exact-port`: stop instead of quietly moving to
        another port (it once moved onto 6007, the Angular Storybook's port); `pnpm dev` picks the port itself.
        `--host 0.0.0.0`: Storybook 10 listens on localhost only by default; this keeps the "network" link working. */
@@ -49,7 +46,6 @@ export const STORYBOOKS = {
   angular: {
     name: 'Angular Storybook',
     port: 6007,
-    filter: '@gemeente-tilburg/storybook-angular',
     /* `--ci` here too: without it the builder opens its own browser tab and, on a taken port, asks a question nobody
        can answer (stdin is closed). It has no `--exact-port`. */
     command: (port) =>

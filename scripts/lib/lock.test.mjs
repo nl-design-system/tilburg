@@ -1,9 +1,8 @@
 /* `node --test scripts/`: the pnpm dev lock file — stale, corrupt and overwritten locks. */
 import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { ROOT } from '../dev-config.mjs';
@@ -17,8 +16,9 @@ import {
   updateDevLock,
   writeDevLock,
 } from './lock.mjs';
+import { runModule, tempDir } from './test-fakes.mjs';
 
-const dir = mkdtempSync(resolve(tmpdir(), 'tilburg-lock-'));
+const dir = tempDir('tilburg-lock-');
 let count = 0;
 const lockWith = (content) => {
   const file = resolve(dir, `lock-${count++}.json`);
@@ -31,15 +31,15 @@ test('this process is alive; a pid nobody has is not', () => {
   assert.equal(isAlive(2 ** 22 + 17), false);
 });
 
-for (const pid of [0, -1]) {
-  test(`a corrupt lock with pid ${pid} is not taken for a running pnpm dev (it would signal a process group)`, () => {
+for (const pid of [0, -1, 2 ** 22 + 17]) {
+  test(`a lock with pid ${pid} is not a running pnpm dev: ignored and removed`, () => {
     const file = lockWith({ pid, started: new Date().toISOString() });
     assert.equal(readDevLock(file), null);
     assert.equal(existsSync(file), false);
   });
 }
 
-for (const content of ['null', '[]', '{"pid":"123"}', '{"pid":1.5}', '']) {
+for (const content of ['null', '[]', '{"pid":"123"}', '{"pid":1.5}', '', '{ not json']) {
   test(`a lock file holding ${JSON.stringify(content)} is ignored, not a crash`, () => {
     assert.equal(readDevLock(lockWith(content)), null);
   });
@@ -62,7 +62,8 @@ test(
 );
 
 test('writeDevLock says when another process already holds the lock', () => {
-  const file = lockWith({ pid: process.ppid, started: new Date().toISOString() });
+  const file = lockWith({ pid: process.ppid, started: new Date().toISOString(), storybooks: [{ port: 6006 }] });
+  assert.equal(readDevLock(file)?.storybooks[0].port, 6006, 'a lock of a running process is read');
   assert.equal(writeDevLock({}, file), false);
   assert.equal(JSON.parse(readFileSync(file, 'utf8')).pid, process.ppid, 'the other lock is left alone');
   const mine = resolve(dir, `lock-${count++}.json`);
@@ -116,14 +117,7 @@ test(
   { skip: process.platform === 'win32' },
   async () => {
     const spawnGroup = (script) => spawn('sh', ['-c', script], { detached: true, stdio: 'ignore' });
-    const alive = (pid) => {
-      try {
-        process.kill(-pid, 0);
-        return true;
-      } catch {
-        return false;
-      }
-    };
+    const alive = (pid) => isAlive(-pid);
     /* ours: the leader still runs, with the start time the lock recorded. */
     const ours = spawnGroup('sleep 30');
     /* recycled: same shape, but the lock says it started at another time (its number was handed on). */
@@ -152,9 +146,7 @@ test(
       for (const group of [ours, recycled, leaderless]) {
         try {
           process.kill(-group.pid, 'SIGKILL');
-        } catch {
-          /* already gone */
-        }
+        } catch {}
       }
     }
   },
@@ -170,17 +162,12 @@ test('a lock that cannot be written does not stop pnpm dev', () => {
 
 /* writeDevLock removes the file on exit, so it runs in a child process. */
 const runWriter = (file, overwriteWith) =>
-  spawnSync(
-    process.execPath,
-    [
-      '--input-type=module',
-      '-e',
-      `import { writeFileSync } from 'node:fs';
+  runModule(
+    `import { writeFileSync } from 'node:fs';
        import { writeDevLock } from ${JSON.stringify(new URL('./lock.mjs', import.meta.url).href)};
        writeDevLock({ storybooks: [] }, ${JSON.stringify(file)});
        ${overwriteWith ? `writeFileSync(${JSON.stringify(file)}, ${JSON.stringify(JSON.stringify(overwriteWith))});` : ''}`,
-    ],
-    { timeout: 10_000, encoding: 'utf8' },
+    { timeout: 10_000 },
   );
 
 test('pnpm dev removes its own lock when it exits', () => {
@@ -200,17 +187,12 @@ test('pnpm dev leaves a lock alone that another pnpm dev wrote over its own', ()
 test('takeBuildLock: takes a free lock, exits 1 with the busy problem when another build holds it, leaves "ours" alone', () => {
   const temp = mkdtempSync(resolve(dir, 'build-'));
   const take = (ours) =>
-    spawnSync(
-      process.execPath,
-      [
-        '--input-type=module',
-        '-e',
-        `import { readFileSync } from 'node:fs';
+    runModule(
+      `import { readFileSync } from 'node:fs';
          import { SYNC_LOCK, takeBuildLock } from ${JSON.stringify(new URL('./lock.mjs', import.meta.url).href)};
          takeBuildLock('pnpm test', (other) => ({ what: 'busy: ' + other.what }), ${ours ? '() => true' : 'undefined'});
          console.log('took ' + JSON.parse(readFileSync(SYNC_LOCK, 'utf8')).what);`,
-      ],
-      { env: { ...process.env, TMPDIR: temp, TMP: temp, TEMP: temp }, encoding: 'utf8', timeout: 10_000 },
+      { env: { ...process.env, TMPDIR: temp, TMP: temp, TEMP: temp }, timeout: 10_000 },
     );
   const free = take();
   assert.equal(free.status, 0, free.stderr);

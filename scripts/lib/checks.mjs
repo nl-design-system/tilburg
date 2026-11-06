@@ -10,7 +10,7 @@ import net from 'node:net';
 import { cpus, homedir } from 'node:os';
 import { delimiter, dirname, resolve, sep } from 'node:path';
 import { LIBRARIES, NODE_MAJOR, PNPM_VERSION, ROOT, STORYBOOKS } from '../dev-config.mjs';
-import { ago, capture, cmd } from './cli-utils.mjs';
+import { ago, capture, cmd, readJson, readText, tryOr, warnRow } from './cli-utils.mjs';
 import { readDevLock } from './lock.mjs';
 import { newestNvmNode, nodeOutsideNvmWindows, NVM_HOME } from './nvm.mjs';
 
@@ -24,8 +24,7 @@ export function runInherit(command) {
 const shellFix = (label, command, order) => ({ label, command, order, run: () => runInherit(command) });
 /* nvm-windows has no .nvmrc support: `nvm use` there needs the version. No `a && b` in a command to type: Windows
    PowerShell 5.1 refuses it. */
-const NVM_WINDOWS = Boolean(NVM_HOME);
-const NVM_USE = NVM_WINDOWS ? `nvm use ${NODE_MAJOR}` : 'nvm use';
+const NVM_USE = NVM_HOME ? `nvm use ${NODE_MAJOR}` : 'nvm use';
 const NVM_FIX = { label: 'Switch Node', command: NVM_USE, order: 10 };
 const COREPACK_FIX = shellFix('Run corepack enable?', 'corepack enable', 20);
 const INSTALL_FIX = shellFix('Run pnpm install?', 'pnpm install', 30);
@@ -58,12 +57,7 @@ export function belowEngines(version, range) {
 
 /* Angular asks more than .nvmrc's major: Angular 22 refuses Node 24 below 24.15. Unknown until installed. */
 function angularNodeRange() {
-  try {
-    const file = resolve(ROOT, 'packages/storybook-angular/node_modules/@angular/core/package.json');
-    return JSON.parse(readFileSync(file, 'utf8')).engines?.node;
-  } catch {
-    return undefined;
-  }
+  return readJson(resolve(ROOT, 'packages/storybook-angular/node_modules/@angular/core/package.json'))?.engines?.node;
 }
 
 export function checkNode() {
@@ -78,15 +72,13 @@ export function checkNode() {
   const major = Number(version.split('.')[0]);
   const angularNeeds = major === NODE_MAJOR && belowEngines(version, angularNodeRange());
   if (angularNeeds) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `v${version}, but Angular needs ${angularNeeds} or newer`,
-      note: `install a newer Node ${NODE_MAJOR}: ${cmd(`nvm install ${NODE_MAJOR}`)}`,
-    };
+    return warnRow(
+      `v${version}, but Angular needs ${angularNeeds} or newer`,
+      `install a newer Node ${NODE_MAJOR}: ${cmd(`nvm install ${NODE_MAJOR}`)}`,
+    );
   }
   if (major === NODE_MAJOR) return { ok: true, detail: `v${version}`, note: `.nvmrc pins ${NODE_MAJOR}` };
-  if (NVM_WINDOWS) {
+  if (NVM_HOME) {
     const installed = newestNvmNode(NODE_MAJOR);
     const outside = installed && nodeOutsideNvmWindows();
     return {
@@ -126,20 +118,16 @@ export function checkEnvironment(env = process.env, platform = process.platform)
   /* Every child node inherits NODE_OPTIONS: --inspect makes each one fight over port 9229, --require loads its file. */
   const nodeOptions = env.NODE_OPTIONS?.match(/(?<!\S)(--inspect[\w-]*|--require|-r)(?![\w-])/g);
   if (!set.length && nodeOptions) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `NODE_OPTIONS holds ${nodeOptions.join(' ')}: every Node that pnpm and the builds start inherits it`,
-      note: `unset it in this terminal: ${cmd(unset(['NODE_OPTIONS']))}`,
-    };
+    return warnRow(
+      `NODE_OPTIONS holds ${nodeOptions.join(' ')}: every Node that pnpm and the builds start inherits it`,
+      `unset it in this terminal: ${cmd(unset(['NODE_OPTIONS']))}`,
+    );
   }
   if (!set.length) return { ok: true, detail: 'no settings that skip devDependencies' };
-  return {
-    ok: true,
-    warn: true,
-    detail: `${set.join(', ')} is set: pnpm install then skips devDependencies (the build tools)`,
-    note: `unset it in this terminal (${cmd(unset(set.map((name) => name.split('=')[0])))}), then pnpm install`,
-  };
+  return warnRow(
+    `${set.join(', ')} is set: pnpm install then skips devDependencies (the build tools)`,
+    `unset it in this terminal (${cmd(unset(set.map((name) => name.split('=')[0])))}), then pnpm install`,
+  );
 }
 
 /** An x64 Node on an Apple Silicon Mac (Rosetta): native binaries in node_modules then fit only one of the two. */
@@ -148,12 +136,10 @@ export function checkCpu(
 ) {
   /* Under Rosetta, os.cpus() still names the Apple chip while process.arch says x64. */
   if (platform === 'darwin' && arch === 'x64' && /^Apple /.test(cpuModel)) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `x64 Node under Rosetta on ${cpuModel}`,
-      note: `open a native terminal (${cmd('arch -arm64 zsh')}); if ${cmd('node -p process.arch')} still says x64, reinstall Node (${cmd(`nvm uninstall ${process.versions.node} && nvm install ${NODE_MAJOR}`)}), then ${cmd('rm -rf node_modules && pnpm install')}`,
-    };
+    return warnRow(
+      `x64 Node under Rosetta on ${cpuModel}`,
+      `open a native terminal (${cmd('arch -arm64 zsh')}); if ${cmd('node -p process.arch')} still says x64, reinstall Node (${cmd(`nvm uninstall ${process.versions.node} && nvm install ${NODE_MAJOR}`)}), then ${cmd('rm -rf node_modules && pnpm install')}`,
+    );
   }
   return { ok: true, detail: `${arch}${cpuModel ? `, ${cpuModel}` : ''}` };
 }
@@ -172,17 +158,13 @@ function firstOnPath(name) {
 function findCorepack() {
   const path = firstOnPath('corepack');
   if (!path) return null;
-  try {
-    /* npm's Windows shim corepack.cmd sits in the Node folder, beside node_modules\corepack; elsewhere corepack is a
-       link to corepack/dist/corepack.js. */
-    const pkg =
-      process.platform === 'win32' && path.endsWith('.cmd')
-        ? resolve(dirname(path), 'node_modules', 'corepack', 'package.json')
-        : resolve(dirname(realpathSync(path)), '..', 'package.json');
-    return { path, version: JSON.parse(readFileSync(pkg, 'utf8')).version };
-  } catch {
-    return { path, version: undefined };
-  }
+  /* npm's Windows shim corepack.cmd sits in the Node folder, beside node_modules\corepack; elsewhere corepack is a
+     link to corepack/dist/corepack.js. */
+  const pkg = () =>
+    process.platform === 'win32' && path.endsWith('.cmd')
+      ? resolve(dirname(path), 'node_modules', 'corepack', 'package.json')
+      : resolve(dirname(realpathSync(path)), '..', 'package.json');
+  return { path, version: tryOr(() => readJson(pkg())?.version) };
 }
 
 /**
@@ -194,24 +176,20 @@ export function checkCorepack(found = findCorepack(), nodeBin = dirname(process.
   const [major, minor] = (found.version ?? '').split('.').map(Number);
   if (!(major === 0 && minor < 31)) return { ok: true, detail: found.version ?? 'version unknown', note: found.path };
   const other = dirname(found.path) !== nodeBin ? `, not the one of the Node in ${nodeBin}` : '';
-  return {
-    ok: true,
-    warn: true,
-    detail: `${found.version} at ${found.path}${other}: too old for pnpm 11`,
-    /* Two commands on Windows: PowerShell 5.1 has no &&. */
-    note: `run ${process.platform === 'win32' ? `${cmd('npm install -g corepack@latest')}, then ${cmd('corepack enable')}` : cmd('npm install -g corepack@latest && corepack enable')}${other && `, or remove ${found.path}`}`,
-  };
+  /* Two commands on Windows: PowerShell 5.1 has no &&. */
+  return warnRow(
+    `${found.version} at ${found.path}${other}: too old for pnpm 11`,
+    `run ${process.platform === 'win32' ? `${cmd('npm install -g corepack@latest')}, then ${cmd('corepack enable')}` : cmd('npm install -g corepack@latest && corepack enable')}${other && `, or remove ${found.path}`}`,
+  );
 }
 
 export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstOnPath('pnpm') : undefined) {
   /* WSL with appendWindowsPath: the Windows pnpm would install win32 binaries into this Linux node_modules. */
   if (pnpmPath?.startsWith('/mnt/')) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `the Windows pnpm (${pnpmPath}) comes first on your PATH: installs would fetch win32 binaries`,
-      note: `install Node inside WSL (${cmd(`nvm install ${NODE_MAJOR}`)}), then ${cmd('corepack enable')}`,
-    };
+    return warnRow(
+      `the Windows pnpm (${pnpmPath}) comes first on your PATH: installs would fetch win32 binaries`,
+      `install Node inside WSL (${cmd(`nvm install ${NODE_MAJOR}`)}), then ${cmd('corepack enable')}`,
+    );
   }
   const { code, stdout, stderr, timedOut } = await capture('pnpm --version', { timeoutMs: 60_000, cwd: ROOT });
   const version = stdout.trim();
@@ -223,7 +201,7 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
       ok: false,
       detail: `cannot start: pnpm 11 runs on ${pathNode} from your PATH`,
       /* nvm-windows has no default alias: its `nvm use` already switches every terminal. */
-      note: NVM_WINDOWS
+      note: NVM_HOME
         ? `run ${cmd(NVM_USE)}`
         : `run ${cmd(NVM_USE)}, or make ${NODE_MAJOR} the default: ${cmd(`nvm alias default ${NODE_MAJOR}`)}`,
       fix: NVM_FIX,
@@ -255,13 +233,11 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
     };
   }
   if (PNPM_VERSION && version !== PNPM_VERSION) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `${version}, package.json pins ${PNPM_VERSION}`,
-      note: `run ${cmd('corepack enable')} so this folder uses the pinned pnpm`,
-      fix: COREPACK_FIX,
-    };
+    return warnRow(
+      `${version}, package.json pins ${PNPM_VERSION}`,
+      `run ${cmd('corepack enable')} so this folder uses the pinned pnpm`,
+      { fix: COREPACK_FIX },
+    );
   }
   return { ok: true, detail: version, note: 'package.json "packageManager"' };
 }
@@ -272,35 +248,31 @@ export async function checkGitHooks() {
   if (stdout.trim() === '.husky/_' && existsSync(resolve(ROOT, '.husky/_'))) {
     return { ok: true, detail: 'pre-commit runs lint-staged', note: '.husky/pre-commit' };
   }
-  return {
-    ok: true,
-    warn: true,
-    detail: 'not installed, so commits are not linted',
-    note: `run ${cmd('pnpm install')} (its prepare step installs them) or ${cmd('pnpm exec husky')}`,
-    fix: HUSKY_FIX,
-  };
+  return warnRow(
+    'not installed, so commits are not linted',
+    `run ${cmd('pnpm install')} (its prepare step installs them) or ${cmd('pnpm exec husky')}`,
+    { fix: HUSKY_FIX },
+  );
 }
 
 /** Not a requirement, but a failed `git push` halfway through a release is a poor moment to find out. */
-export async function checkGitPush() {
+async function checkGitPush() {
   const { stdout: url } = await capture('git remote get-url origin', { cwd: ROOT, timeoutMs: 5000 });
   if (!url.trim()) return { skip: true, ok: true, detail: 'no origin remote' };
   if (!url.startsWith('https://')) return { ok: true, detail: 'over SSH', note: url.trim() };
   const { stdout: helper } = await capture('git config credential.helper', { cwd: ROOT, timeoutMs: 5000 });
   if (helper.trim()) return { ok: true, detail: `HTTPS, credentials from ${helper.trim()}`, note: url.trim() };
-  return {
-    ok: true,
-    warn: true,
-    detail: 'HTTPS without a credential helper',
-    note: `git push will ask for a username; ${cmd('gh auth login')} or a credential helper fixes that`,
-  };
+  return warnRow(
+    'HTTPS without a credential helper',
+    `git push will ask for a username; ${cmd('gh auth login')} or a credential helper fixes that`,
+  );
 }
 
 /**
  * Commits the branch is behind its upstream and origin/main, from the refs already here (no fetch: fast and offline).
  * Skipped outside a git checkout or with nothing to compare with.
  */
-export async function checkBranchBehind() {
+async function checkBranchBehind() {
   const note = 'as of the last fetch';
   const git = async (args) => capture(`git ${args}`, { cwd: ROOT, timeoutMs: 5000 });
   const count = ({ code, stdout }) => (code === 0 ? Number(stdout.trim()) : 0);
@@ -324,7 +296,7 @@ export async function checkBranchBehind() {
     behind.push(
       `${count(behindMain)} commit(s) behind origin/main — run ${cmd('git fetch && git rebase origin/main')}`,
     );
-  if (behind.length) return { ok: true, warn: true, detail: behind.join('; '), note };
+  if (behind.length) return warnRow(behind.join('; '), note);
   const compared = [up, main && up !== 'origin/main' && 'origin/main'].filter(Boolean).join(' and ');
   return { ok: true, detail: `up to date with ${compared}`, note };
 }
@@ -358,24 +330,15 @@ export function checkInstallFresh() {
   if (readFileSync(installedLock, 'utf8') === readFileSync(resolve(ROOT, 'pnpm-lock.yaml'), 'utf8')) {
     return { ok: true, detail: 'match pnpm-lock.yaml' };
   }
-  return {
-    ok: true,
-    warn: true,
-    detail: 'pnpm-lock.yaml differs from what is installed',
-    note: `run ${cmd('pnpm install')} (a branch switch or pull changed the dependencies)`,
-    fix: INSTALL_FIX,
-  };
+  return warnRow(
+    'pnpm-lock.yaml differs from what is installed',
+    `run ${cmd('pnpm install')} (a branch switch or pull changed the dependencies)`,
+    { fix: INSTALL_FIX },
+  );
 }
 
 /** statfs of `path`; undefined on a Node without it, null where it throws (network mounts, FUSE). */
-function statfs(path) {
-  if (!fs.statfsSync) return undefined;
-  try {
-    return fs.statfsSync(path);
-  } catch {
-    return null;
-  }
-}
+const statfs = (path) => (fs.statfsSync ? tryOr(() => fs.statfsSync(path), null) : undefined);
 
 /** Under 2 GB free, an install or build stops halfway with ENOSPC. */
 export function checkDiskSpace(free = statfs(ROOT)) {
@@ -385,12 +348,10 @@ export function checkDiskSpace(free = statfs(ROOT)) {
   if (typeof free === 'object') free = free.bavail * free.bsize;
   const gb = (free / 1024 ** 3).toFixed(1);
   if (free >= 2 * 1024 ** 3) return { ok: true, detail: `${gb} GB free` };
-  return {
-    ok: true,
-    warn: true,
-    detail: `only ${gb} GB free: installs and builds may stop with ENOSPC`,
-    note: `${cmd('pnpm store prune')} and ${cmd('pnpm run clean:pick')} free some`,
-  };
+  return warnRow(
+    `only ${gb} GB free: installs and builds may stop with ENOSPC`,
+    `${cmd('pnpm store prune')} and ${cmd('pnpm run clean:pick')} free some`,
+  );
 }
 
 /** The root package.json parses (a merge conflict or half-saved edit leaves it broken for every pnpm command). */
@@ -404,7 +365,7 @@ export function checkPackageJson(file = resolve(ROOT, 'package.json')) {
 }
 
 /** The filesystem type of the mount that holds `path`, from /proc/mounts (Linux): the longest, last mount point wins. */
-export function mountType(path, mounts = readOr('/proc/mounts')) {
+export function mountType(path, mounts = readText('/proc/mounts')) {
   let found = { dir: '', type: undefined };
   for (const line of mounts.split('\n')) {
     const [, raw, type] = line.split(' ');
@@ -413,14 +374,6 @@ export function mountType(path, mounts = readOr('/proc/mounts')) {
     if (dir.length >= found.dir.length) found = { dir, type };
   }
   return found.type;
-}
-
-function readOr(file, fallback = '') {
-  try {
-    return readFileSync(file, 'utf8');
-  } catch {
-    return fallback;
-  }
 }
 
 /** A synced folder (iCloud Drive, OneDrive, Dropbox) uploads node_modules and leaves "file 2" conflict copies in it. */
@@ -436,21 +389,17 @@ export function checkFolder(
   /* WSL on a Windows drive (9p/drvfs, wherever wsl.conf mounts it): file watching does not see changes there, and
      every install is many times slower. */
   if (platform === 'linux' && (/^\/mnt\/[a-z]\//.test(root) || /^(9p|drvfs)$/.test(fsType ?? ''))) {
-    return {
-      ok: true,
-      warn: true,
-      detail: 'on a Windows drive under WSL: the watchers miss changes and installs are slow',
-      note: `clone it inside WSL instead, e.g. ${cmd('~/code/tilburg')}`,
-    };
+    return warnRow(
+      'on a Windows drive under WSL: the watchers miss changes and installs are slow',
+      `clone it inside WSL instead, e.g. ${cmd('~/code/tilburg')}`,
+    );
   }
   /* ponytail: network shares on macOS and Windows are not detected (Node gives no filesystem type there). */
   if (/^(nfs4?|cifs|smb3?|smbfs|fuse\.sshfs)$/.test(fsType ?? '')) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `on a network filesystem (${fsType}): the watchers miss changes and installs are slow`,
-      note: `clone it onto a local disk instead, e.g. ${cmd('~/Developer/tilburg')}`,
-    };
+    return warnRow(
+      `on a network filesystem (${fsType}): the watchers miss changes and installs are slow`,
+      `clone it onto a local disk instead, e.g. ${cmd('~/Developer/tilburg')}`,
+    );
   }
   /* mv into a folder that does not exist renames the repo to it; pnpm sync looks for the consumers next to it. */
   const moveOut = `move it out, e.g. ${cmd(
@@ -463,20 +412,13 @@ export function checkFolder(
     .replace(/\\/g, '/')
     .match(/\/Library\/(Mobile Documents|CloudStorage)\/|\/(Dropbox|OneDrive|Google Drive)[^/]*\//)?.[0];
   if (!synced && icloudDocuments && ['Documents', 'Desktop'].some((dir) => root.startsWith(`${home}/${dir}/`))) {
-    return {
-      ok: true,
-      warn: true,
-      detail: 'in ~/Documents or ~/Desktop with iCloud "Desktop & Documents" on: sync conflicts in node_modules',
-      note: moveOut,
-    };
+    return warnRow(
+      'in ~/Documents or ~/Desktop with iCloud "Desktop & Documents" on: sync conflicts in node_modules',
+      moveOut,
+    );
   }
   if (!synced) return { ok: true, detail: 'not in a synced folder', note: root };
-  return {
-    ok: true,
-    warn: true,
-    detail: `inside a synced folder (${synced.replace(/^\/|\/$/g, '')}): sync conflicts in node_modules`,
-    note: moveOut,
-  };
+  return warnRow(`inside a synced folder (${synced.replace(/^\/|\/$/g, '')}): sync conflicts in node_modules`, moveOut);
 }
 
 // ─── Build output ────────────────────────────────────────────────────────────
@@ -489,26 +431,15 @@ export function checkFolder(
 export function newestMtime(paths) {
   let newest = 0;
   const visit = (path, top = false) => {
-    let stat;
-    try {
-      stat = top ? statSync(path) : lstatSync(path);
-    } catch {
-      return;
-    }
-    if (stat.isSymbolicLink()) return;
+    const stat = tryOr(() => (top ? statSync(path) : lstatSync(path)));
+    if (!stat || stat.isSymbolicLink()) return;
     /* Files only: a folder's mtime also moves for a reinstall of its node_modules or a Finder .DS_Store, which would
        mark the build stale for nothing. ponytail: so a branch switch that only deletes files is not noticed. */
     if (!stat.isDirectory()) {
       newest = Math.max(newest, stat.mtimeMs);
       return;
     }
-    let entries = [];
-    try {
-      entries = readdirSync(path, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const entry of entries) {
+    for (const entry of tryOr(() => readdirSync(path, { withFileTypes: true }), [])) {
       if (['node_modules', 'dist', '.angular', '.DS_Store'].includes(entry.name)) continue;
       visit(resolve(path, entry.name));
     }
@@ -532,32 +463,23 @@ export function libraryState(library) {
   return { state: skewed || changedAt > builtAt ? 'stale' : 'fresh', builtAt, changedAt, skewed };
 }
 
-export function checkLibrary(library) {
+function checkLibrary(library) {
   const { state, builtAt, changedAt, skewed } = libraryState(library);
   const forWhom = library.for.map((key) => STORYBOOKS[key].name.replace(' Storybook', '')).join(' + ');
   if (state === 'missing') {
-    return {
-      ok: true,
-      warn: true,
-      detail: 'not built yet',
-      note: `${cmd('pnpm dev')} builds it (needed by ${forWhom})`,
-    };
+    return warnRow('not built yet', `${cmd('pnpm dev')} builds it (needed by ${forWhom})`);
   }
   if (skewed) {
-    return {
-      ok: true,
-      warn: true,
-      detail: 'source has a modification time in the future (clock skew, or files from a zip)',
-      note: `${cmd('pnpm dev')} rebuilds it every time until the clock passes it; check the date, or touch the files`,
-    };
+    return warnRow(
+      'source has a modification time in the future (clock skew, or files from a zip)',
+      `${cmd('pnpm dev')} rebuilds it every time until the clock passes it; check the date, or touch the files`,
+    );
   }
   if (state === 'stale') {
-    return {
-      ok: true,
-      warn: true,
-      detail: `source newer than the build (${ago(changedAt)} vs ${ago(builtAt)})`,
-      note: `an edit, or git touched the files (checkout, stash, reset). ${cmd('pnpm dev')} rebuilds it`,
-    };
+    return warnRow(
+      `source newer than the build (${ago(changedAt)} vs ${ago(builtAt)})`,
+      `an edit, or git touched the files (checkout, stash, reset). ${cmd('pnpm dev')} rebuilds it`,
+    );
   }
   return { ok: true, detail: `built ${ago(builtAt)}`, note: `${library.dir}/${library.built}` };
 }
@@ -625,10 +547,6 @@ function entriesAt(host, port) {
   });
 }
 
-export async function isStorybookOn(port) {
-  return Boolean(await storybookEntries(port));
-}
-
 /**
  * The folder a program was started from, read from its (Windows) command line: what comes before `\node_modules\`
  * (pnpm's shims run node with node_modules/.bin/../<tool>/… under the package), from the last drive letter before it,
@@ -679,11 +597,9 @@ export function listenerDir(port) {
   /* Linux without lsof (Docker, minimal Ubuntu, WSL): ss names the pid, /proc its folder. */
   if (process.platform === 'linux') {
     if (!pid) pid = run('ss', ['-ltnpH', `sport = :${port}`]).match(/pid=(\d+)/)?.[1];
-    try {
-      if (pid) return readlinkSync(`/proc/${pid}/cwd`);
-    } catch {
-      /* not ours to read: fall through to lsof */
-    }
+    /* Another user's /proc entry cannot be read: lsof then. */
+    const cwd = pid && tryOr(() => readlinkSync(`/proc/${pid}/cwd`));
+    if (cwd) return cwd;
   }
   if (!pid) return null;
   const line = lsof(['-a', '-p', pid, '-d', 'cwd', '-Fn'])
@@ -720,7 +636,7 @@ export async function identifyStorybook(storybook, port, findDir = listenerDir) 
   return { ours: true };
 }
 
-export async function checkStorybookPort(storybook) {
+async function checkStorybookPort(storybook) {
   /* pnpm dev may have moved it to another port (its usual one was taken): then that is where it is, nothing to fix. */
   const viaDev = readDevLock()?.storybooks?.find((running) => running.name === storybook.name);
   if (viaDev)
@@ -732,23 +648,19 @@ export async function checkStorybookPort(storybook) {
     return { ok: true, detail: `already running on ${storybook.port}`, note: `http://localhost:${storybook.port}/` };
   }
   if (found) {
-    return {
-      ok: true,
-      warn: true,
-      detail: `${storybook.port} is taken by ${found.what}`,
-      note: `${cmd('pnpm dev')} uses the next free port; stop that Storybook to get ${storybook.port} back`,
-    };
+    return warnRow(
+      `${storybook.port} is taken by ${found.what}`,
+      `${cmd('pnpm dev')} uses the next free port; stop that Storybook to get ${storybook.port} back`,
+    );
   }
-  return {
-    ok: true,
-    warn: true,
-    detail: `${storybook.port} is taken by another process`,
-    note: `${cmd('pnpm dev')} uses the next free port; ${cmd(process.platform === 'win32' ? `netstat -ano | findstr :${storybook.port}` : `lsof -i :${storybook.port}`)} shows who has it`,
-  };
+  return warnRow(
+    `${storybook.port} is taken by another process`,
+    `${cmd('pnpm dev')} uses the next free port; ${cmd(process.platform === 'win32' ? `netstat -ano | findstr :${storybook.port}` : `lsof -i :${storybook.port}`)} shows who has it`,
+  );
 }
 
 /** Is pnpm dev running for this working copy? Read from its lock file; a crashed one does not count. */
-export function checkDevRunning() {
+function checkDevRunning() {
   const lock = readDevLock();
   if (!lock) return { ok: true, detail: 'not running', note: `${cmd('pnpm dev')} starts it` };
   const ports = (lock.storybooks ?? []).map((storybook) => `http://localhost:${storybook.port}/`).join('  ');

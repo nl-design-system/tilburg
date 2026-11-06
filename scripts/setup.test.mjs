@@ -2,16 +2,15 @@
    failures it explains are reached without touching nvm, corepack or pnpm. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { copyFileSync, linkSync, mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { copyFileSync, linkSync, mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { copyScripts, noShell, prependPath, runScript, writeFake } from './lib/test-fakes.mjs';
+import { copyScripts, noShell, prependPath, runScript, tempDir, writeFake } from './lib/test-fakes.mjs';
 
 /* setup starts fnm and the nvm Node without a shell: Windows runs no script that way (a .cmd needs cmd.exe). */
 const shellFakes = process.platform === 'win32' && 'Windows starts no script without a shell';
 /* A space and an accent in the path: a repo cloned into "My Documents/ontwerp-é" must work too. */
-const temp = mkdtempSync(resolve(tmpdir(), 'tilburg setup-test-é-'));
+const temp = tempDir('tilburg setup-test-é-');
 
 let count = 0;
 /**
@@ -59,12 +58,11 @@ function runSetup(
   /* NVM_HOME: the developer's own nvm-windows would stand in for the fake nvm. */
   const { CI, SUDO_USER, NODE_OPTIONS, NVM_HOME, ...rest } = process.env;
   const env = prependPath(rest, fakes);
-  const result = runScript(resolve(root, 'scripts/setup.mjs'), [], {
+  return runScript(resolve(root, 'scripts/setup.mjs'), [], {
     cwd: root,
     env: { ...env, NVM_DIR: nvm, TILBURG_SETUP_REEXEC: '1', ...extra },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
-  return result;
 }
 
 const otherMajor = Number(process.versions.node.split('.')[0]) + 1;

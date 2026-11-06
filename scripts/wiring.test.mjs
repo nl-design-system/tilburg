@@ -24,19 +24,9 @@ export function importsOf(source) {
       .map((part) => part.trim().split(/\s+as\s+|\s*:\s*/)[0])
       .filter(Boolean);
   return [
-    ...[...source.matchAll(/^import\s+(?:\{([^{}]*)\}\s+from\s+|[\w*\s]+from\s+)?'([^']+)'/gm)].map(
-      ([, list, spec]) => ({
-        specifier: spec,
-        names: list === undefined ? null : named(list),
-      }),
-    ),
-    ...[...source.matchAll(/^\s*(?:const\s*\{([^{}]*)\}\s*=\s*)?await\s+import\('([^']+)'\)/gm)].map(
-      ([, list, spec]) => ({
-        specifier: spec,
-        names: list === undefined ? null : named(list),
-      }),
-    ),
-  ];
+    ...source.matchAll(/^import\s+(?:\{([^{}]*)\}\s+from\s+|[\w*\s]+from\s+)?'([^']+)'/gm),
+    ...source.matchAll(/^\s*(?:const\s*\{([^{}]*)\}\s*=\s*)?await\s+import\('([^']+)'\)/gm),
+  ].map(([, list, spec]) => ({ specifier: spec, names: list === undefined ? null : named(list) }));
 }
 
 /** Names a module exports: `export function|const|let|class x` and `export { a, b as c }`. */
