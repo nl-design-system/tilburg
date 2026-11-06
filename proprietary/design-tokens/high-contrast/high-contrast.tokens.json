@@ -370,6 +370,14 @@
             }
           }
         }
+      },
+      "ordered-list": {
+        "marker": {
+          "number": {
+            "$value": "#ffffff",
+            "$type": "color"
+          }
+        }
       }
     },
     "utrecht": {
@@ -1131,6 +1139,164 @@
           "$type": "color"
         },
         "option": {
+          "color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          }
+        }
+      },
+      "toptask-link": {
+        "background-color": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "color": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "hover": {
+          "background-color": {
+            "$value": "#000000",
+            "$type": "color"
+          },
+          "color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          }
+        }
+      },
+      "link-social": {
+        "background-color": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "color": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "border-color": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "hover": {
+          "background-color": {
+            "$value": "#000000",
+            "$type": "color"
+          },
+          "color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          }
+        }
+      },
+      "drawer": {
+        "background-color": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "color": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "border-color": {
+          "$value": "#ffffff",
+          "$type": "color"
+        }
+      },
+      "calendar": {
+        "background-color": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "navigation": {
+          "color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          },
+          "label-color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          }
+        },
+        "button": {
+          "color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          },
+          "hover-color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          },
+          "hover-background-color": {
+            "$value": "#000000",
+            "$type": "color"
+          },
+          "active-color": {
+            "$value": "#ffffff",
+            "$type": "color"
+          },
+          "disabled-color": {
+            "$value": "#cccccc",
+            "$type": "color"
+          }
+        },
+        "table": {
+          "days-item-day": {
+            "color": {
+              "$value": "#ffffff",
+              "$type": "color"
+            },
+            "hover": {
+              "color": {
+                "$value": "#ffffff",
+                "$type": "color"
+              },
+              "background-color": {
+                "$value": "#000000",
+                "$type": "color"
+              }
+            },
+            "out-of-the-month": {
+              "color": {
+                "$value": "#cccccc",
+                "$type": "color"
+              },
+              "background-color": {
+                "$value": "#000000",
+                "$type": "color"
+              }
+            },
+            "is-today": {
+              "border-color": {
+                "$value": "#ffffff",
+                "$type": "color"
+              }
+            },
+            "selected": {
+              "background-color": {
+                "$value": "#ffffff",
+                "$type": "color"
+              },
+              "border-color": {
+                "$value": "#ffffff",
+                "$type": "color"
+              },
+              "color": {
+                "$value": "#000000",
+                "$type": "color"
+              }
+            },
+            "disabled": {
+              "color": {
+                "$value": "#cccccc",
+                "$type": "color"
+              }
+            }
+          }
+        }
+      },
+      "unordered-list": {
+        "marker": {
           "color": {
             "$value": "#ffffff",
             "$type": "color"
