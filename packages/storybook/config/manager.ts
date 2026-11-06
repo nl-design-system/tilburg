@@ -1,4 +1,4 @@
-import { addons, types } from '@storybook/manager-api';
+import { addons, types } from 'storybook/manager-api';
 import { applyTlbFilter, TLB_FILTER_ID, TlbFilter } from './TlbFilter';
 import { renderLabel } from './sidebarLabel';
 import { theme } from './theme';

@@ -6,7 +6,10 @@ import { relative, resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
 
 export const STATUS_FILE = 'packages/storybook-shared/src/documentation/implementation-status.md';
-const P = (...parts) => resolve(ROOT, 'packages', ...parts);
+/** Why loadComponents() found nothing. */
+export const NO_TABLE = `${STATUS_FILE} has no component table, is missing, or has merge-conflict markers.`;
+/** A path under packages/. */
+export const P = (...parts) => resolve(ROOT, 'packages', ...parts);
 
 /** The online Storybooks (GitHub Pages, from main): the React one at the root, the Angular one under angular/. */
 export const SITE = {
@@ -16,11 +19,22 @@ export const SITE = {
 
 /* Names that do not follow "Form Label" → form-label / FormLabel. */
 const EXCEPTIONS = {
-  heading: { css: 'heading-1', react: 'Heading1', angular: 'heading-1', wbc: 'heading-1' },
+  heading: { css: 'heading-1', react: 'Heading1', reactTest: 'Heading', angular: 'heading-1', wbc: 'heading-1' },
   'form-fieldset': { react: 'Fieldset' },
 };
 
-export const kebab = (text) =>
+/* React tests that share one file, with a describe() per component (Form.test.tsx has describe('Checkbox')). */
+const SHARED_REACT_TESTS = {
+  Form: 'Checkbox Fieldset FormField FormFieldDescription FormLabel Textarea Textbox ValidationMessage'.split(' '),
+  Layout: 'Article ButtonGroup Document Page PageContent PageFooter PageHeader'.split(' '),
+  List: 'OrderedList Separator'.split(' '),
+  Status: 'Alert BadgeStatus Breadcrumb Pagination ProgressBar'.split(' '),
+};
+
+/** The file's text, or '' when it does not exist: a layer whose index is missing has nothing exported. */
+const read = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
+
+const kebab = (text) =>
   text
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase()
@@ -41,8 +55,9 @@ function storyMeta(path) {
  * Every row of the implementation-status table, with its files. `layers` lists, per layer, whether the table
  * promises it (`promised`), the main file, its test, and the story (with its Storybook id) that shows it.
  */
-export function loadComponents() {
-  const table = existsSync(resolve(ROOT, STATUS_FILE)) ? readFileSync(resolve(ROOT, STATUS_FILE), 'utf8') : '';
+export function loadComponents(table = read(resolve(ROOT, STATUS_FILE))) {
+  /* Both sides of a merge conflict would load: every name then fits two components. */
+  if (/^<{7}/m.test(table)) return [];
   return table
     .split('\n')
     .filter((line) => /^\| [A-Z]/.test(line) && !line.startsWith('| Component'))
@@ -53,6 +68,8 @@ export function loadComponents() {
         .map((cell) => cell.trim());
       const slug = kebab(name);
       const names = { css: slug, react: pascal(slug), angular: slug, wbc: slug, ...EXCEPTIONS[slug] };
+      const shared = Object.keys(SHARED_REACT_TESTS).find((file) => SHARED_REACT_TESTS[file].includes(names.react));
+      if (shared) Object.assign(names, { reactTest: shared, reactSuite: names.react });
       const story = (storybook, suffix) =>
         storyMeta(P(storybook, 'src', `tilburg-${slug}${suffix}.stories.${storybook === 'storybook' ? 'tsx' : 'ts'}`));
       return {
@@ -74,9 +91,10 @@ export function loadComponents() {
             label: 'React',
             promised: react === '✅',
             main: P('components-react/src', `${names.react}.tsx`),
-            test: P('components-react/src', `${names.react}.test.tsx`),
-            exported: () =>
-              readFileSync(P('components-react/src/index.ts'), 'utf8').includes(`from './${names.react}'`),
+            test: P('components-react/src', `${names.reactTest ?? names.react}.test.tsx`),
+            /* In a shared test file: the describe() that holds this component's tests. */
+            suite: names.reactSuite,
+            exported: () => read(P('components-react/src/index.ts')).includes(`from './${names.react}'`),
             stories: [story('storybook', '-react')],
           },
           angular: {
@@ -84,8 +102,7 @@ export function loadComponents() {
             promised: angular === '✅',
             main: P('components-angular/src', names.angular, 'component.ts'),
             test: P('components-angular/src', names.angular, 'component.spec.ts'),
-            exported: () =>
-              readFileSync(P('components-angular/src/components.ts'), 'utf8').includes(`./${names.angular}/component'`),
+            exported: () => read(P('components-angular/src/components.ts')).includes(`./${names.angular}/component'`),
             stories: [story('storybook-angular', '')],
           },
           wbc: {
@@ -122,8 +139,8 @@ function distance(a, b) {
 
 /**
  * Find a component by any of its names: "tooltip", "Tooltip", "password input", "PasswordInput", "tilburg-wbc-tooltip",
- * "<tilburg-tooltip>", "fieldset". Returns { component } on one match, { matches } when several fit, or
- * { suggestions } (closest names) when none does.
+ * "<tilburg-tooltip>", "fieldset". { component } on one match, { matches } when several fit, { suggestions } (the
+ * closest names) when none does.
  */
 export function findComponent(query, components = loadComponents()) {
   const wanted = kebab(String(query).replace(/^<|>$/g, '')).replace(/^tilburg-(wbc-)?/, '');
@@ -152,7 +169,6 @@ export function findComponent(query, components = loadComponents()) {
 /** The Storybook URL of a story id: its docs page, on a local port or online. */
 export const storyUrl = (base, id) => `${base.replace(/\/?$/, '/')}?path=/docs/${id}--docs`;
 
-/** A path relative to the repository, for display. */
 export const rel = (path) => relative(ROOT, path);
 
 /**
@@ -160,19 +176,16 @@ export const rel = (path) => relative(ROOT, path);
  * the name fits several, or the closest names when it fits none.
  */
 export async function requireComponent(query, command) {
-  const { c, fail } = await import('./cli-utils.mjs');
+  const { c, exitAfter, exitWith, fail } = await import('./cli-utils.mjs');
   const components = loadComponents();
-  if (!components.length) {
-    fail({ what: 'No components found', why: `${STATUS_FILE} has no component table (or is missing).` });
-    process.exit(1);
-  }
+  if (!components.length) exitWith({ what: 'No components found', why: NO_TABLE });
   const { component, matches, suggestions } = findComponent(query, components);
   if (component) return component;
   if (matches) {
-    fail({
-      what: `"${query}" fits ${matches.length} components`,
-      fix: matches.map((match) => `${command} ${match.slug}`).join('   '),
-    });
+    /* Five fit on a line; "a" fits 25. */
+    const shown = matches.slice(0, 5).map((match) => `${command} ${match.slug}`);
+    if (matches.length > 5) shown.push(`… pnpm where --list shows all ${matches.length}`);
+    fail({ what: `"${query}" fits ${matches.length} components`, fix: shown.join('   ') });
   } else {
     fail({
       what: `No component called "${query}"`,
@@ -180,6 +193,5 @@ export async function requireComponent(query, command) {
       fix: suggestions.length ? `${command} ${suggestions[0].slug}` : 'pnpm where --list shows every component',
     });
   }
-  console.log(`  ${c.gray}Names come from ${STATUS_FILE}.${c.reset}\n`);
-  process.exit(1);
+  exitAfter(`  ${c.gray}Names come from ${STATUS_FILE}.${c.reset}\n`, 1);
 }

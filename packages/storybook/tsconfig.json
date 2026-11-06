@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "noImplicitOverride": false
   },
   "extends": "../../tsconfig.json",
   "include": ["config/**/*.ts", "config/**/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["**/node_modules/*"]
+  "exclude": ["**/node_modules/*", "config/manager.ts", "config/sidebarLabel.tsx", "config/TlbFilter.tsx"]
 }

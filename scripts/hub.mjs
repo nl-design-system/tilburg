@@ -1,16 +1,24 @@
 /* `pnpm menu`: every command in a menu, after bq-tlb-frontend's hub.mjs. ↑ ↓ ← → choose, Enter runs, H help, Q quits.
-   Sections sit side by side; without a terminal it prints the help list instead. */
+   Sections sit side by side; without a terminal (or one without cursor control, TERM=dumb) it prints the help list. */
 import { spawn } from 'node:child_process';
 import { checkInstalled, checkInstallFresh } from './lib/checks.mjs';
-import { c, printBanner, stripAnsi } from './lib/cli-utils.mjs';
+import { c, installCrashHandler, interactive, printBanner, readKeys, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
+import { splitKeys } from './lib/keys.mjs';
 import { randomSaying } from './lib/sayings.mjs';
 
 const COLUMNS = 3;
 const COLUMN_WIDTH = 18;
 const GAP = 3;
 
-if (!process.stdin.isTTY || !process.stdout.isTTY) {
+/* Restores the terminal (raw mode, cursor) on a crash; Ctrl-C is a key here, or the launched command's. */
+installCrashHandler('pnpm menu', { signals: false });
+
+/* Redrawing moves the cursor up by the lines it wrote: a wrapped line would leave the menu drifting down the screen.
+   Too narrow for the columns: the list instead. */
+const width = () => process.stdout.columns || 80;
+const tooNarrow = () => width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;
+if (!process.stdin.isTTY || !process.stdout.isTTY || !interactive || tooNarrow()) {
   await import('./help.mjs');
   process.exit(0);
 }
@@ -59,7 +67,10 @@ function render() {
     out.push('');
   }
   const { script, what } = SECTIONS[section].items[item];
-  out.push(`  ${c.cyan}pnpm ${script}${c.reset}  ${c.gray}${what}${c.reset}`);
+  const room = width() - script.length - 10;
+  out.push(
+    `  ${c.cyan}pnpm ${script}${c.reset}  ${c.gray}${what.length > room ? `${what.slice(0, room - 1)}…` : what}${c.reset}`,
+  );
   out.push('');
   out.push(`  ${c.gray}↑ ↓ ← → choose   Enter run   H help   Q quit${c.reset}`);
   if (drawn) process.stdout.write(`\x1b[${drawn}A\x1b[G`);
@@ -69,11 +80,12 @@ function render() {
 
 function leave() {
   process.stdout.write('\x1b[?25h');
-  process.stdin.setRawMode(false);
-  process.stdin.pause();
+  process.stdin.setRawMode(false).pause();
 }
 
+let running = false;
 function run(script) {
+  running = true;
   leave();
   process.stdout.write('\x1b[2J\x1b[H');
   /* The command owns the terminal now: Ctrl-C is for it (it stops itself), not for the menu that started it. */
@@ -83,7 +95,8 @@ function run(script) {
       console.error(`\n  Could not start pnpm run ${script}: ${err.message}. Is pnpm on your PATH? (pnpm check)\n`);
       process.exit(1);
     })
-    .on('close', (code) => process.exit(code ?? 0));
+    /* No code means a signal stopped it: that is not a success. */
+    .on('close', (code) => process.exit(code ?? 1));
 }
 
 process.stdout.write('\x1b[2J\x1b[H\x1b[?25l');
@@ -94,10 +107,20 @@ console.log(`      ${c.magenta}${c.bold}“${saying}”${c.reset}  ${c.gray}${me
 if (install) console.log(`  ${c.yellow}⚠  ${install}${c.reset} Press Enter to run ${c.cyan}pnpm setup${c.reset}.\n`);
 render();
 
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', (key) => {
+/* Made narrower while open: the list instead, as at the start. */
+process.stdout.on('resize', async () => {
+  if (running || !tooNarrow()) return;
+  running = true;
+  leave();
+  process.stdout.write('\x1b[2J\x1b[H');
+  await import('./help.mjs');
+  process.exit(0);
+});
+
+readKeys((chunk) => {
+  for (const key of splitKeys(chunk)) if (!running) onKey(key);
+});
+function onKey(key) {
   const items = () => SECTIONS[section].items;
   if (key === '\u0003' || key === 'q' || key === 'Q') {
     leave();
@@ -126,4 +149,4 @@ process.stdin.on('data', (key) => {
     item = Math.min(item, items().length - 1);
     render();
   }
-});
+}

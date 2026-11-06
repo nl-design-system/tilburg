@@ -32,10 +32,12 @@ De component-CSS is SCSS, per component een map. Compileer alleen wat je gebruik
 Een paar componenten hebben gedrag nodig. Daarvoor zijn er kleine scripts, en je zet ze per element aan met een
 `data-`-attribuut:
 
-| Component | Script               | Opt-in attribuut                 |
-| --------- | -------------------- | -------------------------------- |
-| Accordion | `accordion/index.js` | `data-tilburg-accordion-enhance` |
-| Combobox  | `combobox/index.js`  | `data-tilburg-combobox-enhance`  |
+| Component      | Script                    | Opt-in attribuut                      |
+| -------------- | ------------------------- | ------------------------------------- |
+| Accordion      | `accordion/index.js`      | `data-tilburg-accordion-enhance`      |
+| Combobox       | `combobox/index.js`       | `data-tilburg-combobox-enhance`       |
+| Password Input | `password-input/index.js` | `data-tilburg-password-input-enhance` |
+| Tooltip        | `tooltip/index.js`        | `data-tilburg-tooltip-enhance`        |
 
 ```html
 <!-- initialiseert zichzelf bij het laden -->

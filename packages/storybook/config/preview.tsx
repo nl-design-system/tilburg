@@ -61,8 +61,8 @@ import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
-import { Controls, Description, Primary, Stories } from '@storybook/addon-docs';
-import type { Preview } from '@storybook/react';
+import { Controls, Description, Primary, Stories } from '@storybook/addon-docs/blocks';
+import type { Preview } from '@storybook/react-vite';
 import { ParametersArgsDecorator } from './ParametersArgsDecorator';
 import { theme } from './theme';
 
@@ -104,6 +104,7 @@ const preview: Preview = {
           [
             'Intro',
             'Aan de slag',
+            'Je eerste wijziging',
             'Tips & valkuilen',
             'Implementatiestatus',
             'Voorbeelden',
