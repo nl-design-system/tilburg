@@ -3,13 +3,17 @@
    run against the real pages, so a page that is restructured fails here instead of silently emptying the panel. */
 import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { ROOT } from './dev-config.mjs';
+import { loadComponents } from './lib/components.mjs';
 import {
   cleanStoryHtml,
+  componentLinks,
+  linkStatus,
+  RELATED,
   formatHtml,
   fullPage,
   hasFullPage,
@@ -331,9 +335,13 @@ test('the online Storybook addresses in usage.ts equal SITE in scripts/lib/compo
 
 test('every ?path=/docs/… link in the shared documentation is a page of both Storybooks', () => {
   const docs = join(SHARED, 'documentation');
-  const links = readdirSync(docs)
-    .filter((file) => file.endsWith('.md'))
-    .flatMap((file) => [...readFileSync(join(docs, file), 'utf8').matchAll(/\?path=\/docs\/([\w-]+)--docs/g)])
+  /* The READMEs of the packages link to the same pages, on the published Storybooks. */
+  const readmes = ['packages', 'proprietary'].flatMap((group) =>
+    readdirSync(join(ROOT, group)).map((name) => join(ROOT, group, name, 'README.md')),
+  );
+  const links = [...readdirSync(docs).map((file) => join(docs, file)), ...readmes]
+    .filter((file) => file.endsWith('.md') && existsSync(file))
+    .flatMap((file) => [...readFileSync(file, 'utf8').matchAll(/\?path=\/docs\/([\w-]+)--docs/g)])
     .map((match) => match[1]);
   assert.ok(links.length > 10, 'the links should be found');
   for (const storybook of ['storybook', 'storybook-angular']) {
@@ -540,4 +548,79 @@ test('the files both Storybooks keep a copy of are the same, but for the line th
     );
     assert.equal(react, angular, `${file} differs between the two Storybooks`);
   }
+});
+
+/* Story ids per Storybook, as the story files declare them. */
+const storyIds = (storybook) =>
+  readdirSync(join(ROOT, 'packages', storybook, 'src'))
+    .filter((file) => /\.stories\.tsx?$/.test(file))
+    .map((file) => readFileSync(join(ROOT, 'packages', storybook, 'src', file), 'utf8').match(/^\s*id:\s*'([^']+)'/m))
+    .flatMap((match) => (match ? [match[1]] : []));
+
+test('linkStatus links every component of the status table to its HTML page, which both Storybooks have', () => {
+  const linked = linkStatus(page('implementation-status'));
+  const ids = [...linked.matchAll(/^\| \[[^\]]+\]\(\?path=\/docs\/([\w-]+)--docs\)/gm)].map((match) => match[1]);
+  assert.equal(ids.length, loadComponents().length, 'every row is linked');
+  assert.match(linked, /^\| Component +\|/m, 'the header is left alone');
+  for (const storybook of ['storybook', 'storybook-angular']) {
+    const known = storyIds(storybook);
+    assert.deepEqual(
+      ids.filter((id) => !known.includes(id)),
+      [],
+      `${storybook}: rows without a page`,
+    );
+  }
+});
+
+test('componentLinks: related components are real ones, and every link on every component page exists there', async () => {
+  const slugs = loadComponents().map((component) => component.slug);
+  assert.deepEqual(
+    RELATED.flat().filter((slug) => !slugs.includes(slug)),
+    [],
+    'RELATED names a component the status table does not have',
+  );
+  const files = readdirSync(SHARED).filter((file) => /^tilburg-.*\.examples\.ts$/.test(file));
+  const sections = allSections(
+    Object.fromEntries(await Promise.all(files.map(async (file) => [`./${file}`, await import(join(SHARED, file))]))),
+  );
+  for (const storybook of ['storybook', 'storybook-angular']) {
+    const known = storyIds(storybook);
+    const missing = known
+      .flatMap((id) => [...componentLinks(`${id}--docs`, sections).matchAll(/\/docs\/(tilburg-[\w-]+)--docs/g)])
+      .map((match) => match[1])
+      .filter((id) => !known.includes(id) && !/^tilburg-(aan-de-slag|implementatiestatus)$/.test(id));
+    assert.deepEqual([...new Set(missing)], [], `${storybook}: links to a page it does not have`);
+  }
+  const links = componentLinks('tilburg-form-label-react--default', sections);
+  assert.match(links, /\[Form Field\]\(\?path=\/docs\/tilburg-form-field-react--docs\)/, 'the same layer');
+  assert.doesNotMatch(links, /Form Label\]/, 'not itself');
+  assert.match(componentLinks('tilburg-badge-status-react--default', sections), /tilburg-badge-counter--docs/);
+  assert.equal(componentLinks('tokens-colors--docs', sections), '', 'not a component: no links');
+});
+
+test('a section the documentation names ("onder _X_", "_X_ op _Y_") is a heading that exists', () => {
+  const folders = ['storybook-shared', 'storybook', 'storybook-angular'].map((name) =>
+    join(ROOT, 'packages', name, 'src/documentation'),
+  );
+  const texts = [
+    readFileSync(join(ROOT, 'CONTRIBUTING.md'), 'utf8'),
+    ...folders.flatMap((folder) =>
+      readdirSync(folder)
+        .filter((file) => file.endsWith('.md'))
+        .map((file) => readFileSync(join(folder, file), 'utf8')),
+    ),
+  ];
+  const headings = texts.flatMap((text) => [...text.matchAll(/^#+ (.+)$/gm)].map((match) => match[1].trim()));
+  /* A name with an arrow is a place in the sidebar, not a section. */
+  const named = texts
+    .slice(1)
+    .flatMap((text) => [...text.matchAll(/onder\s+_([^_]+)_|_([^_]+)_\s+op\s+_[^_]+_/g)])
+    .map((match) => (match[1] ?? match[2]).replace(/\s+/g, ' '))
+    .filter((name) => !name.includes('→'));
+  assert.ok(named.length > 4, 'the references should be found');
+  assert.deepEqual(
+    [...new Set(named)].filter((name) => !headings.includes(name)),
+    [],
+    'a section named in the documentation that no page has',
+  );
 });

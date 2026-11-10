@@ -25,5 +25,8 @@ export const App = () => (
 );
 ```
 
-Lees in de Storybook **Tilburg → Aan de slag** voor de volledige setup (fonts, varianten van de tokens) en de pagina's
-onder `Tilburg React/…` voor de props per component. Nog in ontwikkeling (0.x).
+Het package staat nog niet op npm; het komt bij de eerste release. Tot dan installeer je het als tarball
+(`pnpm run pack:local` in de repository).
+
+Lees in de Storybook [Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs) voor de tarball, de volledige setup (fonts, varianten van de tokens) en de
+pagina's onder `Tilburg React/…` voor de props per component. Nog in ontwikkeling (0.x).

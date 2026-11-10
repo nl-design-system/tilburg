@@ -23,7 +23,8 @@ The Tilburg brand decisions. Defined in `src/`, built by `style-dictionary-build
 | **Interaction accents** | `--tilburg-interaction-color`, `--tilburg-interaction-hover-color`, `--tilburg-interaction-active-color`                      | The "Tilburg blue" used for links, focus rings, primary buttons.                                                                                                              |
 | **Component slots**     | `--tilburg-table-footer-border-width`, `--tilburg-accordion-section-border-color`, `--tilburg-page-header-title-font-size`, … | Per-component knobs that components-css consumes. Consumers normally tune the higher-level family tokens above; component slots exist as overrides for unusual styling needs. |
 
-Browse the full set live under **Tokens** in either Storybook.
+Browse the full set live under **Tokens** in either Storybook; how to load the theme in a project is under
+[Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs).
 
 ### 2. Utrecht-owned tokens (`--utrecht-*`)
 

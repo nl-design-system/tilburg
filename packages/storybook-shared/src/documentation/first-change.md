@@ -28,6 +28,7 @@ Je ziet waar de Tooltip in elke laag staat. Het belangrijkste om te onthouden:
   daaruit, ook de tekst van de documentatiepagina van het component. Hoe je die schrijft, staat in `CONTRIBUTING.md`
   onder _De tekst van een component_.
 - **TLB** betekent een eigen Tilburg-component zonder Utrecht-basis (zoals de Tooltip); de andere bouwen op Utrecht.
+  Deze en andere woorden staan onder _Begrippen_ op de [Intro](?path=/docs/tilburg-intro--docs).
 - **De knop `</> Gebruik`** in de werkbalk opent een venster dat per laag laat zien hoe je het component in je eigen
   project zet: installeren, laden, plaatsen, de HTML die de story rendert en, voor HTML/CSS en Web Components, een losse pagina om te downloaden. Alles
   met een kopieerknop. _Plaatsen_ komt uit de story zelf en volgt wat je in _Controls_ instelt; hoe dat werkt en hoe je

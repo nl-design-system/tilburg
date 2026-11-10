@@ -31,3 +31,19 @@ Nog niet alles staat op npm. Wat je nu kunt installeren en hoe, staat op [Aan de
   </figcaption>
 </figure>
 <!-- markdownlint-enable MD033 -->
+
+## Begrippen
+
+De woorden die op deze pagina's steeds terugkomen:
+
+| Begrip            | Betekenis                                                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Laag**          | Eén manier om een component te gebruiken: HTML/CSS, React, Angular of Web Components. Zie [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).                  |
+| **Referentie**    | De HTML en CSS van een component, zoals onder `Tilburg HTML/…`. Elke andere laag maakt precies die HTML.                                                         |
+| **Wrapper**       | Het React-component, Angular-component of de Web Component rond de referentie: het voegt een API toe, geen eigen stijl.                                          |
+| **Utrecht-basis** | De CSS van `@utrecht/component-library-css` (NL Design System), waar de Tilburg-stijl bovenop ligt.                                                              |
+| **TLB**           | Een eigen Tilburg-component, zonder Utrecht-basis (bijvoorbeeld de Tooltip). In de zijbalk herken je het aan de TLB-badge.                                       |
+| **Design token**  | Een benoemde waarde (kleur, afstand, lettergrootte) als CSS custom property, zoals `--tilburg-interaction-color`. Zie [Tokens](?path=/docs/tokens-intro--docs).  |
+| **Thema**         | Een set tokens. Er zijn er twee, Tilburg en BAT, met dezelfde componenten; hoog contrast is een aanvulling daarop. Zie [Tokens](?path=/docs/tokens-intro--docs). |
+| **Afnemer**       | Een project dat de componenten gebruikt: een website of applicatie van of voor de gemeente.                                                                      |
+| **Tarball**       | Een package als `.tgz`-bestand, om te installeren zolang het niet op npm staat. Zie [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).                        |

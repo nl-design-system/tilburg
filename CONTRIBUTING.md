@@ -295,7 +295,13 @@ om naast te leggen.
   verschijnt op de tabbladen van de andere lagen en als de story niets afleidbaars rendert. Houd het dus kloppend,
   maar verfijn het niet.
 
+- **De links eronder schrijf je niet zelf.** Onder de beschrijving zet de Storybook een regel naar _Aan de slag_ en
+  _Implementatiestatus_, en een regel _See also_ met verwante componenten. Die laatste komt uit de groepen in
+  `RELATED` in `storybook-shared/src/usage.ts`: hoort je component bij een groep, zet het daar dan bij. De namen in
+  de tabel op _Implementatiestatus_ worden vanzelf links.
+
 `pnpm test:scripts` faalt zolang er een `TODO` in een beschrijving staat, of een codeblok onder een andere `###`-kop.
+De tests controleren ook dat elke link en elke genoemde sectie (`onder _…_`) in de documentatie en de READMEs bestaat.
 
 ### Het venster Gebruik
 

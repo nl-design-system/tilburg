@@ -64,8 +64,9 @@ import * as reactLibrary from '@gemeente-tilburg/components-react';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
-import { Controls, Description, Primary, Stories } from '@storybook/addon-docs/blocks';
+import { Controls, Description, DocsContext, Markdown, Primary, Stories } from '@storybook/addon-docs/blocks';
 import type { Preview } from '@storybook/react-vite';
+import { useContext } from 'react';
 import { ParametersArgsDecorator } from './ParametersArgsDecorator';
 import { theme } from './theme';
 import gettingStarted from '../../storybook-shared/src/documentation/getting-started.md?raw';
@@ -73,7 +74,7 @@ import layerAngular from '../../storybook-shared/src/documentation/intro-layer-a
 import layerHtml from '../../storybook-shared/src/documentation/intro-layer-html-css.md?raw';
 import layerReact from '../../storybook-shared/src/documentation/intro-layer-react.md?raw';
 import layerWebComponents from '../../storybook-shared/src/documentation/intro-layer-web-components.md?raw';
-import { allSections, type UsageDocs } from '../../storybook-shared/src/usage';
+import { allSections, componentLinks, type UsageDocs } from '../../storybook-shared/src/usage';
 
 /* The "Gebruik" panel (config/UsagePanel.tsx) reads its install and load steps from these pages. */
 const usage: UsageDocs = {
@@ -86,6 +87,11 @@ const usage: UsageDocs = {
     import.meta.glob<Record<string, unknown>>('../../storybook-shared/src/tilburg-*.examples.ts', { eager: true }),
   ),
 };
+
+/* Under the description of every component page: the way to the setup and to related components. */
+const ComponentLinks = () => (
+  <Markdown>{componentLinks(useContext(DocsContext).storyById().id, usage.sections)}</Markdown>
+);
 
 defineCustomElements();
 
@@ -155,6 +161,7 @@ const preview: Preview = {
         return (
           <>
             <Description />
+            <ComponentLinks />
             <Primary />
             <Controls />
             <Stories />

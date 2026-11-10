@@ -19,14 +19,25 @@ import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
+import {
+  Controls,
+  Description,
+  DocsContext,
+  Markdown,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
 import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Preview } from '@storybook/angular';
+import { createElement, Fragment, useContext } from 'react';
 import { theme } from './theme';
 import gettingStarted from '../../storybook-shared/src/documentation/getting-started.md?raw';
 import layerAngular from '../../storybook-shared/src/documentation/intro-layer-angular.md?raw';
 import layerHtml from '../../storybook-shared/src/documentation/intro-layer-html-css.md?raw';
 import layerReact from '../../storybook-shared/src/documentation/intro-layer-react.md?raw';
 import layerWebComponents from '../../storybook-shared/src/documentation/intro-layer-web-components.md?raw';
-import { allSections, type UsageDocs } from '../../storybook-shared/src/usage';
+import { allSections, componentLinks, type UsageDocs } from '../../storybook-shared/src/usage';
 
 /* The "Gebruik" panel (.storybook/UsagePanel.tsx) reads its install and load steps from these pages. */
 /* Every examples file, as webpack's require.context gives them: key './tilburg-alert.examples.ts' → its exports. */
@@ -41,6 +52,11 @@ const usage: UsageDocs = {
   /* The snippets of every layer, so the tabs of the layers a story is not about are filled too. */
   sections: allSections(Object.fromEntries(examples.keys().map((key) => [key, examples(key)]))),
 };
+
+/* Under the description of every component page: the way to the setup and to related components. No JSX in this
+   file: the Angular build does not compile it. */
+const ComponentLinks = () =>
+  createElement(Markdown, null, componentLinks(useContext(DocsContext).storyById().id, usage.sections));
 
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const reenhance = () => {
@@ -106,6 +122,15 @@ const preview: Preview = {
     },
     docs: {
       toc: true,
+      /* Storybook's default page, with the links under the description. */
+      page: () =>
+        createElement(
+          Fragment,
+          null,
+          ...[Title, Subtitle, Description, ComponentLinks, Primary, Controls, Stories].map((block, key) =>
+            createElement(block, { key }),
+          ),
+        ),
       theme: theme,
     },
   },

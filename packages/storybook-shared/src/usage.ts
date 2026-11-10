@@ -738,3 +738,56 @@ export const SITES = {
 
 /** Which Storybook documents `layer`: the Angular one for Angular, the React one for React and Web Components. */
 export const storybookOf = (layer: Layer): 'react' | 'angular' => (layer === 'angular' ? 'angular' : 'react');
+
+/* ── Links between the component pages and the documentation pages ───────────────────────────────────────────────
+   - linkStatus(): the names in the implementation-status table become links to the component;
+   - componentLinks(): the lines under a component's description, to the setup, the status and related components.
+   The HTML page of a component has the same id in both Storybooks (`tilburg-<name>--docs`), as have the
+   documentation pages; scripts/usage-snippets.test.mjs checks that every id here exists. */
+
+const docsPath = (id: string): string => `?path=/docs/${id}--docs`;
+const slugOf = (name: string): string => name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const titleOf = (slug: string): string =>
+  slug.replace(/(^|-)(\w)/g, (_, dash, letter) => (dash ? ' ' : '') + letter.toUpperCase()).replace(/\bHtml\b/, 'HTML');
+
+/** The status table with every component name a link to its page. Padding is left to the renderer. */
+export const linkStatus = (markdown: string): string =>
+  markdown.replace(/^\| ([A-Z][\w ]*?)( +)\|/gm, (row, name: string, pad: string) =>
+    name === 'Component' ? row : `| [${name}](${docsPath(`tilburg-${slugOf(name)}`)})${pad}|`,
+  );
+
+/** Components that are used together, or that you choose between. A component may be in more than one group. */
+export const RELATED: string[][] = [
+  ['form-field', 'form-label', 'form-field-description', 'validation-message', 'form-fieldset'],
+  ['form-field', 'textbox', 'textarea', 'password-input', 'select', 'combobox', 'checkbox', 'radio-button'],
+  ['document', 'page', 'page-header', 'page-content', 'page-footer', 'skip-link'],
+  ['button', 'button-group', 'button-link', 'link'],
+  ['breadcrumb', 'pagination', 'link'],
+  ['ordered-list', 'unordered-list', 'data-list'],
+  ['heading', 'paragraph', 'article', 'html-content'],
+  ['alert', 'validation-message', 'badge-status', 'badge-counter'],
+  ['loading-spinner', 'progress-bar'],
+  ['modal', 'tooltip'],
+];
+
+/**
+ * Markdown for under the description of a component page: where to read the setup, and the related components.
+ * A related component links to its page in the same layer when it has a usage section for that layer (`sections`,
+ * see allSections()), else to its HTML page. Empty for a page that is not a component (the tokens).
+ */
+export const componentLinks = (storyId: string, sections: Record<string, UsageSection[]> = {}): string => {
+  const { layer, component } = storyLayer(storyId);
+  if (!sections[component]) return '';
+  const { heading } = LAYERS.find(({ id }) => id === layer) ?? LAYERS[0];
+  const suffix = storyId.split('--')[0].slice(`tilburg-${component}`.length);
+  const related = [...new Set(RELATED.filter((group) => group.includes(component)).flat())]
+    .filter((slug) => slug !== component)
+    .map((slug) => {
+      const own = sections[slug]?.some((section) => section.title === heading);
+      return `[${titleOf(slug)}](${docsPath(`tilburg-${slug}${own ? suffix : ''}`)})`;
+    });
+  return [
+    `Installing and loading: [Aan de slag](${docsPath('tilburg-aan-de-slag')}). The **\`</> Gebruik\`** button in the toolbar of a story gives the code for your project. Which layers exist: [Implementatiestatus](${docsPath('tilburg-implementatiestatus')}).`,
+    ...(related.length ? [`See also: ${related.join(', ')}.`] : []),
+  ].join('\n\n');
+};
