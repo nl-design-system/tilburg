@@ -81,7 +81,8 @@ zit (lagen, testen, een component toevoegen, releasen) staat in [`CONTRIBUTING.m
 | `pnpm dev [react\|angular] [component]` | Storybook(s) met live rebuild; met een component opent hij die pagina |
 | `pnpm where <component>`                | Waar een component staat, per laag                                    |
 | `pnpm test [component]`                 | Alle tests, of die van één component in alle lagen                    |
-| `pnpm parity`                           | Is elke component compleet in elke laag?                              |
+| `pnpm parity`                           | Is elk component compleet in elke laag?                               |
+| `pnpm new badge --html '<span …>'`      | Een nieuw component in elke laag, afgeleid van zijn HTML              |
 | `pnpm verify`                           | Wat CI op een pull request controleert, in één tabel                  |
 | `pnpm ship`                             | Verify, pushen na een vraag, en de link voor de pull request          |
 | `pnpm sync` / `pnpm pack:local`         | De packages als tarball naar een afnemende applicatie                 |

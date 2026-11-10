@@ -86,6 +86,7 @@
     "lint:package-lock": "pnpm ls --recursive",
     "logs": "node scripts/logs.mjs",
     "menu": "node scripts/hub.mjs",
+    "new": "node scripts/new-component.mjs",
     "pack:local": "node scripts/pack-local.mjs",
     "parity": "node scripts/parity.mjs",
     "postinstall": "node scripts/welcome.mjs",
