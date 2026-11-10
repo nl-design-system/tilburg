@@ -13,6 +13,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { NODE_MAJOR, ROOT } from '../dev-config.mjs';
 import {
   c,
+  columns,
   confirm,
   fail,
   interactive,
@@ -505,7 +506,8 @@ export function enginesMinimum() {
   return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
 /** The newest Node of the .nvmrc major that nvm has installed and engines accepts ({ version, bin }), or null. */
-const nvmNode = () => newestNvmNode(NODE_MAJOR, { minimum: enginesMinimum() });
+/** The newest Node <NODE_MAJOR> nvm has installed that is not below the engines minimum (pnpm install would refuse an older one), or null. */
+export const nvmNode = () => newestNvmNode(NODE_MAJOR, { minimum: enginesMinimum() });
 /** On an Apple Silicon Mac, a terminal under Rosetta runs x64 Node: installs then fetch x64 binaries again. */
 const underRosetta = () =>
   process.platform === 'darwin' &&
@@ -674,8 +676,7 @@ export async function runStepWithRecovery(
     const stepLabel = attempt > 1 ? `${label} (attempt ${attempt})` : label;
     const step = stepStart(stepLabel);
     /* Not where the output streams anyway (TERM=dumb, CI), nor where the hint would wrap and the spinner then stack. */
-    if (interactive && (process.stdout.columns || 80) >= stepLabel.length + 30)
-      process.stdout.write(`  ${c.gray}[v] show output${c.reset}`);
+    if (interactive && columns() >= stepLabel.length + 30) process.stdout.write(`  ${c.gray}[v] show output${c.reset}`);
     try {
       const wasVerbose = await runStep(runCommand, { onVerbose: () => step.pause(), env: runEnv, cwd, label });
       stepDone(step, wasVerbose);
@@ -755,12 +756,16 @@ export function reportStepFailure(label, err) {
   console.log('');
 }
 
-/** runStepWithRecovery, or report the failure (under `reportLabel`) and exit 1: the rest would run on a broken step. */
-export async function runStepOrExit(label, command, options, reportLabel = label) {
+/**
+ * runStepWithRecovery, or report the failure (under `reportLabel`) and exit 1: the rest would run on a broken step.
+ * `options.hint` is a last line to print before leaving (how to carry on).
+ */
+export async function runStepOrExit(label, command, { hint, ...options } = {}, reportLabel = label) {
   try {
     await runStepWithRecovery(label, command, options);
   } catch (err) {
     reportStepFailure(reportLabel, err);
+    if (hint) console.log(hint);
     process.exit(1);
   }
 }

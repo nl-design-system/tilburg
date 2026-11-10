@@ -26,8 +26,8 @@ import {
   warn,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunning, readDevLock, SYNC_LOCK } from './lib/lock.mjs';
-import { newestNvmNode, nodeOutsideNvmWindows, NVM_DIR, NVM_HOME } from './lib/nvm.mjs';
-import { enginesMinimum, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { nodeOutsideNvmWindows, NVM_DIR, NVM_HOME } from './lib/nvm.mjs';
+import { nvmNode, runStepOrExit } from './lib/recovery.mjs';
 
 installCrashHandler('pnpm setup');
 
@@ -38,17 +38,13 @@ const noStart = args.includes('--skip-dev');
 const ask = (question, options = {}) => (yes ? Promise.resolve(options.default ?? true) : confirm(question, options));
 
 /** Run a step; on failure explain it and stop: later steps need this one. */
-async function step(label, command, options = {}) {
-  try {
-    await runStepWithRecovery(label, command, { cwd: ROOT, ...options, env: { ...process.env, TILBURG_QUIET: '1' } });
-  } catch (err) {
-    reportStepFailure(label, err);
-    exitAfter(
-      `  ${c.gray}Fix it and run ${c.cyan}node scripts/setup.mjs${c.gray} again; finished steps are skipped.${c.reset}\n`,
-      1,
-    );
-  }
-}
+const step = (label, command, options = {}) =>
+  runStepOrExit(label, command, {
+    cwd: ROOT,
+    ...options,
+    env: { ...process.env, TILBURG_QUIET: '1' },
+    hint: `  ${c.gray}Fix it and run ${c.cyan}node scripts/setup.mjs${c.gray} again; finished steps are skipped.${c.reset}\n`,
+  });
 
 if (!process.env.TILBURG_SETUP_REEXEC) printBanner('Setup');
 
@@ -67,11 +63,8 @@ if (process.platform === 'win32' && ROOT.startsWith('\\\\'))
 /* nvm-sh is a shell function loaded from nvm.sh; nvm-windows is a program (nvm.exe) in NVM_HOME. Setup drives both. */
 const hasNvm = Boolean(NVM_HOME) || existsSync(resolve(NVM_DIR, 'nvm.sh'));
 
-/**
- * The newest Node <NODE_MAJOR> that nvm has installed, as the folder that holds its node program. Not one below the
- * engines minimum (24.13 when engines says >=24.15): pnpm install would refuse it.
- */
-const nvmNodeBin = () => newestNvmNode(NODE_MAJOR, { minimum: enginesMinimum() })?.bin ?? null;
+/** The folder that holds the node program of the Node nvm would use, or null. */
+const nvmNodeBin = () => nvmNode()?.bin ?? null;
 
 /* Without this, an alias like lts/* reads as NaN and setup would try to install "Node NaN" with nvm. */
 if (!Number.isInteger(NODE_MAJOR))

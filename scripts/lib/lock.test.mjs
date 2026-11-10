@@ -184,13 +184,13 @@ test('pnpm dev leaves a lock alone that another pnpm dev wrote over its own', ()
   assert.equal(JSON.parse(readFileSync(file, 'utf8')).pid, process.pid);
 });
 
-test('takeBuildLock: takes a free lock, exits 1 with the busy problem when another build holds it, leaves "ours" alone', () => {
+test('takeBuildLock: takes a free lock, exits 1 naming the build that holds it and why, leaves "ours" alone', () => {
   const temp = mkdtempSync(resolve(dir, 'build-'));
   const take = (ours) =>
     runModule(
       `import { readFileSync } from 'node:fs';
          import { SYNC_LOCK, takeBuildLock } from ${JSON.stringify(new URL('./lock.mjs', import.meta.url).href)};
-         takeBuildLock('pnpm test', (other) => ({ what: 'busy: ' + other.what }), ${ours ? '() => true' : 'undefined'});
+         takeBuildLock('pnpm test', 'two at once break', ${ours ? '() => true' : 'undefined'});
          console.log('took ' + JSON.parse(readFileSync(SYNC_LOCK, 'utf8')).what);`,
       { env: { ...process.env, TMPDIR: temp, TMP: temp, TEMP: temp }, timeout: 10_000 },
     );
@@ -201,7 +201,10 @@ test('takeBuildLock: takes a free lock, exits 1 with the busy problem when anoth
   writeDevLock({ what: 'pnpm sync' }, resolve(temp, lockName(ROOT, 'sync')));
   const busy = take();
   assert.equal(busy.status, 1);
-  assert.match(busy.stdout, /busy: pnpm sync/);
+  assert.match(busy.stdout, /pnpm sync is running \(process \d+, since /);
+  assert.doesNotMatch(busy.stdout, /Another/, 'only a second run of the same command is "another"');
+  assert.match(busy.stdout, /two at once break/);
+  assert.match(busy.stdout, /then pnpm test again/);
   const ours = take(true);
   assert.equal(ours.status, 0, ours.stderr);
   assert.match(ours.stdout, /took pnpm sync/);

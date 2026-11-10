@@ -29,7 +29,7 @@ delete process.env.TILBURG_TTY;
 /* NO_COLOR (no-color.org) and FORCE_COLOR=0 ask for plain text, also on a terminal. */
 const colour = interactive && !process.env.NO_COLOR && process.env.FORCE_COLOR !== '0';
 /* 0 or undefined when nobody knows (TILBURG_TTY, some ptys): assume the usual 80. */
-const columns = () => process.stdout.columns || 80;
+export const columns = () => process.stdout.columns || 80;
 
 const colours = {
   reset: '\x1b[0m',
@@ -56,6 +56,12 @@ export function hyperlink(text, url) {
 }
 
 /** Strip colour, cursor, charset and OSC (hyperlink, title) sequences, to measure or store the visible text. */
+/** `line` cut to one row of the terminal (colours dropped when cut): a line that wraps breaks a redraw that moves the cursor up. */
+export function fitLine(line) {
+  const width = columns() - 1;
+  return stripAnsi(line).length > width ? stripAnsi(line).slice(0, width) : line;
+}
+
 export function stripAnsi(text) {
   return String(text).replace(/\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[()][0-9A-B]/g, '');
 }

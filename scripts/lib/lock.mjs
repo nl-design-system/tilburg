@@ -10,7 +10,7 @@ import { linkSync, lstatSync, readFileSync, renameSync, rmSync, writeFileSync } 
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { ROOT } from '../dev-config.mjs';
-import { c, confirm, exitAfter, exitWith, tryOr } from './cli-utils.mjs';
+import { c, confirm, exitAfter, exitWith, readJson, tryOr } from './cli-utils.mjs';
 
 /* In the temp folder (nothing stray to commit), one per working copy and user: on a shared /tmp, another user's lock
    (or a root-owned one from an old sudo run) must not block ours. Windows paths ignore case, and the drive letter's
@@ -171,16 +171,14 @@ export function writeDevLock(data, file = LOCK_FILE) {
 
 /** Remove our own lock now (writeDevLock also does on exit). Only our own: another pnpm dev may have written over it. */
 export function releaseDevLock(file = LOCK_FILE) {
-  try {
-    if (JSON.parse(readFileSync(file, 'utf8')).pid === process.pid) rmSync(file, { force: true });
-  } catch {}
+  if (readJson(file)?.pid === process.pid) removeLock(file);
 }
 
 /** Add to our own lock (e.g. the watchers' process groups once they run). Never touches another process's lock. */
 export function updateDevLock(data, file = LOCK_FILE) {
   try {
-    const lock = JSON.parse(readFileSync(file, 'utf8'));
-    if (lock.pid !== process.pid) return;
+    const lock = readJson(file);
+    if (lock?.pid !== process.pid) return;
     /* A new file renamed over the old one: the rename replaces a planted symlink instead of writing through it. */
     const next = `${file}.${process.pid}`;
     rmSync(next, { force: true });
@@ -214,12 +212,20 @@ export async function confirmNoDevRunningOrExit(what) {
 }
 
 /**
- * Take the build lock of sync, verify and pack:local for `what` ('pnpm verify'), or exit 1 with `busy(lock)` when
- * another build holds it. A lock for which `ours(lock)` is true is left alone (pack:local started by the sync holding it).
+ * Take the build lock of sync, verify and pack:local for `what` ('pnpm verify'), or exit 1 when another build holds
+ * it, with `why` two at once go wrong. A lock for which `ours(lock)` is true is left alone (pack:local started by the
+ * sync holding it).
  */
-export function takeBuildLock(what, busy, ours = () => false) {
+export function takeBuildLock(what, why, ours = () => false) {
   const other = readDevLock(SYNC_LOCK);
-  if (other && !ours(other)) exitWith(busy(other));
+  if (other && !ours(other)) {
+    const running = other.what ?? 'pnpm sync';
+    exitWith({
+      what: `${running === what ? 'Another ' : ''}${running} is running (process ${other.pid}, since ${other.started})`,
+      why,
+      fix: `wait for it to finish, then ${what} again`,
+    });
+  }
   if (!other && !writeDevLock({ what }, SYNC_LOCK))
     exitWith({
       what: 'Another build took the build lock just now',

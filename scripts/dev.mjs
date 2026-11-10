@@ -8,7 +8,7 @@
    Storybooks', O opens the browser, Q (or Ctrl-C) stops everything.
 
    Components-css (SCSS) and storybook-shared are read from source by the Storybooks, so they need no watcher. */
-import { readFileSync, realpathSync, rmSync, watchFile } from 'node:fs';
+import { realpathSync, rmSync, watchFile } from 'node:fs';
 import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { LIBRARIES, ROOT, STORYBOOKS } from './dev-config.mjs';
@@ -24,8 +24,10 @@ import {
 import {
   appendLog,
   c,
+  columns,
   confirm,
   exitWith,
+  fitLine,
   hint,
   installCrashHandler,
   interactive,
@@ -212,10 +214,7 @@ let footerSource = [];
 const printLine = console.log;
 /* Rows, not lines: a terminal made narrower wraps the footer's lines onto more rows. */
 const footerRows = () =>
-  footer.reduce(
-    (rows, line) => rows + Math.max(1, Math.ceil(stripAnsi(line).length / (process.stdout.columns || 80))),
-    0,
-  );
+  footer.reduce((rows, line) => rows + Math.max(1, Math.ceil(stripAnsi(line).length / columns())), 0);
 const clearFooter = () => {
   const rows = footerRows();
   if (rows) process.stdout.write(`\r${rows > 1 ? `\x1b[${rows - 1}A` : ''}\x1b[J`);
@@ -225,10 +224,7 @@ function setFooter(lines) {
   clearFooter();
   footerSource = lines;
   /* A line that wraps would leave a copy behind on every redraw: cut it to the terminal's width. */
-  const width = (process.stdout.columns || 80) - 1;
-  footer = interactive
-    ? lines.map((line) => (stripAnsi(line).length > width ? stripAnsi(line).slice(0, width) : line))
-    : [];
+  footer = interactive ? lines.map(fitLine) : [];
   process.stdout.write(footer.join('\n'));
 }
 console.log = (...args) => {
@@ -296,9 +292,7 @@ function stopAll(exitCode = 0) {
      stale (pid 0) rather than removed, so that pnpm dev reaps and waits for these groups before choosing its ports. */
   updateDevLock({ pid: 0 });
   process.on('exit', () => {
-    try {
-      if (JSON.parse(readFileSync(LOCK_FILE, 'utf8')).pid === 0) rmSync(LOCK_FILE, { force: true });
-    } catch {}
+    if (readJson(LOCK_FILE)?.pid === 0) tryOr(() => rmSync(LOCK_FILE, { force: true }));
   });
   setFooter([]);
   /* A closed terminal has no stdin to reset. */

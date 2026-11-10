@@ -45,11 +45,7 @@ const run = (command, cwd = ROOT) => execSync(command, { cwd, stdio: 'inherit' }
    tarballs. pnpm sync starts this one itself while holding the lock: TILBURG_SYNC_PID says so. */
 takeBuildLock(
   'pnpm pack:local',
-  (other) => ({
-    what: `${other.what ?? 'pnpm sync'} is running (process ${other.pid}, since ${other.started})`,
-    why: 'it builds the same dist/ folders and tarballs.',
-    fix: 'wait for it to finish, then pnpm pack:local again',
-  }),
+  'it builds the same dist/ folders and tarballs.',
   (other) => String(other.pid) === process.env.TILBURG_SYNC_PID,
 );
 await confirmNoDevRunningOrExit('pack:local builds every package, and');

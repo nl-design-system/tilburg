@@ -212,7 +212,7 @@ test(
     const realGit = execFileSync('/bin/sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim();
     writeFileSync(
       join(bin, 'git'),
-      `#!/bin/sh\ncase "$1" in fetch) exec "${process.execPath}" -e 'setTimeout(() => {}, 1e9)' ${MARKER} ;; esac\nexec "${realGit}" "$@"\n`,
+      `#!/bin/sh\n# ship calls git -C <dir> fetch: look at every argument\ncase " $* " in *" fetch "*) exec "${process.execPath}" -e 'setTimeout(() => {}, 1e9)' ${MARKER} ;; esac\nexec "${realGit}" "$@"\n`,
       { mode: 0o755 },
     );
     writeFileSync(join(bin, 'pnpm'), '#!/bin/sh\necho VERIFY-RAN\nexit 0\n', { mode: 0o755 });

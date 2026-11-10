@@ -2,7 +2,7 @@
    Sections sit side by side; without a terminal (or one without cursor control, TERM=dumb) it prints the help list. */
 import { spawn } from 'node:child_process';
 import { checkInstalled, checkInstallFresh } from './lib/checks.mjs';
-import { c, installCrashHandler, interactive, printBanner, readKeys, stripAnsi } from './lib/cli-utils.mjs';
+import { c, columns, installCrashHandler, interactive, printBanner, readKeys, stripAnsi } from './lib/cli-utils.mjs';
 import { SECTIONS } from './lib/commands.mjs';
 import { splitKeys } from './lib/keys.mjs';
 import { randomSaying } from './lib/sayings.mjs';
@@ -16,8 +16,7 @@ installCrashHandler('pnpm menu', { signals: false });
 
 /* Redrawing moves the cursor up by the lines it wrote: a wrapped line would leave the menu drifting down the screen.
    Too narrow for the columns: the list instead. */
-const width = () => process.stdout.columns || 80;
-const tooNarrow = () => width() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;
+const tooNarrow = () => columns() < 2 + COLUMNS * COLUMN_WIDTH + (COLUMNS - 1) * GAP;
 if (!process.stdin.isTTY || !process.stdout.isTTY || !interactive || tooNarrow()) {
   await import('./help.mjs');
   process.exit(0);
@@ -67,7 +66,7 @@ function render() {
     out.push('');
   }
   const { script, what } = SECTIONS[section].items[item];
-  const room = width() - script.length - 10;
+  const room = columns() - script.length - 10;
   out.push(
     `  ${c.cyan}pnpm ${script}${c.reset}  ${c.gray}${what.length > room ? `${what.slice(0, room - 1)}…` : what}${c.reset}`,
   );

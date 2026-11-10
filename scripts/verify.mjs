@@ -21,7 +21,7 @@ import {
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
-import { treeState } from './lib/ship.mjs';
+import { treeChangedRow, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm verify');
 /* Strict: `pnpm verify tooltip` or a typo must not start the full CI-length run while you wait for something else. */
@@ -69,11 +69,10 @@ const STEPS = [
 ];
 
 /* One build at a time: pnpm sync and pack:local build and pack the same dist/ folders (this lock is theirs too). */
-takeBuildLock('pnpm verify', (building) => ({
-  what: `${building.what ?? 'pnpm sync'} is running (process ${building.pid}, since ${building.started})`,
-  why: 'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
-  fix: 'wait for it to finish, then pnpm verify again',
-}));
+takeBuildLock(
+  'pnpm verify',
+  'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
+);
 await confirmNoDevRunningOrExit('pnpm verify builds every package and');
 const treeAtStart = await treeState(ROOT);
 
@@ -123,15 +122,13 @@ rows.push(
 );
 
 /* A checkout, pull or stash meanwhile: the steps ran on a mix of two trees. */
-const treeAtEnd = await treeState(ROOT);
-if (treeAtStart && treeAtEnd && treeAtStart !== treeAtEnd)
-  rows.push(
-    warnRow(
-      'changed while this ran',
-      'a checkout, pull or stash meanwhile: the steps saw a mix of two trees, so pnpm verify again',
-      { label: 'Working tree' },
-    ),
-  );
+const treeChanged = treeChangedRow(
+  treeAtStart,
+  await treeState(ROOT),
+  'Working tree',
+  'the steps saw a mix of two trees, so pnpm verify again',
+);
+if (treeChanged) rows.push(treeChanged);
 
 console.log('');
 const { failed, total } = printCheckTable([{ title: 'Result', rows }]);

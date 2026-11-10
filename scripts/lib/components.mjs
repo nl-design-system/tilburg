@@ -40,7 +40,7 @@ const kebab = (text) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-const pascal = (slug) => slug.replace(/(^|-)(\w)/g, (_, __, letter) => letter.toUpperCase());
+export const pascal = (slug) => slug.replace(/(^|-)(\w)/g, (_, __, letter) => letter.toUpperCase());
 
 /** A story file's meta: its id (for the URL) and whether it carries the `tilburg` (TLB) tag. */
 function storyMeta(path) {

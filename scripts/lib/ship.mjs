@@ -1,8 +1,9 @@
 /* The git helpers of `pnpm ship`, also used by verify and sync. */
-import { execFile } from 'node:child_process';
+import { execFile, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { warnRow } from './cli-utils.mjs';
 
 /**
  * The GitHub "open a pull request" page for `branch` against `base`, from the remote URL in any of its forms
@@ -28,6 +29,23 @@ export function pullRequestUrl(remote, branch, base = 'main') {
 const { GIT_DIR, GIT_INDEX_FILE, GIT_WORK_TREE, ...gitEnv } = process.env;
 /** process.env without git's own GIT_DIR, GIT_INDEX_FILE and GIT_WORK_TREE. */
 export const GIT_ENV = gitEnv;
+
+/**
+ * git in `dir`, as `(...args) => { ok, out, signal, error }`. Never throws. `env` and `timeout` (ms) only where the
+ * caller asks: a sync has no time limit, a ship gives up on a fetch that hangs.
+ */
+export const gitIn =
+  (dir, { env = gitEnv, timeout } = {}) =>
+  (...args) => {
+    const result = spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env, timeout });
+    /* trimEnd: a porcelain entry such as " M file" starts with its own space. */
+    return {
+      ok: result.status === 0,
+      out: (result.stdout ?? '').trimEnd(),
+      signal: result.signal,
+      error: result.error,
+    };
+  };
 
 /* Half-way through one of these the branch (or HEAD) is not what it will end up as: ship will not push it, sync will
    not write a consumer's lockfile into it. [file under `git rev-parse --git-path`, what, how to finish it] */
@@ -70,3 +88,12 @@ export async function treeState(dir) {
   if (status === null) return null;
   return `${(head ?? '').trim()} ${createHash('sha1').update(status).digest('hex')}`;
 }
+
+/**
+ * The warning row for a working tree that is not the one a long build started on (`before` and `after` from
+ * treeState()), or undefined. `consequence` says what that mixed up and what to run again.
+ */
+export const treeChangedRow = (before, after, label, consequence) =>
+  before && after && before !== after
+    ? warnRow('changed while this ran', `a checkout, pull or stash meanwhile: ${consequence}`, { label })
+    : undefined;

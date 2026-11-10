@@ -11,6 +11,7 @@ import {
   cmd,
   confirm,
   exitAfter,
+  fitLine,
   installCrashHandler,
   interactive,
   printBanner,
@@ -20,7 +21,6 @@ import {
   stepFail,
   stepStart,
   stopKeys,
-  stripAnsi,
 } from './lib/cli-utils.mjs';
 import { splitKeys } from './lib/keys.mjs';
 import { readDevLock, SYNC_LOCK } from './lib/lock.mjs';
@@ -106,8 +106,7 @@ function pick(targets) {
       });
       lines.push(`\n  ${c.gray}↑ ↓ move   space tick   enter delete   q cancel${c.reset}\x1b[0K`);
       /* A line that wraps would make the cursor-up above miss, and the list drift down the screen. */
-      const width = (process.stdout.columns || 80) - 1;
-      const fit = (line) => (stripAnsi(line).length > width ? `${stripAnsi(line).slice(0, width)}\x1b[0K` : line);
+      const fit = (line) => (fitLine(line) === line ? line : `${fitLine(line)}\x1b[0K`);
       process.stdout.write(`${lines.map(fit).join('\n')}\n`);
       drawn = lines.length + 1;
     };

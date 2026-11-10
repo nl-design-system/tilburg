@@ -17,7 +17,7 @@ import {
   printBanner,
 } from './lib/cli-utils.mjs';
 import { classifyFailure } from './lib/recovery.mjs';
-import { GIT_ENV, inProgress, pullRequestUrl } from './lib/ship.mjs';
+import { GIT_ENV, gitIn, inProgress, pullRequestUrl } from './lib/ship.mjs';
 
 installCrashHandler('pnpm ship');
 
@@ -28,12 +28,12 @@ const gitEnv = { ...GIT_ENV, GIT_TERMINAL_PROMPT: '0', LANGUAGE: 'en' };
 /** git in the repository. Never throws: { ok, out }. */
 function git(...args) {
   /* A fetch that hangs (network) gives up after two minutes instead of blocking ship. */
-  const result = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8', timeout: 120_000, env: gitEnv });
+  const result = gitIn(ROOT, { env: gitEnv, timeout: 120_000 })(...args);
   if (result.error?.code === 'ENOENT')
     exitWith({ what: 'git not found', fix: 'install git (https://git-scm.com/), then pnpm ship again' });
   /* Ctrl-C reaches git, not our SIGINT handler (spawnSync blocks it): stop here rather than carry on to the push. */
   if (result.signal === 'SIGINT') exitAfter('\n  Stopped (Ctrl-C).\n', 130);
-  return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
+  return result;
 }
 
 const { values: args } = parseArgsOrExit(

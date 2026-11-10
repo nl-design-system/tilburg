@@ -242,9 +242,12 @@ export async function checkPnpm(pnpmPath = process.platform === 'linux' ? firstO
   return { ok: true, detail: version, note: 'package.json "packageManager"' };
 }
 
+/** A quick, read-only git question about this repository: { code, stdout, … } as capture() gives it. */
+const git = (args) => capture(`git ${args}`, { cwd: ROOT, timeoutMs: 5000 });
+
 /** husky's `prepare` script installs the pre-commit hook on `pnpm install`; a clone that never installed has none. */
 export async function checkGitHooks() {
-  const { stdout } = await capture('git config core.hooksPath', { cwd: ROOT, timeoutMs: 5000 });
+  const { stdout } = await git('config core.hooksPath');
   if (stdout.trim() === '.husky/_' && existsSync(resolve(ROOT, '.husky/_'))) {
     return { ok: true, detail: 'pre-commit runs lint-staged', note: '.husky/pre-commit' };
   }
@@ -257,10 +260,10 @@ export async function checkGitHooks() {
 
 /** Not a requirement, but a failed `git push` halfway through a release is a poor moment to find out. */
 async function checkGitPush() {
-  const { stdout: url } = await capture('git remote get-url origin', { cwd: ROOT, timeoutMs: 5000 });
+  const { stdout: url } = await git('remote get-url origin');
   if (!url.trim()) return { skip: true, ok: true, detail: 'no origin remote' };
   if (!url.startsWith('https://')) return { ok: true, detail: 'over SSH', note: url.trim() };
-  const { stdout: helper } = await capture('git config credential.helper', { cwd: ROOT, timeoutMs: 5000 });
+  const { stdout: helper } = await git('config credential.helper');
   if (helper.trim()) return { ok: true, detail: `HTTPS, credentials from ${helper.trim()}`, note: url.trim() };
   return warnRow(
     'HTTPS without a credential helper',
@@ -274,7 +277,6 @@ async function checkGitPush() {
  */
 async function checkBranchBehind() {
   const note = 'as of the last fetch';
-  const git = async (args) => capture(`git ${args}`, { cwd: ROOT, timeoutMs: 5000 });
   const count = ({ code, stdout }) => (code === 0 ? Number(stdout.trim()) : 0);
   const [head, upstream, behindUp, behindMain, hasMain, shallow] = await Promise.all([
     git('rev-parse --abbrev-ref HEAD'),

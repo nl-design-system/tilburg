@@ -6,7 +6,6 @@
      components built against newer tokens lose their styling.
    - hltsamen installs everything from `.tarballs/` (`pnpm run pack:local`) and copies the stories.
    The consumers are expected next to this repository (../bq-tlb-frontend, ../hltsamen). */
-import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { basename, delimiter, dirname, resolve, sep } from 'node:path';
@@ -22,12 +21,11 @@ import {
   readJson,
   tryOr,
   warn,
-  warnRow,
 } from './lib/cli-utils.mjs';
 import { confirmNoDevRunningOrExit, readDevLock, SYNC_LOCK, takeBuildLock, writeDevLock } from './lib/lock.mjs';
 /* A step that fails stops the sync: a half-packed set is worse than none. */
 import { reportStepFailure, runStepOrExit as step, runStepWithRecovery } from './lib/recovery.mjs';
-import { GIT_ENV, inProgress, treeState } from './lib/ship.mjs';
+import { gitIn, inProgress, treeChangedRow, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm sync');
 printBanner('Sync to consumers');
@@ -90,14 +88,6 @@ async function checkTarball(file, mustContain, what) {
       fix: 'pnpm build, then pnpm sync again',
     });
 }
-
-const gitIn =
-  (dir) =>
-  (...args) => {
-    const result = spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: GIT_ENV });
-    /* trimEnd: a porcelain entry such as " M file" starts with its own space. */
-    return { ok: result.status === 0, out: (result.stdout ?? '').trimEnd() };
-  };
 
 /** The `.tarballs/` files a consumer installs (`file:…/.tarballs/x.tgz` in its package.json files), as full paths. */
 function tarballSpecs(dir) {
@@ -169,11 +159,10 @@ if (!usable.length) {
   process.exit(1);
 }
 /* Two syncs pack into the same dist/ and .tarballs/ folders: one would install what the other is still writing. */
-takeBuildLock('pnpm sync', (otherSync) => ({
-  what: `Another ${otherSync.what ?? 'pnpm sync'} is running (process ${otherSync.pid}, since ${otherSync.started})`,
-  why: 'two builds at once rebuild the same dist/ and tarballs, and a consumer could install one while it is being rewritten.',
-  fix: 'wait for it to finish, then pnpm sync again',
-}));
+takeBuildLock(
+  'pnpm sync',
+  'two builds at once rebuild the same dist/ and tarballs, and a consumer could install one while it is being rewritten.',
+);
 /* And one per consumer folder: a sync from another checkout (a worktree) would run its install in the same folder. */
 for (const consumer of usable) {
   const hash = createHash('sha1').update(realpath(consumer.dir)).digest('hex').slice(0, 10);
@@ -335,15 +324,13 @@ for (const consumer of usable.filter((consumer) => !blocked.has(consumer))) {
   syncing = null;
 }
 
-const treeAtEnd = await treeState(ROOT);
-if (treeAtStart && treeAtEnd && treeAtStart !== treeAtEnd)
-  rows.push(
-    warnRow(
-      'the working tree changed while this ran',
-      'a checkout, pull or stash meanwhile: the tarballs may mix two trees, so pnpm sync again',
-      { label: 'tilburg' },
-    ),
-  );
+const treeChanged = treeChangedRow(
+  treeAtStart,
+  await treeState(ROOT),
+  'tilburg working tree',
+  'the tarballs may mix two trees, so pnpm sync again',
+);
+if (treeChanged) rows.push(treeChanged);
 
 console.log('');
 const { failed } = printCheckTable([{ title: 'Result', rows }]);
