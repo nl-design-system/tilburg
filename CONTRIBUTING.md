@@ -11,7 +11,7 @@ De scripts in `scripts/` nemen de omgeving voor hun rekening: Node, pnpm, de ins
 fouten (zie _Als een script misgaat_). Wat je zelf meebrengt:
 
 - **git** — branches, commits en een pull request. `pnpm ship` doet de controles en de push, niet het branchen.
-- **TypeScript**, en **React** of **Angular** (of allebei). Elke component bestaat in beide lagen en rendert dezelfde
+- **TypeScript**, en **React** of **Angular** (of allebei). Elk component bestaat in beide lagen en rendert dezelfde
   DOM; wie één laag kent, kan de andere lezen.
 - **SCSS** met BEM-classes. De stijl zit in `components-css`, niet in de frameworklagen.
 
@@ -96,10 +96,11 @@ configuraties om de open React-test, Angular-spec, script of script-test te debu
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm setup`      | Van verse clone naar draaiende Storybook; slaat over wat al klopt                                                                     |
 | `pnpm check`      | Omgeving nalopen: Node, pnpm, install, verouderde builds, poorten, git-hooks, achterstand op `main`; `--fix` biedt de oplossingen aan |
-| `pnpm parity`     | Is elke component compleet in elke laag? (`pnpm parity tooltip` voor één, `--tests` per test)                                         |
+| `pnpm parity`     | Is elk component compleet in elke laag? (`pnpm parity tooltip` voor één, `--tests` per test)                                          |
 | `pnpm where`      | Waar een component staat, per laag, met zijn Storybook-pagina's (`pnpm where tooltip`; `--list` voor alle)                            |
-| `pnpm dev`        | Beide Storybooks met live rebuild van alle libraries (`pnpm dev tooltip` opent die component)                                         |
-| `pnpm test`       | Alle tests, zoals CI; `pnpm test tooltip` alleen die component, in React, Angular en Web Components, in één tabel                     |
+| `pnpm new`        | Een nieuw component in elke laag uit zijn HTML (`pnpm new badge --html '<span …>'`), geregistreerd en met tests                       |
+| `pnpm dev`        | Beide Storybooks met live rebuild van alle libraries (`pnpm dev tooltip` opent dat component)                                         |
+| `pnpm test`       | Alle tests, zoals CI; `pnpm test tooltip` alleen dat component, in React, Angular en Web Components, in één tabel                     |
 | `pnpm verify`     | Wat CI op een pull request controleert, plus `parity` en of er een changeset bij hoort                                                |
 | `pnpm ship`       | Verify, toont de commits, pusht na een vraag en geeft de link voor de pull request (`--dry-run`, `--no-verify`)                       |
 | `pnpm logs`       | De nieuwste stap-logs; `--last` toont het einde van de laatst mislukte, `--open` opent de map                                         |
@@ -230,12 +231,145 @@ beide Storybooks volgen.
   standaardwaarden). Wijk je af, documenteer het dan in de usage-tekst van die laag.
 - **Stijl hoort in `components-css`.** Laag-specifieke CSS alleen voor de host-elementen (bv. `display: block`) of waar
   een wrapper-element de CSS-selector doorbreekt.
-- **Documentatie** voor afnemers staat in `storybook-shared/src/documentation/` (Nederlands). De usage per component
-  staat in de `description*`-strings van de `*.examples.ts`.
+- **Documentatie** voor afnemers staat in `storybook-shared/src/documentation/` (Nederlands). De tekst per component
+  staat in de `description*`-strings van de `*.examples.ts` (Engels); zie _De tekst van een component_.
 
-## Een nieuwe component toevoegen in alle lagen
+## Een nieuw component toevoegen in alle lagen
 
-`pnpm parity <naam>` laat zien welke van de stappen hieronder nog ontbreken, met het pad van elk bestand.
+Een component bestaat in vier lagen (HTML/CSS, React, Angular, Web Component) die dezelfde DOM renderen. De HTML is
+leidend: schrijf die eerst, de rest wordt eruit afgeleid.
+
+### In vier stappen
+
+1. **Schrijf het referentie-markup**: één root-element met de Utrecht- of Tilburg-classes, zoals het straks in de
+   browser moet staan. Bijvoorbeeld `<span class="utrecht-badge-label">Nieuw</span>`.
+2. **Genereer de lagen**:
+
+   ```bash
+   pnpm new badge-label --html '<span class="utrecht-badge-label">Nieuw</span>'
+   ```
+
+   `--html` mag ook een bestandspad zijn. Zonder `--html` wordt het een `<div class="utrecht-<naam>">` met inhoud. `--tlb`
+   maakt een Tilburg-eigen component (class `tilburg-<naam>`, TLB-badge in de zijbalk). Bestaat er al iets van de
+   component, dan weigert het commando en zegt `pnpm parity <naam>` wat er nog mist.
+
+3. **Werk de TODO's af** met `pnpm dev <naam>` ernaast (beide Storybooks op dat component, de watchers bouwen de dist):
+   - de CSS in `packages/components-css/<naam>/index.scss`, met design-tokens (`var(--tilburg-…)`), geen losse kleuren;
+   - de props, inputs en attributen in de drie wrappers (`components-react/src/<Naam>.tsx`,
+     `components-angular/src/<naam>/`, `web-components-stencil/src/<naam>/`);
+   - de intro, de uitleg per laag en de voorbeelden in `packages/storybook-shared/src/tilburg-<naam>.examples.ts`.
+4. **Controleer en lever in**: `pnpm test <naam>` (de drie tests die je er al bij kreeg), `pnpm parity <naam>`,
+   `pnpm verify`, en de changeset staat al in `.changeset/<naam>.md` (zie _Releasen_).
+
+### Wat `pnpm new` maakt
+
+| Laag          | Bestanden                                                                             | Registratie                               |
+| ------------- | ------------------------------------------------------------------------------------- | ----------------------------------------- |
+| HTML/CSS      | `components-css/<naam>/index.scss`, `storybook-shared/src/tilburg-<naam>.examples.ts` | SCSS-import in beide Storybooks           |
+| React         | `components-react/src/<Naam>.tsx` + `.test.tsx`                                       | export in `components-react/src/index.ts` |
+| Angular       | `components-angular/src/<naam>/` (component, template, scss, public-api, spec)        | `components.ts` en `index.module.ts`      |
+| Web Component | `web-components-stencil/src/<naam>/` (component, scss, spec)                          | (Stencil registreert zelf)                |
+| Stories       | vijf: HTML in beide Storybooks, React, Web Component, Angular                         | rij in `implementation-status.md`         |
+| Release       | `.changeset/<naam>.md`                                                                |                                           |
+
+De templates van de drie wrappers komen uit het markup (`scripts/lib/markup.mjs`): `class` wordt `className`, void-tags
+sluiten zichzelf, `style` wordt een object; het root-element krijgt in React `ref`, `clsx` en de rest-props. Houdt het
+root-element alleen tekst, dan wordt die tekst de children-slot (`{children}`, `<ng-content>`, `<slot />`). Zitten er
+elementen in, dan blijven die staan zoals ze zijn, inclusief tekst; maak daar in stap 3 props en inputs van.
+
+### De tekst van een component
+
+De documentatiepagina van een component in Storybook komt uit `tilburg-<naam>.examples.ts`: de vier
+`description*`-strings, één per laag. `pnpm new` zet het geraamte klaar; `tilburg-alert.examples.ts` is het voorbeeld
+om naast te leggen.
+
+- **Taal**: Engels, zoals de bestaande componenten. De voorbeeldinhoud in de code (labels, meldingen) is Nederlands.
+- **De intro** is één alinea: waar het component voor is en wanneer je het gebruikt. Alle lagen delen hem, dus noem
+  hier geen props.
+- **De koppen liggen vast**: `## Usage`, met daaronder `### Plain HTML / CSS`, `### React`, `### Angular` en
+  `### Web Components (Stencil)`. Het venster _Gebruik_ zoekt een laag op precies die kop; onder een andere kop vindt
+  het de code niet.
+- **Per laag**: eerst één codeblok met het gewone gebruik (dat is het blok dat het venster toont), daarna de props,
+  inputs of attributen met hun standaardwaarden, en wat afwijkt van de Angular-API.
+- **Het codeblok is een vangnet.** _Plaatsen_ komt meestal uit de story zelf (zie hieronder); het geschreven blok
+  verschijnt op de tabbladen van de andere lagen en als de story niets afleidbaars rendert. Houd het dus kloppend,
+  maar verfijn het niet.
+
+`pnpm test:scripts` faalt zolang er een `TODO` in een beschrijving staat, of een codeblok onder een andere `###`-kop.
+
+### Het venster Gebruik
+
+De knop `</> Gebruik` in de werkbalk van een story toont hoe een afnemer het component in zijn project zet. Het venster
+heeft geen eigen inhoud; het leest uit bronnen die je toch al bijhoudt, dus je hoeft er niets voor te schrijven:
+
+| Stap in het venster                         | Bron                                                                                                          | Bijschaven                                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Installeren, Laden, Gedrag aanzetten        | de Storybook-pagina's _De lagen_ (`documentation/intro-layer-*.md`)                                           | daar                                                                                               |
+| Plaatsen                                    | wat de story rendert (React, Web Components) of haar `template` met de args ingevuld (Angular); zie hieronder | de sectie onder `## Usage` in het examples-bestand, met `parameters: { usage: { written: true } }` |
+| Dit rendert de story                        | de live preview                                                                                               | nee                                                                                                |
+| Als losse pagina (HTML/CSS, Web Components) | de _Minimale pagina_ van _Aan de slag_, plus wat de lagenpagina voor die laag noemt                           | daar                                                                                               |
+
+`pnpm test:scripts` bewaakt dat elk component een snippet
+oplevert en dat de docs-pagina's de koppen houden waar het venster op leest (`Installatie`, `Setup`, `Gebruik`,
+`Interactieve componenten`, `Minimale pagina`), dat de tarballnamen in de documentatie de versies uit de `package.json`'s
+hebben, en dat `UsagePanel.tsx`, `TlbFilter.tsx` en `sidebarLabel.tsx` in beide Storybooks gelijk zijn.
+
+_Installeren_ toont de codeblokken van de sectie `Installatie` in de volgorde van de pagina. Zolang er geen release is,
+staat het tarball-commando daar bovenaan en het npm-commando eronder; na de release draai je dat op de lagenpagina om.
+
+_Als losse pagina_ staat alleen op de tabbladen HTML/CSS en Web Components. Voor React en Angular zou het een pagina
+zijn met de HTML die het component rendert, zonder het component zelf (en voor Angular zonder de Tilburg-CSS): een
+plaatje, geen manier om het te gebruiken. _Dit rendert de story_ toont die HTML daar al.
+
+#### Plaatsen: afgeleid uit de story
+
+_Plaatsen_ laat zien wat je in je eigen project zet. Voor de laag van de story zelf schrijft niemand dat: het venster
+leidt het af, in deze volgorde.
+
+1. **Wat de story rendert.** Storybook meldt bij elke render de JSX van een React-story, met de echte waarden en met
+   lussen uitgeschreven (`docs.source.type: 'dynamic'` in `storybook/config/preview.tsx`). Verander je iets in
+   _Controls_, dan verandert de snippet mee.
+   - **React**: die JSX, met een `import`-regel voor elk component uit `@gemeente-tilburg/components-react` dat erin
+     staat.
+   - **Web Components**: dezelfde JSX als custom elements. Attributen in kebab-case, `className` wordt `class`, een
+     `style`-object wordt CSS. Wat geen attribuut kan zijn, staat in een commentaarregel boven het element: een array
+     of object als JavaScript-property, een handler als `addEventListener`.
+   - **Wat van de story is en niet van de lezer** valt eruit: hulpcomponenten (een `Row` of `Field` voor de opmaak;
+     hun kinderen blijven staan), en buiten een component ook een `div` die alleen een `style` draagt en de
+     tussenkopjes (`h1`–`h6`) boven een groep voorbeelden.
+2. **De geschreven sectie** `### React` / `### Angular` / `### Web Components (Stencil)` onder `## Usage` in het
+   examples-bestand, als afleiden niets oplevert. Dat is zo wanneer het voorbeeld in een hulpcomponent met eigen state
+   zit (`<ModalDemo />`), wanneer zo'n hulpcomponent in een prop staat, of wanneer het component van de story zelf niet
+   in het resultaat voorkomt.
+3. **De bron van de story**: de `template` van een Angular-story met de args ingevuld (`[variant]="variant"` wordt
+   `variant="info"`), of het component met de args als de story geen eigen render heeft.
+
+Angular-stories beginnen bij stap 2. De tabbladen van de andere lagen tonen de geschreven sectie van die laag: beide
+previews geven de secties van alle examples-bestanden mee (`parameters.usage.sections`), dus ook een laag die niet in
+deze Storybook zit, is gevuld, met een link naar het component in de andere Storybook.
+
+Wil je voor een story de geschreven sectie tonen, ook als afleiden lukt, zet dan op de story (of op de meta, voor alle
+stories van het component):
+
+```ts
+export const Default: Story = {
+  parameters: { usage: { written: true } },
+};
+```
+
+Goed om te weten:
+
+- De geschreven secties blijven dus nodig: voor de docs-pagina, voor de andere tabbladen en als terugval.
+- _Show code_ op de docs-pagina's van de React-Storybook toont door dezelfde instelling ook de gerenderde JSX.
+- In de HTML van Web Components worden op native elementen alleen `className` en `htmlFor` hernoemd; een naam als
+  `tabIndex` blijft staan.
+- De code van het venster (`UsagePanel.tsx`) laadt bij het starten van Storybook: herstart `pnpm dev` na een wijziging
+  daarin. De afleiding zelf staat in `storybook-shared/src/usage.ts` en wordt getest in
+  `scripts/usage-snippets.test.mjs`.
+
+### Met de hand
+
+Zonder `pnpm new` zijn dit de stappen; `pnpm parity <naam>` laat zien welke nog ontbreken, met het pad van elk bestand.
 
 1. **CSS** — `packages/components-css/<naam>/index.scss`. Ontbreekt er een token, voeg het toe in
    `proprietary/design-tokens/src/`.
@@ -247,7 +381,7 @@ beide Storybooks volgen.
 4. **React** — `packages/components-react/src/<Naam>.tsx` (importeert de SCSS uit `components-css`), export in
    `src/index.ts`, test in `src/<Naam>.test.tsx`, story `packages/storybook/src/tilburg-<naam>-react.stories.tsx`.
 5. **Angular** — `packages/components-angular/src/<naam>/` (`component.ts`, `index.html`, `index.scss`,
-   `public-api.ts`, `component.spec.ts`). Registreer de component in `src/index.module.ts` en exporteer hem in
+   `public-api.ts`, `component.spec.ts`). Registreer het component in `src/index.module.ts` en exporteer het in
    `src/components.ts`. Story: `packages/storybook-angular/src/tilburg-<naam>.stories.ts`.
 6. **Web Component** — `packages/web-components-stencil/src/<naam>/`. De conventies (light DOM, attributen
    doorgeven, slots, events) staan in `packages/web-components-stencil/README.md`. Story:

@@ -21,6 +21,26 @@ import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
    token reference tables with `getComputedStyle()` output at runtime. */
 import { applicationConfig, componentWrapperDecorator, moduleMetadata, type Preview } from '@storybook/angular';
 import { theme } from './theme';
+import gettingStarted from '../../storybook-shared/src/documentation/getting-started.md?raw';
+import layerAngular from '../../storybook-shared/src/documentation/intro-layer-angular.md?raw';
+import layerHtml from '../../storybook-shared/src/documentation/intro-layer-html-css.md?raw';
+import layerReact from '../../storybook-shared/src/documentation/intro-layer-react.md?raw';
+import layerWebComponents from '../../storybook-shared/src/documentation/intro-layer-web-components.md?raw';
+import { allSections, type UsageDocs } from '../../storybook-shared/src/usage';
+
+/* The "Gebruik" panel (.storybook/UsagePanel.tsx) reads its install and load steps from these pages. */
+/* Every examples file, as webpack's require.context gives them: key './tilburg-alert.examples.ts' → its exports. */
+declare const require: {
+  context(folder: string, deep: boolean, files: RegExp): { keys(): string[]; (key: string): Record<string, unknown> };
+};
+const examples = require.context('../../storybook-shared/src', false, /tilburg-[\w-]+\.examples\.ts$/);
+
+const usage: UsageDocs = {
+  gettingStarted,
+  pages: { html: layerHtml, react: layerReact, angular: layerAngular, webComponents: layerWebComponents },
+  /* The snippets of every layer, so the tabs of the layers a story is not about are filled too. */
+  sections: allSections(Object.fromEntries(examples.keys().map((key) => [key, examples(key)]))),
+};
 
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const reenhance = () => {
@@ -58,21 +78,15 @@ const preview: Preview = {
   ],
   parameters: {
     controls: { expanded: false },
+    usage,
     options: {
       storySort: {
-        /* `Tilburg Angular` at the top so the cold-start landing story is
-           `Tilburg Angular/Intro`, then the shared `Tilburg HTML/…` reference,
-           then `Tokens` — still discoverable but no longer the default
-           landing.
-
-           Unlike the React Storybook — where the `Tilburg/…` section holds only
-           documentation — this section mixes the MDX pages in with all the
-           Angular components. Without naming them explicitly the `*` wildcard
-           sorts them alphabetically among the components, which buried
-           Implementatiestatus, the licence and the usage notice below Heading.
-           So every MDX page is listed ahead of the wildcard. */
+        /* `Tilburg` (the documentation pages, in reading order) at the top so the cold-start landing story is
+           `Tilburg/Intro`, then the Angular components, the shared `Tilburg HTML/…` reference and `Tokens`. The
+           documentation has the same titles, and so the same ids, as in the React Storybook: the shared markdown
+           links to `?path=/docs/tilburg-…--docs` and that has to work in both. */
         order: [
-          'Tilburg Angular',
+          'Tilburg',
           [
             'Intro',
             'Aan de slag',
@@ -83,6 +97,7 @@ const preview: Preview = {
             'Toestemming voor gebruik',
             '*',
           ],
+          'Tilburg Angular',
           'Tilburg HTML',
           'Tokens',
           ['Intro', '*'],
