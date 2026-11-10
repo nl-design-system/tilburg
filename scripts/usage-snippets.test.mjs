@@ -7,6 +7,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { pathToFileURL } from 'node:url';
 import { ROOT } from './dev-config.mjs';
 import { loadComponents } from './lib/components.mjs';
 import {
@@ -44,7 +45,10 @@ const docs = {
 /* The examples files import each other without the `.ts` extension (the bundlers add it); Node's loader does not. */
 registerHooks({
   resolve(specifier, context, next) {
-    const bare = specifier.startsWith('./') && !/\.[cm]?[jt]s$/.test(specifier) && context.parentURL?.includes(SHARED);
+    const bare =
+      specifier.startsWith('./') &&
+      !/\.[cm]?[jt]s$/.test(specifier) &&
+      context.parentURL?.startsWith(pathToFileURL(SHARED).href);
     return next(bare ? `${specifier}.ts` : specifier, context);
   },
 });
@@ -102,7 +106,7 @@ test('every component description gives the panel at least one snippet, under a 
   assert.ok(files.length > 30, 'the examples files should be found');
   const empty = [];
   for (const file of files) {
-    const module = await import(join(SHARED, file));
+    const module = await import(pathToFileURL(join(SHARED, file)));
     for (const [name, value] of Object.entries(module)) {
       if (!/^description/.test(name) || typeof value !== 'string') continue;
       const titles = usageSections(value).map((section) => section.title);
@@ -498,7 +502,7 @@ test("renderedSnippet keeps what is inside a component: a heading or a styled di
 test('allSections gives every component the usage sections of all layers, as both previews pass them to the panel', async () => {
   const files = readdirSync(SHARED).filter((file) => /^tilburg-.*\.examples\.ts$/.test(file));
   const modules = Object.fromEntries(
-    await Promise.all(files.map(async (file) => [`./${file}`, await import(join(SHARED, file))])),
+    await Promise.all(files.map(async (file) => [`./${file}`, await import(pathToFileURL(join(SHARED, file)))])),
   );
   const sections = allSections(modules);
   assert.deepEqual(sections.alert.map((section) => section.title).sort(), [
@@ -581,7 +585,9 @@ test('componentLinks: related components are real ones, and every link on every 
   );
   const files = readdirSync(SHARED).filter((file) => /^tilburg-.*\.examples\.ts$/.test(file));
   const sections = allSections(
-    Object.fromEntries(await Promise.all(files.map(async (file) => [`./${file}`, await import(join(SHARED, file))]))),
+    Object.fromEntries(
+      await Promise.all(files.map(async (file) => [`./${file}`, await import(pathToFileURL(join(SHARED, file)))])),
+    ),
   );
   for (const storybook of ['storybook', 'storybook-angular']) {
     const known = storyIds(storybook);
