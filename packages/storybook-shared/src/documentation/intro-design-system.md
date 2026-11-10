@@ -4,9 +4,9 @@
 >
 > Deze componentenbibliotheek is nog in ontwikkeling. Componenten en hun API's kunnen nog wijzigen. Loop je ergens tegenaan, mis je een component, of twijfel je of je iets al kunt gebruiken? Neem contact op met het Design System-team van Gemeente Tilburg — dan kijken we mee. Meld bugs en verzoeken bij voorkeur als issue op [github.com/nl-design-system/tilburg](https://github.com/nl-design-system/tilburg/issues).
 
-## Vier consumptie-lagen
+## Vier lagen
 
-De componenten zijn in vier lagen beschikbaar — kies de laag die past bij je stack:
+De componenten zijn er in vier lagen. Kies de laag die past bij je stack:
 
 | Laag                 | Package                                    | Voor wie                                                                                 |
 | -------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
@@ -15,7 +15,9 @@ De componenten zijn in vier lagen beschikbaar — kies de laag die past bij je s
 | **Angular**          | `@gemeente-tilburg/components-angular`     | Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, etc.                         |
 | **Web Components**   | `@gemeente-tilburg/web-components-stencil` | elke stack — native custom elements `<tilburg-wbc-alert>`, `<tilburg-wbc-textbox>`, etc. |
 
-De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web Component is een dunne laag die exact dezelfde DOM en klassen emit als de gedeelde HTML/CSS-referentie. De Web Components renderen in de light DOM, dus dezelfde CSS stylet ze; hun React-wrappers (`@gemeente-tilburg/web-components-react`) worden door Stencil gegenereerd. Wat je onder `Tilburg HTML/…` ziet is de gedeelde render — `Tilburg React/…`, `Tilburg Angular/…` en `Tilburg Web Components/…` zijn parity-checks bovenop.
+De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web Component is een dunne laag die precies dezelfde DOM en classes maakt als de gedeelde HTML/CSS-referentie. De Web Components renderen in de light DOM, dus dezelfde CSS geldt ook daar; hun React-wrappers (`@gemeente-tilburg/web-components-react`) worden door Stencil gegenereerd. Wat je onder `Tilburg HTML/…` ziet is die referentie; `Tilburg React/…`, `Tilburg Angular/…` en `Tilburg Web Components/…` laten hetzelfde zien, gemaakt door die laag.
+
+Nog niet alles staat op npm. Wat je nu kunt installeren en hoe, staat op [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs); welk component in welke laag bestaat op [Implementatiestatus](?path=/docs/tilburg-implementatiestatus--docs).
 
 <!-- markdownlint-disable MD033 -->
 <figure style="margin: 1.5rem 0;">

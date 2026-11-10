@@ -2,9 +2,19 @@
 
 # Tips & valkuilen
 
-Praktische dingen die je niet uit één componentpagina haalt. Voorbeelden staan in Angular-syntax tenzij anders
-vermeld; de React-props en Web Component-attributen heten hetzelfde (in React camelCase, in Web Components
-kebab-case).
+Praktische dingen die je niet uit één componentpagina haalt. Eerst installeren? Zie
+[Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).
+
+De voorbeelden staan in Angular-syntax, tenzij anders vermeld. In React en Web Components werkt het hetzelfde, met deze
+verschillen in naamgeving:
+
+| Angular                   | React              | Web Components     |
+| ------------------------- | ------------------ | ------------------ |
+| `headingLevel`            | `headingLevel`     | `heading-level`    |
+| `ariaLabel`               | `aria-label`       | `aria-label`       |
+| `ariaDescribedBy`         | `aria-describedby` | `aria-describedby` |
+| `title` (Alert, Modal, …) | `title`            | `heading`          |
+| `(closed)`                | `onClose`          | `tilburgClose`     |
 
 ## Toegankelijkheid
 
@@ -19,7 +29,7 @@ Een label verwijst met `for` naar het `id` van zijn veld. De componenten maken g
 <tilburg-textbox id="email" type="email" [control]="emailCtrl"></tilburg-textbox>
 ```
 
-In Web Components zet je `id` gewoon op het element (`<tilburg-wbc-textbox id="email">`). De component verplaatst het
+In Web Components zet je `id` gewoon op het element (`<tilburg-wbc-textbox id="email">`). Het component verplaatst het
 naar de binnenliggende `<input>`, zodat de koppeling werkt.
 
 ### Beschrijvingen en foutmeldingen
@@ -65,10 +75,18 @@ Geef een tabel een bijschrift (`caption`) en zet `scope="col"` of `scope="row"` 
 
 ```html
 <tilburg-table caption="Openingstijden">
-  <tr tilburg-table-row>
-    <th tilburg-table-header-cell scope="col">Dag</th>
-    <th tilburg-table-header-cell scope="col">Tijden</th>
-  </tr>
+  <thead tilburg-table-header>
+    <tr tilburg-table-row>
+      <th tilburg-table-header-cell scope="col">Dag</th>
+      <th tilburg-table-header-cell scope="col">Tijden</th>
+    </tr>
+  </thead>
+  <tbody tilburg-table-body>
+    <tr tilburg-table-row>
+      <td tilburg-table-cell>Maandag</td>
+      <td tilburg-table-cell>9.00 – 17.00 uur</td>
+    </tr>
+  </tbody>
 </tilburg-table>
 ```
 
@@ -76,7 +94,9 @@ Geef een tabel een bijschrift (`caption`) en zet `scope="col"` of `scope="row"` 
 
 De titel van de modal is ook zijn toegankelijke naam, dus maak die beschrijvend ("Aanvraag bevestigen", niet
 "Let op"). Sluit de modal altijd via het close-event (`closed` / `onClose` / `tilburgClose`), dan blijft je eigen
-open-state gelijk, ook als de gebruiker op Escape drukt of naast de modal klikt.
+open-state gelijk, ook als de gebruiker op Escape drukt of naast de modal klikt. In plain HTML is er geen component:
+gebruik `showModal()` en `close()` van het native `<dialog>`. De oude React-`AlertDialog` is een deprecated alias van
+`Modal`.
 
 ### HTML Content
 
@@ -91,8 +111,8 @@ Zet `decorative` op een separator die alleen voor de opmaak is, dan slaan screen
 
 ## Formulieren
 
-- **Angular** — de formuliercomponenten werken met reactive forms via `[control]`. Zie _API-conventies (Angular)_ hieronder
-  (alleen in de Angular-Storybook).
+- **Angular** — de formuliercomponenten werken met reactive forms via `[control]`; `formControlName` en `[(ngModel)]`
+  werken niet. De details staan in _API-conventies (Angular)_ op deze pagina in de Angular-Storybook.
 - **React** — gecontroleerde componenten: `value` + `onChange`, zoals native inputs.
 - **Web Components** — de echte `<input>` staat in de light DOM, dus hij doet gewoon mee in een `<form>`. Luister naar de
   native `input`- en `change`-events.
@@ -102,11 +122,13 @@ Zet `decorative` op een separator die alleen voor de opmaak is, dan slaan screen
 Gebruik op één pagina óf de Angular-componenten (`<tilburg-…>`) óf de Web Components (`<tilburg-wbc-…>`). Ze hebben
 bewust een ander prefix zodat ze niet botsen, maar samen gebruikt laad je alle CSS dubbel.
 
-## Bekende gaten
+## Article en Page Content: zelf de breedte zetten
 
-- `.utrecht-article` heeft geen maximale regelbreedte: het token `--utrecht-article-max-inline-size` bestaat nog niet.
-  Geef zelf een `max-inline-size` op.
-- `.utrecht-page-content` heeft geen padding en maximale breedte: de `--utrecht-page-*`-tokens ontbreken. Page Header en
-  Page Footer begrenzen hun inhoud wel (1150px).
+`.utrecht-article` heeft geen maximale regelbreedte en `.utrecht-page-content` geen padding of maximale breedte: de
+tokens daarvoor ontbreken nog. Geef zelf een `max-inline-size` (en padding) op. Page Header en Page Footer begrenzen hun
+inhoud wel (1150px). De details staan onder _Bekende hiaten_ op
+[Implementatiestatus](?path=/docs/tilburg-implementatiestatus--docs), samen met welk component in welke laag bestaat.
 
-Zie _Implementatiestatus_ voor welke component in welke laag bestaat.
+## Tokens, thema's en hoog contrast
+
+Een kleur of afstand aanpassen, het BAT-thema en hoog contrast staan op [Tokens](?path=/docs/tokens-intro--docs).
