@@ -13,6 +13,27 @@ gebruikt. Daar zijn ze in DevTools te inspecteren. De pagina's per categorie ton
 - **Typography** — lettergroottes (en lettertypes)
 - **Interaction** — accenten voor links, focus en actief
 
+## Voor ontwerpers
+
+Werk je in Figma aan de huisstijl, dan is dit wat je moet weten. De rest van deze pagina is voor wie de CSS schrijft.
+
+- **Figma is de bron.** Elke kleur, afstand en lettergrootte in de componenten komt uit de Figma-export: één bestand
+  per thema, `figma/tilburg/figma.tokens.json` en `figma/bat/figma.tokens.json` in het package `design-tokens`.
+- **Een wijziging gaat één kant op**: je past het token aan in Figma, exporteert opnieuw, en het nieuwe bestand
+  vervangt het oude in de repository (met een pull request, of via een ontwikkelaar). De waarde in de code met de hand
+  aanpassen werkt niet: de volgende export overschrijft hem.
+- **Je ziet het resultaat in deze Storybook.** Draait `pnpm dev`, dan wordt het thema opnieuw gebouwd zodra het bestand
+  verandert. De pagina's _Colors_, _Space_, _Typography_ en _Interaction_ tonen elke naam met zijn uitgerekende waarde;
+  de componenten staan onder `Tilburg HTML/…`.
+- **Controleer na een wijziging** het contrast (WCAG AA, ook van tekst op de nieuwe kleur), de focusrand, en beide
+  thema's: Tilburg en BAT delen de componenten en verschillen alleen in tokens. Kijk ook met hoog contrast aan.
+- **Een token dat nog niet in Figma staat**, staat tijdelijk in de code (`src/patches/`), zodat de bouw niet hoeft te
+  wachten. Die lijst is het werk dat in Figma nog open staat: staat het token daar, dan kan de patch weg. Zie
+  _Waar de tokens vandaan komen_.
+- **Een naam** zegt van wie het token is, welk onderdeel en welke eigenschap: `--tilburg-color-blue-300`,
+  `--tilburg-alert-margin-block-end`. Een nieuw token voor een component volgt dat patroon; stem de naam af met een
+  ontwikkelaar voordat je exporteert.
+
 ## Twee tokenfamilies: van Tilburg en van Utrecht
 
 Het Tilburg Design System gebruikt **twee namespaces van custom properties**, allebei op dezelfde

@@ -252,6 +252,8 @@ leidend: schrijf die eerst, de rest wordt eruit afgeleid.
    `--html` mag ook een bestandspad zijn. Zonder `--html` wordt het een `<div class="utrecht-<naam>">` met inhoud. `--tlb`
    maakt een Tilburg-eigen component (class `tilburg-<naam>`, TLB-badge in de zijbalk). Bestaat er al iets van de
    component, dan weigert het commando en zegt `pnpm parity <naam>` wat er nog mist.
+   Zonder naam vraagt het commando erom. Na afloop biedt het aan `pnpm dev <naam>` te starten (`--skip-dev`: niet
+   aanbieden).
 
 3. **Werk de TODO's af** met `pnpm dev <naam>` ernaast (beide Storybooks op dat component, de watchers bouwen de dist):
    - de CSS in `packages/components-css/<naam>/index.scss`, met design-tokens (`var(--tilburg-…)`), geen losse kleuren;

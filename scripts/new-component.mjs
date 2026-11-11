@@ -1,29 +1,56 @@
-/* `pnpm new <naam> [--html <markup of bestand>] [--tlb]`: every file a component needs in every layer, with the
+/* `pnpm new [naam] [--html <markup of bestand>] [--tlb] [--skip-dev]`: every file a component needs in every layer, with the
    registrations, so `pnpm parity <naam>` is green from the first minute and `pnpm dev <naam>` shows it with the
    "Gebruik" dialog filled. The HTML/CSS layer is leading: give the reference markup (a snippet or a file with one root
    element) and the React, Angular and Web Component templates are derived from it (scripts/lib/markup.mjs); without
    it the component is a `<div class="utrecht-<naam>">` with its content. Everything that is design work is marked
-   TODO. `--tlb` makes it a Tilburg-only component (class `tilburg-<naam>`, the TLB badge in the sidebar).
+   TODO. `--tlb` makes it a Tilburg-only component (class `tilburg-<naam>`, the TLB badge in the sidebar). In a terminal
+   it asks for a name that was not given, and ends by offering `pnpm dev <naam>` (`--skip-dev`: do not offer).
 
    Generated: components-css/<naam>/index.scss · storybook-shared/src/tilburg-<naam>.examples.ts · the five stories ·
    components-react/src/<Naam>.tsx + test · components-angular/src/<naam>/ (five files) · web-components-stencil/src/
    <naam>/ (three files) · a changeset. Registered in: components-react/src/index.ts, components-angular/src/
    components.ts and index.module.ts, the implementation-status table, storybook/config/preview.tsx and
    storybook-angular/src/styles.scss. */
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { createInterface } from 'node:readline/promises';
 import { ROOT } from './dev-config.mjs';
-import { c, cmd, exitWith, hint, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
+import {
+  c,
+  cmd,
+  confirm,
+  exitWith,
+  hint,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+} from './lib/cli-utils.mjs';
 import { P, pascal as pascalCase, rel as show, STATUS_FILE } from './lib/components.mjs';
 import { angularTemplate, indent, parseRoot, reactTemplate, stencilTemplate } from './lib/markup.mjs';
 
 installCrashHandler('pnpm new');
-const USAGE = 'pnpm new <naam> [--html <markup of bestand>] [--tlb]   (naam in kebab-case: button-group)';
+const USAGE = 'pnpm new <naam> [--html <markup of bestand>] [--tlb] [--skip-dev]   (naam in kebab-case: button-group)';
 const {
-  values: { html: htmlOption, tlb = false },
+  values: { html: htmlOption, tlb = false, 'skip-dev': skipDev = false },
   positionals,
-} = parseArgsOrExit({ allowPositionals: true, options: { html: { type: 'string' }, tlb: { type: 'boolean' } } }, USAGE);
+} = parseArgsOrExit(
+  {
+    allowPositionals: true,
+    options: { html: { type: 'string' }, tlb: { type: 'boolean' }, 'skip-dev': { type: 'boolean' } },
+  },
+  USAGE,
+);
+const terminal = process.stdin.isTTY && process.stdout.isTTY;
+
+/* No name given: ask, instead of an error that says to type the command again. */
+if (!positionals.length && terminal) {
+  const prompt = createInterface({ input: process.stdin, output: process.stdout });
+  positionals.push(
+    ...(await prompt.question('  Naam van het component (kebab-case, bv. button-group): ')).split(/\s+/),
+  );
+  prompt.close();
+}
 
 const slug = positionals.join('-').trim().toLowerCase();
 if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(slug))
@@ -548,8 +575,18 @@ for (const file of Object.keys(files)) console.log(`    ${show(file)}`);
 console.log(`
   ${c.bold}Nu jij:${c.reset}
     1. ${cmd(`pnpm dev ${slug}`)}            ${hint('beide Storybooks op dit component; de watchers bouwen de dist')}
-    2. De TODO's: de CSS in ${show(P('components-css', slug, 'index.scss'))}, de props/inputs in de drie wrappers,
+    2. De TODO's (${cmd('pnpm test:scripts')} faalt tot de intro geschreven is): de CSS in ${show(P('components-css', slug, 'index.scss'))}, de props/inputs in de drie wrappers,
        de teksten en voorbeelden in ${show(P('storybook-shared/src', `tilburg-${slug}.examples.ts`))}.
     3. ${cmd(`pnpm test ${slug}`)}           ${hint('de drie tests die je er nu bij kreeg')}
     4. ${cmd(`pnpm parity ${slug}`)}         ${hint('alles aanwezig? (het is groen vanaf nu)')}
 `);
+
+/* The same hand-over as pnpm setup: pnpm dev opens the component, also when one is running already. */
+if (terminal && !skipDev && (await confirm(`Start pnpm dev ${slug} nu?`, { default: true }))) {
+  /* pnpm dev owns the terminal now: Ctrl-C is for it (it stops its watchers itself). */
+  process.removeAllListeners('SIGINT');
+  process.on('SIGINT', () => {});
+  spawn('pnpm', ['run', 'dev', slug], { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' })
+    .on('error', (err) => exitWith({ what: 'Could not start pnpm dev', why: err.message, fix: `pnpm dev ${slug}` }))
+    .on('close', (code) => process.exit(code ?? 1));
+}

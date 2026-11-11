@@ -343,8 +343,11 @@ test('every ?path=/docs/… link in the shared documentation is a page of both S
   const readmes = ['packages', 'proprietary'].flatMap((group) =>
     readdirSync(join(ROOT, group)).map((name) => join(ROOT, group, name, 'README.md')),
   );
-  const links = [...readdirSync(docs).map((file) => join(docs, file)), ...readmes]
-    .filter((file) => file.endsWith('.md') && existsSync(file))
+  /* The diagrams link to them as well (shown in an <object>, so their links work). */
+  const diagrams = join(ROOT, 'proprietary/assets/src/diagrams');
+  const drawn = readdirSync(diagrams).map((file) => join(diagrams, file));
+  const links = [...readdirSync(docs).map((file) => join(docs, file)), ...readmes, ...drawn]
+    .filter((file) => /\.(md|svg)$/.test(file) && existsSync(file))
     .flatMap((file) => [...readFileSync(file, 'utf8').matchAll(/\?path=\/docs\/([\w-]+)--docs/g)])
     .map((match) => match[1]);
   assert.ok(links.length > 10, 'the links should be found');
@@ -354,7 +357,8 @@ test('every ?path=/docs/… link in the shared documentation is a page of both S
     const ids = readdirSync(pages)
       .filter((file) => file.endsWith('.mdx'))
       .map((file) => readFileSync(join(pages, file), 'utf8').match(/<Meta title="([^"]+)"/)?.[1] ?? '')
-      .map((title) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+      .map((title) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
+      .concat(storyIds(storybook));
     assert.deepEqual(
       [...new Set(links)].filter((id) => !ids.includes(id)),
       [],

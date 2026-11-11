@@ -13,6 +13,10 @@
 
 # Tilburg Design System
 
+Het Tilburg Design System is de set bouwstenen voor de websites en applicaties van Gemeente Tilburg: knoppen,
+formuliervelden, meldingen en pagina-onderdelen in de Tilburg-huisstijl, toegankelijk en voor iedereen gelijk. Deze
+Storybook laat ze zien en legt uit hoe je ze gebruikt.
+
 Deze Storybook bevat de **HTML/CSS-referentie** (`Tilburg HTML/…`), de **React-componenten** (`Tilburg React/…`) en de **Web Components** (`Tilburg Web Components/…`, via de gegenereerde React-wrappers). Elke componentpagina heeft een **Usage**-sectie met de props, en de knop **`</> Gebruik`** in de werkbalk laat zien hoe je het component in je eigen project zet.
 
 Er bestaat **een tweede, onafhankelijke Storybook** voor de Angular-laag, die de Angular-componenten (`Tilburg Angular/…`) plus dezelfde HTML/CSS-referentie documenteert. Op de gepubliceerde site staat die onder <a href="angular/" target="_top">/angular/</a>; lokaal start je hem met `pnpm dev angular`, of beide Storybooks tegelijk met `pnpm dev`.
