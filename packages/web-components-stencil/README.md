@@ -12,6 +12,9 @@ design-tokens → components-css (HTML + CSS, leading) → web-components-stenci
 
 ## Usage
 
+Experimental and not published to npm: install the tarball that `pnpm run pack:local` makes. The steps and the full
+setup are in Storybook under [Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs).
+
 The components render the HTML/CSS layer's markup into **light DOM**, so the same global stylesheets apply:
 
 ```html

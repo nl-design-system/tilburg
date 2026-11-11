@@ -1,0 +1,9 @@
+{
+  "//": "Type-checks the Storybook manager files. Storybook bundles them with the classic JSX runtime (React must be in scope), unlike the stories and preview, which Vite builds with the automatic runtime in tsconfig.json.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react"
+  },
+  "include": ["config/manager.ts"],
+  "exclude": []
+}

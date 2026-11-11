@@ -2,40 +2,57 @@
    that is already running), wait until it serves, and print its local and network address. */
 import { networkInterfaces } from 'node:os';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { findFreePort, isStorybookOn, portStatus } from './checks.mjs';
+import { findFreePort, identifyStorybook, portStatus, storybookEntries } from './checks.mjs';
 import { c, hyperlink } from './cli-utils.mjs';
 
-/** This machine's LAN address, to open a Storybook on a phone or another computer. */
-export function localIp() {
-  for (const addresses of Object.values(networkInterfaces())) {
-    for (const address of addresses ?? []) {
-      if (address.family === 'IPv4' && !address.internal) return address.address;
-    }
-  }
-  return null;
+/**
+ * This machine's LAN address, to open a Storybook on a phone or another computer. Wi-Fi or Ethernet first; never a
+ * VPN tunnel, Docker or VM bridge (172.17/16, 100.64/10 carrier-grade NAT), which another device cannot reach.
+ */
+export function localIp(interfaces = networkInterfaces()) {
+  const candidates = Object.entries(interfaces).flatMap(([name, addresses]) =>
+    (addresses ?? [])
+      .filter(
+        (address) =>
+          address.family === 'IPv4' &&
+          !address.internal &&
+          /* vEthernet: WSL2/Hyper-V; virbr, lxc, cni, podman: Linux VMs and containers; wg, zt: WireGuard, ZeroTier. */
+          !/^(docker|br-|veth|utun|tun|tap|vboxnet|vmnet|vethernet|virbr|lxc|wg|zt|cni|podman)/i.test(name) &&
+          !/^(172\.17|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7]))\./.test(address.address),
+      )
+      .map((address) => ({ name, address: address.address })),
+  );
+  /* en0 (macOS), eth0/enp3s0/wlp2s0 (Linux), "Wi-Fi" and "Ethernet 2" (Windows). */
+  const preferred = candidates.find(({ name }) => /^(en|eth|wl|wi-?fi|ethernet)/i.test(name));
+  return (preferred ?? candidates[0])?.address ?? null;
 }
 
 /**
- * Where should this Storybook run? `{ port, running }`: `running` when one already serves on its usual port (then
- * nothing has to start), otherwise the usual port or the next free one. `reserved` are ports promised to the other
- * Storybook in this run. `{ error }` when nothing is free.
+ * Where should this Storybook run? `{ port, running }`: `running` when this Storybook, from this working copy, already
+ * serves on its usual port (nothing to start); else the usual port or the next free one, with `taken` naming what holds
+ * the usual one. `reserved`: ports promised to the other Storybook in this run. `{ error }` when nothing is free.
  */
 export async function choosePort(storybook, reserved = []) {
   const status = await portStatus(storybook.port);
   if (status === null && !reserved.includes(storybook.port)) return { port: storybook.port, running: false };
-  if (status === 'EADDRINUSE' && (await isStorybookOn(storybook.port))) return { port: storybook.port, running: true };
+  /* Not taken but refused (security software, a sandbox): another port will not fare better. */
+  if (status && status !== 'EADDRINUSE')
+    return { error: `listening on port ${storybook.port} is not allowed (${status})` };
+  const found = status === 'EADDRINUSE' ? await identifyStorybook(storybook, storybook.port) : null;
+  if (found?.ours) return { port: storybook.port, running: true };
   const free = await findFreePort(storybook.port + 1, 20, [...reserved, 6006, 6007]);
   if (!free) return { error: `port ${storybook.port} and the 20 after it are all taken` };
-  return { port: free, running: false, moved: true };
+  return { port: free, running: false, moved: true, taken: found?.what ?? 'something else' };
 }
 
 /** Resolves once the Storybook on `port` serves its index, or with false when `stop()` says to give up. */
 export async function waitForStorybook(port, stop) {
-  while (!stop()) {
-    if (await isStorybookOn(port)) return true;
+  /* Look before giving up: after the laptop slept, the wall-clock limit has passed although the Storybook is up. */
+  while (!(await storybookEntries(port))) {
+    if (stop()) return false;
     await sleep(1000);
   }
-  return false;
+  return true;
 }
 
 /** The box with the addresses of the running Storybooks: [{ name, port, note }]. */

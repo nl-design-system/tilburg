@@ -2,15 +2,34 @@
    Node built-ins only, so they work before `pnpm install` — which is exactly when `pnpm check` is most useful.
    Ported from the nvwa-angular and bq-tlb-frontend tooling. */
 import { spawn } from 'node:child_process';
-import { appendFileSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import {
+  appendFileSync,
+  chmodSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
+import { constants, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import util, { inspect } from 'node:util';
 
 /**
  * No colours, spinners or banner art in CI or when the output goes to a file. TILBURG_TTY=1 says the output reaches a
- * terminal by another way (welcome.mjs writes to /dev/tty, because pnpm folds the output of install hooks away).
+ * terminal another way (welcome.mjs writes to /dev/tty: pnpm folds the output of install hooks away).
  */
-export const interactive = (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI;
+export const interactive =
+  (Boolean(process.stdout.isTTY) || process.env.TILBURG_TTY === '1') && !process.env.CI && process.env.TERM !== 'dumb';
+/* Read once and dropped: the tools and scripts this process starts must not inherit a terminal they do not have. */
+delete process.env.TILBURG_TTY;
+/* NO_COLOR (no-color.org) and FORCE_COLOR=0 ask for plain text, also on a terminal. */
+const colour = interactive && !process.env.NO_COLOR && process.env.FORCE_COLOR !== '0';
+/* 0 or undefined when nobody knows (TILBURG_TTY, some ptys): assume the usual 80. */
+export const columns = () => process.stdout.columns || 80;
 
 const colours = {
   reset: '\x1b[0m',
@@ -25,19 +44,26 @@ const colours = {
   gray: '\x1b[90m',
 };
 
-/** Colour codes, or empty strings when the output is not a terminal. */
-export const c = interactive ? colours : Object.fromEntries(Object.keys(colours).map((key) => [key, '']));
+/** Colour codes, or empty strings when the output is not a terminal or colour is turned off. */
+export const c = colour ? colours : Object.fromEntries(Object.keys(colours).map((key) => [key, '']));
+
+/* The Linux console, and screen or an old tmux, print OSC 8 as garbage instead of ignoring it. */
+const links = interactive && !/^(linux|screen)/.test(process.env.TERM ?? '');
 
 /** OSC 8 hyperlink: clickable in iTerm2, the VS Code and JetBrains terminals, Warp and Windows Terminal. */
 export function hyperlink(text, url) {
-  return interactive ? `\x1b]8;;${url}\x07${text}\x1b]8;;\x07` : text;
+  return links ? `\x1b]8;;${url}\x07${text}\x1b]8;;\x07` : text;
 }
 
-/** Remove colour codes and hyperlink markers, to measure or store the visible text. */
+/** Strip colour, cursor, charset and OSC (hyperlink, title) sequences, to measure or store the visible text. */
+/** `line` cut to one row of the terminal (colours dropped when cut): a line that wraps breaks a redraw that moves the cursor up. */
+export function fitLine(line) {
+  const width = columns() - 1;
+  return stripAnsi(line).length > width ? stripAnsi(line).slice(0, width) : line;
+}
+
 export function stripAnsi(text) {
-  return String(text)
-    .replace(/\x1b\[[0-9;]*[A-Za-z]/g, '')
-    .replace(/\x1b\]8;;[^\x07]*\x07/g, '');
+  return String(text).replace(/\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[()][0-9A-B]/g, '');
 }
 
 /** "3 min ago", "2 h ago", "5 days ago". */
@@ -95,7 +121,7 @@ function fg([r, g, b], depth) {
   return `\x1b[38;5;${16 + 36 * level(r) + 6 * level(g) + level(b)}m`;
 }
 
-/** Mix two sRGB colours in linear light: a straight mix in sRGB (or a walk round the hue circle) goes muddy or garish. */
+/** Mix two sRGB colours in linear light: a straight sRGB mix (or a walk round the hue circle) goes muddy or garish. */
 function mix(from, to, t) {
   const linear = (value) => (value / 255 <= 0.04045 ? value / 255 / 12.92 : ((value / 255 + 0.055) / 1.055) ** 2.4);
   const srgb = (value) => Math.round(255 * (value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055));
@@ -120,34 +146,39 @@ function saturate([r, g, b], minimum) {
 }
 
 /**
- * The banner in Tilburg blue running into Tilburg pink, column by column: the █ blocks are the letters, the ╔═╗ lines
- * become their drop shadow (the same colour, darker). Same size as the plain version.
+ * The banner in Tilburg blue running into pink, column by column: the █ blocks are the letters, the ╔═╗ lines their
+ * drop shadow (same colour, darker). Same size as the plain version.
  */
 function colourBanner(depth) {
-  const width = Math.max(...bannerLines.map((line) => line.length));
-  const [from, to] = [hslToRgb(BRAND_FROM), hslToRgb(BRAND_TO)];
   return bannerLines.map(
     (line) =>
       [...line]
         .map((char, column) => {
           if (char === ' ') return char;
           if (depth === 'basic') return char === '█' ? `${c.blue}${char}` : `${c.gray}${char}`;
-          const face = saturate(mix(from, to, width > 1 ? column / (width - 1) : 0), 0.8);
-          const colour = char === '█' ? face : face.map((value) => Math.round(value * 0.45));
-          return `${fg(colour, depth)}${char}`;
+          return `${fg(bannerColour(char, column), depth)}${char}`;
         })
         .join('') + c.reset,
   );
 }
 
+/** [r, g, b] of a banner character in `column`; also used for the README image (scripts/banner.mjs). */
+export function bannerColour(char, column) {
+  const width = Math.max(...bannerLines.map((line) => line.length));
+  const face = saturate(mix(hslToRgb(BRAND_FROM), hslToRgb(BRAND_TO), width > 1 ? column / (width - 1) : 0), 0.8);
+  return char === '█' ? face : face.map((value) => Math.round(value * 0.45));
+}
+
 /** The banner with a subtitle such as "Environment check". Only the subtitle in CI or a log file. */
 export function printBanner(subtitle) {
   const title = `Tilburg Design System · ${subtitle}`;
-  if (!interactive) {
+  /* The art is 60 columns wide: in a narrower terminal every line would wrap into a mess. */
+  if (!interactive || columns() < 61) {
     console.log(`\n${title}\n`);
     return;
   }
-  const depth = colourDepth();
+  /* 'basic' with c empty draws the art without colour. */
+  const depth = colour ? colourDepth() : 'basic';
   const pink = depth === 'basic' ? c.magenta : fg(hslToRgb(BRAND_TO), depth);
   console.log('');
   for (const line of colourBanner(depth)) console.log(`      ${line}`);
@@ -202,8 +233,7 @@ export function stepSkip(label, why) {
 
 // ─── Child processes: tracked, logged, stoppable ─────────────────────────────
 
-/* Every long-running child goes in here, so a crash, Ctrl-C or a plain exit stops them all instead of leaving a
-   watcher or a Storybook running in the background. */
+/* Every long-running child: a crash, Ctrl-C or a plain exit stops them all, so no watcher or Storybook lingers. */
 const children = new Set();
 
 /** Register a child (spawned with `detached`, so it leads its own process group) to be stopped when we exit. */
@@ -213,10 +243,23 @@ export function track(child) {
   return child;
 }
 
+/** A tracked shell command in its own process group (killTree stops it whole), without stdin, output piped. */
+export const spawnShell = (command, cwd, env) =>
+  track(
+    spawn(command, {
+      shell: true,
+      cwd,
+      detached: process.platform !== 'win32',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env,
+    }),
+  );
+
 /** Stop every tracked child and its whole tree. Synchronous: it also runs from the 'exit' event. */
-export function stopChildren(signal = 'SIGTERM') {
+function stopChildren(signal = 'SIGTERM') {
   for (const child of children) killTree(child, signal);
-  children.clear();
+  /* After a SIGINT they stay listed: one that ignores it (a Stencil build) still gets the SIGTERM on exit. */
+  if (signal !== 'SIGINT') children.clear();
 }
 process.on('exit', () => stopChildren());
 
@@ -231,36 +274,51 @@ export function killTree(child, signal = 'SIGTERM') {
       process.kill(-child.pid, signal);
     }
   } catch {
-    try {
-      child.kill(signal);
-    } catch {
-      /* already gone */
-    }
+    tryOr(() => child.kill(signal)); /* already gone */
   }
 }
 
-/* `pnpm check | head` closes the pipe early; writing to it then throws EPIPE. That is the reader's choice, not a crash. */
+/* `pnpm check | head` closes the pipe early; writing to it then throws EPIPE: the reader's choice, not a crash. Exit
+   with the code already set (a failure before the pipe closed), else 0: `pnpm commands | head` is not an error, and
+   pnpm would report one for the shell's 141 (128 + SIGPIPE). */
 for (const stream of [process.stdout, process.stderr]) {
   stream.on('error', (err) => {
-    if (err.code === 'EPIPE') process.exit(0);
+    if (err.code === 'EPIPE') process.exit(process.exitCode ?? 0);
     throw err;
   });
 }
 
 // ─── Logs: the full output of every step, kept on disk ───────────────────────
 
-export const LOG_DIR = resolve(tmpdir(), 'tilburg-logs');
+/* One per user: on a temp folder users share (Linux /tmp), someone else's folder would leave us without logs. */
+export const LOG_DIR = resolve(tmpdir(), process.getuid ? `tilburg-logs-${process.getuid()}` : 'tilburg-logs');
 const KEEP_LOGS = 40;
+const MAX_LOG_BYTES = 20 * 1024 * 1024;
+const truncatedLogs = new Set();
 
 /** A new log file for `label` (oldest ones are pruned). Returns its path, or null when the disk will not have it. */
 export function newLogFile(label) {
   try {
-    mkdirSync(LOG_DIR, { recursive: true });
+    /* Private: tool output can hold tokens. On a temp folder shared between users (Linux /tmp), a log folder that
+       someone else made (or a symlink) is not used: they could read the logs or point them elsewhere. */
+    mkdirSync(LOG_DIR, { recursive: true, mode: 0o700 });
+    const folder = lstatSync(LOG_DIR);
+    if (folder.isSymbolicLink() || (process.getuid && folder.uid !== process.getuid())) return null;
+    /* mode above applies only on create: a folder from an older version may still be readable by everyone. */
+    chmodSync(LOG_DIR, 0o700);
     const old = readdirSync(LOG_DIR)
       .filter((name) => name.endsWith('.log'))
       .sort();
-    for (const name of old.slice(0, Math.max(0, old.length - KEEP_LOGS + 1)))
-      rmSync(resolve(LOG_DIR, name), { force: true });
+    /* Never a log still being written: pnpm dev opens its watcher logs at the start, so they are the oldest names, and
+       a verify in another terminal would otherwise prune them (and their early errors) away. */
+    const busy = Date.now() - 60 * 60 * 1000;
+    /* A pnpm dev watcher can stay silent for hours while it runs, so its logs get a week. */
+    const busyDev = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    for (const name of old.slice(0, Math.max(0, old.length - KEEP_LOGS + 1))) {
+      const path = resolve(LOG_DIR, name);
+      const since = /^[\dT-]{19}-dev-/.test(name) ? busyDev : busy;
+      if (lstatSync(path, { throwIfNoEntry: false })?.mtimeMs < since) rmSync(path, { force: true });
+    }
     const slug =
       label
         .toLowerCase()
@@ -268,31 +326,49 @@ export function newLogFile(label) {
         .replace(/^-|-$/g, '')
         .slice(0, 40) || 'step';
     const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const path = resolve(LOG_DIR, `${stamp}-${slug}.log`);
-    writeFileSync(path, '');
-    return path;
+    /* A retry within the same second, or another script starting at the same moment, must not truncate a log: 'wx'
+       claims the name in one step (an existsSync() check first would race). */
+    for (let n = 1; ; n++) {
+      const path = resolve(LOG_DIR, n === 1 ? `${stamp}-${slug}.log` : `${stamp}-${slug}-${n}.log`);
+      try {
+        writeFileSync(path, '', { flag: 'wx', mode: 0o600 });
+        return path;
+      } catch (err) {
+        if (err.code !== 'EEXIST') throw err;
+      }
+    }
   } catch {
     return null;
   }
 }
 
-/** Append to a log without ever throwing: losing a log line is better than losing the step. */
+/**
+ * Append to a log without ever throwing: a lost log line beats a lost step. Past 20 MB (a watcher that loops for
+ * days) only one "truncated" line and the closing "# exit" line are still written.
+ */
 export function appendLog(path, text) {
   if (!path) return;
   try {
-    appendFileSync(path, text);
+    if (!text.startsWith('\n# exit')) {
+      if (truncatedLogs.has(path)) return;
+      if ((statSync(path, { throwIfNoEntry: false })?.size ?? 0) + text.length > MAX_LOG_BYTES) {
+        truncatedLogs.add(path);
+        text = `\n# truncated: this log passed ${MAX_LOG_BYTES / 1024 / 1024} MB, the rest was not kept\n`;
+      }
+    }
+    /* mode: a log pruned meanwhile is created again, and must be as private as newLogFile makes it. */
+    appendFileSync(path, text, { mode: 0o600 });
   } catch {
     /* disk full or folder gone: carry on without */
   }
 }
 
-/** The path as a clickable file link. */
-export const logLink = (path) => (path ? hyperlink(path, `file://${path}`) : '(no log could be written)');
+export const logLink = (path) => (path ? hyperlink(path, pathToFileURL(path).href) : '(no log could be written)');
 
 // ─── What did the tool say? ──────────────────────────────────────────────────
 
-/* Lines that carry the actual complaint, from pnpm, npm, node, tsc, ng, vite, jest, eslint, stylelint and markdownlint.
-   "0 errors" and the like are left out. */
+/* The complaint lines of pnpm, npm, node, tsc, ng, vite, jest, eslint, stylelint and markdownlint; "0 errors" and the
+   like are left out. */
 const ERROR_LINE =
   /\b(error|ERR!|failed|failure|cannot|can't|unable to|not found|missing|denied|refused|invalid|unexpected|exception)\b|✖|✗|×|●|\bFAIL\b/i;
 /* Case-sensitive on purpose: errno and tool codes (ENOENT, ERR_PNPM_…, TS2304, NG8002, MD041). Case-insensitive,
@@ -328,6 +404,31 @@ export function excerpt(output, { max = 12, tail = 10 } = {}) {
   };
 }
 
+/**
+ * Everything a failed command printed, between clear start and end lines: from its log file (complete, colours
+ * stripped), or the tail runStep() kept when the log could not be written or read.
+ */
+export function printFullOutput({ command, exitCode, signal, output = '', log } = {}) {
+  const logText = readText(log, null);
+  const complete = logText !== null;
+  /* The log starts with the "$ command" header runStep() wrote; the output follows the first blank line. */
+  const text = complete ? logText.split('\n\n').slice(1).join('\n\n') : output;
+  /* All of it, also for a long build: the summary comes after it, so it stays the last thing on screen. */
+  const lines = text
+    .replace(/\n# exit \S+\n?$/, '')
+    .replace(/\s+$/, '')
+    .split('\n');
+  const how = signal ? `stopped by ${signal}` : `exit code ${exitCode ?? '?'}`;
+  const rule = (title) =>
+    console.log(
+      `\n  ${c.gray}──── ${title} ${'─'.repeat(Math.max(4, Math.min(72, columns() - 10) - title.length))}${c.reset}`,
+    );
+  rule(`Full output of \`${command ?? 'the command'}\` (${how}${complete ? '' : ', last part only'})`);
+  if (!text.trim()) console.log(`  ${c.gray}│${c.reset} (it printed nothing)`);
+  else for (const line of lines) console.log(`  ${c.gray}│${c.reset} ${line}`);
+  rule('end of output');
+}
+
 /** Print what a tool said, briefly: its error lines, else its last lines, and where the full log is. */
 export function printToolOutput({ output = '', log } = {}) {
   const { errors, last } = excerpt(output);
@@ -341,11 +442,11 @@ export function printToolOutput({ output = '', log } = {}) {
   if (log) console.log(`     ${c.gray}Full output:${c.reset} ${logLink(log)}`);
 }
 
-// ─── Steps ───────────────────────────────────────────────────────────────────
+// ─── Commands: run one as a step with a log, or capture a probe's output ─────
 
 /** How much of a failed command's output is kept for classifyFailure(). */
 const OUTPUT_TAIL_BYTES = 256 * 1024;
-/** No output for this long: say that it is still busy, rather than look stuck. */
+/** No output for this long: say it is still busy rather than look stuck. */
 const QUIET_NOTICE_MS = 2 * 60_000;
 
 /**
@@ -360,15 +461,13 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
     appendLog(log, `$ ${command}\n# in ${cwd ?? process.cwd()}, ${new Date().toISOString()}\n\n`);
     let child;
     try {
-      child = track(
-        spawn(command, {
-          shell: true,
-          cwd,
-          detached: process.platform !== 'win32',
-          stdio: ['ignore', 'pipe', 'pipe'],
-          env: { FORCE_COLOR: '1', ...(env ?? process.env) },
-        }),
-      );
+      /* Tools print colour into a pipe only when forced: only when it reaches a terminal (not a file, CI or
+         NO_COLOR). LANGUAGE: git, the shell and strerror in English, which classifyFailure reads. */
+      child = spawnShell(command, cwd, {
+        ...(colour ? { FORCE_COLOR: '1' } : {}),
+        ...(env ?? process.env),
+        LANGUAGE: 'en',
+      });
     } catch (err) {
       /* A missing cwd throws here, synchronously, instead of emitting 'error'. */
       Object.assign(err, { command, output: '', log });
@@ -400,22 +499,9 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
     };
     const stopListening = () => {
       clearInterval(quietTimer);
-      if (process.stdin.isTTY) {
-        process.stdin.removeListener('data', onKey);
-        try {
-          process.stdin.setRawMode(false);
-        } catch {
-          /* stdin already closed */
-        }
-        process.stdin.pause();
-      }
+      if (process.stdin.isTTY) stopKeys(onKey);
     };
-    if (process.stdin.isTTY) {
-      process.stdin.setRawMode(true);
-      process.stdin.resume();
-      process.stdin.setEncoding('utf8');
-      process.stdin.on('data', onKey);
-    }
+    if (process.stdin.isTTY) readKeys(onKey);
     const quietTimer = setInterval(() => {
       if (verbose || Date.now() - lastOutput < QUIET_NOTICE_MS) return;
       lastOutput = Date.now();
@@ -437,8 +523,9 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
       held.push({ stream, data });
       if (held.length > 5000) held.splice(0, held.length - 5000);
     };
-    child.stdout.on('data', collect(process.stdout));
-    child.stderr.on('data', collect(process.stderr));
+    /* Decode as a stream: a character split over two chunks would otherwise turn into two U+FFFD. */
+    child.stdout.setEncoding('utf8').on('data', collect(process.stdout));
+    child.stderr.setEncoding('utf8').on('data', collect(process.stderr));
 
     child.on('close', (code, signal) => {
       stopListening();
@@ -450,7 +537,8 @@ export function runStep(command, { onVerbose, env, cwd, label = command } = {}) 
       const err = new Error(
         signal ? `\`${command}\` was stopped by ${signal}` : `\`${command}\` exited with code ${code}`,
       );
-      Object.assign(err, { command, exitCode: code, signal, output: stripAnsi(tail), log });
+      /* streamed: the output was already shown live (no terminal, or V), so the report need not repeat it. */
+      Object.assign(err, { command, exitCode: code, signal, output: stripAnsi(tail), log, streamed: verbose });
       reject(err);
     });
     child.on('error', (err) => {
@@ -469,9 +557,7 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
   return new Promise((resolvePromise) => {
     let child;
     try {
-      child = track(
-        spawn(command, { shell: true, cwd, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] }),
-      );
+      child = spawnShell(command, cwd, { ...process.env, LANGUAGE: 'en' });
     } catch (err) {
       resolvePromise({ code: 1, stdout: '', stderr: String(err.message ?? err), timedOut: false });
       return;
@@ -489,8 +575,8 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
       killTree(child, 'SIGKILL');
       done(1, { timedOut: true });
     }, timeoutMs);
-    child.stdout.on('data', (d) => (stdout += d));
-    child.stderr.on('data', (d) => (stderr += d));
+    child.stdout.setEncoding('utf8').on('data', (d) => (stdout += d));
+    child.stderr.setEncoding('utf8').on('data', (d) => (stderr += d));
     child.on('close', (code) => done(code ?? 1));
     child.on('error', (err) => {
       stderr += String(err.message ?? err);
@@ -501,34 +587,81 @@ export function capture(command, { timeoutMs = 60_000, cwd } = {}) {
 
 // ─── Questions ───────────────────────────────────────────────────────────────
 
-/** One-key [Y/n] question. Without a terminal it answers `fallback` instead of waiting for nobody. */
+/** Read keys from the terminal: raw mode, one 'data' chunk per key press. Undone by stopKeys(). */
+export const readKeys = (onKey) => process.stdin.setRawMode(true).resume().setEncoding('utf8').on('data', onKey);
+
+/** The reverse of readKeys(); a stdin that is already closed is left alone. */
+export function stopKeys(onKey) {
+  process.stdin.removeListener('data', onKey);
+  tryOr(() => process.stdin.setRawMode(false));
+  process.stdin.pause();
+}
+
+/**
+ * What a key (one 'data' chunk in raw mode) answers: Enter takes the default, y and n answer, Esc and Ctrl-D answer
+ * no; null for anything else (Tab, Backspace, an arrow or F-key sequence, another letter): keep waiting. A paste
+ * counts by its first character.
+ */
+export function confirmAnswer(chunk, dflt) {
+  if (chunk[0] === '\r' || chunk[0] === '\n') return dflt;
+  if (chunk === '\x1b' || chunk[0] === '\x04' || /^n/i.test(chunk)) return false;
+  return /^y/i.test(chunk) ? true : null;
+}
+
+/** One-key [Y/n] question (see confirmAnswer). Without a terminal it answers `fallback` rather than wait for nobody. */
 export function confirm(question, { default: dflt = true, fallback = false } = {}) {
   return new Promise((resolve) => {
-    if (!process.stdin.isTTY) {
+    /* stdout too: with the output redirected (`pnpm verify > out.txt`) nobody sees the question it waits for. */
+    if (!process.stdin.isTTY || !process.stdout.isTTY) {
       resolve(fallback);
       return;
     }
-    process.stdout.write(`  ${c.bold}${question}${c.reset} ${c.cyan}${dflt ? '[Y/n]' : '[y/N]'}${c.reset}  `);
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.setEncoding('utf8');
-    process.stdin.once('data', (chunk) => {
-      process.stdin.setRawMode(false);
-      process.stdin.pause();
-      if (chunk.includes('\u0003')) {
-        process.stdout.write('\n');
-        process.exit(130);
-      }
-      /* One 'data' event can hold several bytes (a paste, an arrow key): look at the first printable one. */
-      const printable = [...chunk].filter((ch) => ch >= ' ' && ch !== '\u007f');
-      const yes = printable.length === 0 ? dflt : /^y$/i.test(printable[0]);
-      process.stdout.write(`\r\x1b[2K  ${c.bold}${question}${c.reset}  ${c.gray}${yes ? 'yes' : 'no'}${c.reset}\n`);
-      resolve(yes);
-    });
+    const onCtrlC = (chunk) => {
+      if (!chunk.includes('\u0003')) return false;
+      process.stdout.write('\n');
+      process.exit(130);
+    };
+    /* Keys typed before the question (an Enter pressed while a step ran waits in the terminal) must not answer it:
+       what arrives in the first moment after resume() was typed earlier, and is dropped. */
+    readKeys(onCtrlC);
+    setTimeout(() => {
+      process.stdin.removeListener('data', onCtrlC);
+      process.stdout.write(`  ${c.bold}${question}${c.reset} ${c.cyan}${dflt ? '[Y/n]' : '[y/N]'}${c.reset}  `);
+      const onKey = (chunk) => {
+        onCtrlC(chunk);
+        const yes = confirmAnswer(chunk, dflt);
+        if (yes === null) return;
+        stopKeys(onKey);
+        process.stdout.write(`\r\x1b[2K  ${c.bold}${question}${c.reset}  ${c.gray}${yes ? 'yes' : 'no'}${c.reset}\n`);
+        resolve(yes);
+      };
+      process.stdin.on('data', onKey);
+    }, 30);
   });
 }
 
 // ─── Reporting ───────────────────────────────────────────────────────────────
+
+/** A `warn` row for printCheckTable; `extra` carries `fix`, `label` or `error`. */
+export const warnRow = (detail, note, extra) => ({ ok: true, warn: true, detail, note, ...extra });
+
+/**
+ * `fn()`, or `fallback` when it throws: for a read whose absence is an answer, not an error, and for a side effect
+ * (a kill, an rm, a terminal reset) whose target may already be gone.
+ */
+export function tryOr(fn, fallback) {
+  try {
+    return fn();
+  } catch {
+    return fallback;
+  }
+}
+
+/** Parsed JSON, or undefined when the file is missing or does not parse. */
+export const readJson = (file) => tryOr(() => JSON.parse(readFileSync(file, 'utf8')));
+
+/** The file's text, or `fallback` when it cannot be read. */
+export const readText = (file, fallback = '') => tryOr(() => readFileSync(file, 'utf8'), fallback);
 
 /**
  * Print groups of { ok, warn, skip, label, detail, note } rows as a ✅/⚠️/❌ table. A `warn` row works but deserves
@@ -560,11 +693,40 @@ export function printCheckTable(groups) {
 }
 
 /** The one shape for a failure: what broke, why, and what to do about it. */
-export function fail({ what, why, fix }) {
+export function fail({ what, why, auto, fix }) {
   console.log(`\n  ${c.red}✗${c.reset}  ${c.bold}${what}${c.reset}`);
   if (why) console.log(`     ${c.gray}Why:${c.reset}  ${why}`);
-  if (fix) console.log(`     ${c.gray}Fix:${c.reset}  ${c.cyan}${fix}${c.reset}`);
+  /* auto: what the scripts did or can do themselves (recovery.mjs); fix is then the manual way. */
+  if (auto) console.log(`     ${c.gray}Auto:${c.reset} ${auto}`);
+  if (fix) console.log(`     ${c.gray}${auto ? 'By hand:' : 'Fix:'}${c.reset}  ${c.cyan}${fix}${c.reset}`);
   console.log('');
+}
+
+/** A command to type, in cyan; a hint, in gray. Not for text that goes on in another colour (they end with a reset). */
+export const cmd = (text) => `${c.cyan}${text}${c.reset}`;
+export const hint = (text) => `${c.gray}${text}${c.reset}`;
+export const warn = (text) => console.log(`  ${c.yellow}⚠${c.reset}  ${text}`);
+
+export function exitWith(problem) {
+  fail(problem);
+  process.exit(1);
+}
+
+export function exitAfter(text, code = 0) {
+  console.log(text);
+  process.exit(code);
+}
+
+/**
+ * parseArgs (strict), or exit 1 with `usage` as the fix. Node's hint to "place it after '--'" is dropped: there it
+ * would turn a mistyped flag into a component name.
+ */
+export function parseArgsOrExit(config, usage) {
+  try {
+    return util.parseArgs(config);
+  } catch (err) {
+    exitWith({ what: err.message.replace(/\. To specify.*$/s, ''), fix: usage });
+  }
 }
 
 /** An exception in full: name, message, errno code, the `cause` chain and the stack. */
@@ -574,28 +736,39 @@ export function printError(err, { what, why, fix } = {}) {
   for (let depth = 0; current && depth < 5; depth++) {
     const prefix = depth === 0 ? '' : 'Caused by: ';
     if (current instanceof Error) {
-      console.error(
-        `  ${c.red}${prefix}${current.name}: ${current.message}${current.code ? ` [${current.code}]` : ''}${c.reset}`,
-      );
-      for (const line of (current.stack ?? '').split('\n').slice(1))
-        console.error(`  ${c.gray}${line.trim()}${c.reset}`);
-      current = current.cause;
+      try {
+        console.error(
+          `  ${c.red}${prefix}${current.name}: ${current.message}${current.code ? ` [${current.code}]` : ''}${c.reset}`,
+        );
+        const stack = String(current.stack ?? '');
+        for (const line of stack.split('\n').slice(1)) console.error(`  ${c.gray}${line.trim()}${c.reset}`);
+        current = current.cause;
+      } catch {
+        /* A getter that throws: inspect() does not call getters. Printing must not throw, or the crash handler dies
+           (exit 7) with the original error unseen. */
+        console.error(`  ${c.red}${prefix}${inspect(current)}${c.reset}`);
+        current = null;
+      }
     } else {
-      console.error(`  ${c.red}${prefix}${typeof current === 'string' ? current : JSON.stringify(current)}${c.reset}`);
+      console.error(`  ${c.red}${prefix}${typeof current === 'string' ? current : inspect(current)}${c.reset}`);
       current = null;
     }
   }
   console.error('');
 }
 
-function restoreTerminal() {
-  try {
+const restoreTerminal = () =>
+  tryOr(() => {
     if (process.stdin.isTTY && process.stdin.isRaw) process.stdin.setRawMode(false);
     if (process.stdout.isTTY) process.stdout.write('\x1b[?25h');
-  } catch {
-    /* nothing more we can do */
-  }
-}
+  });
+
+/**
+ * Run as root via sudo: node_modules, dist/ and the logs would belong to root, and every later run without sudo fails
+ * with EACCES. SUDO_USER alone is not enough: `sudo -iu dev` sets it too, yet the files belong to the right user.
+ */
+export const underSudo = (env = process.env, uid = process.getuid?.()) =>
+  Boolean(env.SUDO_USER || env.DOAS_USER) && uid === 0;
 
 /**
  * The safety net for every script: anything nobody caught is printed in full (with where to go next), and Ctrl-C or
@@ -603,6 +776,12 @@ function restoreTerminal() {
  * shutdown (pnpm dev) passes `signals: false`.
  */
 export function installCrashHandler(script, { signals = true } = {}) {
+  if (underSudo())
+    exitWith({
+      what: `${script} is running under sudo`,
+      why: `the files it writes would belong to ${process.env.USER || 'root'}, not to ${process.env.SUDO_USER || process.env.DOAS_USER}; the next run without sudo then fails with EACCES.`,
+      fix: `${script} without sudo (after an earlier sudo run: sudo chown -R "$(id -un)" . first)`,
+    });
   const onCrash = (err) => {
     restoreTerminal();
     stopChildren();
@@ -620,7 +799,8 @@ export function installCrashHandler(script, { signals = true } = {}) {
       restoreTerminal();
       stopChildren(signal);
       console.log(`\n  ${c.gray}Stopped (${signal === 'SIGINT' ? 'Ctrl-C' : signal}).${c.reset}\n`);
-      process.exit(130);
+      /* The shell's convention, 128 + the signal: 130 for Ctrl-C, 143 for SIGTERM, 129 for SIGHUP. */
+      process.exit(128 + constants.signals[signal]);
     };
     process.on('SIGINT', onSignal);
     process.on('SIGTERM', onSignal);
@@ -628,19 +808,22 @@ export function installCrashHandler(script, { signals = true } = {}) {
   }
 }
 
-/** Open a URL in the default browser. Never throws: not opening a browser is cosmetic. */
-export function openUrl(url) {
+/**
+ * Open a URL (or a folder) in the default browser (or file manager: `what`). Never throws: not opening it is
+ * cosmetic. On Linux $BROWSER first: Codespaces, devcontainers and WSL (wslview) set it, often without xdg-open.
+ */
+export function openUrl(url, what = 'a browser') {
   const [command, args] =
     process.platform === 'darwin'
       ? ['open', [url]]
       : process.platform === 'win32'
         ? ['cmd', ['/c', 'start', '', url]]
-        : ['xdg-open', [url]];
+        : [(/^https?:/.test(url) && process.env.BROWSER?.split(':')[0]) || 'xdg-open', [url]];
   try {
     const child = spawn(command, args, { stdio: 'ignore', detached: true });
-    child.on('error', () => console.log(`  Could not open a browser; go to ${url}`));
+    child.on('error', () => console.log(`  Could not open ${what}; go to ${url}`));
     child.unref();
   } catch {
-    console.log(`  Could not open a browser; go to ${url}`);
+    console.log(`  Could not open ${what}; go to ${url}`);
   }
 }

@@ -9,4 +9,5 @@ gegenereerd:** `pnpm --filter @gemeente-tilburg/web-components-stencil run build
 Elke `<tilburg-wbc-naam>` wordt een `TilburgWbcNaam`-component; events `tilburgX` worden props `onTilburgX`. De
 stories onder `Tilburg Web Components/…` in de React-Storybook gebruiken deze wrappers.
 
-Experimenteel en niet op npm gepubliceerd.
+Experimenteel en niet op npm gepubliceerd: je installeert de tarball (`pnpm run pack:local`). De setup staat in de
+Storybook onder [Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs), bij _Web Components (Stencil)_.

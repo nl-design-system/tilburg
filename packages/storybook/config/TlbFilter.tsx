@@ -1,12 +1,11 @@
 /* Toolbar button that filters the sidebar on the TLB badge (see `sidebarLabel.tsx`): all components, only the
    components Tilburg introduces itself, or only the ones that style an Utrecht component. It uses Storybook's sidebar
-   filter API (`experimental_setFilter`), which both Storybook versions in this repo have; the built-in tag filter of
-   Storybook 9 can only include a tag, not exclude it. The choice is remembered per browser. The same file as
-   `packages/storybook-angular/.storybook/TlbFilter.tsx`, with the Storybook 8 imports. */
-import { type API, useStorybookApi } from '@storybook/manager-api';
-// @ts-expect-error TS6133 — required at runtime in the production manager bundle
+   filter API (`experimental_setFilter`), because the built-in tag filter can only include a tag, not exclude it.
+   The choice is remembered per browser. The same file as `packages/storybook-angular/.storybook/TlbFilter.tsx`;
+   keep the two in sync. */
 import React, { useState } from 'react';
 import { IconButton, TooltipLinkList, WithTooltip } from 'storybook/internal/components';
+import { type API, useStorybookApi } from 'storybook/manager-api';
 import { TILBURG_TAG } from './sidebarLabel';
 
 export const TLB_FILTER_ID = 'tilburg/tlb-filter';

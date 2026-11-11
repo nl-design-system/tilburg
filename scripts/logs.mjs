@@ -1,26 +1,24 @@
-/* `pnpm logs`: the newest step logs (the full output of every step the scripts ran, see runStep in lib/cli-utils.mjs).
+/* `pnpm logs`: the newest step logs (the full output of every step the scripts ran; runStep in lib/cli-utils.mjs).
    `pnpm logs --last` prints the end of the last failing one, `pnpm logs --open` opens the folder. */
-import { parseArgs } from 'node:util';
-import { c, fail, LOG_DIR, logLink, openUrl } from './lib/cli-utils.mjs';
+import { c, exitWith, installCrashHandler, LOG_DIR, logLink, openUrl, parseArgsOrExit } from './lib/cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './lib/logs.mjs';
 
+installCrashHandler('pnpm logs');
 const SHOW = 15;
 const TAIL_LINES = 80;
 
-let args;
-try {
-  ({ values: args } = parseArgs({ options: { last: { type: 'boolean' }, open: { type: 'boolean' } } }));
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open' });
-  process.exit(1);
-}
+const USAGE = 'pnpm logs   or   pnpm logs --last   or   pnpm logs --open';
+const { values: args } = parseArgsOrExit({ options: { last: { type: 'boolean' }, open: { type: 'boolean' } } }, USAGE);
+if (args.last && args.open) exitWith({ what: '--last and --open do not go together', fix: USAGE });
 
 const kb = (bytes) => (bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`);
 
 /** ok / exit 1 / —, padded to `width` before colouring so the columns line up. */
 function status(exit, width = 0) {
-  const text = (exit === null ? '—' : exit === '0' ? 'ok' : `exit ${exit}`).padEnd(width);
-  return `${exit === null ? c.gray : exit === '0' ? c.green : c.red}${text}${c.reset}`;
+  const text = (exit === null ? '—' : exit === '0' ? 'ok' : exit === 'stopped' ? 'stopped' : `exit ${exit}`).padEnd(
+    width,
+  );
+  return `${exit === null || exit === 'stopped' ? c.gray : exit === '0' ? c.green : c.red}${text}${c.reset}`;
 }
 
 const logs = readLogs();
@@ -28,8 +26,8 @@ if (!logs.length) {
   console.log(`\n  No step logs yet ${c.gray}(${LOG_DIR})${c.reset}.`);
   console.log('  They appear once pnpm setup, verify, test or dev has run a step.\n');
 } else if (args.open) {
-  openUrl(LOG_DIR);
-  console.log(`\n  Opened ${logLink(LOG_DIR)}\n`);
+  console.log(`\n  Opening ${logLink(LOG_DIR)}\n`);
+  openUrl(LOG_DIR, 'the folder');
 } else if (args.last) {
   const log = pickLast(logs);
   console.log(`\n  ${log.step}  ${status(log.exit)}  ${c.gray}${log.time.toLocaleString()}${c.reset}`);

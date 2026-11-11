@@ -4,7 +4,8 @@
 
 import { Markdown, Meta } from "@storybook/addon-docs/blocks";
 import markdown from "../../../storybook-shared/src/documentation/implementation-status.md?raw";
+import { linkStatus } from "../../../storybook-shared/src/usage";
 
-<Meta title="Tilburg Angular/Implementatiestatus" />
+<Meta title="Tilburg/Implementatiestatus" />
 
-<Markdown>{markdown}</Markdown>
+<Markdown>{linkStatus(markdown)}</Markdown>

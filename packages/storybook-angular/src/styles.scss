@@ -43,3 +43,7 @@
 @import "@gemeente-tilburg/components-css/validation-message/index";
 
 @import "@gemeente-tilburg/font/src/index";
+
+/* The documentation pages: inline code in running text (shared with the React Storybook).
+   Without the extension, so that Sass takes the rules in instead of leaving an @import for the browser. */
+@import "../../storybook-shared/src/docs";

@@ -4,9 +4,9 @@
 >
 > Deze componentenbibliotheek is nog in ontwikkeling. Componenten en hun API's kunnen nog wijzigen. Loop je ergens tegenaan, mis je een component, of twijfel je of je iets al kunt gebruiken? Neem contact op met het Design System-team van Gemeente Tilburg — dan kijken we mee. Meld bugs en verzoeken bij voorkeur als issue op [github.com/nl-design-system/tilburg](https://github.com/nl-design-system/tilburg/issues).
 
-## Vier consumptie-lagen
+## Vier lagen
 
-De componenten zijn in vier lagen beschikbaar — kies de laag die past bij je stack:
+De componenten zijn er in vier lagen. Kies de laag die past bij je stack:
 
 | Laag                 | Package                                    | Voor wie                                                                                 |
 | -------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
@@ -15,7 +15,9 @@ De componenten zijn in vier lagen beschikbaar — kies de laag die past bij je s
 | **Angular**          | `@gemeente-tilburg/components-angular`     | Angular-projecten — `<tilburg-alert>`, `<tilburg-textbox>`, etc.                         |
 | **Web Components**   | `@gemeente-tilburg/web-components-stencil` | elke stack — native custom elements `<tilburg-wbc-alert>`, `<tilburg-wbc-textbox>`, etc. |
 
-De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web Component is een dunne laag die exact dezelfde DOM en klassen emit als de gedeelde HTML/CSS-referentie. De Web Components renderen in de light DOM, dus dezelfde CSS stylet ze; hun React-wrappers (`@gemeente-tilburg/web-components-react`) worden door Stencil gegenereerd. Wat je onder `Tilburg HTML/…` ziet is de gedeelde render — `Tilburg React/…`, `Tilburg Angular/…` en `Tilburg Web Components/…` zijn parity-checks bovenop.
+De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web Component is een dunne laag die precies dezelfde DOM en classes maakt als de gedeelde HTML/CSS-referentie. De Web Components renderen in de light DOM, dus dezelfde CSS geldt ook daar; hun React-wrappers (`@gemeente-tilburg/web-components-react`) worden door Stencil gegenereerd. Wat je onder `Tilburg HTML/…` ziet is die referentie; `Tilburg React/…`, `Tilburg Angular/…` en `Tilburg Web Components/…` laten hetzelfde zien, gemaakt door die laag.
+
+Nog niet alles staat op npm. Wat je nu kunt installeren en hoe, staat op [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs); welk component in welke laag bestaat op [Implementatiestatus](?path=/docs/tilburg-implementatiestatus--docs).
 
 <!-- markdownlint-disable MD033 -->
 <figure style="margin: 1.5rem 0;">
@@ -29,3 +31,19 @@ De **HTML/CSS-laag is leidend**: elke React-component, Angular-component en Web 
   </figcaption>
 </figure>
 <!-- markdownlint-enable MD033 -->
+
+## Begrippen
+
+De woorden die op deze pagina's steeds terugkomen:
+
+| Begrip            | Betekenis                                                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Laag**          | Eén manier om een component te gebruiken: HTML/CSS, React, Angular of Web Components. Zie [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).                  |
+| **Referentie**    | De HTML en CSS van een component, zoals onder `Tilburg HTML/…`. Elke andere laag maakt precies die HTML.                                                         |
+| **Wrapper**       | Het React-component, Angular-component of de Web Component rond de referentie: het voegt een API toe, geen eigen stijl.                                          |
+| **Utrecht-basis** | De CSS van `@utrecht/component-library-css` (NL Design System), waar de Tilburg-stijl bovenop ligt.                                                              |
+| **TLB**           | Een eigen Tilburg-component, zonder Utrecht-basis (bijvoorbeeld de Tooltip). In de zijbalk herken je het aan de TLB-badge.                                       |
+| **Design token**  | Een benoemde waarde (kleur, afstand, lettergrootte) als CSS custom property, zoals `--tilburg-interaction-color`. Zie [Tokens](?path=/docs/tokens-intro--docs).  |
+| **Thema**         | Een set tokens. Er zijn er twee, Tilburg en BAT, met dezelfde componenten; hoog contrast is een aanvulling daarop. Zie [Tokens](?path=/docs/tokens-intro--docs). |
+| **Afnemer**       | Een project dat de componenten gebruikt: een website of applicatie van of voor de gemeente.                                                                      |
+| **Tarball**       | Een package als `.tgz`-bestand, om te installeren zolang het niet op npm staat. Zie [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).                        |

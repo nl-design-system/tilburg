@@ -1,21 +1,29 @@
-/* `pnpm run clean:pick`: choose what to delete, with sizes. Build output and caches are ticked; node_modules is not,
-   and asks again. Without a terminal it only lists the ticked defaults, unless `--yes` is passed. (`pnpm clean` still runs every package's own
-   clean script.) */
-import { exec } from 'node:child_process';
+/* `pnpm run clean:pick`: choose what to delete, with sizes. Build output and caches are ticked; the tarballs and
+   node_modules are not, and node_modules asks again. Without a terminal it only lists the ticked defaults, unless
+   `--yes` is passed. (`pnpm clean` still runs every package's own clean script.) */
+import { execFile } from 'node:child_process';
 import { existsSync, readdirSync, rmSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { ROOT } from './dev-config.mjs';
 import {
   c,
+  cmd,
   confirm,
+  exitAfter,
+  fitLine,
   installCrashHandler,
+  interactive,
   printBanner,
   printError,
+  readKeys,
   stepDone,
   stepFail,
   stepStart,
+  stopKeys,
 } from './lib/cli-utils.mjs';
+import { splitKeys } from './lib/keys.mjs';
+import { readDevLock, SYNC_LOCK } from './lib/lock.mjs';
 
 installCrashHandler('pnpm run clean:pick');
 printBanner('Clean');
@@ -31,9 +39,10 @@ const TARGETS = [
   { label: 'Build output', what: "every package's dist/", paths: inPackages('dist'), checked: true },
   {
     label: 'Tarballs',
-    what: '.tarballs/ (pnpm run pack:local)',
+    what: '.tarballs/ (pack:local; hltsamen installs from it)',
     paths: [resolve(ROOT, '.tarballs')].filter(existsSync),
-    checked: true,
+    /* Not by default: hltsamen installs from these (file:../tilburg/.tarballs/…), and its next install would fail. */
+    checked: false,
   },
   {
     label: 'Angular caches',
@@ -43,8 +52,12 @@ const TARGETS = [
   },
   {
     label: 'Tool caches',
-    what: 'node_modules/.cache (Vite, Storybook, Babel)',
-    paths: [resolve(ROOT, 'node_modules/.cache'), ...inPackages('node_modules/.cache')].filter(existsSync),
+    what: 'node_modules/.cache (Vite, Storybook, Babel) and .stencil/',
+    paths: [
+      resolve(ROOT, 'node_modules/.cache'),
+      ...inPackages('node_modules/.cache'),
+      ...inPackages('.stencil'),
+    ].filter(existsSync),
     checked: true,
   },
   {
@@ -59,7 +72,7 @@ const TARGETS = [
 async function size(paths) {
   if (!paths.length) return null;
   try {
-    const { stdout } = await promisify(exec)(`du -sk ${paths.map((path) => `"${path}"`).join(' ')}`);
+    const { stdout } = await promisify(execFile)('du', ['-sk', ...paths]);
     const kb = stdout
       .trim()
       .split('\n')
@@ -84,7 +97,7 @@ function pick(targets) {
       if (drawn) process.stdout.write(`\x1b[${drawn}A`);
       const lines = targets.map((target, index) => {
         const box = !target.paths.length ? `${c.gray}[ ]` : target.checked ? `${c.green}[x]` : '[ ]';
-        const pointer = index === cursor ? `${c.cyan}❯${c.reset}` : ' ';
+        const pointer = index === cursor ? `${cmd('❯')}` : ' ';
         const sizeText = target.paths.length
           ? `${c.gray}${(target.size ?? '').padStart(8)}${c.reset}`
           : `${c.gray}  (none)${c.reset}`;
@@ -92,16 +105,20 @@ function pick(targets) {
         return `  ${pointer} ${box}${c.reset} ${target.label.padEnd(15)} ${sizeText}  ${c.gray}${target.what}${c.reset}${warning}\x1b[0K`;
       });
       lines.push(`\n  ${c.gray}↑ ↓ move   space tick   enter delete   q cancel${c.reset}\x1b[0K`);
-      process.stdout.write(`${lines.join('\n')}\n`);
+      /* A line that wraps would make the cursor-up above miss, and the list drift down the screen. */
+      const fit = (line) => (fitLine(line) === line ? line : `${fitLine(line)}\x1b[0K`);
+      process.stdout.write(`${lines.map(fit).join('\n')}\n`);
       drawn = lines.length + 1;
     };
     draw();
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.setEncoding('utf8');
     const onKey = (key) => {
-      if (key === '\u0003' || key === 'q') {
+      if (key === '\u0003') {
+        /* Ctrl-C is a stop, not a choice: exit like a SIGINT would. */
         finish(null);
+        exitAfter(`\n  ${c.gray}Nothing deleted.${c.reset}\n`, 130);
+      } else if (key === 'q' || key === 'Q' || key === '\x1b') {
+        finish(null);
+        return;
       } else if (key === '\x1b[A') {
         cursor = (cursor - 1 + targets.length) % targets.length;
       } else if (key === '\x1b[B') {
@@ -114,43 +131,63 @@ function pick(targets) {
       }
       draw();
     };
+    let finished = false;
+    const onData = (chunk) => {
+      for (const key of splitKeys(chunk)) if (!finished) onKey(key);
+    };
     const finish = (result) => {
-      process.stdin.removeListener('data', onKey);
-      process.stdin.setRawMode(false);
-      process.stdin.pause();
+      finished = true;
+      stopKeys(onData);
       done(result);
     };
-    process.stdin.on('data', onKey);
+    readKeys(onData);
   });
 }
 
 let selected;
-if (process.stdin.isTTY) {
+if (process.stdin.isTTY && interactive) {
   selected = await pick(TARGETS);
+} else if (process.stdin.isTTY) {
+  /* TERM=dumb: no cursor control for the picker, so one plain question about the defaults. */
+  const defaults = TARGETS.filter((target) => target.checked);
+  const ok =
+    defaults.length &&
+    (await confirm(`Delete ${defaults.map((target) => target.label).join(', ')}?`, { default: false }));
+  selected = ok ? defaults : [];
 } else {
   /* No one to ask: deleting without a question needs --yes, so a piped or scripted run cannot wipe dist/ by accident. */
   selected = TARGETS.filter((target) => target.checked);
-  if (!process.argv.includes('--yes')) {
+  if (selected.length && !process.argv.includes('--yes')) {
     console.log(
       `  No terminal to ask in. These would be deleted: ${selected.map((target) => target.label).join(', ')}.`,
     );
-    console.log(`  Run ${c.cyan}pnpm run clean:pick --yes${c.reset} to delete them without asking.\n`);
-    process.exit(1);
+    exitAfter(`  Run ${cmd('pnpm run clean:pick --yes')} to delete them without asking.\n`, 1);
   }
 }
 
-if (!selected?.length) {
-  console.log(`\n  ${c.gray}Nothing deleted.${c.reset}\n`);
-  process.exit(0);
-}
+if (!selected?.length) exitAfter(`\n  ${c.gray}Nothing deleted.${c.reset}\n`);
 if (selected.some((target) => target.dangerous)) {
   console.log('');
   if (
     !(await confirm(`${c.yellow}Delete node_modules? You need pnpm install afterwards.${c.reset}`, { default: false }))
-  ) {
-    console.log(`\n  ${c.gray}Cancelled.${c.reset}\n`);
-    process.exit(0);
-  }
+  )
+    exitAfter(`\n  ${c.gray}Cancelled.${c.reset}\n`);
+}
+
+/* A build (sync, verify, pack:local) writes what this would delete: wait for it instead. */
+const building = selected.length > 0 && readDevLock(SYNC_LOCK);
+if (building)
+  exitAfter(
+    `\n  ${c.yellow}⚠${c.reset}  ${building.what ?? 'pnpm sync'} is running (process ${building.pid}). Nothing deleted: run this again when it is done.\n`,
+    1,
+  );
+
+/* Deleting dist/, node_modules or the caches under a running pnpm dev breaks its watchers and Storybooks. */
+const devLock = selected.length > 0 && readDevLock();
+if (devLock) {
+  console.log(`\n  ${c.yellow}⚠${c.reset}  pnpm dev is running (process ${devLock.pid}) and uses what you picked.`);
+  if (!(await confirm('Delete them anyway? (or stop pnpm dev with q first)', { default: false })))
+    exitAfter(`\n  ${c.gray}Nothing deleted. Stop pnpm dev with q, then run this again.${c.reset}\n`, 1);
 }
 
 console.log('');
@@ -171,9 +208,9 @@ for (const target of selected) {
       err,
       locked
         ? {
-            what: `${relative(ROOT, err.path ?? target.paths[0])} is in use`,
-            why: 'A running Storybook, watcher (pnpm dev), test runner or editor holds files in it.',
-            fix: 'stop those (q in pnpm dev), then run this again',
+            what: `${relative(ROOT, err.path ?? target.paths[0])} could not be deleted`,
+            why: 'A running Storybook, watcher (pnpm dev), test runner or editor holds files in it, or a folder in it is read-only or not yours (made with sudo).',
+            fix: `stop those (q in pnpm dev), or check the owner with ls -la ${relative(ROOT, err.path ?? target.paths[0])}, then run this again`,
           }
         : { what: `Could not delete ${target.label.toLowerCase()}` },
     );
@@ -182,11 +219,9 @@ for (const target of selected) {
 
 console.log('');
 if (selected.some((target) => target.dangerous) && !existsSync(resolve(ROOT, 'node_modules'))) {
-  console.log(`  Next: ${c.cyan}pnpm install${c.reset}`);
+  console.log(`  Next: ${cmd('pnpm install')}`);
 } else if (selected.some((target) => target.label === 'Build output')) {
-  console.log(
-    `  Next: ${c.cyan}pnpm dev${c.reset} builds what the Storybooks need, ${c.cyan}pnpm build${c.reset} builds everything.`,
-  );
+  console.log(`  Next: ${cmd('pnpm dev')} builds what the Storybooks need, ${cmd('pnpm build')} builds everything.`);
 }
 console.log('');
 process.exit(failures ? 1 : 0);

@@ -1,5 +1,6 @@
-import { addons, types } from '@storybook/manager-api';
+import { addons, types } from 'storybook/manager-api';
 import { applyTlbFilter, TLB_FILTER_ID, TlbFilter } from './TlbFilter';
+import { USAGE_TOOL_ID, UsageTool } from './UsagePanel';
 import { renderLabel } from './sidebarLabel';
 import { theme } from './theme';
 
@@ -14,5 +15,15 @@ addons.register(TLB_FILTER_ID, (api) => {
     title: 'TLB-filter',
     match: ({ viewMode }) => viewMode === 'story' || viewMode === 'docs',
     render: TlbFilter,
+  });
+});
+
+/* Toolbar button "</> Gebruik": a dialog with how to put the component on screen into a project of your own. */
+addons.register(USAGE_TOOL_ID, () => {
+  addons.add(USAGE_TOOL_ID, {
+    type: types.TOOL,
+    title: 'Gebruik',
+    match: ({ viewMode }) => viewMode === 'story',
+    render: UsageTool,
   });
 });

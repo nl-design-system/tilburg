@@ -1,7 +1,7 @@
 /* Mirrors `packages/storybook/config/theme.tsx` so both storybooks have the
-   same Tilburg brand chrome — logo, title, colors, fonts. Storybook 9 exposes
-   the theming API at `storybook/theming/create` (the standalone
-   `@storybook/theming` package is deprecated in v9). */
+   same Tilburg brand chrome — logo, title, colors, fonts. Since Storybook 9
+   the theming API lives at `storybook/theming/create` (the standalone
+   `@storybook/theming` package is gone). */
 
 import { create } from 'storybook/theming/create';
 
@@ -33,10 +33,12 @@ export const theme = create({
   appBorderRadius: tilburgBorderRadius,
   textColor: tilburgColorBlack,
   textInverseColor: tilburgColorWhite,
-  barTextColor: tilburgColorWhite,
-  barSelectedColor: tilburgColorLightBlue,
-  barHoverColor: tilburgColorLightBlue,
-  barBg: tilburgColorDarkBlue,
+  /* Light bar: since Storybook 9 the toolbar icons take `textMutedColor` (grey), not `barTextColor`, so on a dark bar
+     they all but disappear. */
+  barTextColor: tilburgColorGrey,
+  barSelectedColor: tilburgColorDarkBlue,
+  barHoverColor: tilburgColorMediumBlue,
+  barBg: tilburgColorWhite,
   inputBg: tilburgColorWhite,
   inputBorder: tilburgColorGrey,
   inputTextColor: tilburgColorGrey,

@@ -1,4 +1,4 @@
-import type { Decorator } from '@storybook/react';
+import type { Decorator } from '@storybook/react-vite';
 import { Document } from '@utrecht/component-library-react';
 
 export const ParametersArgsDecorator: Decorator = (Story, context) => {
