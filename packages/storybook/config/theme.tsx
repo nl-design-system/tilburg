@@ -29,10 +29,12 @@ export const theme: ThemeVars = create({
   appBorderRadius: tilburgBorderRadius,
   textColor: tilburgColorBlack,
   textInverseColor: tilburgColorWhite,
-  barTextColor: tilburgColorWhite,
-  barSelectedColor: tilburgColorLightBlue,
-  barHoverColor: tilburgColorLightBlue,
-  barBg: tilburgColorDarkBlue,
+  /* Light bar: since Storybook 9 the toolbar icons take `textMutedColor` (grey), not `barTextColor`, so on a dark bar
+     they all but disappear. */
+  barTextColor: tilburgColorGrey,
+  barSelectedColor: tilburgColorDarkBlue,
+  barHoverColor: tilburgColorMediumBlue,
+  barBg: tilburgColorWhite,
   inputBg: tilburgColorWhite,
   inputBorder: tilburgColorGrey,
   inputTextColor: tilburgColorGrey,

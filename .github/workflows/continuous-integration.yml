@@ -115,3 +115,38 @@ jobs:
 
       - name: Test
         run: pnpm run test
+
+  # The dev tooling in scripts/ also runs on Windows (cmd.exe, nvm-windows, no lsof or POSIX signals). Its own tests
+  # catch what only breaks there: a fake command that is a bare shell script, a path joined or split with "/", a
+  # Unix-only command. Only those tests: the packages are built and tested on Linux above.
+  test-scripts-windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm package manager
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Check for known security issues with npm packages
+        run: |
+          echo "Auditing npm dependencies before installing them. For more information, see: https://nldesignsystem.nl/pnpm-audit"
+          pnpm audit --audit-level critical
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test the scripts
+        run: pnpm run test:scripts

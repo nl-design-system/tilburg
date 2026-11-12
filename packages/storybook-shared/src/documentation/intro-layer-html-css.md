@@ -7,16 +7,22 @@ direct in je markup. Dit is de leidende laag; alle andere lagen renderen precies
 
 ### Installatie (HTML/CSS)
 
-`@gemeente-tilburg/components-css` is **nog niet op npm gepubliceerd**. Vraag het Design System-team om een build, of
-gebruik de map `packages/components-css` uit de repository. Tokens en Utrecht-basis installeer je wel via npm:
-
 ```bash
-npm install @gemeente-tilburg/design-tokens @utrecht/component-library-css
+npm install ../tilburg/.tarballs/gemeente-tilburg-components-css-0.0.0.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            @utrecht/component-library-css
 ```
+
+> `@gemeente-tilburg/components-css` wordt niet op npm gepubliceerd: je installeert de tarball uit de repository (zie
+> _Installeren vanuit een tarball_ op _Aan de slag_), of je gebruikt de map `packages/components-css` rechtstreeks. De
+> tokens komen na de eerste release van npm (`@gemeente-tilburg/design-tokens`).
+
+Het package bevat per component de SCSS (`index.scss`) en, waar nodig, het script (`index.js`); er is geen
+gecompileerde CSS.
 
 ### Setup (HTML/CSS)
 
-De component-CSS is SCSS, per component een map. Compileer alleen wat je gebruikt:
+De component-CSS is SCSS, per component een map. Je hebt dus een Sass-stap nodig. Compileer alleen wat je gebruikt:
 
 ```scss
 @import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
@@ -56,7 +62,8 @@ script nodig: gebruik `showModal()` en `close()` van het native `<dialog>`-eleme
 
 ### Gebruik (HTML/CSS)
 
-Neem de markup over van de pagina's onder `Tilburg HTML/…`:
+Neem de markup over van de pagina's onder `Tilburg HTML/…`, of kopieer hem met de knop **`</> Gebruik`** in de werkbalk
+van een story:
 
 ```html
 <button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Versturen</button>

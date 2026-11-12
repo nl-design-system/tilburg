@@ -1,6 +1,7 @@
 /* Every command a message tells someone to run must work: the `fix`, `note` and `why` texts in scripts/, and the
    FAILURES fixes and RECOVERIES labels in recovery.mjs (the CONTRIBUTING.md table is generated from those). Static:
    nothing here runs a step or a tool, except `git help -a` to list git's own commands. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -106,7 +107,7 @@ test('every git subcommand a message names is one git has', () => {
 });
 
 test('nvm and corepack are only told to do what they can', () => {
-  const NVM = new Set(['install', 'use', 'alias', 'first']);
+  const NVM = new Set(['install', 'uninstall', 'use', 'alias', 'first']);
   const wrong = messages.flatMap(({ where, text }) => [
     ...[...text.matchAll(/\bnvm ([a-z]+)/g)].filter(([, sub]) => !NVM.has(sub)).map(([all]) => `${where}: ${all}`),
     ...[...text.matchAll(/\bcorepack ([a-z]+)/g)]

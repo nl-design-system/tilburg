@@ -1,16 +1,13 @@
 /* `node --test scripts/`: the install hooks, run on a copy of the scripts against a fake repo. preflight may only stop
    `pnpm install` for a wrong Node; welcome may never stop it. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { after, test } from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { test } from 'node:test';
+import { copyScripts, runScript, tempDir } from './lib/test-fakes.mjs';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const temp = mkdtempSync(resolve(tmpdir(), 'tilburg-preflight-test-'));
-after(() => rmSync(temp, { recursive: true, force: true }));
+const temp = tempDir('tilburg-preflight-test-');
 
 const major = Number(process.versions.node.split('.')[0]);
 let count = 0;
@@ -18,21 +15,17 @@ let count = 0;
 /** Run `script` in a fake repo; `files` are its root files (null leaves one out). */
 function run(script, { files = {}, env = {}, detached = false } = {}) {
   const root = resolve(temp, `repo-${count++}`);
-  mkdirSync(resolve(root, 'scripts'), { recursive: true });
-  for (const file of [script, 'dev-config.mjs', 'lib'])
-    cpSync(resolve(here, file), resolve(root, 'scripts', file), { recursive: true });
+  copyScripts(root, script);
   const all = { 'package.json': JSON.stringify({ packageManager: 'pnpm@11.15.1' }), '.nvmrc': `${major}\n`, ...files };
   for (const [name, content] of Object.entries(all)) if (content !== null) writeFileSync(resolve(root, name), content);
   const { CI, npm_config_user_agent, TILBURG_QUIET, ...rest } = process.env;
-  const result = spawnSync(process.execPath, [resolve(root, 'scripts', script)], {
+  const result = runScript(resolve(root, 'scripts', script), [], {
     cwd: root,
     env: { ...rest, ...env },
     stdio: ['ignore', 'pipe', 'pipe'],
-    encoding: 'utf8',
-    timeout: 20_000,
     detached,
   });
-  return { status: result.status, output: result.stdout + result.stderr };
+  return { status: result.status, output: result.output };
 }
 
 test('preflight: the right Node passes silently', () => {

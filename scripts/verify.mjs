@@ -7,11 +7,26 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ROOT } from './dev-config.mjs';
-import { c, capture, installCrashHandler, printBanner, printCheckTable, stepSkip } from './lib/cli-utils.mjs';
-import { confirmNoDevRunning } from './lib/lock.mjs';
+import { checkInstallFresh } from './lib/checks.mjs';
+import {
+  c,
+  capture,
+  exitAfter,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+  stepSkip,
+  warnRow,
+} from './lib/cli-utils.mjs';
+import { confirmNoDevRunningOrExit, takeBuildLock } from './lib/lock.mjs';
 import { classifyFailure, reportStepFailure, runStepWithRecovery } from './lib/recovery.mjs';
+import { treeChangedRow, treeState } from './lib/ship.mjs';
 
 installCrashHandler('pnpm verify');
+/* Strict: `pnpm verify tooltip` or a typo must not start the full CI-length run while you wait for something else. */
+if (parseArgsOrExit({ options: { help: { type: 'boolean', short: 'h' } } }, 'pnpm verify').values.help)
+  exitAfter('pnpm verify: runs what CI checks (audit, lockfile, lint, build, tests, parity), no options.');
 printBanner('Verify (what CI checks)');
 
 const STEPS = [
@@ -19,6 +34,13 @@ const STEPS = [
     label: 'Security audit',
     command: 'pnpm audit --audit-level critical',
     why: 'CI runs this before installing and stops on a critical advisory.',
+  },
+  {
+    label: 'Lockfile',
+    command: 'pnpm install --frozen-lockfile --lockfile-only',
+    why: 'CI installs with --frozen-lockfile: a package.json change without its pnpm-lock.yaml update fails there.',
+    /* No automatic pnpm install: it would update the lockfile, pass here, and leave CI failing on the uncommitted file. */
+    recoveries: {},
   },
   {
     label: 'Lint',
@@ -46,7 +68,17 @@ const STEPS = [
   },
 ];
 
-if (!(await confirmNoDevRunning('pnpm verify builds every package and'))) process.exit(1);
+/* One build at a time: pnpm sync and pack:local build and pack the same dist/ folders (this lock is theirs too). */
+takeBuildLock(
+  'pnpm verify',
+  'it builds the same dist/ folders; two builds at once fail with EEXIST or test a half-written build.',
+);
+await confirmNoDevRunningOrExit('pnpm verify builds every package and');
+const treeAtStart = await treeState(ROOT);
+
+/* An install that lags the lockfile gives other results than CI's fresh one. */
+const fresh = checkInstallFresh();
+if (fresh.warn || !fresh.ok) console.log(`  ${c.yellow}⚠${c.reset}  ${fresh.detail}: ${fresh.note}.\n`);
 
 const rows = [];
 let built = true;
@@ -58,12 +90,21 @@ for (const step of STEPS) {
   }
   try {
     /* cwd: run from the repository root also when started as node scripts/verify.mjs from another folder. */
-    await runStepWithRecovery(step.label, step.command, { cwd: ROOT, env: { ...process.env, TILBURG_QUIET: '1' } });
+    await runStepWithRecovery(step.label, step.command, {
+      cwd: ROOT,
+      env: { ...process.env, TILBURG_QUIET: '1' },
+      ...(step.recoveries && { recoveries: step.recoveries }),
+    });
     rows.push({ ok: true, label: step.label, detail: 'passed', note: step.why });
   } catch (err) {
     reportStepFailure(step.label, err);
     const diagnosis = classifyFailure(err.output ?? '', err);
     if (step.label === 'Build') built = false;
+    /* Offline, the audit says nothing about the code: CI (online) decides that one. */
+    if (step.label === 'Security audit' && diagnosis.kind === 'network') {
+      rows.push(warnRow('could not check: no network', diagnosis.fix, { label: step.label }));
+      continue;
+    }
     rows.push({
       ok: false,
       label: step.label,
@@ -75,21 +116,24 @@ for (const step of STEPS) {
 
 /* Only a warning: a crash in it (a broken package.json) must not throw away the table of the steps above. */
 rows.push(
-  await changesetRow().catch((error) => ({
-    ok: true,
-    warn: true,
-    label: 'Changeset (not in CI)',
-    detail: 'could not check',
-    error,
-  })),
+  await changesetRow().catch((error) =>
+    warnRow('could not check', undefined, { label: 'Changeset (not in CI)', error }),
+  ),
 );
+
+/* A checkout, pull or stash meanwhile: the steps ran on a mix of two trees. */
+const treeChanged = treeChangedRow(
+  treeAtStart,
+  await treeState(ROOT),
+  'Working tree',
+  'the steps saw a mix of two trees, so pnpm verify again',
+);
+if (treeChanged) rows.push(treeChanged);
 
 console.log('');
 const { failed, total } = printCheckTable([{ title: 'Result', rows }]);
-if (failed.length) {
-  console.log(`  ${c.red}${failed.length} of ${total} failed.${c.reset} CI would fail the same way.\n`);
-  process.exit(1);
-}
+if (failed.length)
+  exitAfter(`  ${c.red}${failed.length} of ${total} failed.${c.reset} CI would fail the same way.\n`, 1);
 console.log(`  ${c.green}Everything CI checks passes.${c.reset}\n`);
 
 /**
@@ -111,13 +155,11 @@ async function changesetRow() {
   /* Fails without a shared commit: a shallow clone (CI's checkout) has cut the history off before it. */
   const base = await git('merge-base HEAD origin/main').catch(() => '');
   if (!base)
-    return {
-      ok: true,
-      warn: true,
-      label,
-      detail: 'could not check: no common history with origin/main',
-      note: `a shallow clone? ${c.cyan}git fetch --unshallow origin${c.reset}`,
-    };
+    return warnRow(
+      'could not check: no common history with origin/main',
+      `a shallow clone? ${c.cyan}git fetch --unshallow origin${c.reset}`,
+      { label },
+    );
   const changed = [
     ...(await git(`diff --name-only ${base}`)).split('\n'),
     ...(await git('ls-files --others --exclude-standard')).split('\n'),
@@ -133,11 +175,9 @@ async function changesetRow() {
   if (!touched.length) return { ok: true, label, detail: 'no published package changed' };
   if (changesets.length)
     return { ok: true, label, detail: `${changesets.length} on this branch`, note: changesets.join(', ') };
-  return {
-    ok: true,
-    warn: true,
-    label,
-    detail: `${touched.map((dir) => dir.split('/')[1]).join(', ')} changed, but this branch has no changeset`,
-    note: `${c.cyan}pnpm changeset${c.reset} describes the change for the release (skip it for refactors and tests)`,
-  };
+  return warnRow(
+    `${touched.map((dir) => dir.split('/')[1]).join(', ')} changed, but this branch has no changeset`,
+    `${c.cyan}pnpm changeset${c.reset} describes the change for the release (skip it for refactors and tests)`,
+    { label },
+  );
 }

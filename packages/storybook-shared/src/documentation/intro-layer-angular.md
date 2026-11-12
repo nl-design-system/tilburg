@@ -9,17 +9,31 @@ en 22: gebouwd met Angular 20 (de oudste ondersteunde versie), de Storybook draa
 ### Installatie (Angular)
 
 ```bash
+npm install ../tilburg/.tarballs/gemeente-tilburg-components-angular-0.0.0.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            @utrecht/component-library-angular@1.1.0 \
+            @utrecht/component-library-css
+```
+
+`@utrecht/component-library-angular` is een peer-dependency (`^1.1.0`). Begin met `1.1.0`: daarmee is het package
+gebouwd en getest.
+
+De versie doet ertoe omdat de module `UtrechtComponentsModule` importeert en de templates Utrecht-directives en
+-elementen gebruiken (`utrecht-button`, `utrecht-link`, `utrecht-alert`, `utrecht-select`, `utrecht-listbox`,
+`<utrecht-form-field>`, `<utrecht-page>`, de headings). Die kunnen per Utrecht-versie veranderen.
+
+De CSS-basis komt uit `@utrecht/component-library-css`, zie _Aan de slag_.
+
+> `@gemeente-tilburg/components-angular` staat nog niet op npm; het komt bij de eerste release. Tot dan installeer je dit
+> package en de tokens als tarball uit de repository: zie _Installeren vanuit een tarball_ op _Aan de slag_.
+
+```bash
+# na de eerste release:
 npm install @gemeente-tilburg/components-angular \
             @gemeente-tilburg/design-tokens \
             @utrecht/component-library-angular@1.1.0 \
             @utrecht/component-library-css
 ```
-
-`@utrecht/component-library-angular` is een peer-dependency: installeer precies deze versie.
-
-> `@gemeente-tilburg/components-angular` staat nog niet op npm; het komt bij de eerste release. Tot dan gebruik je een
-> tarball uit deze repository (`pnpm run pack:local`, zie _Lokaal gebruiken in een andere repository_ in
-> `CONTRIBUTING.md`).
 
 ### Setup (Angular)
 
@@ -63,4 +77,5 @@ element met `class="tilburg-theme"`.
 </tilburg-form-field>
 ```
 
-De inputs en outputs per component staan op de pagina's onder `Tilburg Angular/…` in de Angular-Storybook.
+De inputs en outputs per component staan op de pagina's onder `Tilburg Angular/…` in de Angular-Storybook. Formulieren
+(`[control]`) en de attribuut-directives staan in _API-conventies (Angular)_ op _Tips & valkuilen_ van die Storybook.

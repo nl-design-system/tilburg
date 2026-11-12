@@ -10,145 +10,95 @@
 
    and the other way round: a component with files but no row in the table. Exits 1 on ❌ (the table and the files
    disagree, or a layer misses a file), not on missing tests: the Tests column counts them, `--tests` lists them. */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
-import { c, fail, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
-import { findComponent, loadComponents, P, STATUS_FILE } from './lib/components.mjs';
+import { existsSync, readdirSync } from 'node:fs';
+import { sep } from 'node:path';
+import { c, exitWith, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
+import { findComponent, loadComponents, NO_TABLE, P, rel, STATUS_FILE } from './lib/components.mjs';
 
 installCrashHandler('pnpm parity');
 printBanner('Parity: every component in every layer');
 
-const read = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
+/* The promise: the table, through the shared component lookup. */
+const components = loadComponents();
 
-// ─── The promise: the table (through the shared component lookup) ────────────
-
-const rows = loadComponents().map(({ name, slug, names, layers }) => ({
-  name,
-  slug,
-  promise: {
-    css: layers.html.promised ? '✅' : layers.html.utrecht ? 'utrecht' : '—',
-    react: layers.react.promised,
-    angular: layers.angular.promised,
-    wbc: layers.wbc.promised,
-  },
-  ...names,
-}));
-
-let args;
-let positionals;
-try {
-  ({ values: args, positionals } = parseArgs({ allowPositionals: true, options: { tests: { type: 'boolean' } } }));
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm parity [component] [--tests]' });
-  process.exit(1);
-}
+const { values: args, positionals } = parseArgsOrExit(
+  { allowPositionals: true, options: { tests: { type: 'boolean' } } },
+  'pnpm parity [component] [--tests]',
+);
 const listTests = Boolean(args.tests);
 /* The same lookup as pnpm where and pnpm test ("PasswordInput", "<tilburg-tooltip>", "heading-1"); a name that fits
    several components (pnpm parity form) checks them all. A name that is given but empty is not "everything". */
 const filter = positionals.join(' ').trim();
-if (positionals.length && !filter) {
-  fail({ what: 'The component name is empty', fix: 'pnpm parity <component>, or pnpm parity for everything' });
-  process.exit(1);
-}
-const found = filter ? findComponent(filter) : null;
+if (positionals.length && !filter)
+  exitWith({ what: 'The component name is empty', fix: 'pnpm parity <component>, or pnpm parity for everything' });
+const found = filter ? findComponent(filter, components) : null;
 const wanted = found?.component ? [found.component] : (found?.matches ?? []);
 if (found && !wanted.length) {
-  const close = found.suggestions.map((component) => component.name).join(', ');
-  fail({
+  const close = found.suggestions;
+  exitWith({
     what: `No component matches "${filter}"`,
-    fix: close ? `did you mean: ${close}?` : 'pnpm where --list shows every component',
+    why: close.length ? `Did you mean ${close.map((component) => component.name).join(', ')}?` : undefined,
+    fix: close.length ? `pnpm parity ${close[0].slug}` : 'pnpm where --list shows every component',
   });
-  process.exit(1);
 }
-const selected = filter ? rows.filter((row) => wanted.some((component) => component.slug === row.slug)) : rows;
+const selected = filter ? wanted : components;
 /* Nothing selected would report "0 components, every layer is there": parity that was never checked. */
-if (!selected.length) {
-  fail({
-    what: filter ? `No component matches "${filter}"` : 'No components found',
-    why: `${STATUS_FILE} has no row for it (or no component table at all).`,
-    fix: 'pnpm where --list shows every component',
-  });
-  process.exit(1);
-}
+if (!selected.length)
+  exitWith({ what: 'No components found', why: NO_TABLE, fix: 'pnpm where --list shows every component' });
 
-// ─── The facts: the files ────────────────────────────────────────────────────
-
-const reactIndex = read(P('components-react/src/index.ts'));
-const angularIndex = read(P('components-angular/src/components.ts'));
+/* The facts: the files. Paths print with forward slashes on every platform. */
+const posix = (path) => rel(path).split(sep).join('/');
 const problems = [];
 const warnings = [];
-const missing = (row, what, path) => problems.push({ row, text: `${what}: ${path} is missing` });
+const missing = (row, what, path) => problems.push({ row, text: `${what}: ${posix(path)} is missing` });
+const EXPORTED_FROM = { react: 'components-react/src/index.ts', angular: 'components-angular/src/components.ts' };
 
 function checkRow(row) {
   const cells = {};
   const file = (path) => existsSync(P(path));
+  const { html, react, angular, wbc } = row.layers;
 
   /* HTML/CSS: `✅` means a Tilburg layer on top of utrecht, `utrecht` means the utrecht base is enough. */
-  const cssPath = `components-css/${row.css}/index.scss`;
-  if (row.promise.css === '✅') {
-    cells.css = file(cssPath);
-    if (!cells.css) missing(row, 'HTML/CSS', `packages/${cssPath}`);
+  if (html.promised) {
+    cells.css = existsSync(html.main);
+    if (!cells.css) missing(row, 'HTML/CSS', html.main);
   } else {
     cells.css = 'utrecht';
-    if (file(cssPath))
-      problems.push({ row, text: `the table says "utrecht", but packages/${cssPath} exists: mark it ✅` });
+    if (existsSync(html.main))
+      problems.push({ row, text: `the table says "utrecht", but ${posix(html.main)} exists: mark it ✅` });
   }
-  const examples = `storybook-shared/src/tilburg-${row.slug}.examples.ts`;
-  if (!file(examples)) missing(row, 'shared HTML examples', `packages/${examples}`);
+  if (!existsSync(row.examples)) missing(row, 'shared HTML examples', row.examples);
 
   cells.tests = [0, 0];
-  const layer = (key, label, mainPath, registered, registeredWhere, testPath) => {
-    const exists = file(mainPath);
-    if (row.promise[key] && exists) {
+  for (const key of ['react', 'angular', 'wbc']) {
+    const { label, main, test, promised, exported } = row.layers[key];
+    const exists = existsSync(main);
+    if (promised && exists) {
       cells.tests[1]++;
-      if (file(testPath)) cells.tests[0]++;
+      if (existsSync(test)) cells.tests[0]++;
     }
-    if (row.promise[key]) {
+    if (promised) {
+      const registered = exists && exported();
       cells[key] = exists && registered;
-      if (!exists) missing(row, label, `packages/${mainPath}`);
-      else if (!registered) problems.push({ row, text: `${label}: not exported from ${registeredWhere}` });
-      else if (!file(testPath)) warnings.push({ row, text: `${label}: no test (packages/${testPath})` });
+      if (!exists) missing(row, label, main);
+      else if (!registered) problems.push({ row, text: `${label}: not exported from ${EXPORTED_FROM[key]}` });
+      else if (!existsSync(test)) warnings.push({ row, text: `${label}: no test (${posix(test)})` });
     } else {
       cells[key] = null;
-      if (exists)
-        problems.push({ row, text: `the table says ${label} "—", but packages/${mainPath} exists: mark it ✅` });
+      if (exists) problems.push({ row, text: `the table says ${label} "—", but ${posix(main)} exists: mark it ✅` });
     }
-  };
-  layer(
-    'react',
-    'React',
-    `components-react/src/${row.react}.tsx`,
-    reactIndex.includes(`from './${row.react}'`),
-    'components-react/src/index.ts',
-    `components-react/src/${row.reactTest ?? row.react}.test.tsx`,
-  );
-  layer(
-    'angular',
-    'Angular',
-    `components-angular/src/${row.angular}/component.ts`,
-    angularIndex.includes(`./${row.angular}/component'`),
-    'components-angular/src/components.ts',
-    `components-angular/src/${row.angular}/component.spec.ts`,
-  );
-  layer(
-    'wbc',
-    'Web Component',
-    `web-components-stencil/src/${row.wbc}/component.tsx`,
-    true,
-    '',
-    `web-components-stencil/src/${row.wbc}/component.spec.tsx`,
-  );
+  }
 
   /* One story file per layer that exists, in the Storybook that shows that layer. */
   const stories = [
     [`storybook/src/tilburg-${row.slug}.stories.tsx`, true],
     [`storybook-angular/src/tilburg-${row.slug}-html.stories.ts`, true],
-    [`storybook/src/tilburg-${row.slug}-react.stories.tsx`, row.promise.react],
-    [`storybook/src/tilburg-${row.slug}-wbc.stories.tsx`, row.promise.wbc],
-    [`storybook-angular/src/tilburg-${row.slug}.stories.ts`, row.promise.angular],
+    [`storybook/src/tilburg-${row.slug}-react.stories.tsx`, react.promised],
+    [`storybook/src/tilburg-${row.slug}-wbc.stories.tsx`, wbc.promised],
+    [`storybook-angular/src/tilburg-${row.slug}.stories.ts`, angular.promised],
   ].filter(([, needed]) => needed);
   const missingStories = stories.filter(([path]) => !file(path));
-  missingStories.forEach(([path]) => missing(row, 'story', `packages/${path}`));
+  missingStories.forEach(([path]) => missing(row, 'story', P(path)));
   cells.stories = `${stories.length - missingStories.length}/${stories.length}`;
   cells.storiesOk = missingStories.length === 0;
 
@@ -157,29 +107,41 @@ function checkRow(row) {
 }
 
 /* The other way round: a component folder in a layer without a row in the table. */
-const known = new Set(rows.flatMap((row) => [row.slug, row.css, row.angular, row.wbc]));
+const known = new Set(components.flatMap(({ slug, names }) => [slug, names.css, names.angular, names.wbc]));
 const helpers = new Set(['utils', 'announce', 'tokens', 'node_modules']);
-const orphan = (dir, label) =>
+/* Only a folder with its main file: a branch switch leaves a removed component's folder behind with a .DS_Store. */
+const orphan = (dir, label, main) =>
   existsSync(P(dir))
     ? readdirSync(P(dir), { withFileTypes: true })
         .filter(
           (entry) => entry.isDirectory() && !helpers.has(entry.name) && !/^(heading-[2-6]|table-.+)$/.test(entry.name),
         )
-        .filter((entry) => !known.has(entry.name))
+        .filter((entry) => !known.has(entry.name) && existsSync(P(dir, entry.name, main)))
         .map((entry) => ({
           row: { name: entry.name },
           text: `${label} has packages/${dir}/${entry.name}, but ${STATUS_FILE} has no row for it`,
         }))
     : [];
+/* A story file whose row is gone: Storybook would still show it. */
+const orphanStories = (dir) =>
+  existsSync(P(dir))
+    ? readdirSync(P(dir))
+        .map((file) => [file, file.match(/^tilburg-(.+?)(-react|-wbc|-html)?\.stories\.tsx?$/)?.[1]])
+        .filter(([, slug]) => slug && !slug.startsWith('tokens-') && !known.has(slug))
+        .map(([file, slug]) => ({
+          row: { name: slug },
+          text: `has packages/${dir}/${file}, but ${STATUS_FILE} has no row for it`,
+        }))
+    : [];
 if (!filter) {
   problems.push(
-    ...orphan('components-css', 'HTML/CSS'),
-    ...orphan('components-angular/src', 'Angular'),
-    ...orphan('web-components-stencil/src', 'Web Components'),
+    ...orphan('components-css', 'HTML/CSS', 'index.scss'),
+    ...orphan('components-angular/src', 'Angular', 'component.ts'),
+    ...orphan('web-components-stencil/src', 'Web Components', 'component.tsx'),
+    ...orphanStories('storybook/src'),
+    ...orphanStories('storybook-angular/src'),
   );
 }
-
-// ─── Report ──────────────────────────────────────────────────────────────────
 
 const mark = (value) =>
   value === null

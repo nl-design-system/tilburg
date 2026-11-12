@@ -10,16 +10,19 @@ pagina geladen worden.
 
 ### Installatie (Web Components)
 
-`@gemeente-tilburg/web-components-stencil` is **experimenteel en nog niet op npm gepubliceerd**. Vraag het Design
-System-team om een build als je hem wilt proberen. Tokens en Utrecht-basis installeer je via npm:
-
 ```bash
-npm install @gemeente-tilburg/design-tokens @utrecht/component-library-css
+npm install ../tilburg/.tarballs/gemeente-tilburg-web-components-stencil-0.0.0.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            @utrecht/component-library-css
 ```
+
+> `@gemeente-tilburg/web-components-stencil` is **experimenteel en wordt niet op npm gepubliceerd**: je installeert de
+> tarball uit de repository, zie _Installeren vanuit een tarball_ op _Aan de slag_. De tokens komen na de eerste
+> release van npm (`@gemeente-tilburg/design-tokens`).
 
 ### Gebruik (Web Components)
 
-Laad de tokens en de Utrecht-basis globaal en zet `tilburg-theme` en `utrecht-document` op `<body>`; elke component
+Laad de tokens en de Utrecht-basis globaal en zet `tilburg-theme` en `utrecht-document` op `<body>`; elk component
 laadt zijn eigen `components-css`-regels zelf.
 
 ```html
@@ -36,14 +39,16 @@ laadt zijn eigen `components-css`-regels zelf.
 </body>
 ```
 
-- **Attributen** volgen de Angular-inputs in kebab-case (`heading-level`, `close-button-aria-label`). Lijsten en objecten
-  (bijv. combobox-items) zet je als JavaScript-property.
-- **`aria-label`, `title`, `id`** en andere globale attributen schrijf je gewoon op het element; de component verplaatst
+- **Attributen** volgen de Angular-inputs in kebab-case (`heading-level`, `close-button-aria-label`). Eén uitzondering:
+  de titel heet `heading` en niet `title` (Alert, Modal, Page Header, Progress Bar, Loading Spinner), omdat `title` een
+  globaal HTML-attribuut is. Lijsten en objecten (bijv. combobox-items) zet je als JavaScript-property.
+- **`aria-label`, `title`, `id`** en andere globale attributen schrijf je gewoon op het element; het component verplaatst
   ze naar het binnenliggende native element (`<button>`, `<input>`), zodat `<label for>` en de toegankelijke naam kloppen.
-- **Events** heten `tilburg…` (`tilburgClose`, `tilburgToggle`); native events van binnenliggende controls (`input`,
-  `change`, `click`) bubbelen gewoon door.
+- **Events** heten `tilburg…`: `tilburgClose`, `tilburgToggle`, `tilburgChange`, `tilburgNavigate`, `tilburgItemClick`
+  en `tilburgBackClick`. Native events van binnenliggende controls (`input`, `change`, `click`) bubbelen gewoon door.
 - **Slots** vervangen Angular's `ng-content` (`<svg slot="icon">`).
 
 In React kun je `@gemeente-tilburg/web-components-react` gebruiken: door Stencil gegenereerde wrappers
-(`<TilburgWbcAlert heading="…" onTilburgClose={…}>`), ook nog niet gepubliceerd. De stories onder
-`Tilburg Web Components/…` gebruiken die wrappers.
+(`<TilburgWbcAlert heading="…" onTilburgClose={…}>`), ook alleen als tarball. Dat package vraagt React 17 of 18. De
+stories onder `Tilburg Web Components/…` in de React-Storybook gebruiken die wrappers. De attributen en events per
+component staan op die pagina's.

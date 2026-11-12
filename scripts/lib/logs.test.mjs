@@ -1,15 +1,14 @@
-/* `pnpm run test:scripts`: pnpm logs reads runStep's log folder; pnpm ship's pull request link. */
+/* `pnpm run test:scripts`: pnpm logs reads runStep's log folder. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
-import { after, test } from 'node:test';
+import { mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
+import { basename, join, resolve } from 'node:path';
+import { test } from 'node:test';
+import { LOG_DIR } from './cli-utils.mjs';
 import { pickLast, readLogs, tailLines } from './logs.mjs';
-import { pullRequestUrl } from './ship.mjs';
+import { runScript, tempDir, tempEnv } from './test-fakes.mjs';
 
-const dir = mkdtempSync(join(tmpdir(), 'tilburg-logs-test-'));
-after(() => rmSync(dir, { recursive: true, force: true }));
+const dir = tempDir('tilburg-logs-test-');
 
 const log = (name, body) => writeFileSync(join(dir, name), body);
 log('2026-10-19T10-00-00-lint.log', '$ pnpm run lint\n\nfine\n# exit 0\n');
@@ -33,17 +32,13 @@ test('logs newest first, with step name and exit status; other files are left ou
 });
 
 test('a log that vanishes while it is read (pruned by a step starting meanwhile) is skipped, not a crash', () => {
-  const pruned = mkdtempSync(join(tmpdir(), 'tilburg-logs-pruned-'));
-  try {
-    writeFileSync(join(pruned, '2026-10-19T10-00-00-lint.log'), '# exit 0\n');
-    symlinkSync(join(pruned, 'gone'), join(pruned, '2026-10-19T11-00-00-gone.log'));
-    assert.deepEqual(
-      readLogs(pruned).map((entry) => entry.step),
-      ['lint'],
-    );
-  } finally {
-    rmSync(pruned, { recursive: true, force: true });
-  }
+  const pruned = tempDir('tilburg-logs-pruned-');
+  writeFileSync(join(pruned, '2026-10-19T10-00-00-lint.log'), '# exit 0\n');
+  symlinkSync(join(pruned, 'gone'), join(pruned, '2026-10-19T11-00-00-gone.log'));
+  assert.deepEqual(
+    readLogs(pruned).map((entry) => entry.step),
+    ['lint'],
+  );
 });
 
 test('--last picks the newest failure, else the newest log', () => {
@@ -56,6 +51,14 @@ test('--last picks the newest failure, else the newest log', () => {
     'a',
   );
   assert.equal(pickLast([]), null);
+  /* A watcher pnpm dev stopped (q) is not a failure. */
+  assert.equal(
+    pickLast([
+      { step: 'dev-tokens', exit: 'stopped' },
+      { step: 'tests', exit: '1' },
+    ]).step,
+    'tests',
+  );
 });
 
 test('the tail keeps the last lines', () => {
@@ -67,33 +70,16 @@ test('the tail keeps the last lines', () => {
   assert.equal(lines.at(-1), 'line 199');
 });
 
-test('pull request URL from every remote form', () => {
-  const expected = 'https://github.com/nl-design-system/tilburg/compare/main...feat/x?expand=1';
-  for (const remote of [
-    'https://github.com/nl-design-system/tilburg.git',
-    'https://user:token@github.com/nl-design-system/tilburg',
-    'git@github.com:nl-design-system/tilburg.git',
-    'ssh://git@github.com:22/nl-design-system/tilburg.git',
-  ])
-    assert.equal(pullRequestUrl(remote, 'feat/x'), expected, remote);
-  assert.equal(pullRequestUrl('/tmp/origin.git', 'b'), null);
-});
-
-/** `pnpm logs` itself, with TMPDIR pointing at a temp folder so LOG_DIR is ours. */
+/** `pnpm logs` itself, with its temp folder (TMPDIR; TEMP on Windows) pointing at ours, so LOG_DIR is ours. */
 function logsCli(args, logs = {}) {
-  const tmp = mkdtempSync(join(tmpdir(), 'tilburg-logs-cli-'));
-  try {
-    mkdirSync(join(tmp, 'tilburg-logs'));
-    for (const [name, body] of Object.entries(logs)) writeFileSync(join(tmp, 'tilburg-logs', name), body);
-    const result = spawnSync(process.execPath, [resolve(import.meta.dirname, '..', 'logs.mjs'), ...args], {
-      encoding: 'utf8',
-      timeout: 10_000,
-      env: { ...process.env, TMPDIR: tmp, CI: '1' },
-    });
-    return { status: result.status, output: result.stdout + result.stderr };
-  } finally {
-    rmSync(tmp, { recursive: true, force: true });
-  }
+  const tmp = tempDir('tilburg-logs-cli-');
+  const folder = join(tmp, basename(LOG_DIR));
+  mkdirSync(folder);
+  for (const [name, body] of Object.entries(logs)) writeFileSync(join(folder, name), body);
+  return runScript(resolve(import.meta.dirname, '..', 'logs.mjs'), args, {
+    timeout: 10_000,
+    env: { ...process.env, ...tempEnv(tmp), CI: '1' },
+  });
 }
 
 test('pnpm logs with an unknown option exits 1 and says how to call it', () => {

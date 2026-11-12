@@ -2,21 +2,67 @@
 
 # Aan de slag
 
-Deze pagina brengt je van een leeg project naar een eerste Tilburg-component die er goed uitziet. Doe eerst de
-**basis** hieronder; die is voor elke laag hetzelfde. Kies daarna je laag.
+Deze pagina brengt je van een leeg project naar een eerste Tilburg-component die er goed uitziet:
 
-## Welke packages kun je installeren?
-
-| Package                                    | Laag                    | Status                                                                                            |
-| ------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| `@gemeente-tilburg/design-tokens`          | basis, nodig voor alles | gepubliceerd op npm                                                                               |
-| `@gemeente-tilburg/components-react`       | React                   | **nog niet op npm** — komt bij de eerste release; tot dan via een tarball (zie `CONTRIBUTING.md`) |
-| `@gemeente-tilburg/components-angular`     | Angular                 | **nog niet op npm** — komt bij de eerste release; tot dan via een tarball (zie `CONTRIBUTING.md`) |
-| `@gemeente-tilburg/components-css`         | Plain HTML / CSS        | **nog niet gepubliceerd** — vraag het Design System-team om een build                             |
-| `@gemeente-tilburg/web-components-stencil` | Web Components          | **nog niet gepubliceerd** — experimenteel, vraag het Design System-team                           |
+1. Doe de **basis**: tokens, Utrecht-CSS, twee classes en de fonts. Die is voor elke laag hetzelfde.
+2. Kies je **laag** (HTML/CSS, React, Angular of Web Components) en volg de stappen daarvan, verderop op deze pagina.
+3. Ziet het er niet goed uit? Onderaan staat _Werkt het niet?_ met de meest gemaakte fouten.
 
 De componenten zijn nog in ontwikkeling (versie 0.x): API's kunnen per release veranderen. Lees de changelog bij een
 update.
+
+## Welke packages zijn er?
+
+Er is nog geen release van de componenten. Tot die er is installeer je **alle** packages, ook de tokens, vanuit een
+tarball uit de repository.
+
+| Package                                    | Laag                    | Op npm                                                                     |
+| ------------------------------------------ | ----------------------- | -------------------------------------------------------------------------- |
+| `@gemeente-tilburg/design-tokens`          | basis, nodig voor alles | een oude `0.0.1` (oktober 2025), zonder de bestanden uit deze documentatie |
+| `@gemeente-tilburg/components-react`       | React                   | nog niet; komt bij de eerste release                                       |
+| `@gemeente-tilburg/components-angular`     | Angular                 | nog niet; komt bij de eerste release                                       |
+| `@gemeente-tilburg/components-css`         | Plain HTML / CSS        | nee, dit package wordt niet gepubliceerd; de tarball is de manier          |
+| `@gemeente-tilburg/web-components-stencil` | Web Components          | nee, experimenteel en niet gepubliceerd; de tarball is de manier           |
+| `@gemeente-tilburg/web-components-react`   | Web Components in React | nee, hoort bij `web-components-stencil`; werkt met React 17 en 18          |
+
+> ⚠️ `npm install @gemeente-tilburg/design-tokens` haalt nu de oude `0.0.1` van npm. Die heeft alleen `dist/theme.css`
+> en `dist/variables.css`: geen `dist/tilburg/`, geen BAT-thema en geen hoog contrast. De tarball uit de repository heet
+> ook `0.0.1`, maar heeft alles wat hieronder staat. Gebruik dus de tarball.
+
+### Installeren vanuit een tarball
+
+Drie stappen, en het werkt in elk project:
+
+```bash
+git clone https://github.com/nl-design-system/tilburg.git
+cd tilburg && pnpm setup --skip-dev   # of: pnpm install
+pnpm run pack:local                   # bouwt alles en zet de tarballs in .tarballs/
+```
+
+```text
+.tarballs/
+  gemeente-tilburg-design-tokens-0.0.1.tgz
+  gemeente-tilburg-components-css-0.0.0.tgz
+  gemeente-tilburg-components-react-0.0.0.tgz
+  gemeente-tilburg-components-angular-0.0.0.tgz
+  gemeente-tilburg-web-components-stencil-0.0.0.tgz
+  gemeente-tilburg-web-components-react-0.0.0.tgz
+  gemeente-tilburg-storybook-shared-0.0.0.tgz
+```
+
+Installeer in je eigen project wat je laag nodig heeft, met het pad naar de tarball:
+
+```bash
+npm install ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-components-react-0.0.0.tgz
+```
+
+npm schrijft dat als `"file:../tilburg/.tarballs/…tgz"` in je `package.json`. De paden in je code zijn dezelfde als na
+een release (`@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`), dus bij de eerste release hoef je alleen het
+versienummer in te vullen. Een nieuwe `pnpm run pack:local` plus een gewone `npm install` in je project haalt de nieuwste
+build op; na een versiebump heet de tarball anders en pas je het pad aan.
+
+Waar hieronder `npm install @gemeente-tilburg/…` staat, gebruik je tot de release dus het pad naar de tarball.
 
 ## Basis — voor elke laag
 
@@ -34,10 +80,11 @@ De tokens zijn CSS custom properties (`--tilburg-…`, `--utrecht-…`). Er zijn
 | `@gemeente-tilburg/design-tokens/dist/tilburg/variables.css` | `:root`          | De hele pagina is Tilburg en je wilt geen extra class.                         |
 
 Voor het **BAT-thema** gebruik je dezelfde bestanden uit `dist/bat/` (`theme.css` met de class `bat-theme`, of
-`variables.css`); de componenten zijn hetzelfde, alleen de tokens verschillen.
+`variables.css`); de componenten zijn hetzelfde, alleen de tokens verschillen. Thema's, hoog contrast en het
+overschrijven van tokens staan op [Tokens](?path=/docs/tokens-intro--docs).
 
 > ⚠️ Gebruik je `theme.css`, zet dan **`class="tilburg-theme"`** op een element rond je content (meestal `<body>`).
-> Zonder die class zijn alle tokens leeg en ziet elke component er ongestyled uit. Dit is de meest gemaakte fout.
+> Zonder die class zijn alle tokens leeg en ziet elk component er ongestyled uit. Dit is de meest gemaakte fout.
 
 ### 2. Utrecht-basis-CSS
 
@@ -52,7 +99,13 @@ npm install @utrecht/component-library-css
 @import "@utrecht/component-library-css/dist/index.css";
 ```
 
-De Storybooks gebruiken versie `5.2.0`.
+De packages vragen versie `^5.2.0`; de Storybooks draaien op `5.2.0`.
+
+**Waarom Utrecht erbij?** De Tilburg-CSS is een laag óver Utrecht: ze zet de Tilburg-tokens en -afwijkingen op de
+Utrecht-classes, de basisregels van elke component (de knop zelf, het formulierveld, de tabel) komen uit Utrecht. Een
+Tilburg-package bevat die basis niet; `components-react/dist/style.css` zegt over `.utrecht-button` bijvoorbeeld alleen
+welke regelhoogte hij krijgt. Daarom is Utrecht een peer dependency en geen onderdeel van onze packages: jij bepaalt de
+Utrecht-versie, en een project dat Utrecht al gebruikt krijgt de CSS niet twee keer.
 
 ### 3. Document-class
 
@@ -65,20 +118,21 @@ zonder staat de lopende tekst in het browserfont.
 </body>
 ```
 
-In React kun je ook `<Document>` uit `@utrecht/component-library-react` gebruiken, in Angular `<tilburg-document>`.
+In React kun je ook `<Document>` uit `@gemeente-tilburg/components-react` gebruiken, in Angular `<tilburg-document>`.
 
 ### 4. Fonts
 
 De tokens verwijzen naar twee fonts, die je zelf laadt:
 
 - **TradeGothicCondensed18** — koppen en knoppen. Dit is een **gelicenseerd font**: de webfont-kit krijg je via het
-  Design System-team van Gemeente Tilburg. Zie ook _Toestemming voor gebruik_.
+  Design System-team van Gemeente Tilburg. Zie ook
+  [Toestemming voor gebruik](?path=/docs/tilburg-toestemming-voor-gebruik--docs).
 - **Roboto** — lopende tekst. Open font; laad het bv. via [Bunny Fonts](https://fonts.bunny.net/family/roboto) (gewicht
   400, 500 en 700) of host het zelf.
 
-Zonder de fonts werkt alles, maar het is niet de Tilburg-huisstijl. Koppen en knoppen vallen terug op Helvetica. De
-lopende tekst valt terug op het **standaard-serif-font van de browser (meestal Times)**, omdat het Roboto-token geen
-fallback heeft. Laad Roboto dus altijd.
+Zonder de fonts werkt alles, maar het is niet de Tilburg-huisstijl. Koppen en knoppen vallen terug op Helvetica Neue of
+het sans-serif-font van de browser. De lopende tekst valt terug op het **standaard-serif-font van de browser (meestal
+Times)**, omdat het Roboto-token geen fallback heeft. Laad Roboto dus altijd.
 
 ### Minimale pagina
 
@@ -98,3 +152,10 @@ fallback heeft. Laad Roboto dus altijd.
 
 Werk je met een bundler (Vite, Angular CLI, webpack), importeer de twee CSS-bestanden dan in je entry-stylesheet in plaats
 van met `<link>`. De stappen per laag hieronder laten zien hoe.
+
+## Kies je laag
+
+Hieronder staat per laag hoe je installeert, laadt en een eerste component plaatst: **Plain HTML / CSS**, **React**,
+**Angular** en **Web Components**. Kies er één; ze maken allemaal dezelfde HTML. Welk component in welke laag bestaat,
+staat op [Implementatiestatus](?path=/docs/tilburg-implementatiestatus--docs). De knop **`</> Gebruik`** in de werkbalk
+van een story toont dezelfde stappen voor dat ene component, met een kopieerknop.

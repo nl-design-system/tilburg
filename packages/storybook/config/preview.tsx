@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 // utrecht 5.x base CSS — the foundation Tilburg components cascade on top of.
 // Provides `.utrecht-alert { display:flex; padding; border }`,
@@ -67,6 +68,7 @@ import '@gemeente-tilburg/components-css/toptask-link/index.scss';
 import '@gemeente-tilburg/components-css/unordered-list/index.scss';
 import '@gemeente-tilburg/components-css/validation-message/index.scss';
 import '@gemeente-tilburg/font/src/index.scss';
+import '../../storybook-shared/src/docs.css';
 /* Opt-in accordion enhancement (toggle + keyboard nav) for the HTML/CSS
    reference stories. Angular/React wrapper stories aren't affected — the
    script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`. */
@@ -82,13 +84,38 @@ import { enhancePasswordInput } from '@gemeente-tilburg/components-css/password-
 /* Hover/focus/Escape behaviour of the HTML/CSS tooltip (`[data-tilburg-tooltip-enhance]`). */
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
+import * as reactLibrary from '@gemeente-tilburg/components-react';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
-import { Controls, Description, Primary, Stories } from '@storybook/addon-docs/blocks';
+import { Controls, Description, DocsContext, Markdown, Primary, Stories } from '@storybook/addon-docs/blocks';
 import type { Preview } from '@storybook/react-vite';
+import { useContext } from 'react';
 import { ParametersArgsDecorator } from './ParametersArgsDecorator';
 import { theme } from './theme';
+import gettingStarted from '../../storybook-shared/src/documentation/getting-started.md?raw';
+import layerAngular from '../../storybook-shared/src/documentation/intro-layer-angular.md?raw';
+import layerHtml from '../../storybook-shared/src/documentation/intro-layer-html-css.md?raw';
+import layerReact from '../../storybook-shared/src/documentation/intro-layer-react.md?raw';
+import layerWebComponents from '../../storybook-shared/src/documentation/intro-layer-web-components.md?raw';
+import { allSections, componentLinks, type UsageDocs } from '../../storybook-shared/src/usage';
+
+/* The "Gebruik" panel (config/UsagePanel.tsx) reads its install and load steps from these pages. */
+const usage: UsageDocs = {
+  gettingStarted,
+  pages: { html: layerHtml, react: layerReact, angular: layerAngular, webComponents: layerWebComponents },
+  /* What a React snippet may import: a component of the story itself (a layout helper) is left out of it. */
+  reactExports: Object.keys(reactLibrary),
+  /* The snippets of every layer, so the tabs of the layers a story is not about are filled too. */
+  sections: allSections(
+    import.meta.glob<Record<string, unknown>>('../../storybook-shared/src/tilburg-*.examples.ts', { eager: true }),
+  ),
+};
+
+/* Under the description of every component page: the way to the setup and to related components. */
+const ComponentLinks = () => (
+  <Markdown>{componentLinks(useContext(DocsContext).storyById().id, usage.sections)}</Markdown>
+);
 
 defineCustomElements();
 
@@ -111,6 +138,7 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
 const preview: Preview = {
   parameters: {
     controls: { expanded: false },
+    usage,
     options: {
       panelPosition: 'right',
       storySort: {
@@ -122,8 +150,8 @@ const preview: Preview = {
 
            The `Tilburg` section holds only MDX documentation, so the pages are
            named explicitly to fix their reading order rather than leaving them
-           to sort alphabetically. The Angular Storybook needs the same list,
-           because there the MDX pages share a section with the components. */
+           to sort alphabetically. The Angular Storybook has the same section
+           with the same titles: the shared markdown links to these ids. */
         order: [
           'Tilburg',
           [
@@ -149,11 +177,16 @@ const preview: Preview = {
       },
     },
     docs: {
+      /* The JSX a story rendered, with its real values, instead of the story's source: the "Gebruik" panel reads it
+         for "Plaatsen" (SNIPPET_RENDERED), and "Show code" on the docs pages shows the same. The Angular renderer
+         does this by default. */
+      source: { type: 'dynamic' },
       page: () => {
         // Exclude `<Title>` because the title comes from the Markdown file
         return (
           <>
             <Description />
+            <ComponentLinks />
             <Primary />
             <Controls />
             <Stories />

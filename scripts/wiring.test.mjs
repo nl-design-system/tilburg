@@ -1,9 +1,10 @@
 /* `node --test scripts/`: the wiring between the scripts and everything that calls them, checked without running them.
    Each script has its own tests; these catch what falls between them: a renamed file, an export that moved, a package
    that was renamed, or a dependency in a script that has to run before `pnpm install`. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { test } from 'node:test';
 import { promisify } from 'node:util';
@@ -23,19 +24,9 @@ export function importsOf(source) {
       .map((part) => part.trim().split(/\s+as\s+|\s*:\s*/)[0])
       .filter(Boolean);
   return [
-    ...[...source.matchAll(/^import\s+(?:\{([^{}]*)\}\s+from\s+|[\w*\s]+from\s+)?'([^']+)'/gm)].map(
-      ([, list, spec]) => ({
-        specifier: spec,
-        names: list === undefined ? null : named(list),
-      }),
-    ),
-    ...[...source.matchAll(/^\s*(?:const\s*\{([^{}]*)\}\s*=\s*)?await\s+import\('([^']+)'\)/gm)].map(
-      ([, list, spec]) => ({
-        specifier: spec,
-        names: list === undefined ? null : named(list),
-      }),
-    ),
-  ];
+    ...source.matchAll(/^import\s+(?:\{([^{}]*)\}\s+from\s+|[\w*\s]+from\s+)?'([^']+)'/gm),
+    ...source.matchAll(/^\s*(?:const\s*\{([^{}]*)\}\s*=\s*)?await\s+import\('([^']+)'\)/gm),
+  ].map(([, list, spec]) => ({ specifier: spec, names: list === undefined ? null : named(list) }));
 }
 
 /** Names a module exports: `export function|const|let|class x` and `export { a, b as c }`. */
@@ -82,7 +73,7 @@ test('every `node scripts/<file>` in package.json, .husky and the workflows exis
     join(ROOT, 'package.json'),
     ...readdirSync(join(ROOT, '.husky')).map((file) => join(ROOT, '.husky', file)),
     ...readdirSync(join(ROOT, '.github/workflows')).map((file) => join(ROOT, '.github/workflows', file)),
-  ].filter((file) => existsSync(file) && !file.endsWith('/_'));
+  ].filter((file) => statSync(file, { throwIfNoEntry: false })?.isFile()); /* not husky's _/ folder */
   const missing = callers.flatMap((file) =>
     [...read(file).matchAll(/\bnode\s+(scripts\/[\w./-]+)/g)]
       .map((m) => m[1])
@@ -158,4 +149,9 @@ test('every `pnpm --filter <name>` in scripts/ is a workspace package', () => {
     );
   assert.ok(packages.size > 5, 'the workspace packages should be found');
   assert.deepEqual(unknown, []);
+});
+
+test('setup starts pnpm dev without a bare `--`: pnpm 7+ hands it to the script, where dev reads --open as a component', () => {
+  const launches = [...read(join(SCRIPTS, 'setup.mjs')).matchAll(/spawn\('pnpm', \[([^\]]*)\]/g)].map((m) => m[1]);
+  assert.deepEqual(launches, ["'run', 'dev', '--open'"]);
 });

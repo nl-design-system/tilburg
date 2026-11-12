@@ -2,39 +2,44 @@
    Storybook pages that show it, local (pnpm dev) and online. `pnpm where --list` lists every component.
    Accepts any of its names: tooltip, Tooltip, "password input", PasswordInput, tilburg-wbc-tooltip. */
 import { existsSync } from 'node:fs';
-import { parseArgs } from 'node:util';
+import { basename } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { STORYBOOKS } from './dev-config.mjs';
-import { c, fail, hyperlink, installCrashHandler, printBanner } from './lib/cli-utils.mjs';
-import { isTlb, loadComponents, rel, requireComponent, SITE, STATUS_FILE, storyUrl } from './lib/components.mjs';
+import { c, cmd, exitWith, hyperlink, installCrashHandler, parseArgsOrExit, printBanner } from './lib/cli-utils.mjs';
+import {
+  isTlb,
+  loadComponents,
+  NO_TABLE,
+  rel,
+  requireComponent,
+  SITE,
+  STATUS_FILE,
+  storyUrl,
+} from './lib/components.mjs';
 import { readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm where');
-let list;
-let positionals;
-try {
-  ({
-    values: { list },
-    positionals,
-  } = parseArgs({ allowPositionals: true, options: { list: { type: 'boolean' } } }));
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm where <component>   or   pnpm where --list' });
-  process.exit(1);
-}
+const {
+  values: { list },
+  positionals,
+} = parseArgsOrExit(
+  { allowPositionals: true, options: { list: { type: 'boolean' } } },
+  'pnpm where <component>   or   pnpm where --list',
+);
 const query = positionals.join(' ').trim();
-if (list && query) {
-  fail({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
-  process.exit(1);
-}
+/* A name that is given but empty (pnpm where "") is not "list everything", as in pnpm test and pnpm parity. */
+if (positionals.length && !query)
+  exitWith({ what: 'The component name is empty', fix: 'pnpm where <component>   or   pnpm where --list' });
+if (list && query)
+  exitWith({ what: '--list takes no component name', fix: `pnpm where ${query}   or   pnpm where --list` });
 
-const link = (path) => hyperlink(rel(path), `file://${path}`);
+/* pathToFileURL: encodes spaces, # and %, and gives file:///C:/… on Windows. */
+const link = (path) => hyperlink(rel(path), pathToFileURL(path).href);
 
 if (list || !query) {
   printBanner('Components');
   const components = loadComponents();
-  if (!components.length) {
-    fail({ what: 'No components found', why: `${STATUS_FILE} has no component table (or is missing).` });
-    process.exit(1);
-  }
+  if (!components.length) exitWith({ what: 'No components found', why: NO_TABLE });
   const width = Math.max(...components.map((component) => component.name.length)) + 2;
   for (const component of components) {
     const layers = Object.values(component.layers)
@@ -46,7 +51,7 @@ if (list || !query) {
     );
   }
   console.log(
-    `\n  ${c.gray}${components.length} components (${STATUS_FILE}). Details: ${c.reset}${c.cyan}pnpm where <name>${c.reset}\n`,
+    `\n  ${c.gray}${components.length} components (${STATUS_FILE}). Details: ${c.reset}${cmd('pnpm where <name>')}\n`,
   );
   process.exit(0);
 }
@@ -57,23 +62,19 @@ console.log(
   `  ${isTlb(component) ? `${c.magenta}Tilburg component (TLB)${c.reset}: its own tilburg-* markup and CSS, no Utrecht base.` : `${c.gray}Built on the Utrecht component, with Tilburg styling.${c.reset}`}\n`,
 );
 
-// ─── Files ───────────────────────────────────────────────────────────────────
-
 const fileCell = (path, { promised = true } = {}) => {
   if (!promised) return `${c.gray}— no wrapper (on purpose, see implementation-status.md)${c.reset}`;
   return existsSync(path) ? link(path) : `${c.red}missing: ${rel(path)}${c.reset}`;
 };
 const testCell = (path) =>
-  existsSync(path)
-    ? `${c.green}✓${c.reset} ${c.gray}${rel(path).split('/').pop()}${c.reset}`
-    : `${c.yellow}no test${c.reset}`;
+  existsSync(path) ? `${c.green}✓${c.reset} ${c.gray}${basename(path)}${c.reset}` : `${c.yellow}no test${c.reset}`;
 
 const { html, react, angular, wbc } = component.layers;
 const rows = [
   [
     'HTML/CSS',
     html.utrecht ? `${c.gray}utrecht base only (no Tilburg CSS)${c.reset}` : fileCell(html.main),
-    existsSync(html.script) ? `${c.gray}+ script ${rel(html.script).split('/').pop()}${c.reset}` : '',
+    existsSync(html.script) ? `${c.gray}+ script ${basename(html.script)}${c.reset}` : '',
   ],
   ['HTML examples', fileCell(component.examples), `${c.gray}the reference markup every layer renders${c.reset}`],
   ['React', fileCell(react.main, react), react.promised && existsSync(react.main) ? testCell(react.test) : ''],
@@ -95,8 +96,6 @@ if (existsSync(component.guidance))
 
 console.log(`  ${c.bold}Files${c.reset}`);
 for (const [label, file, extra] of rows) console.log(`  ${label.padEnd(15)}${file}${extra ? `  ${extra}` : ''}`);
-
-// ─── Storybook ───────────────────────────────────────────────────────────────
 
 const running = readDevLock();
 const port = (key) => running?.storybooks?.find((storybook) => storybook.name === STORYBOOKS[key].name)?.port;
@@ -120,13 +119,9 @@ for (const [label, key, story] of pages) {
   console.log(`  ${''.padEnd(18)}${c.gray}online: ${hyperlink(onlineUrl, onlineUrl)}${c.reset}`);
 }
 
-// ─── Next ────────────────────────────────────────────────────────────────────
-
 console.log(`\n  ${c.bold}Next${c.reset}`);
+console.log(`  ${cmd(`pnpm dev ${component.slug}`)}     ${c.gray}open it in Storybook, rebuilt as you save${c.reset}`);
 console.log(
-  `  ${c.cyan}pnpm dev ${component.slug}${c.reset}     ${c.gray}open it in Storybook, rebuilt as you save${c.reset}`,
+  `  ${cmd(`pnpm test ${component.slug}`)}    ${c.gray}its tests in React, Angular and Web Components${c.reset}`,
 );
-console.log(
-  `  ${c.cyan}pnpm test ${component.slug}${c.reset}    ${c.gray}its tests in React, Angular and Web Components${c.reset}`,
-);
-console.log(`  ${c.cyan}pnpm parity ${component.slug}${c.reset}  ${c.gray}is it complete in every layer?${c.reset}\n`);
+console.log(`  ${cmd(`pnpm parity ${component.slug}`)}  ${c.gray}is it complete in every layer?${c.reset}\n`);

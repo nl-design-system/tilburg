@@ -1,34 +1,30 @@
 /* `pnpm run test:scripts`: pnpm parity must never report parity it did not check. Runs the script read-only against the
    repository, or against a copy of scripts/ in a temp dir with a table of our own. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, resolve } from 'node:path';
+import { cpSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 import { STATUS_FILE } from './lib/components.mjs';
+import { runScript, SCRIPTS, tempDir, writeFile } from './lib/test-fakes.mjs';
 
-const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 const parity = (args, cwd = SCRIPTS, script = resolve(SCRIPTS, 'parity.mjs')) =>
-  spawnSync(process.execPath, [script, ...args], {
-    cwd,
-    encoding: 'utf8',
-    timeout: 20_000,
-    env: { ...process.env, CI: '1' },
-  });
+  runScript(script, args, { cwd, env: { ...process.env, CI: '1' } });
 
 /** A fake repository: scripts/ copied next to a package.json and the given implementation-status table. */
 function fakeRepo(table) {
-  const root = mkdtempSync(resolve(tmpdir(), 'tilburg-parity-'));
+  const root = tempDir('tilburg-parity-');
   cpSync(SCRIPTS, resolve(root, 'scripts'), { recursive: true, filter: (path) => !path.includes('node_modules') });
   writeFileSync(resolve(root, 'package.json'), '{}');
-  if (table !== undefined) {
-    mkdirSync(dirname(resolve(root, STATUS_FILE)), { recursive: true });
-    writeFileSync(resolve(root, STATUS_FILE), table);
-  }
+  if (table !== undefined) writeFile(resolve(root, STATUS_FILE), table);
   return root;
 }
+
+test('a complete component passes (exit 0) and names its layers', () => {
+  const { status, stdout, output } = parity(['tooltip']);
+  assert.equal(status, 0, output);
+  assert.match(stdout, /Tooltip\s+✓\s+✓\s+✓\s+✓/);
+});
 
 test('an unknown name exits 1 instead of "0 components, every layer is there"', () => {
   const { status, stdout } = parity(['no-such-component']);
@@ -48,29 +44,38 @@ for (const args of [['PasswordInput'], ['password input'], ['password', 'input']
 test('a missing or empty table exits 1 with an explanation', () => {
   for (const table of [undefined, '# no table here\n']) {
     const root = fakeRepo(table);
-    try {
-      const { status, stdout } = parity([], root, resolve(root, 'scripts/parity.mjs'));
-      assert.equal(status, 1);
-      assert.match(stdout, /No components found/);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
+    const { status, stdout } = parity([], root, resolve(root, 'scripts/parity.mjs'));
+    assert.equal(status, 1);
+    assert.match(stdout, /No components found/);
   }
 });
 
 test('a promised layer without its files is a problem (exit 1), not parity', () => {
   const root = fakeRepo('| Component | HTML/CSS | React | Angular | Web Components |\n| Ghost | ✅ | ✅ | ✅ | ✅ |\n');
-  try {
-    const { status, stdout } = parity(['ghost'], root, resolve(root, 'scripts/parity.mjs'));
-    assert.equal(status, 1);
-    for (const path of [
-      'components-css/ghost/index.scss',
-      'components-react/src/Ghost.tsx',
-      'components-angular/src/ghost/component.ts',
-      'web-components-stencil/src/ghost/component.tsx',
-    ])
-      assert.ok(stdout.includes(`packages/${path} is missing`), path);
-  } finally {
-    rmSync(root, { recursive: true, force: true });
-  }
+  const { status, stdout } = parity(['ghost'], root, resolve(root, 'scripts/parity.mjs'));
+  assert.equal(status, 1);
+  for (const path of [
+    'components-css/ghost/index.scss',
+    'components-react/src/Ghost.tsx',
+    'components-angular/src/ghost/component.ts',
+    'web-components-stencil/src/ghost/component.tsx',
+  ])
+    assert.ok(stdout.includes(`packages/${path} is missing`), path);
+});
+
+test('a near miss suggests a runnable command', () => {
+  const { status, stdout } = parity(['tooltp']);
+  assert.equal(status, 1);
+  assert.match(stdout, /pnpm parity tooltip/);
+});
+
+test('a leftover folder without its main file is no orphan; a story without a row is', () => {
+  const root = fakeRepo(
+    '| Component | HTML/CSS | React | Angular | Web Components |\n| Real | utrecht | — | — | — |\n',
+  );
+  writeFile(resolve(root, 'packages/components-css/ghost/.DS_Store'), '');
+  writeFile(resolve(root, 'packages/storybook/src/tilburg-ghost-react.stories.tsx'), '');
+  const { stdout } = parity([], root, resolve(root, 'scripts/parity.mjs'));
+  assert.doesNotMatch(stdout, /components-css\/ghost/);
+  assert.match(stdout, /tilburg-ghost-react\.stories\.tsx, but/);
 });

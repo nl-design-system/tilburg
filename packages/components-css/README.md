@@ -6,12 +6,12 @@ De HTML/CSS-laag van het Tilburg Design System: per component een map met SCSS (
 `@utrecht/component-library-css`-classes de Tilburg-huisstijl legt. Deze markup is de referentie waar React, Angular
 en Web Components zich aan houden.
 
-Niet op npm gepubliceerd. React en Angular importeren deze SCSS zelf. Wil je hem los gebruiken, vraag het Design
-System-team dan om een build.
+Niet op npm gepubliceerd. React en Angular importeren deze SCSS zelf. Wil je hem los gebruiken, maak dan een tarball
+met `pnpm run pack:local` in de repository.
 
 - **Markup per component** — de pagina's onder `Tilburg HTML/…` in de Storybook (bron:
   `packages/storybook-shared/src/tilburg-<naam>.examples.ts`).
 - **Gedrag** — `accordion/index.js`, `combobox/index.js`, `password-input/index.js` en `tooltip/index.js` zijn
   kleine enhancer-scripts. Je zet ze per element aan met `data-tilburg-<naam>-enhance` (bv.
   `data-tilburg-accordion-enhance`). `tokens/resolve.js` vult de tokentabellen in de documentatie.
-- **Setup** — tokens, `tilburg-theme`, Utrecht-basis en fonts: zie **Aan de slag** in de Storybook.
+- **Setup** — de tarball, tokens, `tilburg-theme`, Utrecht-basis en fonts: zie [Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs) in de Storybook.

@@ -1,45 +1,43 @@
 /* `pnpm run test:scripts`: `pnpm test` (scripts/test.mjs) is what CI runs, so every failed sub-run has to end in a
    non-zero exit. A fake `pnpm` on PATH stands in for Jest and Stencil: it exits as told and writes fixture JSON to the
    --outputFile, so nothing real runs and nothing in the repository is touched. */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { after, test } from 'node:test';
+import { test } from 'node:test';
 import { loadComponents } from './lib/components.mjs';
+import { noSignals, prependPath, runScript, tempDir, tempEnv, writeFake } from './lib/test-fakes.mjs';
 
-const dir = mkdtempSync(join(tmpdir(), 'tilburg-test-runner-'));
-after(() => rmSync(dir, { recursive: true, force: true }));
+/* With a space: test.mjs quotes the report path, and must keep doing so. */
+const dir = tempDir('tilburg test-runner-');
 
 const calls = join(dir, 'calls.txt');
-writeFileSync(
-  join(dir, 'pnpm'),
+writeFake(
+  dir,
+  'pnpm',
   `#!/usr/bin/env node
 const { appendFileSync, writeFileSync } = require('node:fs');
 const args = process.argv.slice(2).join(' ');
 appendFileSync(${JSON.stringify(calls)}, args + '\\n');
 const plan = JSON.parse(process.env.FAKE_PNPM);
 const { exit = 0, signal, report } = plan[Object.keys(plan).find((key) => args.includes(key))] ?? {};
-const out = /--outputFile=(\\S+)/.exec(args)?.[1];
+/* One argument after the shell: a temp folder with a space in it ("Jan de Vries") stays whole. */
+const out = process.argv.find((arg) => arg.startsWith('--outputFile='))?.slice('--outputFile='.length);
 if (out && report !== undefined) writeFileSync(out, typeof report === 'string' ? report : JSON.stringify(report));
 if (signal) process.kill(process.pid, signal);
 else process.exit(exit);
 `,
 );
-chmodSync(join(dir, 'pnpm'), 0o755);
 
 function run(args, plan) {
   writeFileSync(calls, '');
-  const result = spawnSync(process.execPath, [resolve(import.meta.dirname, 'test.mjs'), ...args], {
-    encoding: 'utf8',
+  const result = runScript(resolve(import.meta.dirname, 'test.mjs'), args, {
     timeout: 30_000,
-    env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, TMPDIR: dir, CI: '1', FAKE_PNPM: JSON.stringify(plan) },
+    env: prependPath({ ...process.env, ...tempEnv(dir), CI: '1', FAKE_PNPM: JSON.stringify(plan) }, dir),
   });
-  return { ...result, output: result.stdout + result.stderr, calls: readFileSync(calls, 'utf8') };
+  return { ...result, calls: readFileSync(calls, 'utf8') };
 }
-
-// ─── Everything (CI) ─────────────────────────────────────────────────────────
 
 test('everything: a failing package run stops there and exits with its code', () => {
   const result = run([], { '--recursive': { exit: 3 } });
@@ -47,9 +45,10 @@ test('everything: a failing package run stops there and exits with its code', ()
   assert.doesNotMatch(result.calls, /test:scripts/);
 });
 
-test('everything: a run killed by a signal is a failure, not a pass', () => {
+test('everything: a run killed by a signal is a failure, not a pass', { skip: noSignals }, () => {
   const result = run([], { '--recursive': { signal: 'SIGTERM' } });
-  assert.notEqual(result.status, 0);
+  /* 128 + 15, as a shell reports it */
+  assert.equal(result.status, 143);
   assert.doesNotMatch(result.calls, /test:scripts/);
 });
 
@@ -62,8 +61,6 @@ test('everything: both green is exit 0', () => {
   assert.equal(result.status, 0);
   assert.match(result.calls, /--recursive run test\nrun test:scripts\n/);
 });
-
-// ─── One component ───────────────────────────────────────────────────────────
 
 /* A component with tests in all three layers, so each layer is run. */
 const component = loadComponents().find((entry) =>

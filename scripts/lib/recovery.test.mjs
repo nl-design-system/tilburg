@@ -1,11 +1,12 @@
 /* `node --test scripts/`: the failure messages people actually hit, and what the scripts should make of them. */
+import './test-env.mjs';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { autoLine, classifyFailure, FAILURES, RECOVERIES, runStepWithRecovery } from './recovery.mjs';
+import { autoLine, classifyFailure, FAILURES, RECOVERIES } from './recovery.mjs';
 
 const cases = [
   ['node-version', 'Error [ERR_UNKNOWN_BUILTIN_MODULE]: No such built-in module: node:sqlite'],
@@ -57,13 +58,69 @@ const cases = [
   ['no-space', "Error: ENOSPC: no space left on device, write '/r/packages/storybook-angular/.angular/cache/x'"],
 ];
 
-for (const [kind, output] of cases) {
-  test(`recognises ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
-    const diagnosis = classifyFailure(output, { exitCode: 1 });
-    assert.equal(diagnosis.kind, kind);
-    assert.ok(diagnosis.why, 'says why');
-  });
-}
+test('a truncated JSON file is only the Angular cache when .angular is named too', () => {
+  assert.notEqual(
+    classifyFailure('Error: package.json: Unexpected end of JSON input', { exitCode: 1 }).kind,
+    'angular-cache',
+  );
+  assert.equal(
+    classifyFailure('Error: Unexpected end of JSON input\n  at read (/r/.angular/x.json)', { exitCode: 1 }).kind,
+    'angular-cache',
+  );
+});
+
+test('the git-lock fix refuses an index.lock outside the git folder, also through ..', async () => {
+  for (const path of ['/tmp/x/index.lock', `${process.cwd()}/.git/../../x/index.lock`]) {
+    const err = { output: `fatal: Unable to create '${path}': File exists.` };
+    await assert.rejects(RECOVERIES['git-lock'].run({ err }), /names no \.git\/index\.lock/);
+  }
+});
+
+test('node:test output: passing test names do not decide the kind, its fail summary does', () => {
+  const output = [
+    '✔ recognises node-version: Error [ERR_UNKNOWN_BUILTIN_MODULE]: node:sqlite (0.1ms)',
+    'ok 3 - recognises git-auth: Authentication failed',
+    '✖ something else (2ms)',
+    'ℹ tests 3',
+    'ℹ pass 2',
+    'ℹ fail 1',
+  ].join('\n');
+  assert.equal(classifyFailure(output, { exitCode: 1 }).kind, 'tests-failed');
+  assert.equal(classifyFailure('# fail 2', { exitCode: 1 }).kind, 'tests-failed');
+  assert.notEqual(classifyFailure('ℹ fail 0', { exitCode: 1 }).kind, 'tests-failed');
+});
+
+test('pnpm --recursive line prefixes do not hide what the line says', () => {
+  const jest =
+    'packages/components-react test: ✕ says Authentication failed\npackages/components-react test: Tests:       1 failed, 3 passed';
+  assert.equal(classifyFailure(jest, { exitCode: 1 }).kind, 'tests-failed');
+  assert.equal(
+    classifyFailure('packages/x build: SyntaxError: Unexpected token', { exitCode: 1 }).kind,
+    'syntax-error',
+  );
+  assert.equal(classifyFailure('packages/x build: [ ERROR ]  TypeScript: bad', { exitCode: 1 }).kind, 'stencil-error');
+  /* Not a prefix: a type error keeps its "error TS…: " */
+  assert.equal(classifyFailure('error TS2304: Cannot find name x.', { exitCode: 1 }).kind, 'type-error');
+});
+
+test('a shell exit 127 or 9009 is a missing command, also in another language', () => {
+  assert.equal(classifyFailure('sh: chokidar: Kommando nicht gefunden.', { exitCode: 127 }).kind, 'command-not-found');
+  assert.equal(classifyFailure("'x' wordt niet herkend", { exitCode: 9009 }).kind, 'command-not-found');
+});
+
+test('no write access, a terminal prompt and a purge question each get their own diagnosis', () => {
+  const denied = 'remote: Permission to org/repo.git denied to someone.\nfatal: The requested URL returned error: 403';
+  assert.equal(classifyFailure(denied, { exitCode: 128 }).kind, 'git-no-access');
+  assert.equal(
+    classifyFailure('gpg: signing failed: Inappropriate ioctl for device', { exitCode: 1 }).kind,
+    'needs-terminal',
+  );
+  assert.equal(
+    classifyFailure('ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY  Aborted removal of modules directory', { exitCode: 1 })
+      .kind,
+    'modules-purge',
+  );
+});
 
 test('a step that fails without saying anything is called out as such, with the command to rerun', () => {
   const diagnosis = classifyFailure('', { exitCode: 3, command: 'exit 3' });
@@ -118,14 +175,7 @@ test('a step someone stopped (Ctrl-C, kill) is not retried as if it crashed', ()
    Each run happens in a child process: run here, its lines ("  ✗  heap step") would share stdout with node:test's own
    report, and Node 24's parser misreads text whose third byte is ≥ 0x80 when it lands right after a report in the same
    pipe read (it reads that text as a negative message size) — "Unable to deserialize cloned data", now and then. */
-const withTemp = async (run) => {
-  const dir = mkdtempSync(join(tmpdir(), 'tilburg-recovery-'));
-  try {
-    await run(dir);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-};
+const withTemp = (run) => run(mkdtempSync(join(tmpdir(), 'tilburg-recovery-')));
 const RECOVERY = new URL('./recovery.mjs', import.meta.url).href;
 /**
  * Run runStepWithRecovery() in a child; resolves to { ok, exitCode, diagnosis, output }. `recoveries`: source text of
@@ -136,7 +186,7 @@ function runInChild(dir, { label = 'step', command, cwd = dir, env = process.env
   const file = join(dir, 'child.mjs');
   writeFileSync(
     file,
-    `${answer === undefined ? '' : 'process.stdin.isTTY = true; process.stdin.setRawMode = () => process.stdin;\n'}const { RECOVERIES, runStepWithRecovery } = await import(${JSON.stringify(RECOVERY)});
+    `${answer === undefined ? '' : 'process.stdin.isTTY = true; process.stdout.isTTY = true; process.stdin.setRawMode = () => process.stdin;\n'}const { RECOVERIES, runStepWithRecovery } = await import(${JSON.stringify(RECOVERY)});
 const recoveries = { ...RECOVERIES, ${recoveries} };
 try {
   await runStepWithRecovery(${JSON.stringify(label)}, ${JSON.stringify(command)}, { cwd: ${JSON.stringify(cwd)}, recoveries });
@@ -164,8 +214,7 @@ process.exit(0);`,
         child.stdin.write(answer);
       }
     };
-    child.stdout.setEncoding('utf8').on('data', read);
-    child.stderr.setEncoding('utf8').on('data', read);
+    for (const stream of [child.stdout, child.stderr]) stream.setEncoding('utf8').on('data', read);
     child.on('close', () => {
       clearTimeout(timer);
       const line = output.split(/\r?\n/).findLast((text) => text.startsWith('@@'));
@@ -416,10 +465,11 @@ const realOutput = [
     'Error: \nReference Errors:\nSome token references (2) could not be found.\nUse log.verbosity "verbose" or use CLI option --verbose for more details.',
   ],
 ];
-for (const [kind, output] of realOutput) {
-  test(`real output: ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
+for (const [kind, output] of [...cases, ...realOutput]) {
+  test(`recognises ${kind}: ${output.split('\n')[0].slice(0, 60)}`, () => {
     const diagnosis = classifyFailure(output, { exitCode: 1 });
     assert.equal(diagnosis.kind, kind);
+    assert.ok(diagnosis.why, 'says why');
     assert.ok(diagnosis.fix, 'every recognised failure has a manual fix');
   });
 }
@@ -447,8 +497,9 @@ const askingFix = (marker) => `'pnpm-version': {
   ask: 'Leave the marker?',
   run: async () => (await import('node:fs')).writeFileSync(${JSON.stringify(marker)}, 'x'),
 },`;
+/* Forward slashes: a Windows path's backslashes would be escapes in the JavaScript string (Windows reads / as well). */
 const wrongPnpmUntil = (marker) =>
-  `node -e "if (!require('fs').existsSync('${marker}')) { console.error('ERR_PNPM_BAD_PM_VERSION  configured to use v11.15.1 of pnpm'); process.exit(1) }"`;
+  `node -e "if (!require('fs').existsSync('${marker.replaceAll('\\', '/')}')) { console.error('ERR_PNPM_BAD_PM_VERSION  configured to use v11.15.1 of pnpm'); process.exit(1) }"`;
 const { CI: _ci, ...noCI } = process.env;
 
 test('a fix that changes the machine never runs without a terminal: it is reported, not run', { timeout: 20_000 }, () =>
@@ -579,9 +630,8 @@ test('a failing test is a test failure, whatever its name or message says', () =
 
 test('a step stopped from outside is never retried, even when its output looks retryable', () => {
   const output = ' WARN  GET https://registry.npmjs.org/x error (ECONNRESET). Will retry in 10 seconds.';
-  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'])
     assert.equal(classifyFailure(output, { signal }).kind, 'stopped', signal);
-  }
 });
 
 test('after the one retry, the report says the fix was not tried because the retry was used', { timeout: 20_000 }, () =>

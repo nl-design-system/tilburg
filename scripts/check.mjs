@@ -2,21 +2,32 @@
    that is not green. Exits 1 only for ❌ rows (things that stop you), not for ⚠️ rows (things to do).
    `pnpm check --fix` then offers each row's fix one by one (Y/n), checks those rows again and prints the table anew.
    Also works as `node scripts/check.mjs`, which is handy when pnpm itself will not start (wrong Node). */
-import { parseArgs } from 'node:util';
-import { c, confirm, fail, installCrashHandler, printBanner, printCheckTable } from './lib/cli-utils.mjs';
+import util from 'node:util';
+import {
+  c,
+  cmd,
+  confirm,
+  exitWith,
+  installCrashHandler,
+  parseArgsOrExit,
+  printBanner,
+  printCheckTable,
+} from './lib/cli-utils.mjs';
 import { runAllChecks, safely } from './lib/checks.mjs';
-import { readDevLock } from './lib/lock.mjs';
+import { confirmNoDevRunning, readDevLock } from './lib/lock.mjs';
 
 installCrashHandler('pnpm check');
 printBanner('Environment check');
 
-let wantsFix;
-try {
-  wantsFix = Boolean(parseArgs({ options: { fix: { type: 'boolean' } } }).values.fix);
-} catch (err) {
-  fail({ what: err.message, fix: 'pnpm check   or   pnpm check --fix' });
-  process.exit(1);
-}
+/* parseArgs came in Node 18.3: on an older Node, say what is wrong instead of crashing on it. */
+if (!util.parseArgs)
+  exitWith({
+    what: `Node ${process.version} is too old to run this check`,
+    fix: 'nvm use   (or install the Node in .nvmrc)',
+  });
+const wantsFix = Boolean(
+  parseArgsOrExit({ options: { fix: { type: 'boolean' } } }, 'pnpm check   or   pnpm check --fix').values.fix,
+);
 const groups = await runAllChecks();
 let { failed, warned, total } = printCheckTable(groups);
 
@@ -30,9 +41,7 @@ for (const row of groups.flatMap((group) => group.rows).filter((row) => row.fix 
 fixes.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 const runnable = fixes.filter((fix) => fix.run).length;
 const fixHint =
-  runnable && !wantsFix
-    ? `\n  ${c.gray}${runnable} can be fixed for you:${c.reset} ${c.cyan}pnpm check --fix${c.reset}`
-    : '';
+  runnable && !wantsFix ? `\n  ${c.gray}${runnable} can be fixed for you:${c.reset} ${cmd('pnpm check --fix')}` : '';
 
 if (wantsFix && (await offerFixes())) ({ failed, warned, total } = printCheckTable(groups));
 
@@ -48,7 +57,7 @@ if (warned.length) {
     `  ${c.green}Ready to work.${c.reset} ${c.yellow}${warned.length} to look at:${c.reset} ${warned.map((row) => row.label).join(', ')}.${fixHint}\n`,
   );
 } else {
-  const next = readDevLock() ? 'pnpm dev is running.' : `Start with ${c.cyan}pnpm dev${c.reset}.`;
+  const next = readDevLock() ? 'pnpm dev is running.' : `Start with ${cmd('pnpm dev')}.`;
   console.log(`  ${c.green}All ${total} checks are green.${c.reset} ${next}\n`);
 }
 
@@ -58,10 +67,11 @@ async function offerFixes() {
     console.log(`  ${c.gray}Nothing to fix.${c.reset}\n`);
     return false;
   }
-  if (!process.stdin.isTTY) {
+  /* Both: with stdout redirected, confirm() answers without asking. */
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
     console.log(`  ${c.yellow}No terminal to ask in — nothing changed.${c.reset} --fix would offer:`);
     for (const fix of fixes)
-      console.log(`    ${c.cyan}${fix.command}${c.reset}${fix.run ? '' : `  ${c.gray}(you run this one)${c.reset}`}`);
+      console.log(`    ${cmd(`${fix.command}`)}${fix.run ? '' : `  ${c.gray}(you run this one)${c.reset}`}`);
     console.log('');
     return false;
   }
@@ -70,11 +80,15 @@ async function offerFixes() {
     console.log(`  ${c.bold}${fix.rows.map((row) => row.label).join(', ')}${c.reset}`);
     if (!fix.run) {
       /* nvm is a shell function: from a child process it cannot change your shell's Node. */
-      console.log(`    Run this yourself: ${c.cyan}${fix.command}${c.reset}\n`);
+      console.log(`    Run this yourself: ${cmd(`${fix.command}`)}\n`);
       continue;
     }
     console.log(`    ${c.gray}${fix.command}${c.reset}`);
     if (!(await confirm(fix.label))) {
+      console.log('');
+      continue;
+    }
+    if (/\bpnpm install\b/.test(fix.command) && !(await confirmNoDevRunning(fix.command))) {
       console.log('');
       continue;
     }

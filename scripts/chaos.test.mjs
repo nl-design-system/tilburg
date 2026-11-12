@@ -2,9 +2,10 @@
    in scripted ways: exit 1 silently, hang, or die by SIGKILL. A run must stop with a non-zero exit and a clear
    message, never with a raw crash, never hang past Ctrl-C, and never leave a child running. The scripts run in child
    processes only: their output never reaches this file's stdout (see the Node 24 note in recovery.test.mjs). */
+import './lib/test-env.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { after, before, test } from 'node:test';
@@ -72,14 +73,11 @@ function run(root, name, { env = base, cwd = root, ctrlC, limit = 25_000 } = {})
     detached: true,
   });
   let output = '';
-  child.stdout.on('data', (data) => (output += data));
-  child.stderr.on('data', (data) => (output += data));
+  for (const stream of [child.stdout, child.stderr]) stream.on('data', (data) => (output += data));
   const signal = (sig) => {
     try {
       process.kill(-child.pid, sig);
-    } catch {
-      /* already gone */
-    }
+    } catch {}
   };
   const timers = [setTimeout(() => signal('SIGKILL'), limit)];
   if (ctrlC) timers.push(setTimeout(() => signal('SIGINT'), ctrlC));
@@ -103,7 +101,11 @@ function orphans() {
 /* A crash the scripts did not catch: Node's own trace, or installCrashHandler's "unexpected error" report. */
 const CRASH = /unexpected error|^\s+at .+:\d+:\d+\)?$/m;
 
+/* Every test here is skipped on Windows, and so are the hooks: ps, pkill and a symlink to node are POSIX. */
+const skip = process.platform === 'win32' && 'the fakes are shell scripts';
+
 before(() => {
+  if (skip) return;
   parent = mkdtempSync(join(tmpdir(), 'tilburg-chaos-'));
   const bin = join(parent, 'bin');
   mkdirSync(bin);
@@ -132,11 +134,9 @@ exit 1
 });
 
 after(() => {
+  if (skip) return;
   orphans();
-  rmSync(parent, { recursive: true, force: true });
 });
-
-const skip = process.platform === 'win32' && 'the fakes are shell scripts';
 
 for (const [condition, change] of Object.entries({
   'every tool exits 1 without output': {},
@@ -191,10 +191,7 @@ test(
 
 test(
   'node_modules installed but pnpm-lock.yaml deleted: dev says what is wrong instead of crashing',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('no-lockfile', { installed: true, lock: false });
     for (const name of ['dev', 'check']) {
@@ -207,10 +204,7 @@ test(
 
 test(
   'ship: Ctrl-C while git fetch hangs stops ship, instead of running verify and exiting 0',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('ship');
     const bin = join(parent, 'ship-bin');
@@ -218,7 +212,7 @@ test(
     const realGit = execFileSync('/bin/sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim();
     writeFileSync(
       join(bin, 'git'),
-      `#!/bin/sh\ncase "$1" in fetch) exec "${process.execPath}" -e 'setTimeout(() => {}, 1e9)' ${MARKER} ;; esac\nexec "${realGit}" "$@"\n`,
+      `#!/bin/sh\n# ship calls git -C <dir> fetch: look at every argument\ncase " $* " in *" fetch "*) exec "${process.execPath}" -e 'setTimeout(() => {}, 1e9)' ${MARKER} ;; esac\nexec "${realGit}" "$@"\n`,
       { mode: 0o755 },
     );
     writeFileSync(join(bin, 'pnpm'), '#!/bin/sh\necho VERIFY-RAN\nexit 0\n', { mode: 0o755 });
@@ -238,10 +232,7 @@ test(
 
 test(
   'verify started from another folder still runs its steps in the repository',
-  {
-    skip,
-    timeout: 30_000,
-  },
+  { skip, timeout: 30_000 },
   async () => {
     const root = sandbox('elsewhere-verify');
     const result = await run(root, 'verify', { cwd: join(parent, 'elsewhere') });

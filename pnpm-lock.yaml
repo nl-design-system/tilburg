@@ -215,6 +215,9 @@ importers:
       '@gemeente-tilburg/components-css':
         specifier: workspace:*
         version: link:../components-css
+      '@gemeente-tilburg/design-tokens':
+        specifier: workspace:*
+        version: link:../../proprietary/design-tokens
       '@testing-library/dom':
         specifier: 10.4.0
         version: 10.4.0

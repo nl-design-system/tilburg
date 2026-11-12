@@ -17,7 +17,7 @@ dat bestand bestaat. Draai hem na een Angular- of ng-packagr-upgrade.
 
 ## Tests
 
-Jest met `jest-preset-angular` (`setup-jest.ts`). Een spec staat naast de component als `component.spec.ts`; zie
+Jest met `jest-preset-angular` (`setup-jest.ts`). Een spec staat naast het component als `component.spec.ts`; zie
 `src/modal/component.spec.ts` voor een voorbeeld met een test-host-component.
 
 ```bash
