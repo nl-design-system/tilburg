@@ -1,5 +1,11 @@
 # @gemeente-tilburg/components-react
 
+## 0.1.1
+
+### Patch Changes
+
+- ecc7ebc: Remove an unneeded peer dependency with invalid value for publishing the package.
+
 ## 0.1.0
 
 ### Minor Changes
