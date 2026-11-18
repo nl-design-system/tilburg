@@ -183,7 +183,7 @@ test('layerSteps: the HTML layer names this component only, and adds the behavio
 
 test('layerSteps: React lists the three stylesheets, Angular the module, Web Components the loader without the example body', () => {
   const react = layerSteps(docs.pages.react, 'button');
-  assert.equal(react[1].code.match(/^import "/gm).length, 3);
+  assert.equal(react[1].code.match(/^import ['"]/gm).length, 3);
   assert.match(react[1].code, /components-react\/dist\/style\.css/);
   /* The notice (a quoted paragraph on the page) is a callout, the explanation is not; code keeps its backticks. */
   assert.deepEqual(
@@ -193,7 +193,7 @@ test('layerSteps: React lists the three stylesheets, Angular the module, Web Com
   assert.match(react[0].notes[0].text, /^`@gemeente-tilburg\/components-react` staat nog niet op npm.*tarball/);
   const angular = layerSteps(docs.pages.angular, 'button');
   assert.match(angular[1].code, /TilburgComponentsModule/);
-  assert.match(angular[1].code, /@import "@gemeente-tilburg\/design-tokens/);
+  assert.match(angular[1].code, /@import ['"]@gemeente-tilburg\/design-tokens/);
   const wbc = layerSteps(docs.pages.webComponents, 'button');
   assert.match(wbc[1].code, /defineCustomElements\(\)/);
   assert.doesNotMatch(wbc[1].code, /<body|tilburg-wbc-alert/);

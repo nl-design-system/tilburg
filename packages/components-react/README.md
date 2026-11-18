@@ -10,11 +10,11 @@ npm install @gemeente-tilburg/components-react @gemeente-tilburg/design-tokens @
 ```
 
 ```tsx
-import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-import "@utrecht/component-library-css/dist/index.css";
-import "@gemeente-tilburg/components-react/dist/style.css"; // de component-CSS laadt niet vanzelf
+import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+import '@utrecht/component-library-css/dist/index.css';
+import '@gemeente-tilburg/components-react/dist/style.css'; // de component-CSS laadt niet vanzelf
 
-import { Alert } from "@gemeente-tilburg/components-react";
+import { Alert } from '@gemeente-tilburg/components-react';
 
 export const App = () => (
   <div className="tilburg-theme utrecht-document">

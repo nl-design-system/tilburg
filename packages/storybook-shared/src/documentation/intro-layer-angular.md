@@ -9,8 +9,8 @@ en 22: gebouwd met Angular 20 (de oudste ondersteunde versie), de Storybook draa
 ### Installatie (Angular)
 
 ```bash
-npm install ../tilburg/.tarballs/gemeente-tilburg-components-angular-0.0.0.tgz \
-            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+npm install ../tilburg/.tarballs/gemeente-tilburg-components-angular-0.1.0.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
             @utrecht/component-library-angular@1.1.0 \
             @utrecht/component-library-css
 ```
@@ -41,8 +41,8 @@ De componenten zitten in één NgModule (er zijn geen standalone exports). Impor
 in de `imports` van een standalone component:
 
 ```ts
-import { NgModule } from "@angular/core";
-import { TilburgComponentsModule } from "@gemeente-tilburg/components-angular";
+import { NgModule } from '@angular/core';
+import { TilburgComponentsModule } from '@gemeente-tilburg/components-angular';
 
 @NgModule({
   imports: [TilburgComponentsModule],
@@ -53,8 +53,8 @@ export class AppModule {}
 Laad de tokens en de Utrecht-basis globaal, via de `styles`-array in `angular.json` of bovenin `styles.scss`:
 
 ```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+@import '@utrecht/component-library-css/dist/index.css';
 ```
 
 De CSS per component zit al in de Angular-componenten zelf; aparte imports per component zijn niet nodig. Zet

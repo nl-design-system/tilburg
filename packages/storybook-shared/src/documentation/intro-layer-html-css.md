@@ -9,7 +9,7 @@ direct in je markup. Dit is de leidende laag; alle andere lagen renderen precies
 
 ```bash
 npm install ../tilburg/.tarballs/gemeente-tilburg-components-css-0.0.0.tgz \
-            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
             @utrecht/component-library-css
 ```
 
@@ -25,11 +25,11 @@ gecompileerde CSS.
 De component-CSS is SCSS, per component een map. Je hebt dus een Sass-stap nodig. Compileer alleen wat je gebruikt:
 
 ```scss
-@import "@gemeente-tilburg/design-tokens/dist/tilburg/theme.css";
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
+@import '@utrecht/component-library-css/dist/index.css';
 
-@import "@gemeente-tilburg/components-css/alert/index";
-@import "@gemeente-tilburg/components-css/button/index";
+@import '@gemeente-tilburg/components-css/alert/index';
+@import '@gemeente-tilburg/components-css/button/index';
 /* …alleen de componenten die je nodig hebt */
 ```
 
@@ -53,7 +53,7 @@ Een paar componenten hebben gedrag nodig. Daarvoor zijn er kleine scripts, en je
 Of in een bundler, zelf aanroepen, bijvoorbeeld na het renderen van nieuwe markup:
 
 ```js
-import { enhanceAccordion } from "@gemeente-tilburg/components-css/accordion/index.js";
+import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion/index.js';
 enhanceAccordion(document);
 ```
 

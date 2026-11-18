@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/components-react",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "React components for the Municipality of Tilburg, based on the NL Design System architecture",
   "author": "Community for NL Design System",
   "license": "EUPL-1.2",
@@ -75,7 +75,6 @@
     "vite": "5.4.21"
   },
   "peerDependencies": {
-    "@gemeente-tilburg/design-tokens": "workspace:^",
     "@utrecht/component-library-css": "^5.2.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"

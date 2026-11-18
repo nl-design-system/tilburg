@@ -9,8 +9,8 @@ De Tilburg-Storybooks importeren de bron direct. Andere design systems die de Ti
 (bijvoorbeeld HLTsamen) gebruiken het gebouwde package:
 
 ```ts
-import { bugs, descriptionHtml, examples } from "@gemeente-tilburg/storybook-shared/tilburg-alert.examples";
-import gettingStarted from "@gemeente-tilburg/storybook-shared/documentation/getting-started.md?raw";
+import { bugs, descriptionHtml, examples } from '@gemeente-tilburg/storybook-shared/tilburg-alert.examples';
+import gettingStarted from '@gemeente-tilburg/storybook-shared/documentation/getting-started.md?raw';
 ```
 
 `pnpm run build` compileert de voorbeelden naar `dist/` (ESM + `.d.ts`, zonder afhankelijkheden). Niet op npm
