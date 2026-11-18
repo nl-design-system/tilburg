@@ -23,7 +23,8 @@ The Tilburg brand decisions. Defined in `src/`, built by `style-dictionary-build
 | **Interaction accents** | `--tilburg-interaction-color`, `--tilburg-interaction-hover-color`, `--tilburg-interaction-active-color`                      | The "Tilburg blue" used for links, focus rings, primary buttons.                                                                                                              |
 | **Component slots**     | `--tilburg-table-footer-border-width`, `--tilburg-accordion-section-border-color`, `--tilburg-page-header-title-font-size`, … | Per-component knobs that components-css consumes. Consumers normally tune the higher-level family tokens above; component slots exist as overrides for unusual styling needs. |
 
-Browse the full set live under **Tilburg / Tokens** in the storybook.
+Browse the full set live under **Tokens** in either Storybook; how to load the theme in a project is under
+[Aan de slag](https://nl-design-system.github.io/tilburg/?path=/docs/tilburg-aan-de-slag--docs).
 
 ### 2. Utrecht-owned tokens (`--utrecht-*`)
 
@@ -68,8 +69,8 @@ Component-level slots (`--tilburg-<component>-*`, e.g. `--tilburg-page-header-ba
 ## Build pipeline
 
 - Source files: `src/` (DTCG-format JSON). `legacy/` is an archive of the old Style-Dictionary-format tokens; the build does not read it.
-- Build script: `style-dictionary-build.mjs` — outputs to `dist/tilburg/`: `theme.css` (tokens on `.tilburg-theme`), `variables.css` (the same tokens on `:root`), `list.json`, `tokens.cjs`, `_mixin.scss`.
-- `pnpm run pack:dist` builds and packs `dist/` into a `.tgz` for downstream apps that consume a tarball. In that tarball `dist/` is the package root, so the import path is `@gemeente-tilburg/design-tokens/tilburg/theme.css` (without `dist/`); the npm release via changesets keeps `dist/` in the path.
+- Build script: `style-dictionary-build.mjs` — outputs one folder per theme, `dist/tilburg/` and `dist/bat/`: `theme.css` (tokens on `.tilburg-theme` / `.bat-theme`), `variables.css` (the same tokens on `:root`), `list.json`, `tokens.cjs`, `_mixin.scss`. Plus `dist/high-contrast.css` for the `tilburg-high-contrast` class.
+- `pnpm run pack:dist` builds the package and packs it into a `.tgz` in `dist/` for downstream apps that consume a tarball. It packs from the package root, like the npm release, so the import paths are the same: `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css`.
 
 See [`CONTRIBUTING.md`](../../CONTRIBUTING.md#releasen) in the repository root for the full release flow.
 

@@ -18,6 +18,13 @@ export default {
       },
     },
     {
+      // The developer scripts use top-level await, which the flow parser does not read.
+      files: ['scripts/**/*.mjs'],
+      options: {
+        parser: 'babel',
+      },
+    },
+    {
       files: ['*.json'],
       options: {
         parser: 'json',
