@@ -20,10 +20,10 @@ staan uitgelegd waar je ze tegenkomt (_Hoe de repository in elkaar zit_, _Een ni
 
 ## Vereisten
 
-| Tool    | Versie                                      | Hoe                                                         |
-| ------- | ------------------------------------------- | ----------------------------------------------------------- |
-| Node.js | 24 (zie `.nvmrc`; `engines`: `>=24.15 <25`) | `nvm use`                                                   |
-| pnpm    | 11 (`packageManager` in `package.json`)     | `corepack enable`, dan kiest corepack de juiste versie zelf |
+| Tool    | Versie                                   | Hoe                                                         |
+| ------- | ---------------------------------------- | ----------------------------------------------------------- |
+| Node.js | 24 (zie `.nvmrc`; `engines`: `^24.22.3`) | `nvm use`                                                   |
+| pnpm    | 11 (`packageManager` in `package.json`)  | `corepack enable`, dan kiest corepack de juiste versie zelf |
 
 `pnpm install` controleert eerst je Node-versie (`scripts/preflight.mjs`) en stopt met uitleg als het niet Node 24 is;
 daarnaast weigert pnpm zelf een andere versie (`engineStrict`). Zie je `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` of
@@ -138,7 +138,7 @@ staat er een nieuwe oorzaak in, draai dan `node scripts/troubleshooting.mjs`.
 <!-- prettier-ignore-start -->
 | Herkend als | Waarom | Lost het script zelf op | Met de hand |
 | ----------- | ------ | ----------------------- | ----------- |
-| `node-version` | This is not the Node the repo needs. pnpm 11 needs a newer Node (it uses node:sqlite), and engines (with engineStrict) needs Node 24, 24.15 or newer (Angular 22). | Vraagt eerst, dan: running it again with the right Node from nvm (installing it with nvm first if needed) | nvm install (installs and switches to the newest Node from .nvmrc), then run the command again in that terminal |
+| `node-version` | This is not the Node the repo needs. pnpm 11 needs a newer Node (it uses node:sqlite), and engines (with engineStrict) needs Node 24, 24.22.3 or newer. | Vraagt eerst, dan: running it again with the right Node from nvm (installing it with nvm first if needed) | nvm install (installs and switches to the newest Node from .nvmrc), then run the command again in that terminal |
 | `pnpm-version` | Another pnpm than the one in package.json "packageManager" is running. | Vraagt eerst, dan: corepack enable (so this folder runs the pnpm that package.json pins) | corepack enable (corepack then runs the pinned pnpm in this folder) |
 | `corepack-keys` | Your corepack is too old: older than the signing key of the pnpm it has to download (it refuses the download), or too old for this Node (it crashes with ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING). | Vraagt eerst, dan: npm install -g corepack@latest, then corepack enable | npm install -g corepack@latest, then corepack enable |
 | `corepack-missing` | corepack is not installed. Node 25 and later no longer include it, nor does a Node from Homebrew or pnpm env. | Vraagt eerst, dan: npm install -g corepack, then corepack enable | npm install -g corepack, then corepack enable |

@@ -12,7 +12,7 @@ pagina geladen worden.
 
 ```bash
 npm install ../tilburg/.tarballs/gemeente-tilburg-web-components-stencil-0.0.0.tgz \
-            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
             @utrecht/component-library-css
 ```
 
@@ -30,7 +30,7 @@ laadt zijn eigen `components-css`-regels zelf.
 <link rel="stylesheet" href="…/@utrecht/component-library-css/dist/index.css" />
 
 <script type="module">
-  import { defineCustomElements } from "@gemeente-tilburg/web-components-stencil/loader";
+  import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader';
   defineCustomElements();
 </script>
 

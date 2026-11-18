@@ -41,10 +41,10 @@ pnpm run pack:local                   # bouwt alles en zet de tarballs in .tarba
 
 ```text
 .tarballs/
-  gemeente-tilburg-design-tokens-0.0.1.tgz
+  gemeente-tilburg-design-tokens-0.1.0.tgz
   gemeente-tilburg-components-css-0.0.0.tgz
-  gemeente-tilburg-components-react-0.0.0.tgz
-  gemeente-tilburg-components-angular-0.0.0.tgz
+  gemeente-tilburg-components-react-0.1.1.tgz
+  gemeente-tilburg-components-angular-0.1.0.tgz
   gemeente-tilburg-web-components-stencil-0.0.0.tgz
   gemeente-tilburg-web-components-react-0.0.0.tgz
   gemeente-tilburg-storybook-shared-0.0.0.tgz
@@ -53,8 +53,8 @@ pnpm run pack:local                   # bouwt alles en zet de tarballs in .tarba
 Installeer in je eigen project wat je laag nodig heeft, met het pad naar de tarball:
 
 ```bash
-npm install ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.0.1.tgz \
-            ../tilburg/.tarballs/gemeente-tilburg-components-react-0.0.0.tgz
+npm install ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
+            ../tilburg/.tarballs/gemeente-tilburg-components-react-0.1.1.tgz
 ```
 
 npm schrijft dat als `"file:../tilburg/.tarballs/…tgz"` in je `package.json`. De paden in je code zijn dezelfde als na
@@ -96,7 +96,7 @@ npm install @utrecht/component-library-css
 ```
 
 ```css
-@import "@utrecht/component-library-css/dist/index.css";
+@import '@utrecht/component-library-css/dist/index.css';
 ```
 
 De packages vragen versie `^5.2.0`; de Storybooks draaien op `5.2.0`.

@@ -122,7 +122,7 @@ test('the files and settings the fixes point at exist', () => {
   for (const key of ['allowBuilds', 'minimumReleaseAge', 'minimumReleaseAgeExclude', 'overrides']) {
     assert.match(workspace, new RegExp(`^${key}:`, 'm'), `pnpm-workspace.yaml has ${key}`);
   }
-  assert.match(readFileSync(join(ROOT, '.nvmrc'), 'utf8'), /^\d+\s*$/, '.nvmrc holds a major version');
+  assert.match(readFileSync(join(ROOT, '.nvmrc'), 'utf8'), /^v?\d+(\.\d+){0,2}\s*$/, '.nvmrc holds a Node version');
   assert.ok(pkg.packageManager?.startsWith('pnpm@'), 'package.json "packageManager" pins pnpm');
   assert.ok(existsSync(join(ROOT, '.husky/pre-commit')), '.husky/pre-commit');
   assert.match(

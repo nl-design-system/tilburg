@@ -35,7 +35,7 @@ export const FAILURES = [
   {
     kind: 'node-version',
     test: /ERR_UNKNOWN_BUILTIN_MODULE|node:sqlite|requires at least Node|ERR_PNPM_UNSUPPORTED_ENGINE|Node\.js version v[\d.]+ detected/i,
-    why: 'This is not the Node the repo needs. pnpm 11 needs a newer Node (it uses node:sqlite), and engines (with engineStrict) needs Node 24, 24.15 or newer (Angular 22).',
+    why: 'This is not the Node the repo needs. pnpm 11 needs a newer Node (it uses node:sqlite), and engines (with engineStrict) needs Node 24, 24.22.3 or newer.',
     fix: 'nvm install   (installs and switches to the newest Node from .nvmrc), then run the command again in that terminal',
     /* nvm-windows reads no .nvmrc: both commands need the version. */
     fixWindows: `nvm install ${NODE_MAJOR}, then nvm use ${NODE_MAJOR}, then run the command again`,
@@ -503,7 +503,7 @@ function gitRunning() {
 export function enginesMinimum() {
   /* a broken package.json is its own failure; here the .nvmrc major is enough */
   const range = readJson(resolve(ROOT, 'package.json'))?.engines?.node ?? '';
-  return range.match(/>=\s*v?(\d+\.\d+\.\d+)/)?.[1] ?? `${NODE_MAJOR}.0.0`;
+  return range.match(new RegExp(`(?:>=|\\^)\\s*v?(${NODE_MAJOR}\\.\\d+\\.\\d+)`))?.[1] ?? `${NODE_MAJOR}.0.0`;
 }
 /** The newest Node of the .nvmrc major that nvm has installed and engines accepts ({ version, bin }), or null. */
 /** The newest Node <NODE_MAJOR> nvm has installed that is not below the engines minimum (pnpm install would refuse an older one), or null. */
