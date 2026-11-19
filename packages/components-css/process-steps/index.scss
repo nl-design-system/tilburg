@@ -18,7 +18,7 @@
   font-family: var(--denhaag-process-steps-font-family, var(--utrecht-document-font-family));
   font-size: var(--denhaag-process-steps-font-size, var(--tilburg-typography-font-size-md));
   line-height: var(--denhaag-process-steps-line-height, var(--tilburg-typography-line-height-md));
-  list-style: none;
+  list-style-type: "";
   margin-block-end: 0; /* reset <ol> */
   margin-block-start: 0; /* reset <ol> */
   padding-inline-start: 0; /* reset <ol> */
@@ -190,8 +190,10 @@
   inline-size: var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs));
   margin-inline-start: calc(
     (
-        var(--denhaag-step-marker-size, var(--tilburg-size-sm)) -
-          var(--denhaag-step-marker-nested-size, var(--tilburg-size-2xs))
+        var(--denhaag-step-marker-size, var(--tilburg-size-sm)) - var(
+            --denhaag-step-marker-nested-size,
+            var(--tilburg-size-2xs)
+          )
       ) / 2
   );
   min-block-size: var(

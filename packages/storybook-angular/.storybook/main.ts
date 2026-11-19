@@ -18,6 +18,13 @@ const config: StorybookConfig = {
             resource.context = HERE;
         }).apply(compiler),
     });
+    /* `x.component.ts?raw` (what "Show code" shows on the example pages) must stay source text: keep the TypeScript
+       loaders off it, or the compiled JavaScript is shown. */
+    for (const rule of webpackConfig.module?.rules ?? []) {
+      if (rule && typeof rule === 'object' && rule.test instanceof RegExp && rule.test.test('x.ts')) {
+        rule.resourceQuery ??= { not: [/raw/] };
+      }
+    }
     return webpackConfig;
   },
   stories: ['../src/**/*.stories.@(ts|js|mdx)', '../src/**/*.mdx'],

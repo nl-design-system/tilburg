@@ -22,10 +22,10 @@
    React/Angular/Web Components render the `<svg>` glyph themselves. */
 .tilburg-validation-message__icon:empty::before {
   background-color: currentColor;
-  block-size: 20px;
+  block-size: 1.25rem;
   content: "";
   display: block;
-  inline-size: 20px;
+  inline-size: 1.25rem;
   mask-position: center;
   mask-repeat: no-repeat;
   mask-size: contain;

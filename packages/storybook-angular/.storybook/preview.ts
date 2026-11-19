@@ -111,6 +111,7 @@ const preview: Preview = {
             'Je eerste wijziging',
             'Tips & valkuilen',
             'Implementatiestatus',
+            'Voorbeelden',
             'Open Source License',
             'Toestemming voor gebruik',
             '*',

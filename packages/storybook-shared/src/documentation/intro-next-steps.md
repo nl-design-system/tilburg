@@ -25,8 +25,9 @@ Vier ingangen, naar wat je hier komt doen. Het plaatje is de korte versie: de ro
 Je wilt weten wat dit is en hoe het eruitziet. Je hoeft niets te installeren.
 
 - **Wat is het?** _Vier lagen_ en _Wat is NL Design System?_ hieronder leggen het uit zonder code.
-- **Hoe ziet het eruit?** De React-Storybook heeft onder _Tilburg → Voorbeelden_ drie pagina's die helemaal uit
-  Tilburg-componenten zijn opgebouwd: _Afspraak maken_, _Melding openbare ruimte_ en _Mijn aanvragen_. Losse
+- **Hoe ziet het eruit?** Onder _Tilburg → Voorbeelden_ staan drie pagina's die helemaal uit Tilburg-componenten zijn
+  opgebouwd: _Afspraak maken_, _Melding openbare ruimte_ en _Mijn aanvragen_. Ze staan in de React- en in de
+  Angular-Storybook, elk gebouwd met de componenten van die laag; de knop _Show code_ toont de code. Losse
   componenten staan in de zijbalk; onder `Tilburg HTML/…` zie je elk component met zijn varianten.
 - **Wat is er al?** [Implementatiestatus](?path=/docs/tilburg-implementatiestatus--docs) is de lijst van alle
   componenten, met een link naar elk.
