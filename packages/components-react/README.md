@@ -26,4 +26,5 @@ export const App = () => (
 ```
 
 Lees in de Storybook **Tilburg → Aan de slag** voor de volledige setup (fonts, varianten van de tokens) en de pagina's
-onder `Tilburg React/…` voor de props per component. Nog in ontwikkeling (0.x).
+onder `Tilburg React/…` voor de props per component.
+Nog in ontwikkeling (0.x).

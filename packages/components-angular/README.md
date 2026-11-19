@@ -19,6 +19,7 @@ export class AppModule {}
 
 Laad `@gemeente-tilburg/design-tokens/dist/tilburg/theme.css` en `@utrecht/component-library-css/dist/index.css` globaal,
 en zet `class="tilburg-theme utrecht-document"` op `<body>`. De volledige setup staat in de Storybook onder
-**Aan de slag**; de inputs en outputs per component onder `Tilburg Angular/…`. Nog in ontwikkeling (0.x).
+**Aan de slag**; de inputs en outputs per component onder `Tilburg Angular/…`.
+Nog in ontwikkeling (0.x).
 
 Bijdragen: zie [`CONTRIBUTING.md`](CONTRIBUTING.md).
