@@ -27,6 +27,7 @@ export * from './document/component';
 export * from './drawer/component';
 export * from './emphasis/component';
 export * from './figure/component';
+export * from './file-input/component';
 export * from './form-field-description/component';
 export * from './form-field/component';
 export * from './form-fieldset/component';

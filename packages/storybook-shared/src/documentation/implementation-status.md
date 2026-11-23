@@ -54,6 +54,7 @@ Er is op dit moment geen enkel component dat wél in React maar niet in Angular 
 | Drawer                 | utrecht  | ✅    | ✅      | ✅             |
 | Emphasis               | utrecht  | ✅    | ✅      | ✅             |
 | Figure                 | ✅       | ✅    | ✅      | ✅             |
+| File Input             | ✅       | ✅    | ✅      | ✅             |
 | Form                   | ✅       | ✅    | ✅      | ✅             |
 | Form Field             | ✅       | ✅    | ✅      | ✅             |
 | Form Field Description | utrecht  | ✅    | ✅      | ✅             |

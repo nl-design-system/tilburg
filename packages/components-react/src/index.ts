@@ -60,6 +60,8 @@ export { Fieldset } from './Fieldset';
 export type { FieldsetProps } from './Fieldset';
 export { Figure } from './Figure';
 export type { FigureProps } from './Figure';
+export { FileInput } from './FileInput';
+export type { FileInputProps } from './FileInput';
 export { Form } from './Form';
 export type { FormProps } from './Form';
 export { FormField } from './FormField';

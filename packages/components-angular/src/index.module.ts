@@ -31,6 +31,7 @@ import { TilburgDocument } from './document/component';
 import { TilburgDrawer } from './drawer/component';
 import { TilburgEmphasis } from './emphasis/component';
 import { TilburgFigure } from './figure/component';
+import { TilburgFileInput } from './file-input/component';
 import { TilburgForm } from './form/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
@@ -207,6 +208,7 @@ const components = [
   TilburgUnorderedList,
   TilburgUrlData,
   TilburgValidationMessage,
+  TilburgFileInput,
 ];
 
 @NgModule({

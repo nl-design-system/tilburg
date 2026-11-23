@@ -1,0 +1,6 @@
+@use "../../../components-css/file-input/index";
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the HTML/CSS reference. */
+tilburg-wbc-file-input {
+  display: block;
+}
