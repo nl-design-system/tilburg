@@ -16,7 +16,7 @@ try {
 } catch {}
 
 /**
- * `.nvmrc` pins the major version; `engines` and pnpm's `engineStrict` refuse anything else at install time. "24",
+ * `.nvmrc` pins the major version; `engines` sets the minimum, which scripts/preflight.mjs enforces at install time. "24",
  * "v24" and "24.19.0" all read as 24; anything else (an alias like lts/*) is NaN, which the checks report.
  */
 export const NODE_MAJOR = (() => {
