@@ -1,0 +1,6 @@
+@use "../../../components-css/form-toggle/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule as the Angular `:host`). */
+tilburg-wbc-form-toggle {
+  display: block;
+}

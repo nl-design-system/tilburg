@@ -1,0 +1,20 @@
+<ng-template #headingText>
+  <a *ngIf="href; else plain" class="utrecht-link utrecht-link--html-a utrecht-card__link" [attr.href]="href"
+    >{{ heading }}</a
+  >
+  <ng-template #plain>{{ heading }}</ng-template>
+</ng-template>
+<div class="utrecht-card" [class.utrecht-card--link]="!!href">
+  <div class="utrecht-card__content">
+    <div class="utrecht-card__heading" [ngSwitch]="headingLevel">
+      <h1 *ngSwitchCase="1" class="utrecht-heading-1"><ng-container *ngTemplateOutlet="headingText"></ng-container></h1>
+      <h2 *ngSwitchCase="2" class="utrecht-heading-2"><ng-container *ngTemplateOutlet="headingText"></ng-container></h2>
+      <h4 *ngSwitchCase="4" class="utrecht-heading-4"><ng-container *ngTemplateOutlet="headingText"></ng-container></h4>
+      <h5 *ngSwitchCase="5" class="utrecht-heading-5"><ng-container *ngTemplateOutlet="headingText"></ng-container></h5>
+      <h6 *ngSwitchCase="6" class="utrecht-heading-6"><ng-container *ngTemplateOutlet="headingText"></ng-container></h6>
+      <h3 *ngSwitchDefault class="utrecht-heading-3"><ng-container *ngTemplateOutlet="headingText"></ng-container></h3>
+    </div>
+    <div class="utrecht-card__image"><ng-content select="[slot=image]"></ng-content></div>
+    <div class="utrecht-card__body"><ng-content></ng-content></div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+{
+  "components/link-social": {
+    "utrecht": {
+      "link-social": {
+        "background-color": { "$value": "{tilburg.interaction.color}" },
+        "color": { "$value": "{tilburg.color.white}" },
+        "border-width": { "$value": "{tilburg.border-width.md}" },
+        "border-color": { "$value": "{tilburg.color.white}" },
+        "size": { "$value": "44px" },
+        "margin-inline-start": { "$value": "{tilburg.space.inline.beetle}" },
+        "icon": {
+          "size": { "$value": "{tilburg.size.icon.md}" }
+        },
+        "hover": {
+          "background-color": { "$value": "{tilburg.interaction.hover.color}" },
+          "color": { "$value": "{tilburg.color.white}" }
+        }
+      }
+    }
+  },
+  "components/list-social": {
+    "utrecht": {
+      "list-social": {
+        "item": {
+          "margin-inline-end": { "$value": "{tilburg.space.inline.beetle}" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+@import "../../../components-css/file-input/index";
+
+/* The host element (`<tilburg-file-input>`) defaults to `display: inline`; give it the block flow of the reference. */
+:host {
+  display: block;
+}

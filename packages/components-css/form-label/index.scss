@@ -28,13 +28,40 @@
    `.utrecht-form-field` places its own label/description/control rhythm on a
    grid, so labels *inside* a form field are left alone — this only covers the
    label + control pairs written outside one, which is exactly where the
-   examples used to hand-patch `margin-bottom`. */
+   examples used to hand-patch `margin-bottom`.
+
+   The Angular (`tilburg-*`) and Web Component (`tilburg-wbc-*`) hosts stand in for the control as the next sibling, and
+   the label itself may sit in a `<tilburg-form-label>` / `<tilburg-wbc-form-label>` host. */
+:not(.utrecht-form-field)
+  > :is(tilburg-form-label, tilburg-wbc-form-label):has(
+    + :is(
+        tilburg-textbox,
+        tilburg-textarea,
+        tilburg-combobox,
+        tilburg-select,
+        tilburg-wbc-textbox,
+        tilburg-wbc-textarea,
+        tilburg-wbc-combobox,
+        tilburg-wbc-select
+      )
+  )
+  > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio),
 :not(.utrecht-form-field)
   > .utrecht-form-label:not(.utrecht-form-label--checkbox, .utrecht-form-label--radio):has(
-    + .utrecht-textbox,
-    + .utrecht-textarea,
-    + .utrecht-combobox,
-    + .utrecht-select
+    + :is(
+        .utrecht-textbox,
+        .utrecht-textarea,
+        .utrecht-combobox,
+        .utrecht-select,
+        tilburg-textbox,
+        tilburg-textarea,
+        tilburg-combobox,
+        tilburg-select,
+        tilburg-wbc-textbox,
+        tilburg-wbc-textarea,
+        tilburg-wbc-combobox,
+        tilburg-wbc-select
+      )
   ) {
   margin-block-end: var(--utrecht-form-field-label-margin-block-end, 0.25rem);
 }

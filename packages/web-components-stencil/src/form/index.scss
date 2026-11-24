@@ -1,0 +1,6 @@
+@use "../../../components-css/form/index";
+
+/* Light-DOM host defaults to `display: inline`; force block flow (same rule as the Angular `:host`). */
+tilburg-wbc-form {
+  display: block;
+}

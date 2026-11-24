@@ -1,0 +1,47 @@
+<!-- With a FormControl the control owns the value and the disabled state (binding `[disabled]` next to
+     `[formControl]` triggers Angular's reactive-forms warning), so the two cases are separate inputs, as in
+     `tilburg-checkbox`. -->
+<div
+  class="utrecht-form-toggle utrecht-form-toggle--html-checkbox"
+  [class.utrecht-form-toggle--disabled]="control ? control.disabled : !!disabled"
+  [class.utrecht-form-toggle--invalid]="!!invalid"
+  [class.utrecht-form-toggle--required]="required"
+>
+  @if (control) {
+  <input
+    type="checkbox"
+    role="switch"
+    class="utrecht-form-toggle__checkbox"
+    [id]="inputId"
+    [attr.name]="name || null"
+    [formControl]="control"
+    [required]="required"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    [attr.aria-describedby]="ariaDescribedBy || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-required]="required ? 'true' : null"
+    (change)="checkChanged.emit($event)"
+  />
+  } @else {
+  <input
+    type="checkbox"
+    role="switch"
+    class="utrecht-form-toggle__checkbox"
+    [id]="inputId"
+    [attr.name]="name || null"
+    [checked]="checked"
+    [disabled]="!!disabled"
+    [required]="required"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+    [attr.aria-describedby]="ariaDescribedBy || null"
+    [attr.aria-invalid]="invalid ? 'true' : null"
+    [attr.aria-required]="required ? 'true' : null"
+    (change)="checkChanged.emit($event)"
+  />
+  }
+  <label class="utrecht-form-toggle__track utrecht-form-toggle__track--html-label" [attr.for]="inputId">
+    <span class="utrecht-form-toggle__thumb"></span>
+  </label>
+</div>

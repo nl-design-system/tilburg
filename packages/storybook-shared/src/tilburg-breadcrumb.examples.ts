@@ -58,8 +58,7 @@ const usagePlainHtml = `### Plain HTML / CSS
 <nav class="utrecht-breadcrumb-nav tilburg-breadcrumb" aria-label="Kruimelpad">
   <ol class="utrecht-breadcrumb-nav__list utrecht-breadcrumb-nav__list--html-ol">
     <li class="utrecht-breadcrumb-nav__item">
-      <a class="utrecht-breadcrumb-nav__link" href="/">Home</a>
-      <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
+      <a class="utrecht-breadcrumb-nav__link" href="/">Home</a><span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
     </li>
     <li class="utrecht-breadcrumb-nav__item">
       <span aria-current="page" class="utrecht-breadcrumb-nav__link utrecht-breadcrumb-nav__link--current">
@@ -138,16 +137,13 @@ export const examples = {
     html: `<nav class="utrecht-breadcrumb-nav tilburg-breadcrumb" aria-label="Kruimelpad">
   <ol class="utrecht-breadcrumb-nav__list utrecht-breadcrumb-nav__list--html-ol">
     <li class="utrecht-breadcrumb-nav__item">
-      <a class="utrecht-breadcrumb-nav__link" href="#">Home</a>
-      <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
+      <a class="utrecht-breadcrumb-nav__link" href="#">Home</a><span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
     </li>
     <li class="utrecht-breadcrumb-nav__item">
-      <a class="utrecht-breadcrumb-nav__link" href="#">Parkeren</a>
-      <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
+      <a class="utrecht-breadcrumb-nav__link" href="#">Parkeren</a><span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
     </li>
     <li class="utrecht-breadcrumb-nav__item">
-      <a class="utrecht-breadcrumb-nav__link" href="#">Vergunning aanvragen</a>
-      <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
+      <a class="utrecht-breadcrumb-nav__link" href="#">Vergunning aanvragen</a><span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
     </li>
     <li class="utrecht-breadcrumb-nav__item">
       <span aria-current="page" class="utrecht-breadcrumb-nav__link utrecht-breadcrumb-nav__link--current">Bewonersvergunning</span>
@@ -160,8 +156,7 @@ export const examples = {
     html: `<nav class="utrecht-breadcrumb-nav tilburg-breadcrumb" aria-label="Kruimelpad">
   <ol class="utrecht-breadcrumb-nav__list utrecht-breadcrumb-nav__list--html-ol">
     <li class="utrecht-breadcrumb-nav__item">
-      <a class="utrecht-breadcrumb-nav__link" href="#">Home</a>
-      <span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
+      <a class="utrecht-breadcrumb-nav__link" href="#">Home</a><span class="utrecht-breadcrumb-nav__separator" aria-hidden="true">›</span>
     </li>
     <li class="utrecht-breadcrumb-nav__item">
       <span aria-current="page" class="utrecht-breadcrumb-nav__link utrecht-breadcrumb-nav__link--current">Aanvragen</span>

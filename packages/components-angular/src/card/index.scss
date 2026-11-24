@@ -1,0 +1,7 @@
+@import "../../../components-css/card/index";
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force the block flow of the HTML/CSS
+   reference. Encapsulation is off (see component.ts), so this is a tag selector instead of `:host`. */
+tilburg-card {
+  display: block;
+}

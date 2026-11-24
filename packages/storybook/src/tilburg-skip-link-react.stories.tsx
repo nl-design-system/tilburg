@@ -30,25 +30,21 @@ export const VisibleOnFocus: Story = {
   ),
 };
 
-/* `--visible` on its own: always rendered in place, but *not* in the focused
-   appearance. The HTML reference story called "Force Visible" combines
-   `--focus` with `--visible`; its React counterpart is `ForceFocusAppearance`
-   below, not this one. */
+/* `visibility="focus"` renders `--focus --visible`, the classes of the HTML reference. */
 export const ForceVisible: Story = {
-  name: 'Always visible (--visible modifier, no focus ring)',
+  name: 'Force visible (demo)',
   render: () => (
-    <SkipLink href="#main" visibility="visible">
+    <SkipLink href="#main" visibility="focus">
       Sla over en ga naar de hoofdinhoud
     </SkipLink>
   ),
 };
 
-/* Same two classes as the `tilburg-skip-link--force-visible` HTML reference:
-   `utrecht-skip-link--focus utrecht-skip-link--visible`. */
-export const ForceFocusAppearance: Story = {
-  name: 'Force focused appearance (storybook screenshot)',
+/* `--visible` on its own: always shown, but *not* in the focused appearance. */
+export const AlwaysVisible: Story = {
+  name: 'Always visible (--visible modifier, no focus ring)',
   render: () => (
-    <SkipLink href="#main" visibility="focus" className="utrecht-skip-link--visible">
+    <SkipLink href="#main" visibility="visible">
       Sla over en ga naar de hoofdinhoud
     </SkipLink>
   ),

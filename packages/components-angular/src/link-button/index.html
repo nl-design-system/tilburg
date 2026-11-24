@@ -1,0 +1,13 @@
+<button
+  class="utrecht-link-button utrecht-link-button--html-button"
+  [class.utrecht-link-button--inline]="inline"
+  [class.utrecht-link-button--pressed]="pressed"
+  [class.utrecht-link-button--disabled]="disabled"
+  [attr.type]="type"
+  [disabled]="disabled"
+  [attr.aria-pressed]="pressed === undefined ? null : pressed ? 'true' : 'false'"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-describedby]="ariaDescribedBy || null"
+>
+  <ng-content></ng-content>
+</button>

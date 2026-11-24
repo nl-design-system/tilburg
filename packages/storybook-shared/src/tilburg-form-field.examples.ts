@@ -142,7 +142,7 @@ export const examples = {
   <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid">
     <label class="utrecht-form-label utrecht-form-label--invalid" for="ff-invalid">E-mailadres</label>
     <input id="ff-invalid" type="email" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="niet-geldig" aria-invalid="true" aria-describedby="ff-invalid-error" />
-    <div id="ff-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert" aria-live="polite">
+    <div id="ff-invalid-error" class="tilburg-validation-message tilburg-validation-message--error utrecht-form-field-error-message" role="alert">
       <span class="tilburg-validation-message__icon" aria-hidden="true">${circleIcon}</span>
       <span>Vul een geldig e-mailadres in.</span>
     </div>
@@ -155,7 +155,7 @@ export const examples = {
   <div class="utrecht-form-field utrecht-form-field--text utrecht-form-field--invalid tilburg-warning">
     <label class="utrecht-form-label" for="ff-warning">Aanvraagdatum</label>
     <input id="ff-warning" type="text" class="utrecht-textbox utrecht-textbox--html-input utrecht-textbox--invalid" value="2026-05-31" aria-describedby="ff-warning-msg" />
-    <div id="ff-warning-msg" class="tilburg-validation-message tilburg-validation-message--warning utrecht-form-field-description utrecht-form-field-description--warning" role="alert" aria-live="polite">
+    <div id="ff-warning-msg" class="tilburg-validation-message tilburg-validation-message--warning utrecht-form-field-description utrecht-form-field-description--warning" role="alert">
       <span class="tilburg-validation-message__icon" aria-hidden="true">${triangleIcon}</span>
       <span>De aanvraagperiode sluit binnenkort.</span>
     </div>

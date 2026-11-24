@@ -1,0 +1,12 @@
+/* utrecht-only component: styled by `@utrecht/component-library-css` with the
+   Tilburg tokens, there is no components-css folder. */
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`;
+   force the block flow of the HTML/CSS reference. In a Heading Group the host,
+   not the inner `<p>`, is the flex item of the `<hgroup>`: it carries the
+   `order` that `.utrecht-pre-heading` reads, so the pre-heading still shows
+   above the heading that precedes it in the DOM. */
+:host {
+  display: block;
+  order: var(--utrecht-pre-heading-order, 0);
+}

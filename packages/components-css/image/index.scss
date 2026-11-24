@@ -1,0 +1,15 @@
+/* Image: `@utrecht/component-library-css` sets `.utrecht-img { height: auto; width: auto }`, which overrides the
+   `width`/`height` attributes, so an image always rendered at its intrinsic size. `revert-layer` hands the size back
+   to the attributes (presentational hints sit below the author layers); `height` stays `auto` when `width` is set, so
+   the attribute ratio is kept when `max-inline-size` shrinks the image in a narrow container. */
+.utrecht-img {
+  max-inline-size: 100%;
+}
+
+.utrecht-img[width] {
+  inline-size: revert-layer;
+}
+
+.utrecht-img[height]:not([width]) {
+  block-size: revert-layer;
+}

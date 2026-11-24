@@ -5,8 +5,6 @@
 }
 
 .tilburg-loading-spinner__overlay {
-  block-size: 100vh;
-  inline-size: 100vw;
   inset: 0;
   position: fixed;
   vertical-align: middle;
@@ -16,9 +14,7 @@
 .tilburg-loading-spinner__panel {
   align-items: center;
   background-color: var(--tilburg-loading-spinner-overlay-background-color);
-  block-size: 100vh;
   display: flex;
-  inline-size: 100vw;
   inset: 0;
   justify-content: center;
   position: fixed;

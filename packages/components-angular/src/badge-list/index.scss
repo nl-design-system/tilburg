@@ -1,0 +1,7 @@
+@import "../../../components-css/badge-list/index";
+
+/* The custom-element host defaults to `display: inline`; force the block flow
+   of the HTML/CSS reference. */
+:host {
+  display: block;
+}

@@ -1,0 +1,12 @@
+<dialog
+  #dialog
+  class="utrecht-drawer"
+  [ngClass]="'utrecht-drawer--' + align"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+  (close)="onDialogClose($event)"
+  (pointerdown)="onDialogPointerDown($event)"
+  (click)="onDialogClick($event)"
+>
+  <ng-content></ng-content>
+</dialog>

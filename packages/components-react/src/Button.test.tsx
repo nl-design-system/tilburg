@@ -41,6 +41,11 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('tilburg-small');
   });
 
+  it('defaults to the primary-action appearance', () => {
+    render(<Button>OK</Button>);
+    expect(screen.getByRole('button')).toHaveClass('utrecht-button--primary-action');
+  });
+
   it('applies the appearance class for the chosen appearance', () => {
     render(<Button appearance="primary-action-button">OK</Button>);
     expect(screen.getByRole('button')).toHaveClass('utrecht-button--primary-action');

@@ -40,13 +40,13 @@ export const AllPermutations: Story = {
         <TilburgWbcTextbox name="x" placeholder="Verplicht" required />
       </Row>
       <Row label="readonly">
-        <TilburgWbcTextbox name="x" value="Alleen lezen" readonly />
+        <TilburgWbcTextbox name="x" value="Alleen lezen" readonly aria-label="Alleen lezen" />
       </Row>
       <Row label="disabled">
         <TilburgWbcTextbox name="x" placeholder="Uitgeschakeld" disabled />
       </Row>
       <Row label="invalid">
-        <TilburgWbcTextbox name="x" value="bad value" invalid />
+        <TilburgWbcTextbox name="x" value="bad value" invalid aria-label="Ongeldige waarde" />
       </Row>
       <Row label="type=email">
         <TilburgWbcTextbox name="x" type="email" placeholder="naam@voorbeeld.nl" />

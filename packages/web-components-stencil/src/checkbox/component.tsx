@@ -3,7 +3,7 @@
  * Copyright (c) 2026 Gemeente Tilburg
  */
 
-import { Component, Element, h, Prop, State } from '@stencil/core';
+import { Component, Element, h, Listen, Prop, State } from '@stencil/core';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 
 const INHERITED = ['id', 'title', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const;
@@ -45,6 +45,13 @@ export class TilburgWbcCheckbox {
 
   disconnectedCallback() {
     this.inheritor?.disconnect();
+  }
+
+  /* `form.reset()` sets the input back without a `change` event; resync `checked` once the reset has run. */
+  @Listen('reset', { target: 'document' })
+  onFormReset(event: Event) {
+    const input = this.input;
+    if (input && (event.target as Node).contains(this.host)) setTimeout(() => (this.checked = input.checked));
   }
 
   componentDidRender() {

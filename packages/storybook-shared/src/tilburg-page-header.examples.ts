@@ -155,7 +155,7 @@ export const examples = {
     html: `<header class="tilburg-page-header">
   <div class="tilburg-page-header__container">
     <a class="tilburg-page-header__brand" href="#">
-      <img class="tilburg-page-header__logo" src="${LOGO_SRC}" alt="" />
+      <img class="tilburg-page-header__logo" src="${LOGO_SRC}" alt="Open Tilburg, naar de homepage" />
     </a>
     <div class="tilburg-page-header__actions">
       <span class="tilburg-page-header__user">Jan Janssen</span>

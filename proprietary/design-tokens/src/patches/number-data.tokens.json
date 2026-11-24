@@ -1,0 +1,14 @@
+{
+  "components/number-data": {
+    "utrecht": {
+      "number-data": {
+        "positive-color": {
+          "$value": "{tilburg.color.green.400}"
+        },
+        "negative-color": {
+          "$value": "{tilburg.color.red.400}"
+        }
+      }
+    }
+  }
+}

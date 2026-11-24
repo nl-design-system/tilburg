@@ -1,0 +1,19 @@
+{
+  "components/figure": {
+    "utrecht": {
+      "figure": {
+        "caption": {
+          "color": {
+            "$value": "{tilburg.color.gray.400}"
+          },
+          "font-size": {
+            "$value": "{tilburg.typography.font-size.sm}"
+          },
+          "line-height": {
+            "$value": "{tilburg.typography.line-height.md}"
+          }
+        }
+      }
+    }
+  }
+}

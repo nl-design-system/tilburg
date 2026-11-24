@@ -3,7 +3,7 @@
 /* The custom-element host (`<tilburg-...>`) defaults to `display: inline`,
    which collapses the component into a text flow and prevents its block-level
    layout (margins, padding, borders, stacking with siblings) from matching the
-   HTML/CSS reference. Force block flow on the host. */
-:host {
+   HTML/CSS reference. Force block flow on the host (an element selector: the component uses `ViewEncapsulation.None`). */
+tilburg-radio-button {
   display: block;
 }

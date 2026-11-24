@@ -23,6 +23,7 @@ export const SECTIONS = [
       { script: 'dev:react', what: 'React Storybook only (HTML, React, Web Components)' },
       { script: 'dev:angular', what: 'Angular Storybook only (Angular, HTML)' },
       { script: 'test', what: 'every test; pnpm test tooltip runs one component in all layers' },
+      { script: 'new', what: 'a new component in every layer from its HTML (pnpm new badge --html "<span …>")' },
     ],
   },
   {

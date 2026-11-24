@@ -1,0 +1,14 @@
+<nav *ngIf="items?.length" class="utrecht-topnav" [attr.aria-label]="ariaLabel">
+  <ul class="utrecht-topnav__list">
+    <li *ngFor="let item of items" class="utrecht-topnav__item">
+      <a
+        class="utrecht-topnav__link"
+        [class.utrecht-topnav__link--current]="item.current"
+        [attr.href]="item.href || '#'"
+        [attr.aria-current]="item.current ? 'page' : null"
+        (click)="itemClick.emit({ item, event: $event })"
+        >{{ item.label }}</a
+      >
+    </li>
+  </ul>
+</nav>

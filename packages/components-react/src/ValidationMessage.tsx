@@ -23,7 +23,8 @@ const TYPE_GLYPH: Record<ValidationMessageType, ReactNode> = {
 };
 
 /* The role follows the live region, so they never contradict each other: `assertive` (default, as in bq-tlb-frontend) is an
-   alert, `polite` a status, `off` no live role at all. */
+   alert, `polite` a status, `off` no live role at all. No `aria-live` attribute: the role already implies it
+   (alert = assertive, status = polite), as in the HTML reference. */
 const LIVE_ROLE: Record<ValidationLiveRegion, 'alert' | 'status' | undefined> = {
   assertive: 'alert',
   polite: 'status',
@@ -56,7 +57,6 @@ export const ValidationMessage = forwardRef(
       <div
         ref={ref}
         role={LIVE_ROLE[ariaLive]}
-        aria-live={ariaLive}
         className={clsx(
           'tilburg-validation-message',
           isError && 'utrecht-form-field-error-message',

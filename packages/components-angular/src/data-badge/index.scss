@@ -1,0 +1,7 @@
+@import "../../../components-css/data-badge/index";
+
+/* `<tilburg-...>` defaults to `display: inline`; the badge is inline-block.
+   Match that so the host is sized by its content in inline flow. */
+:host {
+  display: inline-block;
+}

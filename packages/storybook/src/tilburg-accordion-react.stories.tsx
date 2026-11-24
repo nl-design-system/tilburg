@@ -28,7 +28,15 @@ interface SectionSpec {
 
 /* Multi-open behaviour matches the CSS-class story exactly: clicking a
    section toggles only that section, sections remain independent. */
-const MultiOpenDemo = ({ initialOpenIds = [], sections }: { initialOpenIds?: string[]; sections: SectionSpec[] }) => {
+const MultiOpenDemo = ({
+  initialOpenIds = [],
+  sections,
+  ariaLabel = 'Veelgestelde vragen',
+}: {
+  initialOpenIds?: string[];
+  sections: SectionSpec[];
+  ariaLabel?: string;
+}) => {
   const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(initialOpenIds));
   const toggle = (id: string) => {
     setOpenIds((prev) => {
@@ -39,7 +47,7 @@ const MultiOpenDemo = ({ initialOpenIds = [], sections }: { initialOpenIds?: str
     });
   };
   return (
-    <Accordion aria-label="Veelgestelde vragen">
+    <Accordion aria-label={ariaLabel}>
       {sections.map((section) => (
         <AccordionSection
           key={section.id}
@@ -94,6 +102,7 @@ export const AllPermutations: Story = {
       <div>
         <h4>With a disabled section</h4>
         <MultiOpenDemo
+          ariaLabel="Beschikbaarheid"
           sections={[
             { id: 'open', label: 'Beschikbaar', body: <Paragraph>Normaal te openen.</Paragraph> },
             {
@@ -119,7 +128,7 @@ export const AllPermutations: Story = {
       </div>
       <div>
         <h4>With displayName + headingLevel</h4>
-        <Accordion displayName="Veelgestelde vragen" headingLevel={2}>
+        <Accordion displayName="Veelgestelde vragen over afval" headingLevel={2}>
           <AccordionSection sectionKey="d1" label="Vraag 1" autoToggle>
             <Paragraph>Antwoord 1.</Paragraph>
           </AccordionSection>

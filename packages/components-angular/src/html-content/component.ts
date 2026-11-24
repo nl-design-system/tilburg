@@ -1,10 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'tilburg-html-content',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   standalone: false,
+  /* Not emulated: the typography rules must reach projected and `[innerHTML]` content, which emulated encapsulation would scope away. */
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgHtmlContent {
   @Input() lang?: string;

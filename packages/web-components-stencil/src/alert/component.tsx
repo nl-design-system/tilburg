@@ -5,7 +5,7 @@
 
 import { Component, Element, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 import { announce } from '../utils/announce';
-import { Heading, HeadingLevel } from '../utils/heading';
+import { HeadingLevel } from '../utils/heading';
 import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../utils/inherit-attributes';
 import { hasSlot } from '../utils/slots';
 
@@ -23,9 +23,37 @@ const VARIANT_TO_UTRECHT: Record<TilburgWbcAlertVariant, string> = {
 
 /**
  * @slot - The alert message.
- * @slot icon - Replaces the default per-variant icon (painted by CSS when empty).
- * @slot close-icon - Replaces the default × in the close button (painted by CSS when empty).
+ * @slot icon - Replaces the default per-variant icon.
+ * @slot close-icon - Replaces the default × in the close button.
  */
+/* Default glyphs: the same `<i><svg>` as the HTML reference and the React/Angular layers. */
+const GLYPH: Record<TilburgWbcAlertVariant | 'close', string> = {
+  info: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z',
+  success: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1.4 14.6L6 12l1.4-1.4 3.2 3.2 6-6L18 9.2l-7.4 7.4Z',
+  warning: 'M1 21h22L12 2 1 21Zm12-3h-2v-2h2v2Zm0-4h-2v-4h2v4Z',
+  danger:
+    'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm5 13.6L15.6 17 12 13.4 8.4 17 7 15.6 10.6 12 7 8.4 8.4 7 12 10.6 15.6 7 17 8.4 13.4 12 17 15.6Z',
+  close:
+    'm18.3 5.71-1.42-1.42L12 9.17 7.12 4.29 5.71 5.71 10.59 10.59 5.71 15.46l1.41 1.42L12 12l4.88 4.88 1.42-1.42-4.88-4.87 4.87-4.88Z',
+};
+
+const Icon = ({ glyph }: { glyph: keyof typeof GLYPH }) => (
+  <i
+    aria-hidden="true"
+    style={{
+      alignItems: 'center',
+      display: 'inline-flex',
+      fontSize: 'var(--utrecht-alert-icon-size, 1.5rem)',
+      fontStyle: 'normal',
+      justifyContent: 'center',
+    }}
+  >
+    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d={GLYPH[glyph]} />
+    </svg>
+  </i>
+);
+
 /* The alert type, read out before the message (bq-tlb-frontend TIL-51): the colour and icon show it visually only. */
 const DEFAULT_SR_PREFIX: Record<string, string> = {
   info: 'Informatie:',
@@ -70,7 +98,7 @@ export class TilburgWbcAlert {
       announce(text, liveRegion);
     }
   }
-  @Prop() closeButtonAriaLabel = 'sluit alert';
+  @Prop() closeButtonAriaLabel = 'Sluit alert';
   /** Visually hidden text prepended to the message for screen readers (e.g. "Fout:"). Defaults per variant;
    *  `sr-prefix=""` for none. */
   @Prop() srPrefix?: string | null;
@@ -106,6 +134,9 @@ export class TilburgWbcAlert {
     const prefix = this.srPrefix === undefined ? DEFAULT_SR_PREFIX[this.variant] : this.srPrefix;
     const variant = VARIANT_TO_UTRECHT[this.variant] ? this.variant : 'info';
     const liveRegion = this.liveRegion ?? (variant === 'danger' ? 'assertive' : 'polite');
+    const level = [1, 2, 3, 4, 5, 6].includes(Number(this.headingLevel)) ? Number(this.headingLevel) : 3;
+    const HeadingTag = `utrecht-heading-${level}`;
+    const InnerHeadingTag = `h${level}`;
     return (
       <div
         {...this.inherited}
@@ -115,13 +146,14 @@ export class TilburgWbcAlert {
         aria-atomic={this.announce ? undefined : 'true'}
       >
         <div class="utrecht-alert__icon" aria-hidden="true">
-          {this.hasIcon && <slot name="icon" />}
+          {this.hasIcon ? <slot name="icon" /> : <Icon glyph={variant} />}
         </div>
         <div class="utrecht-alert__content">
           {this.heading && (
-            <Heading level={this.headingLevel} class="tilburg-alert__title">
-              {this.heading}
-            </Heading>
+            /* The utrecht heading directly, as in the HTML reference (no tilburg-wbc-heading-N wrapper). */
+            <HeadingTag class="tilburg-alert__title">
+              <InnerHeadingTag class={`utrecht-heading-${level}`}>{this.heading}</InnerHeadingTag>
+            </HeadingTag>
           )}
           <div class="utrecht-alert__message">
             {prefix && <span class="utrecht-visually-hidden">{prefix} </span>}
@@ -135,7 +167,7 @@ export class TilburgWbcAlert {
             aria-label={this.closeButtonAriaLabel}
             onClick={this.onClose}
           >
-            {this.hasCloseIcon && <slot name="close-icon" />}
+            {this.hasCloseIcon ? <slot name="close-icon" /> : <Icon glyph="close" />}
           </button>
         )}
       </div>

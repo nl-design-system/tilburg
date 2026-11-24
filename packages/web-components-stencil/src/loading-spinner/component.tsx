@@ -77,7 +77,7 @@ export class TilburgWbcLoadingSpinner {
       return null;
     }
     return (
-      <div {...this.inherited} class="tilburg-loading-spinner__overlay" aria-busy="true">
+      <div {...this.inherited} class="tilburg-loading-spinner__overlay" role="group" aria-busy="true">
         <div class="tilburg-loading-spinner__panel">
           {/* The live region wraps the title and message as well as the spinner:
               the <svg> is aria-hidden, so a role="status" around it alone would

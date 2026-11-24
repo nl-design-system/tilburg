@@ -67,4 +67,20 @@ describe('TilburgCombobox', () => {
     expect(host.changes).toEqual(['goi']);
     expect(host.legacy).toEqual(['goi']);
   });
+
+  it('moves focus to the input when the chevron opens the popover', () => {
+    const chevron = fixture.nativeElement.querySelector('.tilburg-combobox__chevron') as HTMLButtonElement;
+    chevron.focus();
+    chevron.click();
+    fixture.detectChanges();
+    expect(document.activeElement).toBe(input());
+    expect(input().getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('renders chip text without surrounding whitespace, like the HTML reference', () => {
+    combobox.multiple = true;
+    host.control.setValue(['tlb'] as never);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.tilburg-combobox__chip').textContent).toBe('Tilburg×');
+  });
 });

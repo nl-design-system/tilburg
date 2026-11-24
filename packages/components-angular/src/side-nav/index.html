@@ -1,0 +1,33 @@
+<nav *ngIf="items?.length" class="utrecht-sidenav utrecht-sidenav--pseudo-elements" [attr.aria-label]="ariaLabel">
+  <ul class="utrecht-sidenav__list">
+    <li
+      *ngFor="let item of items; let last = last"
+      class="utrecht-sidenav__item"
+      [class.utrecht-sidenav__item--last]="last"
+    >
+      <a
+        class="utrecht-sidenav__link"
+        [class.utrecht-sidenav__link--current]="item.current"
+        [class.utrecht-sidenav__link--parent]="item.children?.length"
+        [attr.href]="item.href || '#'"
+        [attr.aria-current]="item.current ? 'page' : null"
+        (click)="itemClick.emit({ item, event: $event })"
+        >{{ item.label }}</a
+      >
+      <ul *ngIf="item.children?.length" class="utrecht-sidenav__list utrecht-sidenav__list--child">
+        <li *ngFor="let child of item.children" class="utrecht-sidenav__item utrecht-sidenav__item--child">
+          <a
+            class="utrecht-sidenav__link utrecht-sidenav__link--child"
+            [class.utrecht-sidenav__link--current]="child.current"
+            [class.utrecht-sidenav__link--current-child]="child.current"
+            [attr.href]="child.href || '#'"
+            [attr.aria-current]="child.current ? 'page' : null"
+            (click)="itemClick.emit({ item: child, event: $event })"
+            >{{ child.label }}</a
+          >
+        </li>
+      </ul>
+      <div class="utrecht-sidenav__item-separator"></div>
+    </li>
+  </ul>
+</nav>

@@ -8,8 +8,6 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
 
 const INHERITED = ['id', 'title', 'dir', 'aria-label', 'aria-labelledby', 'aria-describedby'] as const;
 
-const px = (value: string) => parseInt(value.replace('px', ''), 10);
-
 @Component({
   tag: 'tilburg-wbc-textarea',
   styleUrl: 'index.scss',
@@ -31,7 +29,8 @@ export class TilburgWbcTextarea {
   @Prop() required = false;
   @Prop() readonly = false;
   /**
-   * Grows the textarea with its content between 4 and 8 lines (the Angular
+   * Grows the textarea with its content: from the height the CSS and `rows`
+   * give it up to 8 lines (or `rows`, if larger), then it scrolls (the Angular
    * `tilburgTextAreaAutoResize` directive, which is always on there).
    */
   @Prop() autoResize = true;
@@ -60,17 +59,19 @@ export class TilburgWbcTextarea {
   private resize() {
     const el = this.textarea;
     if (!this.autoResize || !el || typeof window === 'undefined' || !window.getComputedStyle) return;
-    el.style.height = '0';
+    /* Start from the CSS / `rows` height (as the HTML reference) and only grow. */
+    el.style.height = '';
     const style = window.getComputedStyle(el);
-    const padding = px(style.paddingTop) + px(style.paddingBottom);
-    const lineHeight = px(style.lineHeight);
-    if (Number.isNaN(padding) || Number.isNaN(lineHeight)) {
-      el.style.height = '';
-      return;
+    // The textarea is `box-sizing: border-box`; `scrollHeight` includes the padding but not the border.
+    const border = (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
+    const padding = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+    // `line-height: normal` has no pixel value; browsers render it at roughly 1.2 × the font size.
+    const lineHeight = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) || 16) * 1.2;
+    const maxSize = lineHeight * Math.max(8, this.rows ?? 0) + padding + border;
+    const contentSize = el.scrollHeight + border;
+    if (contentSize > el.offsetHeight) {
+      el.style.height = `${Math.max(el.offsetHeight, Math.min(contentSize, maxSize))}px`;
     }
-    const minSize = lineHeight * 4 + padding;
-    const maxSize = Math.min(lineHeight * 8 + padding, el.scrollHeight);
-    el.style.height = `${Math.max(minSize, maxSize)}px`;
   }
 
   private readonly onInput = (event: Event) => {

@@ -2,6 +2,12 @@
 
 /* `<tilburg-form-label>` defaults to inline; without this, the label sits on
    the same line as the textbox inside `.utrecht-form-field`. */
-:host {
+tilburg-form-label {
   display: block;
+}
+
+/* Radio option labels are regular weight (the HTML reference); keep that after the bold base rule above, whatever
+   order the component stylesheets are inserted in. */
+.utrecht-form-label--radio:not(legend) {
+  font-weight: 400;
 }

@@ -1,0 +1,21 @@
+/* Tilburg layer on top of utrecht's `.utrecht-nav-list` (base CSS 5.2.0). Menu links are bold
+   (`--utrecht-nav-list-link-font-weight`) and not underlined; hover and the current page
+   (`aria-current="page"` + `.utrecht-link--current`) get the underline, so the current item
+   does not rely on colour alone. */
+.utrecht-nav-list {
+  --utrecht-link-text-decoration: none;
+  --utrecht-link-hover-text-decoration: underline;
+}
+
+.utrecht-nav-list__link {
+  &.utrecht-link:visited {
+    /* components-css/link underlines every `.utrecht-link:visited`; in a menu the variables above
+       decide (none, underline on hover and for the current page). */
+    text-decoration-line: var(--_utrecht-link-state-text-decoration, var(--utrecht-link-text-decoration));
+  }
+
+  &.utrecht-link--current {
+    --utrecht-link-text-decoration: underline;
+    --utrecht-link-current-font-weight: var(--utrecht-nav-list-link-font-weight);
+  }
+}

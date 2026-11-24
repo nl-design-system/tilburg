@@ -11,7 +11,8 @@ import { AttributeInheritor, inheritAttributes, InheritedAttributes } from '../u
  *  - `visible-on-focus` — production WCAG 2.4.1 pattern: hidden until focused.
  *  - `visible` — always rendered in place.
  *  - `hidden` — never rendered (kept off-screen).
- *  - `focus` — forces the focused appearance (storybook screenshots).
+ *  - `focus` — forces the focused appearance where a focused link appears (`--focus` and `--visible`; demos,
+ *    storybook screenshots).
  */
 export type TilburgWbcSkipLinkVisibility = 'visible-on-focus' | 'visible' | 'hidden' | 'focus';
 
@@ -50,9 +51,9 @@ export class TilburgWbcSkipLink {
         class={{
           'utrecht-skip-link': true,
           'utrecht-skip-link--visible-on-focus': this.visibility === 'visible-on-focus',
-          'utrecht-skip-link--visible': this.visibility === 'visible',
           'utrecht-skip-link--hidden': this.visibility === 'hidden',
           'utrecht-skip-link--focus': this.visibility === 'focus',
+          'utrecht-skip-link--visible': this.visibility === 'visible' || this.visibility === 'focus',
         }}
         href={this.href || undefined}
       >

@@ -8,8 +8,8 @@ import { AnchorHTMLAttributes, ForwardedRef, forwardRef, PropsWithChildren } fro
  *    link receives keyboard focus, then slides into the top-left of the viewport.
  *  - `visible` — always rendered in place (useful for demos / non-standard layouts).
  *  - `hidden` — never rendered (kept off-screen unconditionally).
- *  - `focus` — force the focused appearance regardless of `:focus`; intended for
- *    storybook screenshots.
+ *  - `focus` — force the focused appearance regardless of `:focus`, shown where a
+ *    focused link appears (renders `--focus` and `--visible`); for demos and storybook screenshots.
  */
 export type SkipLinkVisibility = 'visible-on-focus' | 'visible' | 'hidden' | 'focus';
 
@@ -22,7 +22,16 @@ export const SkipLink = forwardRef(
     { visibility = 'visible-on-focus', className, children, ...restProps }: PropsWithChildren<SkipLinkProps>,
     ref: ForwardedRef<HTMLAnchorElement>,
   ) => (
-    <a ref={ref} className={clsx('utrecht-skip-link', `utrecht-skip-link--${visibility}`, className)} {...restProps}>
+    <a
+      ref={ref}
+      className={clsx(
+        'utrecht-skip-link',
+        `utrecht-skip-link--${visibility}`,
+        visibility === 'focus' && 'utrecht-skip-link--visible',
+        className,
+      )}
+      {...restProps}
+    >
       {children}
     </a>
   ),

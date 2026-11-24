@@ -59,7 +59,7 @@ export const Below: Story = {
   render: (args) => (
     <div style={frame}>
       <TilburgWbcTooltip {...args}>
-        <a className="utrecht-link" href="#">
+        <a className="utrecht-link utrecht-link--html-a" href="#">
           Kwijtschelding
         </a>
       </TilburgWbcTooltip>

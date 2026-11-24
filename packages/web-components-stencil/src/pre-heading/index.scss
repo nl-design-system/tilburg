@@ -1,0 +1,11 @@
+/* utrecht-only component: styled by `@utrecht/component-library-css` with the
+   Tilburg tokens, there is no components-css folder. */
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). In a Heading Group
+   the host, not the inner `<p>`, is the flex item of the `<hgroup>`: it carries
+   the `order` that `.utrecht-pre-heading` reads. */
+tilburg-wbc-pre-heading {
+  display: block;
+  order: var(--utrecht-pre-heading-order, 0);
+}

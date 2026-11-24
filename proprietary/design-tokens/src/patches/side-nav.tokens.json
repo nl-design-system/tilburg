@@ -1,0 +1,24 @@
+{
+  "components/utrecht-sidenav": {
+    "utrecht": {
+      "sidenav": {
+        "link": {
+          "color": {
+            "$value": "{utrecht.document.color}"
+          },
+          "hover-color": {
+            "$value": "{tilburg.interaction.hover.color}"
+          }
+        },
+        "item": {
+          "marker-color": {
+            "$value": "{tilburg.color.gray.300}"
+          },
+          "hover-color": {
+            "$value": "{tilburg.interaction.hover.color}"
+          }
+        }
+      }
+    }
+  }
+}

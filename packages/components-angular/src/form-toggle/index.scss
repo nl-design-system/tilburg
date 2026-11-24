@@ -1,0 +1,7 @@
+@import "../../../components-css/form-toggle/index";
+
+/* The custom-element host (`<tilburg-...>`) defaults to `display: inline`; force block flow (same rule as
+   `tilburg-checkbox`). */
+:host {
+  display: block;
+}

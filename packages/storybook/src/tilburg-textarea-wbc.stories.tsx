@@ -27,9 +27,9 @@ export const AllPermutations: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <TilburgWbcTextarea name="msg" rows={3} placeholder="Default" />
       <TilburgWbcTextarea name="msg" rows={3} required placeholder="Required" />
-      <TilburgWbcTextarea name="msg" rows={3} value="Alleen lezen" readonly />
+      <TilburgWbcTextarea name="msg" rows={3} value="Alleen lezen" readonly aria-label="Alleen lezen" />
       <TilburgWbcTextarea name="msg" rows={3} disabled placeholder="Disabled" />
-      <TilburgWbcTextarea name="msg" rows={3} value="bad value" invalid />
+      <TilburgWbcTextarea name="msg" rows={3} value="bad value" invalid aria-label="Ongeldige waarde" />
       <TilburgWbcTextarea name="msg" rows={3} autoResize={false} placeholder="auto-resize=false (rows=3)" />
     </div>
   ),

@@ -4,6 +4,9 @@
       "action": {
         "activate-cursor": {
           "$value": "pointer"
+        },
+        "busy-cursor": {
+          "$value": "progress"
         }
       }
     }

@@ -1,0 +1,13 @@
+import { newSpecPage } from '@stencil/core/testing';
+import { TilburgWbcSubscript } from './component';
+
+const render = (html: string) => newSpecPage({ components: [TilburgWbcSubscript], html });
+
+describe('tilburg-wbc-subscript', () => {
+  it('renders <sub class="utrecht-subscript">', async () => {
+    const page = await render('<tilburg-wbc-subscript>2</tilburg-wbc-subscript>');
+    const element = page.root!.querySelector('sub')!;
+    expect(element.className).toBe('utrecht-subscript');
+    expect(element.textContent).toBe('2');
+  });
+});

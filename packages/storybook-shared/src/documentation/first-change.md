@@ -7,14 +7,14 @@ oefening: aan het eind zet je hem weer terug, of je maakt er een echte pull requ
 ## 0. Eenmalig: opzetten
 
 ```bash
-git clone git@github.com:nl-design-system/tilburg.git && cd tilburg
+git clone https://github.com/nl-design-system/tilburg.git && cd tilburg
 node scripts/setup.mjs
 ```
 
 Setup installeert wat ontbreekt (Node 24, pnpm, de dependencies, de git-hooks, de eerste builds) en sluit af met de
 vraag of hij de Storybooks start. Al opgezet? `pnpm check` laat zien of alles nog klopt.
 
-## 1. Vind de component
+## 1. Vind het component
 
 ```bash
 pnpm where tooltip
@@ -24,12 +24,19 @@ Je ziet waar de Tooltip in elke laag staat. Het belangrijkste om te onthouden:
 
 - **De HTML/CSS-laag is leidend.** `components-css/tooltip/index.scss` is de enige stylesheet. React, Angular en de Web
   Component zijn dunne wrappers die precies dezelfde HTML maken, dus één CSS-wijziging geldt voor alle vier.
-- **De voorbeelden staan op één plek**: `storybook-shared/src/tilburg-tooltip.examples.ts`. Beide Storybooks lezen daaruit.
+- **De voorbeelden staan op één plek**: `storybook-shared/src/tilburg-tooltip.examples.ts`. Beide Storybooks lezen
+  daaruit, ook de tekst van de documentatiepagina van het component. Hoe je die schrijft, staat in `CONTRIBUTING.md`
+  onder _De tekst van een component_.
 - **TLB** betekent een eigen Tilburg-component zonder Utrecht-basis (zoals de Tooltip); de andere bouwen op Utrecht.
+  Deze en andere woorden staan onder _Begrippen_ op de [Intro](?path=/docs/tilburg-intro--docs).
+- **De knop `</> Gebruik`** in de werkbalk opent een venster dat per laag laat zien hoe je het component in je eigen
+  project zet: installeren, laden, plaatsen, de HTML die de story rendert en, voor HTML/CSS en Web Components, een losse pagina om te downloaden. Alles
+  met een kopieerknop. _Plaatsen_ komt uit de story zelf en volgt wat je in _Controls_ instelt; hoe dat werkt en hoe je
+  het overschrijft, staat in `CONTRIBUTING.md` onder _Het venster Gebruik_.
 
 `pnpm where --list` toont alle componenten; een naam mag ook `PasswordInput` of `tilburg-wbc-tooltip` zijn.
 
-## 2. Start de Storybooks op die component
+## 2. Start de Storybooks op dat component
 
 ```bash
 pnpm dev tooltip
@@ -66,14 +73,14 @@ pnpm test tooltip
 Draait alleen de tests van de Tooltip, in React, Angular en Web Components, met één tabel als uitkomst. Gaat er iets mis,
 dan zie je per test wat er verwacht werd en wat er kwam.
 
-## 5. Is de component nog compleet?
+## 5. Is het component nog compleet?
 
 ```bash
 pnpm parity tooltip
 ```
 
 Controleert of elke laag die `implementation-status.md` belooft er is, met stories en tests. Voor een CSS-wijziging
-verandert hier niets; bij een nieuwe component of laag is dit je checklist.
+verandert hier niets; bij een nieuw component of laag is dit je checklist.
 
 ## 6. Beschrijf de wijziging voor de release
 
@@ -104,18 +111,19 @@ Het PR-sjabloon heeft een korte checklist: alle lagen, het BAT-thema, toetsenbor
 Was het een oefening? Zet de wijziging terug met `git checkout -- packages/components-css/tooltip/index.scss` en
 verwijder de changeset uit `.changeset/`.
 
-## Bonus: bekijk het in een afnemende applicatie
+## Bonus: bekijk het in je eigen project
 
 ```bash
-pnpm sync --to bq-tlb-frontend
+pnpm run pack:local
 ```
 
-Packt de Angular-library en de tokens en installeert ze in `../bq-tlb-frontend` (of `--to hltsamen`). Herstart daar de
-dev-server en je ziet je wijziging in de echte applicatie.
+Dat packt de packages als tarballs in `.tarballs/`. Installeer er een in je project met `npm install <pad naar de .tgz>`
+en herstart daar de dev-server; de knop `</> Gebruik` in de werkbalk van een story laat zien wat je importeert en
+plaatst. Zo zie je je wijziging in een echte applicatie, vóór hij uitgebracht is.
 
 ## Als iets niet werkt
 
 - `pnpm check`: wat is er mis met je omgeving, en welk commando lost het op.
 - Een stap die faalt, toont de foutregels van de tool zelf en een link naar de volledige log.
 - `pnpm commands` (of `pnpm menu`): alle commando's op een rij.
-- `CONTRIBUTING.md` in de repository: hoe alles in elkaar zit.
+- [`CONTRIBUTING.md`](https://github.com/nl-design-system/tilburg/blob/main/CONTRIBUTING.md): hoe alles in elkaar zit.

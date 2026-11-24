@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-spotlight-section` is styled by
+   `@utrecht/component-library-css` with the Tilburg tokens, there is no components-css folder. */
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-spotlight-section {
+  display: block;
+}

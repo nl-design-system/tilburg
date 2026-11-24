@@ -1,0 +1,7 @@
+@use "../../../components-css/nav-list/index";
+
+/* The `<ul>` is a flex item of `.utrecht-nav-bar__content` in the HTML/CSS reference; the host generates no box
+   so it does not become that flex item itself (same rule as the Angular `:host`). */
+tilburg-wbc-nav-list {
+  display: contents;
+}

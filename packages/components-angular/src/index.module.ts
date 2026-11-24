@@ -3,32 +3,67 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UtrechtComponentsModule } from '@utrecht/component-library-angular';
 import { TilburgAccordion, TilburgAccordionSection } from './accordion/component';
+import { TilburgActionGroup } from './action-group/component';
 import { TilburgAlert } from './alert/component';
 import { TilburgArticle } from './article/component';
+import { TilburgBackdrop } from './backdrop/component';
+import { TilburgBadgeList } from './badge-list/component';
 import { TilburgBadgeStatus } from './badge-status/component';
+import { TilburgBlockquote } from './blockquote/component';
 import { TilburgBreadcrumb } from './breadcrumb/component';
 import { TilburgButton } from './button/component';
 import { TilburgButtonGroup } from './button-group/component';
 import { TilburgButtonLink } from './button-link/component';
+import { TilburgCalendar } from './calendar/component';
+import { TilburgCard } from './card/component';
 import { TilburgCheckbox } from './checkbox/component';
+import { TilburgCode } from './code/component';
+import { TilburgCodeBlock } from './code-block/component';
+import { TilburgColorSample } from './color-sample/component';
+import { TilburgColumnLayout } from './column-layout/component';
 import { TilburgCombobox } from './combobox/component';
+import { TilburgCurrencyData } from './currency-data/component';
+import { TilburgDataBadge } from './data-badge/component';
 import { TilburgDataList, TilburgDataListItem, TilburgDataListKey, TilburgDataListValue } from './data-list/component';
+import { TilburgDataPlaceholder } from './data-placeholder/component';
+import { TilburgDatetimeValue } from './datetime-value/component';
 import { TilburgDocument } from './document/component';
+import { TilburgDrawer } from './drawer/component';
+import { TilburgEmphasis } from './emphasis/component';
+import { TilburgFigure } from './figure/component';
+import { TilburgFileInput } from './file-input/component';
+import { TilburgForm } from './form/component';
 import { TilburgFormField } from './form-field/component';
 import { TilburgFormFieldDescription } from './form-field-description/component';
 import { TilburgFieldset } from './form-fieldset/component';
 import { TilburgFormLabel } from './form-label/component';
+import { TilburgFormToggle } from './form-toggle/component';
 import { TilburgHeading1 } from './heading-1/component';
 import { TilburgHeading2 } from './heading-2/component';
 import { TilburgHeading3 } from './heading-3/component';
 import { TilburgHeading4 } from './heading-4/component';
 import { TilburgHeading5 } from './heading-5/component';
 import { TilburgHeading6 } from './heading-6/component';
+import { TilburgHeadingGroup } from './heading-group/component';
 import { TilburgHtmlContent } from './html-content/component';
+import { TilburgIbanData } from './iban-data/component';
+import { TilburgIcon } from './icon/component';
+import { TilburgImage } from './image/component';
+import { TilburgIndexCharNav } from './index-char-nav/component';
 import { TilburgLanguageToggle } from './language-toggle/component';
 import { TilburgLink } from './link/component';
+import { TilburgLinkButton } from './link-button/component';
+import { TilburgLinkList } from './link-list/component';
+import { TilburgLinkSocial, TilburgListSocial } from './link-social/component';
+import { TilburgListbox } from './listbox/component';
 import { TilburgLoadingSpinner } from './loading-spinner/component';
+import { TilburgMark } from './mark/component';
 import { TilburgModal } from './modal/component';
+import { TilburgMultilineData } from './multiline-data/component';
+import { TilburgNavBar } from './nav-bar/component';
+import { TilburgNavList } from './nav-list/component';
+import { TilburgNote } from './note/component';
+import { TilburgNumberData } from './number-data/component';
 import { TilburgOrderedList } from './ordered-list/component';
 import { TilburgPage } from './page/component';
 import { TilburgPageContent } from './page-content/component';
@@ -37,11 +72,18 @@ import { TilburgPageHeader } from './page-header/component';
 import { TilburgPagination } from './pagination/component';
 import { TilburgParagraph } from './paragraph/component';
 import { TilburgPasswordInput } from './password-input/component';
+import { TilburgPreHeading } from './pre-heading/component';
+import { TilburgPreserveData } from './preserve-data/component';
+import { TilburgProcessSteps } from './process-steps/component';
 import { TilburgProgressBar } from './progress-bar/component';
 import { TilburgRadioButton } from './radio-button/component';
 import { TilburgSelect } from './select/component';
 import { TilburgSeparator } from './separator/component';
+import { TilburgSideNav } from './side-nav/component';
 import { TilburgSkipLink } from './skip-link/component';
+import { TilburgSpotlightSection } from './spotlight-section/component';
+import { TilburgSubscript } from './subscript/component';
+import { TilburgSuperscript } from './superscript/component';
 import { TilburgTable } from './table/component';
 import { TilburgTableBodyAttr } from './table-body/component';
 import { TilburgTableCaptionAttr } from './table-caption/component';
@@ -54,37 +96,70 @@ import { TilburgTextarea } from './textarea/component';
 import { TilburgTextareaAutoresizeDirective } from './textarea/textarea-resize-directive';
 import { TilburgTextbox } from './textbox/component';
 import { TilburgTooltip } from './tooltip/component';
+import { TilburgTopNav } from './top-nav/component';
+import { TilburgToptaskLink } from './toptask-link/component';
+import { TilburgToptaskNav } from './toptask-nav/component';
 import { TilburgUnorderedList } from './unordered-list/component';
+import { TilburgUrlData } from './url-data/component';
 import { TilburgValidationMessage } from './validation-message/component';
 
 const components = [
   TilburgAccordion,
   TilburgAccordionSection,
+  TilburgActionGroup,
   TilburgAlert,
   TilburgArticle,
+  TilburgBackdrop,
+  TilburgBadgeList,
   TilburgBadgeStatus,
+  TilburgBlockquote,
   TilburgBreadcrumb,
   TilburgButton,
   TilburgButtonGroup,
   TilburgButtonLink,
+  TilburgCalendar,
+  TilburgCard,
   TilburgCheckbox,
+  TilburgColorSample,
+  TilburgColumnLayout,
+  TilburgCode,
+  TilburgCodeBlock,
   TilburgCombobox,
+  TilburgCurrencyData,
+  TilburgDataBadge,
   TilburgDataList,
   TilburgDataListItem,
   TilburgDataListKey,
   TilburgDataListValue,
+  TilburgDataPlaceholder,
+  TilburgDatetimeValue,
+  TilburgFigure,
   TilburgHeading1,
   TilburgHeading2,
   TilburgHeading3,
   TilburgHeading4,
   TilburgHeading5,
   TilburgHeading6,
+  TilburgHeadingGroup,
   TilburgLanguageToggle,
   TilburgLink,
+  TilburgLinkButton,
+  TilburgLinkList,
+  TilburgLinkSocial,
+  TilburgListbox,
+  TilburgListSocial,
   TilburgLoadingSpinner,
+  TilburgMark,
   TilburgModal,
+  TilburgMultilineData,
+  TilburgNavBar,
+  TilburgNavList,
+  TilburgNote,
+  TilburgNumberData,
+  TilburgForm,
   TilburgFormField,
   TilburgFormFieldDescription,
+  TilburgFormToggle,
   TilburgFieldset,
   TilburgOrderedList,
   TilburgPage,
@@ -94,6 +169,9 @@ const components = [
   TilburgPagination,
   TilburgParagraph,
   TilburgPasswordInput,
+  TilburgPreserveData,
+  TilburgPreHeading,
+  TilburgProcessSteps,
   TilburgProgressBar,
   TilburgTable,
   TilburgTableBodyAttr,
@@ -104,18 +182,33 @@ const components = [
   TilburgTableHeaderCellAttr,
   TilburgTableRowAttr,
   TilburgDocument,
+  TilburgDrawer,
+  TilburgEmphasis,
   TilburgHtmlContent,
+  TilburgIbanData,
+  TilburgIcon,
+  TilburgImage,
+  TilburgIndexCharNav,
   TilburgFormLabel,
   TilburgSelect,
   TilburgSeparator,
+  TilburgSideNav,
   TilburgSkipLink,
+  TilburgSpotlightSection,
+  TilburgSubscript,
+  TilburgSuperscript,
   TilburgTextareaAutoresizeDirective,
   TilburgTextarea,
   TilburgTextbox,
   TilburgRadioButton,
   TilburgTooltip,
+  TilburgTopNav,
+  TilburgToptaskLink,
+  TilburgToptaskNav,
   TilburgUnorderedList,
+  TilburgUrlData,
   TilburgValidationMessage,
+  TilburgFileInput,
 ];
 
 @NgModule({

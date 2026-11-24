@@ -23,9 +23,9 @@ export const AllPermutations: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <Textarea name="msg" rows={3} placeholder="Default" />
       <Textarea name="msg" rows={3} required placeholder="Required" />
-      <Textarea name="msg" rows={3} defaultValue="Alleen lezen" readOnly />
+      <Textarea name="msg" rows={3} defaultValue="Alleen lezen" readOnly aria-label="Alleen lezen" />
       <Textarea name="msg" rows={3} disabled placeholder="Disabled" />
-      <Textarea name="msg" rows={3} defaultValue="bad value" invalid />
+      <Textarea name="msg" rows={3} defaultValue="bad value" invalid aria-label="Ongeldige waarde" />
     </div>
   ),
 };

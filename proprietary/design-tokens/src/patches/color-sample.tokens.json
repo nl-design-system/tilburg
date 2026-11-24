@@ -1,0 +1,11 @@
+{
+  "components/color-sample": {
+    "utrecht": {
+      "color-sample": {
+        "background-color": {
+          "$value": "currentColor"
+        }
+      }
+    }
+  }
+}

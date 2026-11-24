@@ -1,5 +1,13 @@
 @import "../../../components-css/alert/index";
 
+/* The title is a bare `<utrecht-heading-N>` (as in the HTML reference), so bring the Tilburg heading styles along. */
+@import "../../../components-css/heading-1/index";
+@import "../../../components-css/heading-2/index";
+@import "../../../components-css/heading-3/index";
+@import "../../../components-css/heading-4/index";
+@import "../../../components-css/heading-5/index";
+@import "../../../components-css/heading-6/index";
+
 /* The custom-element host (`<tilburg-...>`) defaults to `display: inline`,
    which collapses the component into a text flow and prevents its block-level
    layout (margins, padding, borders, stacking with siblings) from matching the

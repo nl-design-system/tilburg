@@ -1,0 +1,8 @@
+/* utrecht-only component: `.utrecht-subscript` is unstyled upstream (the UA styles
+   of `<sub>` apply), there is no components-css folder. */
+
+/* Inline text-level element: the host stays in the text flow, like the native
+   element it renders (same rule as the Angular `:host`). */
+tilburg-wbc-subscript {
+  display: inline;
+}

@@ -1,0 +1,12 @@
+{
+  "components/number-data": {
+    "utrecht": {
+      "number-data": {
+        "negative-color": {
+          "$value": "{tilburg.feedback.negative.color}",
+          "$description": "BAT has no red-400; its feedback red (red-900) already passes 4.5:1 on white."
+        }
+      }
+    }
+  }
+}

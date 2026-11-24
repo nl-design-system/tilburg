@@ -114,7 +114,7 @@ export const AllPermutations: Story = {
     template: `
       <div style="display:flex; flex-direction:column; gap:1rem">
         <div>
-          <h4>Default (no appearance)</h4>
+          <h4>Default (primary-action)</h4>
           <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap">
             <tilburg-button size="small">Small</tilburg-button>
             <tilburg-button size="medium">Medium</tilburg-button>

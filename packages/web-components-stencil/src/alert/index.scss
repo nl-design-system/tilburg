@@ -1,5 +1,13 @@
 @use "../../../components-css/alert/index";
 
+/* The title is a bare `<utrecht-heading-N>` (as in the HTML reference), so bring the Tilburg heading styles along. */
+@use "../../../components-css/heading-1/index" as heading-1;
+@use "../../../components-css/heading-2/index" as heading-2;
+@use "../../../components-css/heading-3/index" as heading-3;
+@use "../../../components-css/heading-4/index" as heading-4;
+@use "../../../components-css/heading-5/index" as heading-5;
+@use "../../../components-css/heading-6/index" as heading-6;
+
 /* Light-DOM host defaults to `display: inline`; force the block flow of the
    HTML/CSS reference (same rule as the Angular `:host`). */
 tilburg-wbc-alert {

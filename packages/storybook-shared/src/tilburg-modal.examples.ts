@@ -23,7 +23,7 @@ const usageLeadHtml = `This component is plain HTML/CSS on the platform \`<dialo
 const usagePlainHtml = `### Plain HTML / CSS
 
 \`\`\`html
-<button type="button" onclick="document.getElementById('confirm').showModal()">
+<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium" onclick="document.getElementById('confirm').showModal()">
   Open modal
 </button>
 
@@ -39,8 +39,8 @@ const usagePlainHtml = `### Plain HTML / CSS
     <p class="utrecht-paragraph">Weet je zeker dat je de aanvraag wilt versturen?</p>
   </div>
   <footer class="tilburg-modal__footer">
-    <button type="button" class="utrecht-button utrecht-button--primary-action">Bevestigen</button>
-    <button type="button" class="utrecht-button utrecht-button--secondary-action">Annuleren</button>
+    <button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Bevestigen</button>
+    <button type="button" class="utrecht-button utrecht-button--secondary-action tilburg-medium">Annuleren</button>
   </footer>
 </dialog>
 \`\`\``;
@@ -164,7 +164,7 @@ export interface Example {
 export const examples = {
   default: {
     name: 'Default',
-    html: `<button type="button" class="utrecht-button utrecht-button--primary-action">Open modal</button>
+    html: `<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Open modal</button>
 <dialog id="modal-default" class="tilburg-modal" aria-labelledby="modal-default-title" open>
   <header class="tilburg-modal__header">
     <h2 id="modal-default-title">Aanvraag bevestigen</h2>
@@ -178,14 +178,14 @@ export const examples = {
     <p class="utrecht-paragraph">Je ontvangt een e-mail zodra je aanvraag in behandeling is genomen.</p>
   </div>
   <footer class="tilburg-modal__footer">
-    <button type="button" class="utrecht-button utrecht-button--primary-action">Bevestigen</button>
-    <button type="button" class="utrecht-button utrecht-button--secondary-action">Annuleren</button>
+    <button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Bevestigen</button>
+    <button type="button" class="utrecht-button utrecht-button--secondary-action tilburg-medium">Annuleren</button>
   </footer>
 </dialog>`,
   },
   withLink: {
     name: 'With link in content',
-    html: `<button type="button" class="utrecht-button utrecht-button--primary-action">Open modal</button>
+    html: `<button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Open modal</button>
 <dialog id="modal-link" class="tilburg-modal" aria-labelledby="modal-link-title" open>
   <header class="tilburg-modal__header">
     <h2 id="modal-link-title">Cookie-instellingen</h2>
@@ -198,8 +198,8 @@ export const examples = {
     <p class="utrecht-paragraph">Wij gebruiken alleen functionele cookies. Voor meer informatie zie ons <a href="#">privacystatement</a>.</p>
   </div>
   <footer class="tilburg-modal__footer">
-    <button type="button" class="utrecht-button utrecht-button--primary-action">Bevestigen</button>
-    <button type="button" class="utrecht-button utrecht-button--secondary-action">Annuleren</button>
+    <button type="button" class="utrecht-button utrecht-button--primary-action tilburg-medium">Bevestigen</button>
+    <button type="button" class="utrecht-button utrecht-button--secondary-action tilburg-medium">Annuleren</button>
   </footer>
 </dialog>`,
   },

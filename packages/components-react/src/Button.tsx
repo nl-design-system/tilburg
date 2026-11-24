@@ -21,7 +21,7 @@ const APPEARANCE_CLASS: Record<ButtonAppearance, string> = {
 export const Button = forwardRef(
   (
     {
-      appearance,
+      appearance = 'primary-action-button',
       size = 'medium',
       pressed,
       busy,
@@ -48,7 +48,7 @@ export const Button = forwardRef(
       className={clsx(
         'utrecht-button',
         `tilburg-${size}`,
-        appearance && APPEARANCE_CLASS[appearance],
+        APPEARANCE_CLASS[appearance],
         busy && 'utrecht-button--busy',
         disabled && 'utrecht-button--disabled',
         pressed === true && 'utrecht-button--pressed',

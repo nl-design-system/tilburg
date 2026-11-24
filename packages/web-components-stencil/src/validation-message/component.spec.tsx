@@ -11,7 +11,7 @@ describe('tilburg-wbc-validation-message', () => {
     expect(root).toHaveClasses(['utrecht-form-field-error-message', 'tilburg-validation-message--error']);
     expect(root).not.toHaveClass('utrecht-form-field-description');
     expect(root.getAttribute('role')).toBe('alert');
-    expect(root.getAttribute('aria-live')).toBe('assertive');
+    expect(root.hasAttribute('aria-live')).toBe(false);
     expect(root.textContent).toContain('Verplicht');
   });
 
@@ -31,20 +31,26 @@ describe('tilburg-wbc-validation-message', () => {
     expect(page.root!.querySelector('.tilburg-validation-message')).toHaveClass('tilburg-validation-message--error');
   });
 
-  it('maps live-region to aria-live and a matching role', async () => {
+  it('maps live-region to a matching role, without aria-live', async () => {
     const page = await render(
       '<tilburg-wbc-validation-message live-region="polite">X</tilburg-wbc-validation-message>',
     );
     const message = page.root!.querySelector('.tilburg-validation-message')!;
-    expect(message.getAttribute('aria-live')).toBe('polite');
+    expect(message.hasAttribute('aria-live')).toBe(false);
     expect(message.getAttribute('role')).toBe('status');
   });
 
-  it('keeps the icon container empty so the CSS default icon is painted', async () => {
+  it('renders the default svg icon of the HTML reference, per type', async () => {
     const page = await render('<tilburg-wbc-validation-message>X</tilburg-wbc-validation-message>');
     const icon = page.root!.querySelector('.tilburg-validation-message__icon')!;
     expect(icon.getAttribute('aria-hidden')).toBe('true');
-    expect(icon.childNodes.length).toBe(0);
+    const svg = icon.querySelector('svg[aria-hidden="true"]')!;
+    expect(svg.getAttribute('viewBox')).toBe('0 0 20 20');
+    expect(svg.querySelector('path')!.getAttribute('d')).toMatch(/^M10 1a9 9/);
+    const warning = await render('<tilburg-wbc-validation-message type="warning">X</tilburg-wbc-validation-message>');
+    expect(warning.root!.querySelector('.tilburg-validation-message__icon path')!.getAttribute('d')).toMatch(
+      /^M10 1 1 19h18/,
+    );
   });
 
   it('projects a custom icon into the icon slot', async () => {
@@ -52,5 +58,6 @@ describe('tilburg-wbc-validation-message', () => {
       '<tilburg-wbc-validation-message><span slot="icon" id="i">!</span>X</tilburg-wbc-validation-message>',
     );
     expect(page.root!.querySelector('.tilburg-validation-message__icon #i')).not.toBeNull();
+    expect(page.root!.querySelector('.tilburg-validation-message__icon svg')).toBeNull();
   });
 });

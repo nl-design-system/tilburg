@@ -24,19 +24,19 @@ export const AllPermutations: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div>
-        <h4>0% — net begonnen</h4>
+        <h3>0% — net begonnen</h3>
         <ProgressBar value={0} total={5} title="Welkom" label="Stap 1 van 5" />
       </div>
       <div>
-        <h4>40%</h4>
+        <h3>40%</h3>
         <ProgressBar value={2} total={5} title="Persoonlijke gegevens" label="Stap 2 van 5" />
       </div>
       <div>
-        <h4>60% — met back-link (default pijl)</h4>
+        <h3>60% — met back-link (default pijl)</h3>
         <ProgressBar value={3} total={5} title="Adresgegevens" label="Stap 3 van 5" showBack backLabel="Vorige stap" />
       </div>
       <div>
-        <h4>60% — met back-link (eigen pijl-icoon)</h4>
+        <h3>60% — met back-link (eigen pijl-icoon)</h3>
         <ProgressBar
           value={3}
           total={5}
@@ -48,11 +48,11 @@ export const AllPermutations: Story = {
         />
       </div>
       <div>
-        <h4>100% — voltooid</h4>
+        <h3>100% — voltooid</h3>
         <ProgressBar value={5} total={5} title="Klaar" label="Stap 5 van 5" />
       </div>
       <div>
-        <h4>Alleen track (geen titel/label)</h4>
+        <h3>Alleen track (geen titel/label)</h3>
         <ProgressBar value={3} total={10} aria-label="Voortgang" />
       </div>
     </div>

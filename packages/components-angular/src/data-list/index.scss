@@ -5,9 +5,16 @@
    `<tilburg-data-list-value>`) which the browser treats as `display: inline`.
    The HTML/CSS reference uses semantic `<div>`/`<dt>`/`<dd>` which are block
    by default — block these hosts so the rows stack vertically and the per-row
-   border + padding actually paint. */
-:host(tilburg-data-list-item),
-:host(tilburg-data-list-key),
-:host(tilburg-data-list-value) {
+   border + padding actually paint. The key/value hosts are `display: contents`
+   instead: in the `--large` grid the `<dt>`/`<dd>` must be the grid items so
+   they stretch to the row. Element selectors, not `:host`: the components use
+   `ViewEncapsulation.None`, where `:host` never matches. */
+tilburg-data-list,
+tilburg-data-list-item {
   display: block;
+}
+
+tilburg-data-list-key,
+tilburg-data-list-value {
+  display: contents;
 }

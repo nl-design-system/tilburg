@@ -1,10 +1,13 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'tilburg-page-header',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
   standalone: false,
+  /* The action rules (`.tilburg-page-header__user`, the white subtle button) must reach projected content and the
+     `<tilburg-button>` inside it, which emulated encapsulation would scope away. */
+  encapsulation: ViewEncapsulation.None,
 })
 export class TilburgPageHeader {
   @Input() logoSrc?: string | null;

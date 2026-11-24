@@ -36,13 +36,9 @@
     }
   }
 
-  /* Default icon painted into `.utrecht-alert__icon` when the consumer leaves
-     it empty. Works the same for raw HTML/CSS (`<div class="utrecht-alert__icon">
-     </div>`) and for the React + Angular components (whose templates render the
-     icon container with an `<ng-content>` / `{icon}` projection that's empty
-     unless the consumer provides one). Painted as a CSS mask so it inherits
-     `currentColor` from the variant token, matching the SVG fill the
-     components would otherwise produce. */
+  /* Fallback icon for raw HTML that leaves `.utrecht-alert__icon` empty. The reference markup and the
+     React/Angular/Web Components render the `<i><svg>` glyph themselves; this mask paints the same glyph in
+     `currentColor` from the variant token. */
   .utrecht-alert__icon:empty::before {
     background-color: var(--_utrecht-alert-icon-color, var(--utrecht-alert-icon-color, currentColor));
     block-size: var(--utrecht-alert-icon-size, 1.5rem);

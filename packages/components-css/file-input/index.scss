@@ -1,0 +1,134 @@
+/* File Input: a drop zone to add files to a form, with a "choose" button for whoever does not drag. A Tilburg component
+   without a Utrecht base. Colours and sizes come from the design tokens (var(--tilburg-…)); see components-css/README.md.
+
+   The native `<input type="file">` lies invisibly over the whole drop zone: a click anywhere opens the file dialog,
+   a drop anywhere lands in the input, and keyboard and screen reader get the real control. So the HTML layer needs no
+   script; the button is only a picture of one. */
+.tilburg-file-input {
+  display: block;
+  max-inline-size: var(--utrecht-form-control-max-inline-size);
+}
+
+.tilburg-file-input__dropzone {
+  align-items: center;
+  background-color: var(--utrecht-form-control-background-color);
+  border-color: var(--utrecht-form-control-border-color);
+  border-radius: var(--utrecht-form-control-border-radius);
+  border-style: dashed;
+  border-width: var(--tilburg-border-width-md, 2px);
+  box-sizing: border-box;
+  color: var(--utrecht-form-control-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tilburg-space-block-snail);
+  padding-block: var(--tilburg-space-block-rabbit);
+  padding-inline: var(--tilburg-space-block-rabbit);
+  position: relative;
+  text-align: center;
+
+  /* A file is dragged over the drop zone (set by the React, Angular and Web Component wrappers). `:where()` keeps it
+     as light as the rule itself, so the focus ring and the invalid border below still win. */
+  :where(.tilburg-file-input--drag-over) & {
+    background-color: var(--tilburg-color-blue-50);
+    border-color: var(--utrecht-form-control-focus-border-color);
+    border-style: solid;
+  }
+
+  &:hover {
+    border-color: var(--tilburg-form-control-hover-border-color, var(--utrecht-form-control-focus-border-color));
+  }
+
+  /* The focus ring of the invisible input, drawn on what the user sees. */
+  &:has(.tilburg-file-input__input:focus-visible) {
+    outline-color: var(--utrecht-focus-outline-color);
+    outline-offset: var(--utrecht-focus-outline-offset);
+    outline-style: var(--utrecht-focus-outline-style, solid);
+    outline-width: var(--utrecht-focus-outline-width);
+  }
+
+  &:has(.tilburg-file-input__input[aria-invalid="true"]) {
+    border-color: var(--utrecht-form-control-invalid-border-color);
+  }
+
+  &:has(.tilburg-file-input__input:disabled) {
+    color: var(--utrecht-form-control-disabled-color);
+
+    .tilburg-file-input__button {
+      opacity: 50%;
+    }
+  }
+}
+
+.tilburg-file-input__input {
+  block-size: 100%;
+  cursor: pointer;
+  inline-size: 100%;
+  inset: 0;
+  opacity: 0%;
+  position: absolute;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Busy (uploading): a spinner and a line of text cover the drop zone, so it keeps its size. The element is always
+   there, empty: a status region has to exist before its text arrives to be announced. */
+@keyframes tilburg-file-input-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tilburg-file-input__busy {
+  align-items: center;
+  border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: var(--tilburg-space-block-snail);
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+}
+
+.tilburg-file-input--busy .tilburg-file-input__busy {
+  background-color: var(--utrecht-form-control-background-color, Canvas);
+  color: var(--utrecht-form-control-color); /* not the grey of the input that is disabled meanwhile */
+  pointer-events: auto;
+}
+
+/* A ring with one quarter left out: the gap is what turns, also in forced colours. */
+.tilburg-file-input__spinner {
+  animation: tilburg-file-input-spin var(--tilburg-loading-spinner-animation-duration, 1000ms) linear infinite;
+  block-size: 2.5rem;
+  border-block-end-color: var(--tilburg-color-gray-500);
+  border-block-start-color: transparent;
+  border-inline-color: var(--tilburg-color-gray-500);
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 0.25rem;
+  box-sizing: border-box;
+  inline-size: 2.5rem;
+}
+
+/* Reduced motion: keep turning (a still spinner no longer says "busy"), but four times slower. */
+@media (prefers-reduced-motion: reduce) {
+  .tilburg-file-input__spinner {
+    animation-duration: calc(var(--tilburg-loading-spinner-animation-duration, 1000ms) * 4);
+  }
+}
+
+/* The names of the chosen files, under the drop zone. */
+.tilburg-file-input__files ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tilburg-space-block-beetle);
+  list-style-type: "";
+  margin-block: var(--tilburg-space-block-snail) 0;
+  padding-inline-start: 0;
+}
+
+.tilburg-file-input__file {
+  overflow-wrap: anywhere;
+}

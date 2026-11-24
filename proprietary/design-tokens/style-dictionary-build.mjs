@@ -23,7 +23,10 @@ StyleDictionary.registerAction({
  *  every theme's patches into every theme, so which theme won depended on file order. */
 const sharedTokenFiles = async (themes) => {
   const files = await readdir('src', { recursive: true });
+  /* On Windows readdir returns patches\accordion.tokens.json; Style Dictionary reads source as globs, where
+     \ escapes the next character, so every nested file silently matched nothing. Use / throughout. */
   return files
+    .map((file) => file.replaceAll('\\', '/'))
     .filter((file) => file === 'tokens.json' || file.endsWith('/tokens.json') || file.endsWith('.tokens.json'))
     .filter((file) => !themes.some((theme) => file.startsWith(`patches/${theme}/`)))
     .map((file) => `src/${file}`)

@@ -1,0 +1,22 @@
+/* @license CC0-1.0 */
+
+/* The documentation pages of both Storybooks (imported by storybook/config/preview.tsx and
+   storybook-angular/src/styles.scss). */
+
+/* Inline code in running text. Storybook's own style has a margin around it, which pushes the comma or bracket after
+   a name away from it, and a background too faint to see; a long package name could not wrap. */
+/* stylelint-disable-next-line selector-class-pattern -- Storybook's own classes, not ours to name */
+.sbdocs.sbdocs-content :not(pre) > code {
+  background: #eef1f5;
+  border: 0;
+  border-radius: 3px;
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", monospace;
+  font-size: 0.9em;
+  line-height: inherit;
+  margin-block: 0;
+  margin-inline: 0;
+  overflow-wrap: anywhere;
+  padding-block: 0.1em;
+  padding-inline: 0.35em;
+  white-space: normal;
+}

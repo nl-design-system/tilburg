@@ -56,7 +56,7 @@ export const Below: Story = {
     props: args,
     template: frame(`
       <tilburg-tooltip [text]="text" [placement]="placement">
-        <a class="utrecht-link" href="#">Kwijtschelding</a>
+        <a class="utrecht-link utrecht-link--html-a" href="#">Kwijtschelding</a>
       </tilburg-tooltip>`),
   }),
 };

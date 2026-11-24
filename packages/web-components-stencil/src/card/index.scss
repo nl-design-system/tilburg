@@ -1,0 +1,7 @@
+@use "../../../components-css/card/index";
+
+/* Light-DOM host defaults to `display: inline`; force the block flow of the
+   HTML/CSS reference (same rule as the Angular host). */
+tilburg-wbc-card {
+  display: block;
+}

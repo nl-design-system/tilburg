@@ -1,0 +1,14 @@
+{
+  "components/mark": {
+    "utrecht": {
+      "mark": {
+        "background-color": {
+          "$value": "{tilburg.color.yellow.500}"
+        },
+        "color": {
+          "$value": "{tilburg.color.black}"
+        }
+      }
+    }
+  }
+}

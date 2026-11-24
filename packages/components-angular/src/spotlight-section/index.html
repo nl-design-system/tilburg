@@ -1,0 +1,20 @@
+<ng-template #content><ng-content></ng-content></ng-template>
+<aside
+  *ngIf="aside; else section"
+  class="utrecht-spotlight-section"
+  [ngClass]="variantClass"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.aria-labelledby]="ariaLabelledBy || null"
+>
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+</aside>
+<ng-template #section>
+  <section
+    class="utrecht-spotlight-section"
+    [ngClass]="variantClass"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-labelledby]="ariaLabelledBy || null"
+  >
+    <ng-container *ngTemplateOutlet="content"></ng-container>
+  </section>
+</ng-template>

@@ -1,0 +1,47 @@
+<div
+  class="tilburg-file-input"
+  [class.tilburg-file-input--drag-over]="dragOver"
+  [class.tilburg-file-input--busy]="busy"
+>
+  <!-- The drop itself is the browser's: it lands in the input, which covers the drop zone. -->
+  <div
+    class="tilburg-file-input__dropzone"
+    [attr.aria-busy]="busy ? 'true' : null"
+    (dragenter)="dragOver = !disabled && !busy"
+    (dragleave)="dragOver = false"
+    (drop)="dragOver = false"
+  >
+    <span class="tilburg-file-input__text">{{ resolvedDropLabel }}</span>
+    <span class="tilburg-file-input__button utrecht-button utrecht-button--secondary-action" aria-hidden="true"
+      >{{ resolvedButtonLabel }}</span
+    >
+    <ng-content></ng-content>
+    <input
+      class="tilburg-file-input__input"
+      type="file"
+      [attr.id]="id || null"
+      [attr.name]="name || null"
+      [attr.accept]="accept || null"
+      [multiple]="multiple"
+      [disabled]="disabled || busy"
+      [required]="required"
+      [attr.aria-invalid]="invalid ? 'true' : null"
+      [attr.aria-required]="required ? 'true' : null"
+      [attr.aria-label]="resolvedAriaLabel"
+      [attr.aria-labelledby]="ariaLabelledBy || null"
+      [attr.aria-describedby]="ariaDescribedBy || null"
+      (change)="onChange($event)"
+    />
+    <div class="tilburg-file-input__busy" role="status">
+      <ng-container *ngIf="busy">
+        <span class="tilburg-file-input__spinner" aria-hidden="true"></span>
+        <span>{{ busyLabel }}</span>
+      </ng-container>
+    </div>
+  </div>
+  <div class="tilburg-file-input__files" role="status">
+    <ul *ngIf="files.length">
+      <li *ngFor="let file of files" class="tilburg-file-input__file">{{ file.name }}</li>
+    </ul>
+  </div>
+</div>

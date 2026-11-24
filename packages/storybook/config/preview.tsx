@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 // utrecht 5.x base CSS — the foundation Tilburg components cascade on top of.
 // Provides `.utrecht-alert { display:flex; padding; border }`,
@@ -5,18 +6,28 @@ import '@gemeente-tilburg/design-tokens/dist/tilburg/theme.css';
 // `components-css/<name>/index.scss` rules below cascade on top.
 import '@utrecht/component-library-css/dist/index.css';
 import '@gemeente-tilburg/components-css/accordion/index.scss';
+import '@gemeente-tilburg/components-css/action-group/index.scss';
 import '@gemeente-tilburg/components-css/alert/index.scss';
 import '@gemeente-tilburg/components-css/badge-counter/index.scss';
+import '@gemeente-tilburg/components-css/badge-list/index.scss';
 import '@gemeente-tilburg/components-css/badge-status/index.scss';
 import '@gemeente-tilburg/components-css/breadcrumb/index.scss';
 import '@gemeente-tilburg/components-css/button/index.scss';
 import '@gemeente-tilburg/components-css/button-link/index.scss';
+import '@gemeente-tilburg/components-css/calendar/index.scss';
+import '@gemeente-tilburg/components-css/card/index.scss';
 import '@gemeente-tilburg/components-css/checkbox/index.scss';
+import '@gemeente-tilburg/components-css/code-block/index.scss';
 import '@gemeente-tilburg/components-css/combobox/index.scss';
+import '@gemeente-tilburg/components-css/data-badge/index.scss';
 import '@gemeente-tilburg/components-css/data-list/index.scss';
+import '@gemeente-tilburg/components-css/figure/index.scss';
+import '@gemeente-tilburg/components-css/file-input/index.scss';
+import '@gemeente-tilburg/components-css/form/index.scss';
 import '@gemeente-tilburg/components-css/form-field/index.scss';
 import '@gemeente-tilburg/components-css/form-fieldset/index.scss';
 import '@gemeente-tilburg/components-css/form-label/index.scss';
+import '@gemeente-tilburg/components-css/form-toggle/index.scss';
 import '@gemeente-tilburg/components-css/heading-1/index.scss';
 import '@gemeente-tilburg/components-css/heading-2/index.scss';
 import '@gemeente-tilburg/components-css/heading-3/index.scss';
@@ -24,27 +35,41 @@ import '@gemeente-tilburg/components-css/heading-4/index.scss';
 import '@gemeente-tilburg/components-css/heading-5/index.scss';
 import '@gemeente-tilburg/components-css/heading-6/index.scss';
 import '@gemeente-tilburg/components-css/html-content/index.scss';
+import '@gemeente-tilburg/components-css/iban-data/index.scss';
+import '@gemeente-tilburg/components-css/image/index.scss';
+import '@gemeente-tilburg/components-css/index-char-nav/index.scss';
 import '@gemeente-tilburg/components-css/language-toggle/index.scss';
 import '@gemeente-tilburg/components-css/link/index.scss';
+import '@gemeente-tilburg/components-css/link-button/index.scss';
+import '@gemeente-tilburg/components-css/link-list/index.scss';
+import '@gemeente-tilburg/components-css/listbox/index.scss';
 import '@gemeente-tilburg/components-css/loading-spinner/index.scss';
 import '@gemeente-tilburg/components-css/modal/index.scss';
+import '@gemeente-tilburg/components-css/nav-bar/index.scss';
+import '@gemeente-tilburg/components-css/nav-list/index.scss';
+import '@gemeente-tilburg/components-css/note/index.scss';
 import '@gemeente-tilburg/components-css/ordered-list/index.scss';
 import '@gemeente-tilburg/components-css/page-footer/index.scss';
 import '@gemeente-tilburg/components-css/page-header/index.scss';
 import '@gemeente-tilburg/components-css/pagination/index.scss';
+import '@gemeente-tilburg/components-css/password-input/index.scss';
+import '@gemeente-tilburg/components-css/process-steps/index.scss';
 import '@gemeente-tilburg/components-css/progress-bar/index.scss';
 import '@gemeente-tilburg/components-css/radio-button/index.scss';
-import '@gemeente-tilburg/components-css/password-input/index.scss';
 import '@gemeente-tilburg/components-css/select/index.scss';
 import '@gemeente-tilburg/components-css/separator/index.scss';
+import '@gemeente-tilburg/components-css/side-nav/index.scss';
 import '@gemeente-tilburg/components-css/skip-link/index.scss';
 import '@gemeente-tilburg/components-css/table/index.scss';
 import '@gemeente-tilburg/components-css/textarea/index.scss';
 import '@gemeente-tilburg/components-css/textbox/index.scss';
 import '@gemeente-tilburg/components-css/tooltip/index.scss';
+import '@gemeente-tilburg/components-css/top-nav/index.scss';
+import '@gemeente-tilburg/components-css/toptask-link/index.scss';
 import '@gemeente-tilburg/components-css/unordered-list/index.scss';
 import '@gemeente-tilburg/components-css/validation-message/index.scss';
 import '@gemeente-tilburg/font/src/index.scss';
+import '../../storybook-shared/src/docs.css';
 /* Opt-in accordion enhancement (toggle + keyboard nav) for the HTML/CSS
    reference stories. Angular/React wrapper stories aren't affected — the
    script only enhances `.utrecht-accordion[data-tilburg-accordion-enhance]`. */
@@ -53,18 +78,45 @@ import { enhanceAccordion } from '@gemeente-tilburg/components-css/accordion';
    the HTML/CSS reference stories. Same idempotency rule — only enhances
    `.utrecht-combobox[data-tilburg-combobox-enhance]`. */
 import { enhanceCombobox } from '@gemeente-tilburg/components-css/combobox';
+/* Keyboard + click selection of the HTML/CSS listbox (`[data-tilburg-listbox-enhance]`). */
+import { enhanceListbox } from '@gemeente-tilburg/components-css/listbox';
 /* Show/hide toggle of the HTML/CSS password input (`[data-tilburg-password-input-enhance]`). */
 import { enhancePasswordInput } from '@gemeente-tilburg/components-css/password-input';
 /* Hover/focus/Escape behaviour of the HTML/CSS tooltip (`[data-tilburg-tooltip-enhance]`). */
 import { resolveTokens } from '@gemeente-tilburg/components-css/tokens/resolve';
 import { enhanceTooltip } from '@gemeente-tilburg/components-css/tooltip';
+import * as reactLibrary from '@gemeente-tilburg/components-react';
 /* Token-resolver enhancement: fills the `<td data-token="…">` cells in the
    token reference tables with `getComputedStyle()` output at runtime. */
 import { defineCustomElements } from '@gemeente-tilburg/web-components-stencil/loader/index.js';
-import { Controls, Description, Primary, Stories } from '@storybook/addon-docs';
-import type { Preview } from '@storybook/react';
+import { Controls, Description, DocsContext, Markdown, Primary, Stories } from '@storybook/addon-docs/blocks';
+import type { Preview } from '@storybook/react-vite';
+import { useContext } from 'react';
 import { ParametersArgsDecorator } from './ParametersArgsDecorator';
 import { theme } from './theme';
+import gettingStarted from '../../storybook-shared/src/documentation/getting-started.md?raw';
+import layerAngular from '../../storybook-shared/src/documentation/intro-layer-angular.md?raw';
+import layerHtml from '../../storybook-shared/src/documentation/intro-layer-html-css.md?raw';
+import layerReact from '../../storybook-shared/src/documentation/intro-layer-react.md?raw';
+import layerWebComponents from '../../storybook-shared/src/documentation/intro-layer-web-components.md?raw';
+import { allSections, componentLinks, type UsageDocs } from '../../storybook-shared/src/usage';
+
+/* The "Gebruik" panel (config/UsagePanel.tsx) reads its install and load steps from these pages. */
+const usage: UsageDocs = {
+  gettingStarted,
+  pages: { html: layerHtml, react: layerReact, angular: layerAngular, webComponents: layerWebComponents },
+  /* What a React snippet may import: a component of the story itself (a layout helper) is left out of it. */
+  reactExports: Object.keys(reactLibrary),
+  /* The snippets of every layer, so the tabs of the layers a story is not about are filled too. */
+  sections: allSections(
+    import.meta.glob<Record<string, unknown>>('../../storybook-shared/src/tilburg-*.examples.ts', { eager: true }),
+  ),
+};
+
+/* Under the description of every component page: the way to the setup and to related components. */
+const ComponentLinks = () => (
+  <Markdown>{componentLinks(useContext(DocsContext).storyById().id, usage.sections)}</Markdown>
+);
 
 defineCustomElements();
 
@@ -75,6 +127,7 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
   const reenhance = () => {
     enhanceAccordion(document);
     enhanceCombobox(document);
+    enhanceListbox(document);
     enhancePasswordInput(document);
     enhanceTooltip(document);
     resolveTokens(document);
@@ -86,6 +139,7 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
 const preview: Preview = {
   parameters: {
     controls: { expanded: false },
+    usage,
     options: {
       panelPosition: 'right',
       storySort: {
@@ -97,13 +151,14 @@ const preview: Preview = {
 
            The `Tilburg` section holds only MDX documentation, so the pages are
            named explicitly to fix their reading order rather than leaving them
-           to sort alphabetically. The Angular Storybook needs the same list,
-           because there the MDX pages share a section with the components. */
+           to sort alphabetically. The Angular Storybook has the same section
+           with the same titles: the shared markdown links to these ids. */
         order: [
           'Tilburg',
           [
             'Intro',
             'Aan de slag',
+            'Je eerste wijziging',
             'Tips & valkuilen',
             'Implementatiestatus',
             'Voorbeelden',
@@ -123,11 +178,16 @@ const preview: Preview = {
       },
     },
     docs: {
+      /* The JSX a story rendered, with its real values, instead of the story's source: the "Gebruik" panel reads it
+         for "Plaatsen" (SNIPPET_RENDERED), and "Show code" on the docs pages shows the same. The Angular renderer
+         does this by default. */
+      source: { type: 'dynamic' },
       page: () => {
         // Exclude `<Title>` because the title comes from the Markdown file
         return (
           <>
             <Description />
+            <ComponentLinks />
             <Primary />
             <Controls />
             <Stories />

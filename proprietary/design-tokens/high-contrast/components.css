@@ -26,3 +26,9 @@
 .tilburg-high-contrast[class*="-theme"] .tilburg-tooltip__popup {
   border: 2px solid #fff;
 }
+
+/* Toptask link and social link: a white tile with black text (as the primary button) that inverts on hover; the
+   inset edge keeps the hovered black tile visible on the black page. */
+.tilburg-high-contrast[class*="-theme"] :is(.utrecht-toptask-link, .utrecht-link-social) {
+  box-shadow: inset 0 0 0 2px #fff;
+}

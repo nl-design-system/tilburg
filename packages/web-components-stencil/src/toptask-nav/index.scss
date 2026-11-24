@@ -1,0 +1,6 @@
+/* utrecht-only component: `.utrecht-toptask-nav` is styled by `@utrecht/component-library-css` with Tilburg
+   tokens; there is no components-css folder. Light-DOM host defaults to `display: inline`; force the block flow
+   of the HTML/CSS reference (same rule as the Angular `:host`). */
+tilburg-wbc-toptask-nav {
+  display: block;
+}

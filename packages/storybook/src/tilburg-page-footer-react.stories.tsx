@@ -23,25 +23,32 @@ type Story = StoryObj<typeof meta>;
 
 export const AllPermutations: Story = {
   render: () => (
+    /* Each variant in its own labelled section, so the story has no repeated contentinfo landmark. */
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <PageFooter
-        links={[
-          { label: 'Privacy', href: '/privacy' },
-          { label: 'Toegankelijkheid', href: '/a11y' },
-          { label: 'Contact', href: '/contact' },
-        ]}
-      />
-      <PageFooter primaryLink={{ label: 'Gemeente Tilburg', href: '/' }} />
-      <PageFooter
-        primaryLink={{ label: 'Gemeente Tilburg', href: '/' }}
-        links={[
-          { label: 'Privacy', href: '/privacy' },
-          { label: 'Toegankelijkheid', href: '/a11y' },
-          { label: 'Contact', href: '/contact' },
-        ]}
-      >
-        Aanvullende footer-inhoud (children).
-      </PageFooter>
+      <section aria-label="Met links">
+        <PageFooter
+          links={[
+            { label: 'Privacy', href: '/privacy' },
+            { label: 'Toegankelijkheid', href: '/a11y' },
+            { label: 'Contact', href: '/contact' },
+          ]}
+        />
+      </section>
+      <section aria-label="Met hoofdlink">
+        <PageFooter primaryLink={{ label: 'Gemeente Tilburg', href: '/' }} />
+      </section>
+      <section aria-label="Met hoofdlink, links en inhoud">
+        <PageFooter
+          primaryLink={{ label: 'Gemeente Tilburg', href: '/' }}
+          links={[
+            { label: 'Privacy', href: '/privacy' },
+            { label: 'Toegankelijkheid', href: '/a11y' },
+            { label: 'Contact', href: '/contact' },
+          ]}
+        >
+          Aanvullende footer-inhoud (children).
+        </PageFooter>
+      </section>
     </div>
   ),
 };

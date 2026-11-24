@@ -34,24 +34,21 @@ export const VisibleOnFocus: Story = {
   ),
 };
 
-/* `--visible` on its own: always rendered in place, but *not* in the focused
-   appearance. */
+/* `visibility="focus"` renders `--focus --visible`, the classes of the HTML reference. */
 export const ForceVisible: Story = {
-  name: 'Always visible (--visible modifier, no focus ring)',
+  name: 'Force visible (demo)',
   render: () => (
-    <TilburgWbcSkipLink href="#main" visibility="visible">
+    <TilburgWbcSkipLink href="#main" visibility="focus">
       Sla over en ga naar de hoofdinhoud
     </TilburgWbcSkipLink>
   ),
 };
 
-/* `visibility="focus"` forces the focused appearance. Unlike the React story,
-   the extra `utrecht-skip-link--visible` class cannot be added: a `className`
-   on the proxy lands on the host, not on the inner `<a>`. */
-export const ForceFocusAppearance: Story = {
-  name: 'Force focused appearance (storybook screenshot)',
+/* `--visible` on its own: always shown, but *not* in the focused appearance. */
+export const AlwaysVisible: Story = {
+  name: 'Always visible (--visible modifier, no focus ring)',
   render: () => (
-    <TilburgWbcSkipLink href="#main" visibility="focus">
+    <TilburgWbcSkipLink href="#main" visibility="visible">
       Sla over en ga naar de hoofdinhoud
     </TilburgWbcSkipLink>
   ),

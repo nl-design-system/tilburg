@@ -1,5 +1,6 @@
 /* @license CC0-1.0 */
 
+import { FormControl } from '@angular/forms';
 import { TilburgTextarea } from '@gemeente-tilburg/components-angular';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { bugs, description } from '../../storybook-shared/src/tilburg-textarea.examples';
@@ -20,7 +21,6 @@ type Story = StoryObj<TilburgTextarea>;
 
 export const Default: Story = {
   name: 'Default',
-  args: { rows: 4 },
   render: (args) => ({
     props: args,
     template: `
@@ -35,10 +35,13 @@ export const Default: Story = {
 export const Filled: Story = {
   name: 'With value',
   render: () => ({
+    props: {
+      control: new FormControl('Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning.'),
+    },
     template: `
       <div style="display:flex; flex-direction:column; gap:1rem; max-width:32rem">
         <label class="utrecht-form-label" style="display:block;font-weight:700;margin-bottom:0.25rem" for="ta-filled">Toelichting</label>
-        <textarea id="ta-filled" class="utrecht-textarea">Ik wil graag een afspraak maken voor de aanvraag van een nieuwe vergunning.</textarea>
+        <tilburg-textarea id="ta-filled" name="explanation" [control]="control"></tilburg-textarea>
       </div>
     `,
   }),
@@ -46,7 +49,7 @@ export const Filled: Story = {
 
 export const Invalid: Story = {
   name: 'Invalid',
-  args: { rows: 4, invalid: true },
+  args: { invalid: true },
   render: (args) => ({
     props: args,
     template: `
@@ -60,7 +63,7 @@ export const Invalid: Story = {
 
 export const Disabled: Story = {
   name: 'Disabled',
-  args: { rows: 4, disabled: true },
+  args: { disabled: true },
   render: (args) => ({
     props: args,
     template: `

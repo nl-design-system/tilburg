@@ -12,11 +12,18 @@ describe('tilburg-wbc-skip-link', () => {
     expect(link.textContent).toBe('Naar inhoud');
   });
 
-  it.each(['visible', 'hidden', 'focus'])('maps visibility="%s" to its modifier only', async (visibility) => {
+  it.each(['visible', 'hidden', 'focus'])('maps visibility="%s" to its modifier', async (visibility) => {
     const page = await render(`<tilburg-wbc-skip-link visibility="${visibility}">X</tilburg-wbc-skip-link>`);
     const link = page.root!.querySelector('a')!;
     expect(link).toHaveClass(`utrecht-skip-link--${visibility}`);
     expect(link).not.toHaveClass('utrecht-skip-link--visible-on-focus');
+  });
+
+  it('renders visibility="focus" as --focus with --visible, like the HTML reference', async () => {
+    const page = await render('<tilburg-wbc-skip-link visibility="focus">X</tilburg-wbc-skip-link>');
+    expect(page.root!.querySelector('a')!.className).toBe(
+      'utrecht-skip-link utrecht-skip-link--focus utrecht-skip-link--visible',
+    );
   });
 
   it('omits href when none is given', async () => {

@@ -1,0 +1,11 @@
+{
+  "components/data-placeholder": {
+    "utrecht": {
+      "data-placeholder": {
+        "background-color": {
+          "$value": "{tilburg.color.gray.400}"
+        }
+      }
+    }
+  }
+}

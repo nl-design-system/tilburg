@@ -1,0 +1,8 @@
+@import "../../../components-css/nav-list/index";
+
+/* The `<ul>` is a flex item of `.utrecht-nav-bar__content` (and fills it with `inline-size: 100%`) in the
+   HTML/CSS reference. A block host in between would become that flex item and shrink to its content, so the
+   host generates no box of its own. */
+:host {
+  display: contents;
+}

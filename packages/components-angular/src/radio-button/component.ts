@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -6,6 +6,9 @@ import { FormControl } from '@angular/forms';
   selector: 'tilburg-radio-button',
   templateUrl: 'index.html',
   styleUrls: ['index.scss'],
+  /* `encapsulation: None`: the components-css rule that lays out a label wrapping this host sits on that label, outside
+     this component's template, so emulated encapsulation would scope it away. */
+  encapsulation: ViewEncapsulation.None,
   standalone: false,
 })
 export class TilburgRadioButton {

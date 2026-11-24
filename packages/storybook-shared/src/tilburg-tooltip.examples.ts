@@ -140,7 +140,7 @@ export const examples = {
     name: 'Below the trigger',
     html: `<div style="${frameStyle}">
   <span class="tilburg-tooltip tilburg-tooltip--below" data-tilburg-tooltip-enhance>
-    <a class="utrecht-link" href="#" aria-describedby="tip-below">Kwijtschelding</a>
+    <a class="utrecht-link utrecht-link--html-a" href="#" aria-describedby="tip-below">Kwijtschelding</a>
     <span class="tilburg-tooltip__popup" id="tip-below" role="tooltip">Vrijstelling van gemeentelijke belastingen bij een laag inkomen.</span>
   </span>
 </div>`,
