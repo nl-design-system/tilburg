@@ -1,5 +1,11 @@
 # @gemeente-tilburg/components-react
 
+## 0.1.2
+
+### Patch Changes
+
+- 262cbbe: Format README without impact, in order to public a new release with OpenID Connect (OIDC).
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@gemeente-tilburg/components-angular",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Angular components for the Municipality of Tilburg, based on the NL Design System architecture",
   "license": "EUPL-1.2",
   "keywords": [
@@ -37,7 +37,7 @@
     "watch:test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose --watch"
   },
   "dependencies": {
-    "tslib": "2.8.1"
+    "tslib": "2.9.1"
   },
   "peerDependencies": {
     "@angular/common": "^20.0.0 || ^21.0.0 || ^22.0.0",
@@ -76,15 +76,15 @@
     "eslint": "9.15.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-json": "4.0.1",
-    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-prettier": "5.5.7",
     "jest": "29.7.0",
     "jest-preset-angular": "14.6.2",
     "ng-packagr": "20.3.2",
     "npm-run-all": "4.1.5",
-    "prettier": "3.4.2",
-    "rxjs": "7.8.1",
+    "prettier": "3.9.10",
+    "rxjs": "7.8.2",
     "typescript": "5.9.3",
-    "zone.js": "0.15.0"
+    "zone.js": "0.16.3"
   },
   "module": "dist/fesm2022/gemeente-tilburg-components-angular.mjs",
   "typings": "dist/index.d.ts",
