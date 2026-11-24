@@ -9,7 +9,7 @@ en 22: gebouwd met Angular 20 (de oudste ondersteunde versie), de Storybook draa
 ### Installatie (Angular)
 
 ```bash
-npm install ../tilburg/.tarballs/gemeente-tilburg-components-angular-0.1.0.tgz \
+npm install ../tilburg/.tarballs/gemeente-tilburg-components-angular-0.1.2.tgz \
             ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
             @utrecht/component-library-angular@1.1.0 \
             @utrecht/component-library-css
