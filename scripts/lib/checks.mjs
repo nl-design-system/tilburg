@@ -70,6 +70,15 @@ export function checkNode() {
     };
   }
   const major = Number(version.split('.')[0]);
+  /* The right major can still be too old: package.json "engines" sets the minimum (pnpm only warns). */
+  const repoNeeds = belowEngines(version, readJson(resolve(ROOT, 'package.json'))?.engines?.node);
+  if (major === NODE_MAJOR && repoNeeds) {
+    return {
+      ok: false,
+      detail: `v${version}, but this repo needs ${repoNeeds} or newer`,
+      note: `install a newer Node ${NODE_MAJOR}: ${cmd(`nvm install ${NODE_MAJOR}`)}`,
+    };
+  }
   const angularNeeds = major === NODE_MAJOR && belowEngines(version, angularNodeRange());
   if (angularNeeds) {
     return warnRow(
