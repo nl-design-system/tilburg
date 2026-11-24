@@ -5,7 +5,7 @@ of de bestanden (`packages/components-css/*/index.scss`, `packages/components-an
 `packages/web-components-stencil/src/*` en de stories van beide Storybooks) daarmee kloppen, en `pnpm verify` draait
 die controle mee. Hoe je een laag gebruikt, staat op [Aan de slag](?path=/docs/tilburg-aan-de-slag--docs).
 
-**87 componenten** zijn gedocumenteerd. **86** hebben een React-wrapper, **86** een Angular-wrapper en **86** een
+**88 componenten** zijn gedocumenteerd. **87** hebben een React-wrapper, **87** een Angular-wrapper en **87** een
 Web Component (`@gemeente-tilburg/web-components-stencil`).
 Er is op dit moment geen enkel component dat wél in React maar niet in Angular bestaat, of andersom.
 
