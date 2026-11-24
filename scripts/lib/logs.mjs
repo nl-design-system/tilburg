@@ -1,7 +1,7 @@
 /* The step logs runStep() and pnpm dev write to LOG_DIR, read back for `pnpm logs`. */
 import { closeSync, openSync, readdirSync, readSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { LOG_DIR } from './cli-utils.mjs';
+import { LOG_DIR, tryOr } from './cli-utils.mjs';
 
 /** The last `bytes` of a file as text. */
 function readTail(path, bytes) {
@@ -22,31 +22,31 @@ function readTail(path, bytes) {
  * is no logs.
  */
 export function readLogs(dir = LOG_DIR) {
-  let names;
-  try {
-    names = readdirSync(dir).filter((name) => name.endsWith('.log'));
-  } catch {
-    return [];
-  }
-  return names
+  return tryOr(() => readdirSync(dir), [])
+    .filter((name) => name.endsWith('.log'))
     .sort()
     .reverse()
-    .map((name) => {
+    .flatMap((name) => {
       const path = join(dir, name);
-      const { size, mtime } = statSync(path);
-      return {
-        path,
-        /* Names are <ISO stamp>-<slug>.log (newLogFile). */
-        step: name.replace(/^\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-/, '').replace(/\.log$/, ''),
-        time: mtime,
-        size,
-        exit: /# exit (\S+)\s*$/.exec(size ? readTail(path, 200) : '')?.[1] ?? null,
-      };
+      try {
+        const { size, mtime } = statSync(path);
+        return {
+          path,
+          /* Names are <ISO stamp>-<slug>.log (newLogFile). */
+          step: name.replace(/^\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-/, '').replace(/\.log$/, ''),
+          time: mtime,
+          size,
+          exit: /# exit (\S+)\s*$/.exec(size ? readTail(path, 200) : '')?.[1] ?? null,
+        };
+      } catch {
+        /* Pruned by a step that started meanwhile (newLogFile keeps 40). */
+        return [];
+      }
     });
 }
 
-/** The log `pnpm logs --last` shows: the newest failure, else the newest log. */
-export const pickLast = (logs) => logs.find((log) => log.exit !== null && log.exit !== '0') ?? logs[0] ?? null;
+export const pickLast = (logs) =>
+  logs.find((log) => log.exit !== null && log.exit !== '0' && log.exit !== 'stopped') ?? logs[0] ?? null;
 
 /** The last `count` lines of a log (256 KB holds far more than that of any tool's output). */
 export function tailLines(path, count = 80) {

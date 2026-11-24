@@ -90,6 +90,29 @@ updates:
           - "patch"
           - "minor"
     ignore:
+      # components-angular builds with the oldest Angular it supports (20). Dependabot cannot ignore per workspace
+      # package, so Angular majors (also for the Storybook) are upgraded by hand.
+      - dependency-name: "@angular/*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@angular-devkit/*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@angular-eslint/*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "ng-packagr"
+        update-types:
+          - "version-update:semver-major"
+      # Angular fixes the TypeScript and zone.js ranges per version: these move together with Angular, by hand.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "zone.js"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
       - dependency-name: "@types/node"
         update-types:
           - "version-update:semver-major"

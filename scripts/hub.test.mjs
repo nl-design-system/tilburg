@@ -1,0 +1,76 @@
+/* `node --test scripts/`: the menu without a terminal (CI, a pipe, closed stdin) prints the list and never waits. */
+import './lib/test-env.mjs';
+import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { stripAnsi } from './lib/cli-utils.mjs';
+import { fakeTerminal, runScript, SCRIPTS } from './lib/test-fakes.mjs';
+
+const hub = join(SCRIPTS, 'hub.mjs');
+const env = { ...process.env, CI: '1', TILBURG_TTY: '' };
+const tty = { ...process.env, CI: '', TILBURG_TTY: '' };
+
+for (const [label, input] of [
+  ['closed stdin (EOF)', ''],
+  ['keys on a pipe', 'q\r'],
+]) {
+  test(`with ${label} it prints the commands and exits 0 instead of waiting for keys`, () => {
+    const result = runScript(hub, [], { input, env, timeout: 10_000 });
+    assert.equal(result.error, undefined, 'did not hang');
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /pnpm setup/);
+    assert.doesNotMatch(result.stdout, /Enter run/, 'no interactive menu');
+  });
+}
+
+test('with stdin ignored altogether it does the same', () => {
+  const result = runScript(hub, [], { stdio: ['ignore', 'pipe', 'pipe'], env, timeout: 10_000 });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /pnpm where/);
+});
+
+test('in a terminal too narrow for its columns it prints the list instead of a menu that wraps', () => {
+  const result = runScript(hub, [], { preload: fakeTerminal(40), input: '', env: tty, timeout: 10_000 });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /pnpm setup/);
+  assert.doesNotMatch(result.stdout, /Enter run/);
+});
+
+test('no menu line is wider than an 80-column terminal, or a redraw drifts down the screen', () => {
+  /* → selects `where`, whose description is the longest. */
+  const result = runScript(hub, [], { preload: fakeTerminal(80), input: '\x1b[C', env: tty, timeout: 10_000 });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /❯ where/);
+  const menu = stripAnsi(result.stdout.slice(result.stdout.indexOf('START'))).replace(/\x1b\[\?25[hl]/g, '');
+  for (const line of menu.split('\n')) assert.ok(line.length < 80, `${line.length}: ${line}`);
+});
+
+test('application-mode arrows and several keys in one chunk are all read', () => {
+  /* →→ in application mode, then q. */
+  const result = runScript(hub, [], { preload: fakeTerminal(80), input: '\x1bOC\x1bOCq', env: tty, timeout: 10_000 });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.split('Enter run').length - 1, 3, 'drawn once, then once per arrow');
+});
+
+test('TERM=dumb (no cursor control) gets the list, not a menu drawn with escape codes', () => {
+  const result = runScript(hub, [], {
+    preload: fakeTerminal(120),
+    input: '',
+    env: { ...tty, TERM: 'dumb' },
+    timeout: 10_000,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /pnpm setup/);
+  assert.doesNotMatch(result.stdout, /Enter run/);
+});
+
+test('Home and F2 are neither help nor quit: the menu stays until q', () => {
+  const result = runScript(hub, [], {
+    preload: fakeTerminal(80),
+    input: '\x1b[H\x1bOQ\x1b[Cq',
+    env: tty,
+    timeout: 10_000,
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.split('Enter run').length - 1, 2, 'drawn once, then once for the arrow');
+});
