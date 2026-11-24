@@ -8,7 +8,7 @@ HTML/CSS-laag. React 18 of 19 is vereist.
 ### Installatie (React)
 
 ```bash
-npm install ../tilburg/.tarballs/gemeente-tilburg-components-react-0.1.1.tgz \
+npm install ../tilburg/.tarballs/gemeente-tilburg-components-react-0.1.2.tgz \
             ../tilburg/.tarballs/gemeente-tilburg-design-tokens-0.1.0.tgz \
             @utrecht/component-library-css
 ```
