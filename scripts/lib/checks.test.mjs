@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import { PNPM_VERSION, ROOT } from '../dev-config.mjs';
 import {
   belowEngines,
+  enginesAllow,
   checkCorepack,
   checkCpu,
   checkDiskSpace,
@@ -30,6 +31,15 @@ test('newestMtime does not follow a symlink loop, and skips build output', () =>
   mkdirSync(resolve(dir, 'src', 'dist'));
   symlinkSync(dir, resolve(dir, 'src', 'loop'));
   assert.ok(newestMtime([resolve(dir, 'src'), resolve(dir, 'missing')]) > 0);
+});
+
+test('enginesAllow: a major the range lists, at or above its minimum', () => {
+  const range = '^24.22.3 || ^26.13.1';
+  assert.equal(enginesAllow('26.13.1', range), true);
+  assert.equal(enginesAllow('v24.22.3', range), true);
+  assert.equal(enginesAllow('26.13.0', range), false);
+  assert.equal(enginesAllow('25.9.0', range), false);
+  assert.equal(enginesAllow('26.13.1', undefined), false);
 });
 
 test('belowEngines reads the minimum for the running major from an engines range', () => {

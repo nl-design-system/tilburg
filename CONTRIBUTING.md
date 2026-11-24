@@ -25,8 +25,8 @@ staan uitgelegd waar je ze tegenkomt (_Hoe de repository in elkaar zit_, _Een ni
 | Node.js | 24 (zie `.nvmrc`; `engines`: `^24.22.3`) | `nvm use`                                                   |
 | pnpm    | 11 (`packageManager` in `package.json`)  | `corepack enable`, dan kiest corepack de juiste versie zelf |
 
-`pnpm install` controleert eerst je Node-versie (`scripts/preflight.mjs`) en stopt met uitleg als het niet Node 24 is, of
-ouder dan `engines` vraagt. pnpm zelf waarschuwt alleen (`engineStrict` staat uit, zodat onze eigen controle het woord krijgt). Zie je `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` of
+`pnpm install` controleert eerst je Node-versie (`scripts/preflight.mjs`) en stopt met uitleg als het niet Node 24 (of een
+andere versie uit `engines`) is; een oudere patchversie geeft alleen een waarschuwing. pnpm zelf waarschuwt alleen (`engineStrict` staat uit, zodat onze eigen controle het woord krijgt). Zie je `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` of
 "This version of pnpm requires at least Node.js", dan start pnpm 11 op een oudere Node uit je `PATH` (vaak een
 nvm-default van 20) en komt het niet eens aan die controle toe: `nvm use`, of `nvm alias default 24`.
 `node scripts/check.mjs` werkt ook zonder pnpm en zegt welke van de twee het is.

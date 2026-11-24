@@ -12,7 +12,7 @@ let message = null;
 try {
   const { NODE_MAJOR, PNPM_VERSION, ROOT } = await import('./dev-config.mjs');
   const { c, fail } = await import('./lib/cli-utils.mjs');
-  const { belowEngines } = await import('./lib/checks.mjs');
+  const { belowEngines, enginesAllow } = await import('./lib/checks.mjs');
   /* dev-config reads past a broken package.json (so pnpm check can report it): say it here, where it is read first. */
   JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
@@ -29,10 +29,16 @@ try {
   const major = Number(process.versions.node.split('.')[0]);
   const engines = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).engines?.node;
   const needs = belowEngines(process.versions.node, engines);
-  if (verdict === 'ok' && (major !== NODE_MAJOR || needs)) {
+  /* A supported major below the patch "engines" asks works: say so, and let the install carry on. */
+  if (needs)
+    console.log(
+      `  ${c.yellow}⚠${c.reset}  Node ${process.versions.node} is older than this repo asks (${needs} or newer): ` +
+        `${c.cyan}nvm install ${major}${c.reset} gets the newest.\n`,
+    );
+  if (verdict === 'ok' && !needs && major !== NODE_MAJOR && !enginesAllow(process.versions.node, engines)) {
     verdict = 'wrong-node';
     fail({
-      what: `Node ${process.versions.node} is not the Node this repo uses (${needs ? `${needs} or newer` : NODE_MAJOR})`,
+      what: `Node ${process.versions.node} is not the Node this repo uses (${NODE_MAJOR})`,
       why: `.nvmrc pins Node ${NODE_MAJOR}; package.json "engines" sets the minimum, and the Angular and Stencil tooling is only tested on it.`,
       fix: process.env.NVM_DIR
         ? 'nvm use   (then pnpm install again, in the same terminal), or node scripts/setup.mjs to sort it out'
